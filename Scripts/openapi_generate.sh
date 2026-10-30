@@ -4,7 +4,6 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 OUTPUT_DIR_CHAT="$REPO_ROOT/Sources/StreamChat/Generated/OpenAPI"
-SOURCERY_CONFIG="$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
 CHAT_DIR="$REPO_ROOT/../chat"
 
 source "$SCRIPT_DIR/openapi_generate_helpers.sh"
@@ -918,6 +917,18 @@ remove_type BanRequest BanRequestDeleteMessages
 remove_type PushPreferenceInput PushPreferenceInputCallLevel
 remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 
+# After the property fixes above: their regexes match only decode( and decodeIfPresent(.
+lossy_array_property ChannelDetailPayload members
+lossy_array_property ChannelStateResponseFields activeLiveLocations members messages pendingMessages pinnedMessages read threads watchers
+lossy_array_property GroupedChannelsBucket channels
+lossy_array_property MessageResponse attachments latestReactions mentionedGroups mentionedRoles mentionedUsers ownReactions restrictedVisibility
+lossy_array_property OwnUserResponse channelMutes devices
+lossy_array_property QueryChannelsResponse channels
+lossy_array_property QueryThreadsResponse threads
+lossy_array_property SyncResponse events
+lossy_array_property ThreadResponse threadParticipants
+lossy_array_property ThreadStateResponse latestReplies read
+
 # 6. Expose selected generated models as public API.
 publicize_model AppSettings
 publicize_model CurrentUserUnreads
@@ -943,24 +954,8 @@ apply_directional_coding_conformances
 strip_hashable_conformance
 strip_streamcore_imports
 
-# 8. Format, splice the generated decoders, prune unused StringCodingKey lets and wrap
-#    long declarations.
+# 8. Format, prune unused StringCodingKey lets and wrap long declarations.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
-
-sourcery --config "$SOURCERY_CONFIG"
-splice_generated_decoders
-
-# After the splice, which replaces init(from:) of the models in the Sourcery sources.
-lossy_array_property ChannelDetailPayload members
-lossy_array_property ChannelStateResponseFields activeLiveLocations members messages pendingMessages pinnedMessages read threads watchers
-lossy_array_property GroupedChannelsBucket channels
-lossy_array_property MessageResponse attachments latestReactions mentionedGroups mentionedRoles mentionedUsers ownReactions restrictedVisibility
-lossy_array_property OwnUserResponse channelMutes devices
-lossy_array_property QueryChannelsResponse channels
-lossy_array_property QueryThreadsResponse threads
-lossy_array_property SyncResponse events
-lossy_array_property ThreadResponse threadParticipants
-lossy_array_property ThreadStateResponse latestReplies read
 
 prune_string_coding_keys
 
