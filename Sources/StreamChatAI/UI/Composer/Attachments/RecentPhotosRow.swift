@@ -13,7 +13,6 @@ struct RecentPhotosRow: View {
     let onCamera: () -> Void
 
     @Injected(\.aiAppearance.colors) private var colors
-    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.images) private var images
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
@@ -25,7 +24,7 @@ struct RecentPhotosRow: View {
                 } label: {
                     AttachmentTile {
                         images.attachmentPickerCamera
-                            .font(fonts.attachmentPickerTileIcon)
+                            .fontWeightIfAvailable(.semibold)
                             .foregroundStyle(Color(colors.attachmentPickerTileIcon))
                     }
                 }

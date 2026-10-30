@@ -9,8 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ChannelListQuery.includeActiveMemberCount` to load `ChatChannel.activeMemberCount`, the number of members who are neither deactivated nor deleted [#4368](https://github.com/GetStream/stream-chat-swift/pull/4368)
 
 ## StreamChatAI
+### ✅ Added
+- Add a failure message when photos picked in the composer can't be loaded [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🐞 Fixed
-- Tell the person when photos picked from the library can't be added, such as photos in iCloud without a connection [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
+- Fix a photo picked again from the library being attached twice [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🔄 Changed
 - `AIComposerView` is available on iOS 15, with a single-line text field and no "All photos" button there [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🎭 New Localizations

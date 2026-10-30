@@ -13,7 +13,6 @@ public struct SpeechToTextButton: View {
     private var silenceTimeout: Double
 
     @Injected(\.aiAppearance.colors) private var colors
-    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.images) private var images
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
@@ -41,7 +40,7 @@ public struct SpeechToTextButton: View {
                 }
             } label: {
                 (speech.isRecording ? images.composerStopDictation : images.composerStartDictation)
-                    .font(fonts.composerIcon)
+                    .fontWeightIfAvailable(.semibold)
                     .foregroundStyle(Color(colors.composerIcon))
             }
         }

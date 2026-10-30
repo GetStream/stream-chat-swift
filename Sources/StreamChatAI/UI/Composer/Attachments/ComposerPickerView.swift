@@ -19,11 +19,13 @@ struct ComposerPickerView: View {
             if #available(iOS 16, *) {
                 HStack {
                     Spacer()
-                    AllPhotosButton(
-                        photoLibrary: photoLibrary,
-                        onPick: { viewModel.appendAttachment($0) },
-                        onFailure: { photosFailed = true }
-                    )
+                    AllPhotosButton { items in
+                        Task {
+                            if await !viewModel.addPhotos(items, from: photoLibrary) {
+                                photosFailed = true
+                            }
+                        }
+                    }
                 }
                 .padding()
             }

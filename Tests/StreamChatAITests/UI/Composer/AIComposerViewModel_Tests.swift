@@ -2,7 +2,9 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import PhotosUI
 @testable import StreamChatAI
+import SwiftUI
 import XCTest
 
 @MainActor
@@ -85,6 +87,18 @@ final class AIComposerViewModel_Tests: XCTestCase {
 
         XCTAssertEqual(viewModel.attachments, [first])
         XCTAssertEqual(viewModel.selectedAssetURLs, ["asset-1": first])
+    }
+
+    @available(iOS 16, *)
+    func test_addPhotos_whenAPhotoIsAttached_doesNotAddItAgain() async throws {
+        let url = try makeFile()
+        viewModel.selectAsset(assetID: "asset-1", attachment: AttachmentLocation(url: url, isTemporary: false))
+
+        let didLoadAll = await viewModel.addPhotos([PhotosPickerItem(itemIdentifier: "asset-1")], from: PhotoLibraryService())
+
+        XCTAssertTrue(didLoadAll)
+        XCTAssertEqual(viewModel.attachments, [url])
+        XCTAssertEqual(viewModel.selectedAssetURLs, ["asset-1": url])
     }
 
     func test_deselectAsset_removesAttachmentAndDeletesTemporaryFile() throws {
