@@ -67,6 +67,14 @@ public final class ChatChannel: @unchecked Sendable {
 
     /// The total number of members in the channel.
     public let memberCount: Int
+
+    /// The number of members whose users are neither deactivated nor deleted.
+    ///
+    /// It is `nil` until a ``ChannelListQuery`` with ``ChannelListQuery/includeActiveMemberCount`` loads the channel.
+    /// Use ``memberCount`` when it is `nil`.
+    ///
+    /// - Important: WebSocket events don't update this value. Only channel list queries do.
+    public let activeMemberCount: Int?
     
     /// The total number of messages in the channel.
     /// Only returns value if `count_messages` is configured for your app.
@@ -231,6 +239,7 @@ public final class ChatChannel: @unchecked Sendable {
         unreadCount: ChannelUnreadCount,
         watcherCount: Int = 0,
         memberCount: Int = 0,
+        activeMemberCount: Int? = nil,
         messageCount: Int? = nil,
         reads: [ChatChannelRead] = [],
         cooldownDuration: Int = 0,
@@ -266,6 +275,7 @@ public final class ChatChannel: @unchecked Sendable {
         self.autoTranslationLanguages = autoTranslationLanguages
         self.watcherCount = watcherCount
         self.memberCount = memberCount
+        self.activeMemberCount = activeMemberCount
         self.messageCount = messageCount
         self.reads = reads
         self.cooldownDuration = cooldownDuration
@@ -321,6 +331,7 @@ public final class ChatChannel: @unchecked Sendable {
             unreadCount: unreadCount,
             watcherCount: watcherCount,
             memberCount: memberCount,
+            activeMemberCount: activeMemberCount,
             reads: reads,
             cooldownDuration: cooldownDuration,
             extraData: extraData ?? [:],
@@ -430,6 +441,7 @@ public final class ChatChannel: @unchecked Sendable {
             unreadCount: unreadCount,
             watcherCount: newWatcherCount,
             memberCount: newMemberCount,
+            activeMemberCount: activeMemberCount,
             reads: newReads,
             cooldownDuration: newCooldownDuration,
             extraData: newExtraData,
@@ -530,6 +542,7 @@ extension ChatChannel: Hashable {
         guard lhs.isDisabled == rhs.isDisabled else { return false }
         guard lhs.isHidden == rhs.isHidden else { return false }
         guard lhs.memberCount == rhs.memberCount else { return false }
+        guard lhs.activeMemberCount == rhs.activeMemberCount else { return false }
         guard lhs.membership == rhs.membership else { return false }
         guard lhs.typingUsers == rhs.typingUsers else { return false }
         guard lhs.team == rhs.team else { return false }
