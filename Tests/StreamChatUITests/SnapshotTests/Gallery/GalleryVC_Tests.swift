@@ -290,6 +290,40 @@ import XCTest
         XCTAssertNil(visibleVideoCell(in: gallery)?.player.currentItem)
     }
 
+    func test_failedToPlayToEnd_survivesRebindOfSameCell() throws {
+        let loader = ControllableMediaLoader()
+        var components = Components.mock
+        components.mediaLoader = loader
+
+        let attachment = makeVideoAttachment()
+        let gallery = makeGalleryVC(
+            content: .init(message: makeMessage(with: [attachment.asAnyAttachment]), currentPage: 0),
+            components: components
+        )
+        presentInWindow(gallery)
+
+        loader.completeVideoAsset(
+            for: attachment.videoURL,
+            with: .success(MediaLoaderVideoAsset(asset: AVURLAsset(url: attachment.videoURL)))
+        )
+        let item = try XCTUnwrap(visibleVideoCell(in: gallery)?.player.currentItem)
+        XCTAssertNotEqual(item.status, .failed)
+
+        NotificationCenter.default.post(
+            name: .AVPlayerItemFailedToPlayToEndTime,
+            object: item,
+            userInfo: [AVPlayerItemFailedToPlayToEndTimeErrorKey: GalleryTestError("failed to end")]
+        )
+        try waitForFailurePresentation(on: gallery.videoPlaybackBar)
+        assertShowsFailure(gallery.videoPlaybackBar)
+
+        // A swipe that settles back on the same page re-runs `updateContent()` for the same cell.
+        gallery.updateCurrentPage()
+
+        XCTAssertNotEqual(item.status, .failed)
+        assertShowsFailure(gallery.videoPlaybackBar)
+    }
+
     func test_replacingFailedVideoWithValidVideo_clearsError() throws {
         let loader = ControllableMediaLoader()
         var components = Components.mock

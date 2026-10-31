@@ -567,7 +567,9 @@ open class GalleryVC: _ViewController,
 
         if let error = videoCell.currentAssetLoadingError {
             videoPlaybackBar.setPlaybackFailure(error)
-        } else if videoCell.player.currentItem?.status != .failed {
+        } else if videoCell.player.currentItem == nil {
+            // A failure on a live item belongs to that item, and the bar clears it when the item
+            // changes. A loading failure has no item, so nothing else clears it on a reused cell.
             videoPlaybackBar.setPlaybackFailure(nil)
         }
         videoCell.onAssetLoadingErrorChange = { [weak self, weak videoCell] error in
