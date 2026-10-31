@@ -295,7 +295,7 @@ import XCTest
         var components = Components.mock
         components.mediaLoader = loader
 
-        let attachment = makeVideoAttachment()
+        let attachment = try makeVideoAttachment(url: makePlayableVideoURL())
         let gallery = makeGalleryVC(
             content: .init(message: makeMessage(with: [attachment.asAnyAttachment]), currentPage: 0),
             components: components
@@ -307,7 +307,15 @@ import XCTest
             with: .success(MediaLoaderVideoAsset(asset: AVURLAsset(url: attachment.videoURL)))
         )
         let item = try XCTUnwrap(visibleVideoCell(in: gallery)?.player.currentItem)
-        XCTAssertNotEqual(item.status, .failed)
+        wait(
+            for: [
+                expectation(
+                    for: NSPredicate(format: "status == %d", AVPlayerItem.Status.readyToPlay.rawValue),
+                    evaluatedWith: item
+                )
+            ],
+            timeout: 10
+        )
 
         NotificationCenter.default.post(
             name: .AVPlayerItemFailedToPlayToEndTime,
@@ -502,6 +510,37 @@ import XCTest
             downloadingState: nil,
             uploadingState: nil
         )
+    }
+
+    /// Writes a one-frame H.264 file, so AVFoundation does not fail the item by itself.
+    private func makePlayableVideoURL() throws -> URL {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension("mp4")
+        addTeardownBlock { try? FileManager.default.removeItem(at: url) }
+
+        let side = 16
+        let writer = try AVAssetWriter(outputURL: url, fileType: .mp4)
+        let input = AVAssetWriterInput(
+            mediaType: .video,
+            outputSettings: [AVVideoCodecKey: AVVideoCodecType.h264, AVVideoWidthKey: side, AVVideoHeightKey: side]
+        )
+        let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: input, sourcePixelBufferAttributes: nil)
+        writer.add(input)
+        XCTAssertTrue(writer.startWriting())
+        writer.startSession(atSourceTime: .zero)
+
+        var pixelBuffer: CVPixelBuffer?
+        CVPixelBufferCreate(nil, side, side, kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
+        XCTAssertTrue(adaptor.append(try XCTUnwrap(pixelBuffer), withPresentationTime: .zero))
+        input.markAsFinished()
+        writer.endSession(atSourceTime: CMTime(value: 1, timescale: 30))
+
+        let finished = expectation(description: "video file written")
+        writer.finishWriting { finished.fulfill() }
+        wait(for: [finished], timeout: 10)
+        XCTAssertEqual(writer.status, .completed)
+        return url
     }
 
     @discardableResult
