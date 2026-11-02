@@ -30,6 +30,21 @@ struct OpenUIViewTests {
         #expect(received == ["second"])
     }
 
+    @Test func ownedRuntimeIsKeptAndRendersWithTheLatestLibrary() throws {
+        let owned = OwnedRuntime()
+        let replaced = RenderCount()
+        let first = owned.runtime(library: .openUIChat, toolProvider: nil, initialState: nil, onAction: nil, response: Self.program, isStreaming: false)
+        let library = ComponentLibrary.openUIChat.replacingRenderer(for: "TextContent") { _ in
+            replaced.count += 1
+            return AnyView(Text("Replaced"))
+        }
+        let second = owned.runtime(library: library, toolProvider: nil, initialState: nil, onAction: nil, response: Self.program, isStreaming: false)
+        try #require(RenderingTests.render(second))
+
+        #expect(first === second)
+        #expect(replaced.count > 0)
+    }
+
     @Test func ownedRuntimeIsRemadeForAnotherLibrary() {
         let owned = OwnedRuntime()
         let chat = owned.runtime(library: .openUIChat, toolProvider: nil, initialState: nil, onAction: nil, response: Self.program, isStreaming: false)
@@ -60,4 +75,9 @@ struct OpenUIViewTests {
         #expect(withoutTools.queryManager.toolProvider == nil)
         #expect(withTools.queryManager.toolProvider != nil)
     }
+}
+
+@MainActor
+final class RenderCount {
+    var count = 0
 }

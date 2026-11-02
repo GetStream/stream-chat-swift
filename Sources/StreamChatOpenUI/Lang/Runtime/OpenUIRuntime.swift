@@ -37,7 +37,7 @@ public struct StateField {
 @MainActor
 @Observable
 public final class OpenUIRuntime {
-    public let library: ComponentLibrary
+    public private(set) var library: ComponentLibrary
     public let store: OpenUIStore
     @ObservationIgnored public let queryManager: QueryManager
 
@@ -69,8 +69,8 @@ public final class OpenUIRuntime {
     @ObservationIgnored private var isRecomputing = false
     @ObservationIgnored private var needsRecompute = false
     @ObservationIgnored private var runtimeErrors: [OpenUIError] = []
-    @ObservationIgnored private let functions: [String: OpenUIFunction]
-    @ObservationIgnored private let customActions: [String: OpenUICustomAction]
+    @ObservationIgnored private var functions: [String: OpenUIFunction]
+    @ObservationIgnored private var customActions: [String: OpenUICustomAction]
 
     /// - Parameters:
     ///   - library: The component library the model was prompted with.
@@ -83,8 +83,8 @@ public final class OpenUIRuntime {
         self.queryManager = QueryManager(toolProvider: toolProvider)
         self.streamParser = library.makeStreamParser()
         self.initialState = initialState
-        self.functions = Dictionary(library.functions.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })
-        self.customActions = Dictionary(library.customActions.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })
+        self.functions = Self.byName(library.functions, name: \.name)
+        self.customActions = Self.byName(library.customActions, name: \.name)
         store.onChange = { [weak self] key in self?.storeDidChange(key) }
         queryManager.onChange = { [weak self] in self?.queryManagerDidChange() }
     }
@@ -111,6 +111,19 @@ public final class OpenUIRuntime {
         runQueryEffects()
         recompute()
         collectErrors()
+    }
+
+    // Takes a library that parses programs the same way, with other renderers, functions or
+    // actions, and keeps the state of what it shows.
+    func adopt(_ library: ComponentLibrary) {
+        self.library = library
+        functions = Self.byName(library.functions, name: \.name)
+        customActions = Self.byName(library.customActions, name: \.name)
+        recompute()
+    }
+
+    private static func byName<Value>(_ values: [Value], name: (Value) -> String) -> [String: Value] {
+        Dictionary(values.map { (name($0), $0) }, uniquingKeysWith: { first, _ in first })
     }
 
     /// Restores persisted state (e.g. when re-rendering a stored message).

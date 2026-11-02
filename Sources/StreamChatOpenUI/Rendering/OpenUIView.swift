@@ -80,14 +80,12 @@ public struct OpenUIView: View {
 }
 
 // The runtime an `OpenUIView` makes for itself. It is made during the view's first body, so the
-// first frame already shows the response, and it follows the latest action handler and tool
-// provider. A different library needs a new runtime, as the parse depends on it.
+// first frame already shows the response, and it follows the latest library, action handler and
+// tool provider. A library that parses programs differently needs a new runtime.
 @available(iOS 17.0, macOS 14.0, *)
 @MainActor
 final class OwnedRuntime {
     private var current: OpenUIRuntime?
-    private var librarySchema: OpenUIValue?
-    private var libraryRoot: String?
     private var tools: ForwardingToolProvider?
 
     nonisolated init() {}
@@ -100,8 +98,10 @@ final class OwnedRuntime {
         response: String?,
         isStreaming: Bool
     ) -> OpenUIRuntime {
-        let isSameLibrary = librarySchema == library.jsonSchema && libraryRoot == library.root
-        if let current, isSameLibrary, (tools != nil) == (toolProvider != nil) {
+        if let current, current.library.parses(like: library), (tools != nil) == (toolProvider != nil) {
+            if current.library.identity != library.identity {
+                current.adopt(library)
+            }
             tools?.update(toolProvider)
             current.onAction = onAction
             return current
@@ -112,8 +112,6 @@ final class OwnedRuntime {
         runtime.update(response: response, isStreaming: isStreaming)
         current?.dispose()
         current = runtime
-        librarySchema = library.jsonSchema
-        libraryRoot = library.root
         self.tools = tools
         return runtime
     }

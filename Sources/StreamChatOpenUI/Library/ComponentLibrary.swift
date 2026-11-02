@@ -51,6 +51,9 @@ public struct ComponentLibrary: Sendable {
     /// Compiled positional parameters used by the parser.
     public let paramMap: ParamMap
 
+    // Tells this library from one made apart from it, whose renderers, functions and actions
+    // are closures that can't be compared.
+    let identity = UUID()
     private let definitionsByName: [String: OpenUIComponentDefinition]
     private let reactiveProps: [String: Set<String>]
 
@@ -119,6 +122,12 @@ public struct ComponentLibrary: Sendable {
     }
 
     public var componentNames: [String] { components.map(\.name) }
+
+    // Whether programs parse the same with `other`, which can still render, compute or act
+    // differently.
+    func parses(like other: ComponentLibrary) -> Bool {
+        identity == other.identity || (root == other.root && jsonSchema == other.jsonSchema)
+    }
 
     public func component(named name: String) -> OpenUIComponentDefinition? {
         definitionsByName[name]
