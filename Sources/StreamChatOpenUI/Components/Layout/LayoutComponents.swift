@@ -19,9 +19,30 @@ private struct ContainerItem {
         self.content = element.props["content"] ?? .array([])
     }
 
-    /// A cheap size measure used to follow content as it streams in.
+    // A cheap size measure used to follow content as it streams in.
     var contentSize: Int {
-        OpenUIJSON.stringify(content.plainJSON).utf8.count
+        content.streamingSize
+    }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+extension OpenUIValue {
+    // Grows as the model writes more of the value, without serializing it.
+    var streamingSize: Int {
+        switch self {
+        case .null, .expression:
+            return 0
+        case .bool, .number:
+            return 1
+        case .string(let string):
+            return string.utf8.count + 1
+        case .array(let items):
+            return items.reduce(1) { $0 + $1.streamingSize }
+        case .object(let object):
+            return object.reduce(1) { $0 + $1.value.streamingSize }
+        case .element(let element):
+            return element.props.reduce(1) { $0 + $1.value.streamingSize }
+        }
     }
 }
 
@@ -44,6 +65,7 @@ struct TabsView: View {
         let items = self.items
         if !items.isEmpty {
             let active = selection.flatMap { value in items.first { $0.value == value }?.value } ?? items[0].value
+            let sizes = context.isStreaming ? items.map(\.contentSize) : []
             VStack(alignment: .leading, spacing: theme.spacing.m) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: theme.spacing.xs) {
@@ -64,6 +86,7 @@ struct TabsView: View {
                                     }
                             }
                             .buttonStyle(.plain)
+                            .accessibilityAddTraits(item.value == active ? [.isSelected] : [])
                         }
                     }
                     .padding(3)
@@ -78,22 +101,21 @@ struct TabsView: View {
                     .transition(.opacity)
                 }
             }
-            .onChange(of: items.map(\.contentSize)) { _, _ in followStreamingContent(items) }
-            .onAppear { followStreamingContent(items) }
+            .onChange(of: sizes) { _, sizes in followStreamingContent(items, sizes: sizes) }
+            .onAppear { followStreamingContent(items, sizes: sizes) }
         }
     }
 
     /// While the user hasn't picked a tab, switch to the tab whose content is growing.
-    private func followStreamingContent(_ items: [ContainerItem]) {
+    private func followStreamingContent(_ items: [ContainerItem], sizes: [Int]) {
         guard !userInteracted else { return }
         var candidate: String?
-        var sizes: [String: Int] = [:]
-        for item in items {
-            let size = item.contentSize
+        var sizesByValue: [String: Int] = [:]
+        for (item, size) in zip(items, sizes) {
             if size > (previousSizes[item.value] ?? 0) { candidate = item.value }
-            sizes[item.value] = size
+            sizesByValue[item.value] = size
         }
-        previousSizes = sizes
+        previousSizes = sizesByValue
         if context.isStreaming, let candidate, candidate != selection {
             selection = candidate
         } else if selection == nil {
@@ -161,7 +183,7 @@ struct DisclosureRow<Content: View>: View {
                 isExpanded.toggle()
             } label: {
                 HStack {
-                    Text(InlineMarkdown.attributed(title))
+                    Text(InlineMarkdown.cached(title))
                         .font(font ?? theme.fonts.bodySmall.weight(.semibold))
                         .foregroundStyle(theme.colors.textPrimary)
                         .multilineTextAlignment(.leading)
@@ -170,6 +192,7 @@ struct DisclosureRow<Content: View>: View {
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(theme.colors.textSecondary)
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                        .accessibilityHidden(true)
                 }
                 .padding(.vertical, theme.spacing.m)
                 .contentShape(Rectangle())
@@ -236,7 +259,7 @@ struct SectionBlockView: View {
             VStack(alignment: .leading, spacing: theme.spacing.l) {
                 ForEach(Array(sections.enumerated()), id: \.offset) { _, section in
                     VStack(alignment: .leading, spacing: theme.spacing.s) {
-                        Text(InlineMarkdown.attributed(section.trigger))
+                        Text(InlineMarkdown.cached(section.trigger))
                             .font(theme.fonts.heading)
                             .foregroundStyle(theme.colors.textPrimary)
                             .accessibilityAddTraits(.isHeader)
@@ -274,6 +297,7 @@ struct SectionBlockView: View {
 struct StepsView: View {
     let context: ComponentContext
     @Environment(\.openUITheme) private var theme
+    @ScaledMetric(relativeTo: .caption) private var markerSize: CGFloat = 24
 
     var body: some View {
         let items = context.props.elements("items")
@@ -286,7 +310,7 @@ struct StepsView: View {
                             .font(.caption.weight(.bold))
                             .monospacedDigit()
                             .foregroundStyle(theme.colors.onAccent)
-                            .frame(width: 24, height: 24)
+                            .frame(width: markerSize, height: markerSize)
                             .background(theme.colors.accent, in: Circle())
                         if index < items.count - 1 {
                             Rectangle()
@@ -297,7 +321,7 @@ struct StepsView: View {
                         }
                     }
                     VStack(alignment: .leading, spacing: theme.spacing.xs) {
-                        Text(InlineMarkdown.attributed(props.text("title") ?? ""))
+                        Text(InlineMarkdown.cached(props.text("title") ?? ""))
                             .font(theme.fonts.bodySmall.weight(.semibold))
                             .foregroundStyle(theme.colors.textPrimary)
                         if let details = props["details"] {
@@ -348,16 +372,23 @@ struct CarouselView: View {
                 .scrollTargetBehavior(.viewAligned)
                 .scrollPosition(id: $position)
                 if slides.count > 1 {
+                    let current = position ?? 0
                     HStack(spacing: theme.spacing.m) {
-                        pagerButton("chevron.left", disabled: (position ?? 0) == 0) { position = max(0, (position ?? 0) - 1) }
+                        pagerButton("chevron.backward", label: L10n.Carousel.previous, disabled: current == 0) {
+                            position = max(0, current - 1)
+                        }
                         HStack(spacing: 6) {
                             ForEach(0..<slides.count, id: \.self) { index in
                                 Circle()
-                                    .fill(index == (position ?? 0) ? theme.colors.accent : theme.colors.border)
+                                    .fill(index == current ? theme.colors.accent : theme.colors.border)
                                     .frame(width: 6, height: 6)
                             }
                         }
-                        pagerButton("chevron.right", disabled: (position ?? 0) >= slides.count - 1) { position = min(slides.count - 1, (position ?? 0) + 1) }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(Text(L10n.Carousel.position(current + 1, of: slides.count)))
+                        pagerButton("chevron.forward", label: L10n.Carousel.next, disabled: current >= slides.count - 1) {
+                            position = min(slides.count - 1, current + 1)
+                        }
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -365,7 +396,7 @@ struct CarouselView: View {
         }
     }
 
-    private func pagerButton(_ systemName: String, disabled: Bool, action: @escaping () -> Void) -> some View {
+    private func pagerButton(_ systemName: String, label: String, disabled: Bool, action: @escaping () -> Void) -> some View {
         Button {
             withAnimation { action() }
         } label: {
@@ -375,23 +406,26 @@ struct CarouselView: View {
         .buttonBorderShape(.circle)
         .controlSize(.small)
         .disabled(disabled)
+        .accessibilityLabel(Text(label))
     }
 }
 
 // MARK: - Modal
 
-/// `Modal(title, open, children, size?)` — `open` is a `$boolean` binding.
+/// `Modal(title, open, children, size?)` — `open` is a `$boolean` binding. A modal without a
+/// binding keeps whether it is open to itself, so it never adds an `open` field to the state.
 @available(iOS 17.0, macOS 14.0, *)
 struct ModalView: View {
     let context: ComponentContext
     @Environment(\.openUITheme) private var theme
+    @State private var presentation = ModalPresentation()
 
     var body: some View {
         let field = context.runtime.stateField(name: "open", binding: context.props["open"], formName: nil)
-        let isOpen = field.value == .bool(true) || field.value == .string("true")
+        let isOpen = presentation.isOpen(field: field, open: context.props["open"])
         Color.clear
             .frame(height: 0)
-            .sheet(isPresented: Binding(get: { isOpen }, set: { presented in if !presented { field.set(.bool(false)) } })) {
+            .sheet(isPresented: Binding(get: { isOpen }, set: { presented in if !presented { presentation.close(field: field) } })) {
                 NavigationStack {
                     ScrollView {
                         VStack(alignment: .leading, spacing: theme.spacing.m) {
@@ -406,7 +440,7 @@ struct ModalView: View {
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
                                 Button {
-                                    field.set(.bool(false))
+                                    presentation.close(field: field)
                                 } label: {
                                     Image(systemName: "xmark")
                                 }
@@ -417,5 +451,27 @@ struct ModalView: View {
                 .environment(context.runtime)
                 .presentationDetents(context.props.string("size") == "sm" ? [.medium, .large] : [.large])
             }
+    }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+struct ModalPresentation {
+    private(set) var isClosed = false
+
+    func isOpen(field: StateField, open: OpenUIValue?) -> Bool {
+        if field.isReactive { return Self.isTrue(field.value) }
+        return !isClosed && Self.isTrue(open)
+    }
+
+    mutating func close(field: StateField) {
+        if field.isReactive {
+            field.set(.bool(false))
+        } else {
+            isClosed = true
+        }
+    }
+
+    private static func isTrue(_ value: OpenUIValue?) -> Bool {
+        value == .bool(true) || value == .string("true")
     }
 }

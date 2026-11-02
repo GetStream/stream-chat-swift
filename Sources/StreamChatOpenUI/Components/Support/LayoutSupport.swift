@@ -261,12 +261,9 @@ struct FlexContainer<Content: View>: View {
     private var rowStack: some View {
         switch justify {
         case "center", "end", "between", "around", "evenly":
-            HStack(alignment: verticalAlignment, spacing: justify == "between" || justify == "around" || justify == "evenly" ? 0 : gap) {
-                if justify == "center" || justify == "end" || justify == "around" || justify == "evenly" { Spacer(minLength: 0) }
-                content()
-                if justify == "center" || justify == "around" || justify == "evenly" { Spacer(minLength: 0) }
-            }
-            .frame(maxWidth: .infinity)
+            JustifiedRowLayout(justify: justify, gap: gap, alignment: verticalAlignment)
+                .callAsFunction(content)
+                .frame(maxWidth: .infinity)
         default:
             HStack(alignment: verticalAlignment, spacing: gap) {
                 content()
@@ -307,5 +304,87 @@ struct FlexContainer<Content: View>: View {
         case "baseline": return .firstTextBaseline
         default: return .center
         }
+    }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+struct JustifiedRowLayout: Layout {
+    var justify: String?
+    var gap: CGFloat
+    var alignment: VerticalAlignment = .center
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let sizes = measure(subviews, width: proposal.width)
+        let contentWidth = sizes.map(\.width).reduce(0, +) + gap * CGFloat(max(0, sizes.count - 1))
+        let width = proposal.width.flatMap { $0.isFinite ? $0 : nil } ?? contentWidth
+        return CGSize(width: width, height: rowMetrics(subviews, sizes: sizes).height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let sizes = measure(subviews, width: bounds.width)
+        let offsets = Self.offsets(widths: sizes.map(\.width), available: bounds.width, gap: gap, justify: justify)
+        let metrics = rowMetrics(subviews, sizes: sizes)
+        for index in subviews.indices {
+            let size = sizes[index]
+            let y: CGFloat
+            switch alignment {
+            case .top: y = bounds.minY
+            case .bottom: y = bounds.maxY - size.height
+            case .firstTextBaseline: y = bounds.minY + metrics.baseline - baseline(subviews[index], size: size)
+            default: y = bounds.minY + (metrics.height - size.height) / 2
+            }
+            subviews[index].place(at: CGPoint(x: bounds.minX + offsets[index], y: y), proposal: ProposedViewSize(size))
+        }
+    }
+
+    // Like a flexbox row's justify-content: the free space left after the items and their gaps
+    // goes before, between and after them.
+    static func offsets(widths: [CGFloat], available: CGFloat, gap: CGFloat, justify: String?) -> [CGFloat] {
+        guard !widths.isEmpty else { return [] }
+        let count = CGFloat(widths.count)
+        let free = max(0, available - widths.reduce(0, +) - gap * (count - 1))
+        let start: CGFloat
+        let extra: CGFloat
+        switch justify {
+        case "center": (start, extra) = (free / 2, 0)
+        case "end": (start, extra) = (free, 0)
+        case "between": (start, extra) = (0, widths.count > 1 ? free / (count - 1) : 0)
+        case "around": (start, extra) = (free / (2 * count), free / count)
+        case "evenly": (start, extra) = (free / (count + 1), free / (count + 1))
+        default: (start, extra) = (0, 0)
+        }
+        var offsets: [CGFloat] = []
+        var x = start
+        for width in widths {
+            offsets.append(x)
+            x += width + gap + extra
+        }
+        return offsets
+    }
+
+    // Items keep their ideal widths, shrinking in proportion when the row is too narrow for them.
+    private func measure(_ subviews: Subviews, width: CGFloat?) -> [CGSize] {
+        let ideal = subviews.map { $0.sizeThatFits(.unspecified) }
+        guard let width, width.isFinite else { return ideal }
+        let available = max(0, width - gap * CGFloat(max(0, subviews.count - 1)))
+        let total = ideal.map(\.width).reduce(0, +)
+        guard total > available, total > 0 else { return ideal }
+        return subviews.indices.map { index in
+            subviews[index].sizeThatFits(ProposedViewSize(width: available * ideal[index].width / total, height: nil))
+        }
+    }
+
+    private func baseline(_ subview: LayoutSubview, size: CGSize) -> CGFloat {
+        subview.dimensions(in: ProposedViewSize(size))[VerticalAlignment.firstTextBaseline]
+    }
+
+    private func rowMetrics(_ subviews: Subviews, sizes: [CGSize]) -> (height: CGFloat, baseline: CGFloat) {
+        guard alignment == .firstTextBaseline else {
+            return (sizes.map(\.height).max() ?? 0, 0)
+        }
+        let baselines = subviews.indices.map { baseline(subviews[$0], size: sizes[$0]) }
+        let ascent = baselines.max() ?? 0
+        let descent = subviews.indices.map { sizes[$0].height - baselines[$0] }.max() ?? 0
+        return (ascent + descent, ascent)
     }
 }
