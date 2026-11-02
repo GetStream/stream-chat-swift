@@ -743,6 +743,31 @@ lane :test_ai do |options|
   )
 end
 
+desc 'Runs A2UI tests in Debug config'
+lane :test_a2ui do |options|
+  next unless is_check_required(sources: @impact[:a2ui][:sources], force_check: @force_check, required_checks: @impact[:a2ui][:checks])
+
+  scheme = 'StreamChatA2UI'
+  update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
+
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: scheme,
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      result_bundle: true,
+      devices: options[:device],
+      xcodebuild_formatter: xcodebuild_formatter
+    },
+    retries: options[:cron] ? 3 : 2
+  )
+end
+
 desc 'Runs OpenUI tests in Debug config'
 lane :test_openui do |options|
   next unless is_check_required(sources: @impact[:openui][:sources], force_check: @force_check, required_checks: @impact[:openui][:checks])
@@ -927,6 +952,10 @@ lane :impact_analysis do
     ai: {
       sources: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', 'Package.swift'],
       checks: ['Test AI (Debug)', 'Build SDKs (Old Xcode)']
+    },
+    a2ui: {
+      sources: ['Sources/StreamChatAI', 'Sources/StreamChatA2UI', 'Tests/StreamChatA2UITests', 'Package.swift'],
+      checks: ['Test A2UI (Debug)', 'Build SDKs (Old Xcode)']
     },
     openui: {
       sources: ['Sources/StreamChatAI', 'Sources/StreamChatOpenUI', 'Tests/StreamChatOpenUITests', 'Package.swift'],

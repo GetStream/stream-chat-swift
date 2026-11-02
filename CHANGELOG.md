@@ -19,6 +19,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🎭 New Localizations
 - Add `composer.photos_failed.*` keys [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 
+## StreamChatA2UI
+### ✅ Added
+- Add the `StreamChatA2UI` library, an A2UI 1.0 renderer that shows replies written in A2UI in StreamChatAI's generated UI [#4373](https://github.com/GetStream/stream-chat-swift/pull/4373)
+
 # [5.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.15.0)
 _October 22, 2026_
 
