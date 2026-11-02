@@ -65,6 +65,9 @@ public enum A2UIProgram {
         var problems: [String] = []
         var references: [String: [String]] = [:]
         for component in components.values.sorted(by: { $0.id < $1.id }) {
+            if !A2UIIdentifier.isValid(component.id) {
+                problems.append("\(component.id) isn't an identifier: use letters, digits and _, not starting with a digit")
+            }
             guard let definition = catalog.component(component.type) else {
                 problems.append("\(component.id) is a \(component.type), which the catalog doesn't have")
                 continue
