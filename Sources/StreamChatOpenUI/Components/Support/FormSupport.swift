@@ -162,10 +162,70 @@ enum SelectionField {
         }
     }
 
+    // Saves the default selection once the model has finished writing the field (useHydrateDefaultFieldValue).
+    @MainActor
+    static func hydrateDefault(runtime: OpenUIRuntime, formName: String?, componentType: String, name: String, single: Bool, defaultValue: OpenUIValue?) {
+        guard !runtime.isStreaming,
+              runtime.fieldValue(formName: formName, name: name) == nil,
+              let value = storedDefault(single: single, defaultValue: defaultValue) else { return }
+        runtime.setFieldValue(formName: formName, componentType: componentType, name: name, value: value)
+    }
+
     static func toggle(single: Bool, selection: [String], value: String) -> [String] {
         if single {
             return selection.first == value ? [] : [value]
         }
         return selection.contains(value) ? selection.filter { $0 != value } : selection + [value]
+    }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+enum SliderValues {
+    static func bounds(minimum: Double?, maximum: Double?) -> ClosedRange<Double> {
+        let lower = minimum.flatMap { $0.isFinite ? $0 : nil } ?? 0
+        let upper = Swift.max(maximum.flatMap { $0.isFinite ? $0 : nil } ?? 100, lower + 1)
+        return lower...upper
+    }
+
+    static func values(_ value: OpenUIValue?, in bounds: ClosedRange<Double>) -> [Double] {
+        let numbers: [Double]
+        switch value {
+        case .number(let number)?:
+            numbers = [number]
+        case .string?:
+            numbers = [JS.toNumber(value)]
+        case .array(let items)?:
+            numbers = items.prefix(2).map { JS.toNumber($0) }
+        default:
+            numbers = []
+        }
+        let finite = numbers.filter(\.isFinite)
+        return finite.isEmpty ? [bounds.lowerBound] : clamped(finite, to: bounds)
+    }
+
+    static func clamped(_ values: [Double], to bounds: ClosedRange<Double>) -> [Double] {
+        let inBounds = values.prefix(2).map { Swift.min(Swift.max($0, bounds.lowerBound), bounds.upperBound) }
+        return inBounds.count == 2 ? [Swift.min(inBounds[0], inBounds[1]), Swift.max(inBounds[0], inBounds[1])] : inBounds
+    }
+
+    // A range's thumbs stop at each other rather than cross.
+    static func setting(_ values: [Double], index: Int, to value: Double) -> [Double] {
+        guard values.indices.contains(index) else { return values }
+        var next = values
+        if values.count == 2 {
+            next[index] = index == 0 ? Swift.min(value, values[1]) : Swift.max(value, values[0])
+        } else {
+            next[index] = value
+        }
+        return next
+    }
+
+    static func stored(_ values: [Double]) -> OpenUIValue {
+        .array(values.map { .number(($0 * 1000).rounded() / 1000) })
+    }
+
+    static func accessibilityLabel(_ label: String, index: Int, count: Int) -> String {
+        guard count == 2 else { return label }
+        return index == 0 ? L10n.Slider.lower(label) : L10n.Slider.upper(label)
     }
 }

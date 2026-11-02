@@ -195,6 +195,7 @@ struct SelectView: View {
                 Image(systemName: "chevron.up.chevron.down")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(theme.colors.textSecondary)
+                    .accessibilityHidden(true)
             }
             .font(props.string("size") == "small" ? theme.fonts.bodySmall : .body)
             .contentShape(Rectangle())
@@ -287,52 +288,54 @@ struct DatePickerView: View {
     }
 }
 
-/// `Slider(name, variant, min, max, step?, defaultValue?, label?, rules?, value?)` — stores `[number]`.
+/// `Slider(name, variant, min, max, step?, defaultValue?, label?, rules?, value?)` — stores `[number]`,
+/// or `[lower, upper]` when its value or default has two numbers.
 @available(iOS 17.0, macOS 14.0, *)
 struct SliderView: View {
     let context: ComponentContext
     @Environment(\.openUIFormName) private var formName
     @Environment(\.openUIFormValidation) private var validation
     @Environment(\.openUITheme) private var theme
-    @State private var draft: Double?
+    @State private var draft: [Double]?
+    @State private var editingThumbs: Set<Int> = []
 
     var body: some View {
         let props = context.props
         let name = props.text("name") ?? ""
         let field = context.runtime.stateField(name: name, binding: props["value"], formName: formName, componentType: "Slider")
         let rules = FormValidation.rules(from: props["rules"])
-        let minimum = props.number("min").flatMap { $0.isFinite ? $0 : nil } ?? 0
-        let maximum = max(props.number("max").flatMap { $0.isFinite ? $0 : nil } ?? 100, minimum + 1)
+        let bounds = SliderValues.bounds(minimum: props.number("min"), maximum: props.number("max"))
         let step = props.number("step").flatMap { $0 > 0 ? $0 : nil } ?? (props.string("variant") == "discrete" ? 1 : nil)
-        let stored = (field.value.flatMap { JS.isNullish($0) ? nil : $0 } ?? props["defaultValue"]).flatMap(Self.firstNumber).flatMap { $0.isNaN ? nil : $0 }
-        let value = min(max(draft ?? stored ?? minimum, minimum), maximum)
+        let stored = SliderValues.values(field.value.flatMap { JS.isNullish($0) ? nil : $0 } ?? props["defaultValue"], in: bounds)
+        let values = draft.map { SliderValues.clamped($0, to: bounds) } ?? stored
+        let label = props.text("label") ?? name
 
         VStack(alignment: .leading, spacing: theme.spacing.xs) {
             HStack {
-                Text(props.text("label") ?? name)
+                Text(label)
                     .font(theme.fonts.bodySmall)
                     .foregroundStyle(theme.colors.textSecondary)
                 Spacer()
-                Text(JS.numberToString(value))
+                Text(values.map(NumberFormatting.decimal).joined(separator: " – "))
                     .font(theme.fonts.bodySmall.weight(.semibold))
                     .monospacedDigit()
                     .foregroundStyle(theme.colors.textPrimary)
             }
-            Group {
-                if let step {
-                    Slider(value: Binding(get: { value }, set: { draft = $0 }), in: minimum...maximum, step: step, onEditingChanged: commit(field, name: name, rules: rules))
-                } else {
-                    Slider(value: Binding(get: { value }, set: { draft = $0 }), in: minimum...maximum, onEditingChanged: commit(field, name: name, rules: rules))
+            .accessibilityHidden(true)
+            ForEach(values.indices, id: \.self) { index in
+                thumb(index, values: values, bounds: bounds, step: step, label: label) { next in
+                    commit(next, field: field, name: name, rules: rules)
                 }
             }
             HStack {
-                Text(JS.numberToString(minimum))
+                Text(NumberFormatting.decimal(bounds.lowerBound))
                 Spacer()
-                Text(JS.numberToString(maximum))
+                Text(NumberFormatting.decimal(bounds.upperBound))
             }
             .font(.caption2)
             .monospacedDigit()
             .foregroundStyle(theme.colors.textTertiary)
+            .accessibilityHidden(true)
         }
         .disabled(context.isStreaming)
         .registersValidation(name: name, rules: rules, isStreaming: context.isStreaming) {
@@ -340,23 +343,48 @@ struct SliderView: View {
         }
     }
 
-    private func commit(_ field: StateField, name: String, rules: [ValidationRule]) -> (Bool) -> Void {
-        { editing in
-            guard !editing, let draft else { return }
-            let rounded = (draft * 1000).rounded() / 1000
-            field.set(.array([.number(rounded)]))
-            if !rules.isEmpty { validation?.validateField(name, value: .number(rounded), rules: rules) }
-            self.draft = nil
+    // VoiceOver adjusts a slider without editing callbacks, so a change outside a drag is saved at once.
+    @ViewBuilder
+    private func thumb(
+        _ index: Int,
+        values: [Double],
+        bounds: ClosedRange<Double>,
+        step: Double?,
+        label: String,
+        commit: @escaping @MainActor ([Double]) -> Void
+    ) -> some View {
+        let value = Binding<Double>(
+            get: { values.indices.contains(index) ? values[index] : bounds.lowerBound },
+            set: { newValue in
+                let next = SliderValues.setting(draft ?? values, index: index, to: newValue)
+                draft = next
+                if editingThumbs.isEmpty { commit(next) }
+            }
+        )
+        let onEditingChanged: (Bool) -> Void = { isEditing in
+            if isEditing {
+                editingThumbs.insert(index)
+            } else {
+                editingThumbs.remove(index)
+                if editingThumbs.isEmpty, let draft { commit(draft) }
+            }
         }
+        Group {
+            if let step {
+                Slider(value: value, in: bounds, step: step, onEditingChanged: onEditingChanged)
+            } else {
+                Slider(value: value, in: bounds, onEditingChanged: onEditingChanged)
+            }
+        }
+        .accessibilityLabel(Text(SliderValues.accessibilityLabel(label, index: index, count: values.count)))
+        .accessibilityValue(Text(NumberFormatting.decimal(values[index])))
     }
 
-    static func firstNumber(_ value: OpenUIValue) -> Double? {
-        switch value {
-        case .number(let number): return number
-        case .array(let items): return items.first.map { JS.toNumber($0) }
-        case .string: return JS.toNumber(value)
-        default: return nil
-        }
+    private func commit(_ values: [Double], field: StateField, name: String, rules: [ValidationRule]) {
+        let stored = SliderValues.stored(values)
+        field.set(stored)
+        if !rules.isEmpty { validation?.validateField(name, value: stored.arrayValue?.first, rules: rules) }
+        draft = nil
     }
 }
 
@@ -444,6 +472,7 @@ struct CheckboxToggleStyle: ToggleStyle {
                 Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
                     .font(.title3)
                     .foregroundStyle(configuration.isOn ? theme.colors.accent : theme.colors.textTertiary)
+                    .accessibilityHidden(true)
                 configuration.label
                 Spacer(minLength: 0)
             }
@@ -484,6 +513,7 @@ struct RadioGroupView: View {
                             Image(systemName: selected ? "largecircle.fill.circle" : "circle")
                                 .font(.title3)
                                 .foregroundStyle(selected ? theme.colors.accent : theme.colors.textTertiary)
+                                .accessibilityHidden(true)
                             TitleSubtitle(title: itemProps.text("label") ?? value, subtitle: itemProps.text("description"))
                             Spacer(minLength: 0)
                         }
@@ -537,9 +567,11 @@ struct SelectionFieldView: View {
             }
         }
         .onAppear {
-            // Persist the default selection once streaming has finished (useHydrateDefaultFieldValue).
-            guard !runtime.isStreaming, stored == nil, let defaultValue = SelectionField.storedDefault(single: single, defaultValue: props["defaultValue"]) else { return }
-            runtime.setFieldValue(formName: formName, componentType: componentType, name: name, value: defaultValue)
+            SelectionField.hydrateDefault(runtime: runtime, formName: formName, componentType: componentType, name: name, single: single, defaultValue: props["defaultValue"])
+        }
+        .onChange(of: context.isStreaming) { _, isStreaming in
+            guard !isStreaming else { return }
+            SelectionField.hydrateDefault(runtime: runtime, formName: formName, componentType: componentType, name: name, single: single, defaultValue: props["defaultValue"])
         }
         .registersValidation(name: name, rules: rules, isStreaming: context.isStreaming) {
             let value = runtime.fieldValue(formName: formName, name: name) ?? SelectionField.storedDefault(single: single, defaultValue: props["defaultValue"])
@@ -572,12 +604,16 @@ struct SelectionFieldView: View {
         return Button(action: action) {
             HStack(spacing: 6) {
                 if let icon = props.element("icon") {
-                    OpenUIIconImage(element: icon).font(.footnote.weight(.semibold))
+                    OpenUIIconImage(element: icon)
+                        .font(.footnote.weight(.semibold))
+                        .accessibilityHidden(true)
                 }
                 Text(props.text("label") ?? value)
                     .font(theme.fonts.bodySmall.weight(.medium))
                 if selected {
-                    Image(systemName: "checkmark").font(.caption.weight(.bold))
+                    Image(systemName: "checkmark")
+                        .font(.caption.weight(.bold))
+                        .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, 12)
@@ -623,6 +659,7 @@ struct SelectionFieldView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(theme.colors.accent)
                         .padding(theme.spacing.s)
+                        .accessibilityHidden(true)
                 }
             }
         }
