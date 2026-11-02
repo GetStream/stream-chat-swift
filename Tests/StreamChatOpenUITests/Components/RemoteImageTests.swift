@@ -10,6 +10,26 @@ import os
 import Testing
 import UniformTypeIdentifiers
 
+// Serves the same body for every image, saying its length only for the path `/declared`.
+private final class StubImageProtocol: URLProtocol {
+    static let body = Data(repeating: 7, count: 1000)
+
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func stopLoading() {}
+
+    override func startLoading() {
+        var headers = ["Content-Type": "image/png"]
+        if request.url?.path == "/declared" {
+            headers["Content-Length"] = "\(Self.body.count)"
+        }
+        let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: Self.body)
+        client?.urlProtocolDidFinishLoading(self)
+    }
+}
+
 @MainActor
 @Suite("Remote images")
 struct RemoteImageTests {
@@ -44,7 +64,7 @@ struct RemoteImageTests {
     }
 
     static func loader(data: Data, log: FetchLog, maxPixelSize: Int = 400, costLimit: Int = 64 * 1024 * 1024, delay: UInt64 = 0) -> RemoteImageLoader {
-        RemoteImageLoader(maxPixelSize: maxPixelSize, costLimit: costLimit) { url in
+        RemoteImageLoader(maxPixelSize: maxPixelSize, costLimit: costLimit) { url, _ in
             log.record(url)
             if delay > 0 { try await Task.sleep(nanoseconds: delay) }
             return data
@@ -98,10 +118,24 @@ struct RemoteImageTests {
 
     @Test func tooLargeDownloadsAreRejected() async throws {
         let data = try Self.png(width: 100, height: 100)
-        let loader = RemoteImageLoader(maxBytes: data.count - 1) { _ in data }
+        let loader = RemoteImageLoader(maxBytes: data.count - 1) { _, _ in data }
         let url = try #require(URL(string: "https://example.com/a.png"))
 
         #expect(await loader.image(for: url) == nil)
+    }
+
+    @Test func downloadsStopAtTheLimitWhetherOrNotTheServerSaysTheLength() async throws {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [StubImageProtocol.self]
+        let session = URLSession(configuration: configuration)
+
+        for path in ["declared", "undeclared"] {
+            let url = try #require(URL(string: "https://example.com/\(path)"))
+            await #expect(throws: URLError.self, "\(path)") {
+                try await RemoteImageLoader.download(url, maxBytes: StubImageProtocol.body.count - 1, session: session)
+            }
+            #expect(try await RemoteImageLoader.download(url, maxBytes: StubImageProtocol.body.count, session: session) == StubImageProtocol.body)
+        }
     }
 
     @Test func leastRecentlyShownImagesAreDroppedFirst() async throws {

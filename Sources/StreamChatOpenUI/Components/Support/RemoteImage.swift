@@ -115,7 +115,7 @@ extension RemoteImage {
 @available(iOS 17.0, macOS 14.0, *)
 @MainActor
 final class RemoteImageLoader {
-    typealias Fetch = @Sendable (URL) async throws -> Data
+    typealias Fetch = @Sendable (_ url: URL, _ maxBytes: Int) async throws -> Data
 
     static let shared = RemoteImageLoader()
 
@@ -132,7 +132,7 @@ final class RemoteImageLoader {
         maxPixelSize: Int = 1200,
         maxBytes: Int = 20_000_000,
         costLimit: Int = 64 * 1024 * 1024,
-        fetch: @escaping Fetch = RemoteImageLoader.download
+        fetch: @escaping Fetch = { try await RemoteImageLoader.download($0, maxBytes: $1) }
     ) {
         self.maxPixelSize = maxPixelSize
         self.maxBytes = maxBytes
@@ -160,7 +160,7 @@ final class RemoteImageLoader {
         let maxPixelSize = self.maxPixelSize
         let maxBytes = self.maxBytes
         let load = Task.detached(priority: .utility) { () -> CGImage? in
-            guard let data = try? await fetch(url), data.count <= maxBytes else { return nil }
+            guard let data = try? await fetch(url, maxBytes), data.count <= maxBytes else { return nil }
             return Self.downsample(data, maxPixelSize: maxPixelSize)
         }
         loads[url] = load
@@ -183,10 +183,25 @@ final class RemoteImageLoader {
         return CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
     }
 
-    nonisolated static func download(_ url: URL) async throws -> Data {
-        let (data, response) = try await URLSession.shared.data(from: url)
+    // The model links to the image, so its server could send any amount: the download stops as
+    // soon as it would go over `maxBytes`, or before it starts when the server says it would.
+    nonisolated static func download(_ url: URL, maxBytes: Int, session: URLSession = .shared) async throws -> Data {
+        let (bytes, response) = try await session.bytes(from: url)
         if let response = response as? HTTPURLResponse, !(200..<300).contains(response.statusCode) {
             throw URLError(.badServerResponse)
+        }
+        guard response.expectedContentLength <= Int64(maxBytes) else {
+            throw URLError(.dataLengthExceedsMaximum)
+        }
+        var data = Data()
+        if response.expectedContentLength > 0 {
+            data.reserveCapacity(Int(response.expectedContentLength))
+        }
+        for try await byte in bytes {
+            guard data.count < maxBytes else {
+                throw URLError(.dataLengthExceedsMaximum)
+            }
+            data.append(byte)
         }
         return data
     }
