@@ -5,7 +5,6 @@
 import StreamCore
 import SwiftUI
 
-@available(iOS 16, *)
 struct AttachmentTile<Content: View>: View {
     @ViewBuilder var content: () -> Content
 

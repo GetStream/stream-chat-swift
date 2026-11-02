@@ -21,7 +21,10 @@ extension DemoAppCoordinator {
     }
 
     private func navigateToChannel(with cid: ChannelId) {
-        if let channelList = self.window.rootViewController as? ChannelList {
+        // Reuse the running session: a second ChatClient would race the connected one for the mock server's web socket.
+        if let navigationController = window.rootViewController as? UINavigationController,
+           let channelList = navigationController.viewControllers.first(where: { $0 is ChannelList }) as? ChannelList {
+            navigationController.popToViewController(channelList, animated: false)
             channelList.router.showChannel(for: cid)
         } else {
             let viewController = ViewController()

@@ -5,7 +5,6 @@
 import SwiftUI
 import UIKit
 
-@available(iOS 16, *)
 struct CameraPicker: UIViewControllerRepresentable {
     @Binding var isPresented: Bool
     let onCapture: (AttachmentLocation) -> Void
