@@ -32,6 +32,15 @@ public enum OpenUIIcons {
         return "circle.dashed"
     }
 
+    // What VoiceOver reads for an icon: its name in words, such as "arrow right" for `arrow-right`.
+    static func accessibilityName(for name: String?) -> String {
+        (name ?? "")
+            .split { $0 == "-" || $0 == "." || $0 == "_" || $0 == " " }
+            .filter { Int($0) == nil }
+            .joined(separator: " ")
+            .lowercased()
+    }
+
     private static func looseCandidates(_ key: String) -> [String] {
         var parts = key.split(separator: "-").map(String.init)
         var candidates: [String] = []
@@ -217,7 +226,9 @@ public struct OpenUIIconImage: View {
     }
 
     public var body: some View {
+        let label = OpenUIIcons.accessibilityName(for: name)
         Image(systemName: OpenUIIcons.symbolName(for: name, category: category))
-            .accessibilityLabel(Text(name ?? ""))
+            .accessibilityLabel(Text(label))
+            .accessibilityHidden(label.isEmpty)
     }
 }

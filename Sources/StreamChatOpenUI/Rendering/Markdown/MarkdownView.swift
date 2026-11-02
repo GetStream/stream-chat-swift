@@ -13,24 +13,52 @@ import AppKit
 /// fenced code, tables and rules; inline emphasis, code and links).
 @available(iOS 17.0, macOS 14.0, *)
 public struct MarkdownView: View {
-    let blocks: [MarkdownBlock]
+    let text: String
     let baseFont: Font?
     let foreground: Color?
     @Environment(\.openUITheme) private var theme
 
     public init(_ text: String, font: Font? = nil, foreground: Color? = nil) {
-        self.blocks = MarkdownParser.parse(text)
+        self.text = text
         self.baseFont = font
         self.foreground = foreground
     }
 
     public var body: some View {
+        let blocks = MarkdownCache.blocks(for: text)
         VStack(alignment: .leading, spacing: theme.spacing.s + 2) {
             ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in
                 MarkdownBlockView(block: block, baseFont: baseFont ?? theme.fonts.body, foreground: foreground)
+                    .equatable()
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+// Parsed Markdown for texts shown recently, so views that are rebuilt with the same text,
+// such as while other parts of a reply stream in, don't parse it again.
+@available(iOS 17.0, macOS 14.0, *)
+@MainActor
+enum MarkdownCache {
+    private static let limit = 256
+    private static var parsedBlocks: [String: [MarkdownBlock]] = [:]
+    private static var parsedInline: [String: AttributedString] = [:]
+
+    static func blocks(for text: String) -> [MarkdownBlock] {
+        if let cached = parsedBlocks[text] { return cached }
+        let parsed = MarkdownParser.parse(text)
+        if parsedBlocks.count >= limit { parsedBlocks.removeAll(keepingCapacity: true) }
+        parsedBlocks[text] = parsed
+        return parsed
+    }
+
+    static func inline(for text: String) -> AttributedString {
+        if let cached = parsedInline[text] { return cached }
+        let parsed = InlineMarkdown.attributed(text)
+        if parsedInline.count >= limit { parsedInline.removeAll(keepingCapacity: true) }
+        parsedInline[text] = parsed
+        return parsed
     }
 }
 
@@ -40,6 +68,11 @@ enum InlineMarkdown {
     // The model writes the links, so only the schemes react-markdown keeps by default for web
     // links and email open; a link to another app or a phone number shows as plain text.
     static let linkSchemes: Set<String> = ["http", "https", "mailto"]
+
+    @MainActor
+    static func cached(_ text: String) -> AttributedString {
+        MarkdownCache.inline(for: text)
+    }
 
     static func attributed(_ text: String) -> AttributedString {
         let options = AttributedString.MarkdownParsingOptions(
@@ -60,23 +93,28 @@ enum InlineMarkdown {
 }
 
 @available(iOS 17.0, macOS 14.0, *)
-struct MarkdownBlockView: View {
+struct MarkdownBlockView: View, Equatable {
     let block: MarkdownBlock
     let baseFont: Font
     let foreground: Color?
     @Environment(\.openUITheme) private var theme
 
+    nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.block == rhs.block && lhs.baseFont == rhs.baseFont && lhs.foreground == rhs.foreground
+    }
+
     var body: some View {
         switch block {
         case .heading(let level, let text):
-            Text(InlineMarkdown.attributed(text))
+            Text(InlineMarkdown.cached(text))
                 .font(headingFont(level))
                 .foregroundStyle(foreground ?? theme.colors.textPrimary)
                 .padding(.top, level <= 2 ? 4 : 2)
                 .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
 
         case .paragraph(let text):
-            Text(InlineMarkdown.attributed(text))
+            Text(InlineMarkdown.cached(text))
                 .font(baseFont)
                 .foregroundStyle(foreground ?? theme.colors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -90,7 +128,7 @@ struct MarkdownBlockView: View {
                             .foregroundStyle(theme.colors.textSecondary)
                             .frame(minWidth: list.ordered ? 22 : 12, alignment: .trailing)
                         VStack(alignment: .leading, spacing: theme.spacing.xs) {
-                            Text(InlineMarkdown.attributed(item.text))
+                            Text(InlineMarkdown.cached(item.text))
                                 .font(baseFont)
                                 .foregroundStyle(foreground ?? theme.colors.textPrimary)
                                 .strikethrough(item.checked == true, color: theme.colors.textSecondary)
@@ -132,6 +170,7 @@ struct MarkdownBlockView: View {
         if let checked = item.checked {
             Image(systemName: checked ? "checkmark.square.fill" : "square")
                 .foregroundStyle(checked ? theme.colors.accent : theme.colors.textSecondary)
+                .accessibilityLabel(Text(checked ? L10n.Toggle.checked : L10n.Toggle.unchecked))
         } else if list.ordered {
             Text("\(list.start + index).")
                 .monospacedDigit()
@@ -187,7 +226,7 @@ struct MarkdownTableView: View {
         case .center: alignment = .center
         case .trailing: alignment = .trailing
         }
-        return Text(InlineMarkdown.attributed(text))
+        return Text(InlineMarkdown.cached(text))
             .foregroundStyle(theme.colors.textPrimary)
             .padding(.horizontal, theme.spacing.m)
             .padding(.vertical, theme.spacing.s)

@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import os
 import SwiftUI
 
 /// Renders an OpenUI Lang response with native SwiftUI components.
@@ -23,7 +24,7 @@ public struct OpenUIView: View {
     }
 
     private let source: Source
-    @State private var ownedRuntime: OpenUIRuntime?
+    @State private var owned = OwnedRuntime()
     private let library: ComponentLibrary
     private let toolProvider: (any OpenUIToolProvider)?
     private let initialState: OpenUIObject?
@@ -59,28 +60,82 @@ public struct OpenUIView: View {
         case .external(let runtime):
             OpenUIRuntimeView(runtime: runtime)
         case .owned(let response, let isStreaming):
-            Group {
-                if let ownedRuntime {
-                    OpenUIRuntimeView(runtime: ownedRuntime)
-                } else {
-                    Color.clear.frame(height: 0)
+            let runtime = owned.runtime(
+                library: library,
+                toolProvider: toolProvider,
+                initialState: initialState,
+                onAction: onAction,
+                response: response,
+                isStreaming: isStreaming
+            )
+            OpenUIRuntimeView(runtime: runtime)
+                .onChange(of: response) { _, newValue in
+                    runtime.update(response: newValue, isStreaming: isStreaming)
                 }
-            }
-            .onAppear {
-                if ownedRuntime == nil {
-                    let runtime = OpenUIRuntime(library: library, toolProvider: toolProvider, initialState: initialState)
-                    runtime.onAction = onAction
-                    runtime.update(response: response, isStreaming: isStreaming)
-                    ownedRuntime = runtime
+                .onChange(of: isStreaming) { _, newValue in
+                    runtime.update(response: response, isStreaming: newValue)
                 }
-            }
-            .onChange(of: response) { _, newValue in
-                ownedRuntime?.update(response: newValue, isStreaming: isStreaming)
-            }
-            .onChange(of: isStreaming) { _, newValue in
-                ownedRuntime?.update(response: response, isStreaming: newValue)
-            }
         }
+    }
+}
+
+// The runtime an `OpenUIView` makes for itself. It is made during the view's first body, so the
+// first frame already shows the response, and it follows the latest action handler and tool
+// provider. A different library needs a new runtime, as the parse depends on it.
+@available(iOS 17.0, macOS 14.0, *)
+@MainActor
+final class OwnedRuntime {
+    private var current: OpenUIRuntime?
+    private var librarySchema: OpenUIValue?
+    private var libraryRoot: String?
+    private var tools: ForwardingToolProvider?
+
+    nonisolated init() {}
+
+    func runtime(
+        library: ComponentLibrary,
+        toolProvider: (any OpenUIToolProvider)?,
+        initialState: OpenUIObject?,
+        onAction: (@MainActor (ActionEvent) -> Void)?,
+        response: String?,
+        isStreaming: Bool
+    ) -> OpenUIRuntime {
+        let isSameLibrary = librarySchema == library.jsonSchema && libraryRoot == library.root
+        if let current, isSameLibrary, (tools != nil) == (toolProvider != nil) {
+            tools?.update(toolProvider)
+            current.onAction = onAction
+            return current
+        }
+        let tools = toolProvider.map(ForwardingToolProvider.init)
+        let runtime = OpenUIRuntime(library: library, toolProvider: tools, initialState: initialState)
+        runtime.onAction = onAction
+        runtime.update(response: response, isStreaming: isStreaming)
+        current?.dispose()
+        current = runtime
+        librarySchema = library.jsonSchema
+        libraryRoot = library.root
+        self.tools = tools
+        return runtime
+    }
+}
+
+// Lets an owned runtime keep its queries while the app passes a new tool provider.
+@available(iOS 17.0, macOS 14.0, *)
+final class ForwardingToolProvider: OpenUIToolProvider {
+    private let target: OSAllocatedUnfairLock<any OpenUIToolProvider>
+
+    init(_ target: any OpenUIToolProvider) {
+        self.target = OSAllocatedUnfairLock(initialState: target)
+    }
+
+    func update(_ provider: (any OpenUIToolProvider)?) {
+        guard let provider else { return }
+        target.withLock { $0 = provider }
+    }
+
+    func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue {
+        let provider = target.withLock { $0 }
+        return try await provider.callTool(name, arguments: arguments)
     }
 }
 
