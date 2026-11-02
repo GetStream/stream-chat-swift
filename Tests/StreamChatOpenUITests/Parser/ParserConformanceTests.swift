@@ -22,6 +22,7 @@ struct ParserConformanceTests {
         let chunks: [String]
         let checkpoints: [Int]
         let streamResults: [OpenUIValue]
+        let completeResult: OpenUIValue
 
         var testDescription: String { name }
     }
@@ -35,7 +36,8 @@ struct ParserConformanceTests {
                   let result = item["result"],
                   let chunks = item["chunks"]?.arrayValue?.compactMap(\.stringValue),
                   let checkpoints = item["checkpoints"]?.arrayValue?.compactMap(\.numberValue),
-                  let streamResults = item["streamResults"]?.arrayValue else { return nil }
+                  let streamResults = item["streamResults"]?.arrayValue,
+                  let completeResult = item["completeResult"] else { return nil }
             return Case(
                 name: name,
                 library: library,
@@ -43,7 +45,8 @@ struct ParserConformanceTests {
                 result: result,
                 chunks: chunks,
                 checkpoints: checkpoints.map { Int($0) },
-                streamResults: streamResults
+                streamResults: streamResults,
+                completeResult: completeResult
             )
         }
     }()
@@ -62,12 +65,27 @@ struct ParserConformanceTests {
             ]
         ]
         result["mini"] = (OpenUIParser.compileSchema(mini), nil)
+        if let spec = try? Fixtures.json("spec-library.json"), let schema = spec["schema"] {
+            result["spec"] = (OpenUIParser.compileSchema(schema), spec["root"]?.stringValue)
+        }
         return result
     }()
 
     @Test func fixturesAreLoaded() {
-        #expect(Self.cases.count >= 100)
-        #expect(Self.libraries.count == 3)
+        #expect(Self.cases.count >= 190)
+        #expect(Self.libraries.count == 4)
+    }
+
+    @Test(arguments: cases)
+    func completedStreamMatchesReference(_ testCase: Case) throws {
+        let (paramMap, rootName) = try #require(Self.libraries[testCase.library])
+        var parser = OpenUIStreamParser(paramMap: paramMap, rootName: rootName)
+        var result = parser.result(complete: true)
+        for (step, chunk) in testCase.chunks.enumerated() {
+            result = parser.push(chunk, complete: step == testCase.chunks.count - 1)
+        }
+        let difference = firstDifference(result.jsonValue, testCase.completeResult)
+        #expect(difference == nil, "\(testCase.name): \(difference ?? "")")
     }
 
     @Test(arguments: cases)

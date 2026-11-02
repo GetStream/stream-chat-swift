@@ -15,6 +15,11 @@ struct RenderingTests {
         name == "chat" ? .openUIChat : .openUI
     }
 
+    // The reference renders a root, or the component a ternary entry (`rootExpression`) picks.
+    static func rendersRoot(_ program: ParserConformanceTests.Case) -> Bool {
+        !(program.result["root"]?.isNull ?? true) || program.result["rootExpression"] != nil
+    }
+
     @discardableResult
     static func render(_ runtime: OpenUIRuntime, colorScheme: ColorScheme = .light) -> CGImage? {
         render(OpenUIView(runtime: runtime), colorScheme: colorScheme)
@@ -36,7 +41,7 @@ struct RenderingTests {
         let runtime = OpenUIRuntime(library: Self.library(program.library))
         runtime.update(response: program.input, isStreaming: false)
 
-        #expect((runtime.root == nil) == (program.result["root"]?.isNull ?? true), "\(program.name)")
+        #expect((runtime.root != nil) == Self.rendersRoot(program), "\(program.name)")
         Self.render(runtime)
         Self.render(runtime, colorScheme: .dark)
     }
@@ -56,7 +61,7 @@ struct RenderingTests {
         runtime.update(response: text, isStreaming: false)
 
         #expect(runtime.response == program.input)
-        #expect((runtime.root == nil) == (program.result["root"]?.isNull ?? true), "\(program.name)")
+        #expect((runtime.root != nil) == Self.rendersRoot(program), "\(program.name)")
     }
 
     @Test(arguments: [ColorScheme.light, .dark])

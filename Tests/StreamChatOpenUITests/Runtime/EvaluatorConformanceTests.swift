@@ -41,6 +41,7 @@ struct EvaluatorConformanceTests {
         let refs: OpenUIObject
         let evaluatedRoot: OpenUIValue
         let queries: OpenUIValue
+        let runtimeErrors: OpenUIValue
         var testDescription: String { name }
     }
 
@@ -57,7 +58,8 @@ struct EvaluatorConformanceTests {
                 state: item["state"]?.objectValue ?? [:],
                 refs: item["refs"]?.objectValue ?? [:],
                 evaluatedRoot: item["evaluatedRoot"] ?? .null,
-                queries: item["queries"] ?? .array([])
+                queries: item["queries"] ?? .array([]),
+                runtimeErrors: item["runtimeErrors"] ?? .array([])
             )
         }
     }()
@@ -69,11 +71,25 @@ struct EvaluatorConformanceTests {
                 result[name] = (OpenUIParser.compileSchema(schema), spec["root"]?.stringValue, SignatureReactiveResolver(spec: spec))
             }
         }
+        if let spec = try? Fixtures.json("spec-library.json"), let schema = spec["schema"] {
+            result["spec"] = (OpenUIParser.compileSchema(schema), spec["root"]?.stringValue, SignatureReactiveResolver(spec: spec))
+        }
         return result
     }()
 
+    // The spec library's function and action, as upstream's conformance runner supplies them.
+    static let specFunctions: [String: OpenUIFunction] = [
+        "Upper": OpenUIFunction("Upper", description: "The text in upper case", params: [.required("text", .string)], returns: .string) { args in
+            .string((args["text"].map { JS.isNullish($0) ? "" : JS.toString($0) } ?? "").uppercased())
+        }
+    ]
+    static let specActions: [String: OpenUICustomAction] = [
+        "CopyToClipboard": OpenUICustomAction("CopyToClipboard", description: "Copies text to the clipboard", params: [.required("text", .string)])
+    ]
+
     @Test func fixturesAreLoaded() {
-        #expect(Self.cases.count > 90)
+        #expect(Self.cases.count > 180)
+        #expect(Self.libraries.count == 3)
     }
 
     @Test(arguments: cases)
@@ -90,10 +106,12 @@ struct EvaluatorConformanceTests {
                 if case .object(let object)? = value, let wrapped = object["value"] { return wrapped }
                 return value
             },
-            resolveRef: { refs[$0] }
+            resolveRef: { refs[$0] },
+            functions: testCase.library == "spec" ? Self.specFunctions : [:],
+            actions: testCase.library == "spec" ? Self.specActions : [:]
         )
 
-        let evaluatedRoot = result.root.map { PropEvaluator.evaluateElementProps($0, context, resolver) }
+        let (evaluatedRoot, runtimeErrors) = PropEvaluator.evaluateRoot(result, context, resolver)
         let actualRoot = evaluatedRoot.map { OpenUIValue.element($0).plainJSON } ?? .null
         if testCase.name == "expressions" {
             // Guard against vacuous passes: the expression case must render real values.
@@ -118,5 +136,16 @@ struct EvaluatorConformanceTests {
         }
         let queryDifference = firstDifference(.array(queries), testCase.queries)
         #expect(queryDifference == nil, "\(testCase.name) queries: \(queryDifference ?? "")")
+
+        let errors: [OpenUIValue] = runtimeErrors.map { error in
+            var object: OpenUIObject = ["source": .string(error.source.rawValue), "code": .string(error.code)]
+            if let component = error.component { object["component"] = .string(component) }
+            if let statementId = error.statementId { object["statementId"] = .string(statementId) }
+            object["message"] = .string(error.message)
+            if let hint = error.hint { object["hint"] = .string(hint) }
+            return .object(object)
+        }
+        let errorDifference = firstDifference(.array(errors), testCase.runtimeErrors)
+        #expect(errorDifference == nil, "\(testCase.name) runtime errors: \(errorDifference ?? "")")
     }
 }

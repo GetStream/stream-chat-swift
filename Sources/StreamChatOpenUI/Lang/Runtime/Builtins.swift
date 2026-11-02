@@ -114,6 +114,42 @@ public enum Builtins {
         allNames.contains(name)
     }
 
+    // Positional parameter names of the built-in functions and steps, as upstream defines them.
+    static let functionParams: [String: [String]] = [
+        "Count": ["array"], "First": ["array"], "Last": ["array"],
+        "Sum": ["numbers"], "Avg": ["numbers"], "Min": ["numbers"], "Max": ["numbers"],
+        "Sort": ["array", "field", "direction"],
+        "Filter": ["array", "field", "operator", "value"],
+        "Round": ["number", "decimals"], "Abs": ["number"], "Floor": ["number"], "Ceil": ["number"],
+        "Each": ["array", "varName", "template"]
+    ]
+
+    static let stepParams: [String: (params: [String], isLazy: Bool)] = [
+        "Run": (["ref"], true),
+        "ToAssistant": (["message", "context"], false),
+        "OpenUrl": (["url"], false),
+        "Set": (["variable", "value"], true),
+        "Reset": (["variable"], true)
+    ]
+
+    /// The built-in functions, steps and `Action`: the base of every library's call registry.
+    public static let calls: [String: CallDef] = {
+        var calls: [String: CallDef] = [:]
+        for (name, params) in functionParams {
+            calls[name] = CallDef(
+                kind: .function,
+                params: params.map { ParamDef(name: $0, required: false) },
+                isBuiltin: true,
+                isLazy: lazyNames.contains(name)
+            )
+        }
+        for (name, step) in stepParams {
+            calls[name] = CallDef(kind: .action, params: step.params.map { ParamDef(name: $0, required: false) }, isBuiltin: true, isLazy: step.isLazy)
+        }
+        calls["Action"] = CallDef(kind: .action, params: [ParamDef(name: "steps", required: true)], isBuiltin: true, isLazy: true)
+        return calls
+    }()
+
     /// Statement-level reserved calls.
     static let query = "Query"
     static let mutation = "Mutation"
@@ -204,7 +240,8 @@ public enum Builtins {
             case "contains":
                 let haystack = JS.isNullish(value) ? "" : JS.toString(value)
                 let needle = JS.isNullish(target) ? "" : JS.toString(target)
-                return needle.isEmpty || haystack.contains(needle)
+                // `String.prototype.includes` compares code units.
+                return needle.isEmpty || haystack.range(of: needle, options: .literal) != nil
             default: return false
             }
         })
@@ -219,4 +256,6 @@ public enum ActionStepType {
     public static let openURL = "open_url"
     public static let set = "set"
     public static let reset = "reset"
+    /// A step of one of the library's custom actions.
+    public static let customAction = "custom_action"
 }

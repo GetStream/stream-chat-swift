@@ -82,7 +82,9 @@ public extension OpenUIValue {
             return self
         case .array(let items):
             return .array(items.map(\.plainJSON))
-        case .object(let object):
+        case .object(var object):
+            // The token that marks custom steps real calls made never leaves the runtime.
+            _ = object.removeValue(forKey: ActionPlan.callTokenKey)
             return .object(object.mapValues(\.plainJSON))
         case .element(let element):
             return element.jsonValue

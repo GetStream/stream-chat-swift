@@ -10,32 +10,82 @@ import Foundation
 /// A prop type produces both the JSON Schema used by the parser (positional mapping and
 /// validation) and the type annotation shown to the model in the generated system prompt.
 @available(iOS 17.0, macOS 14.0, *)
-public indirect enum PropType: Sendable, Hashable {
-    case string
-    case number
-    case boolean
+public struct PropType: Sendable, Hashable {
+    indirect enum Kind: Sendable, Hashable {
+        case string
+        case number
+        case boolean
+        case any
+        case enumeration([String])
+        case literal(String)
+        case array(PropType, minItems: Int?)
+        case object([PropField])
+        case record(PropType)
+        case component(String)
+        case union([PropType])
+        case action
+        case actions([String])
+    }
+
+    let kind: Kind
+
+    init(kind: Kind) {
+        self.kind = kind
+    }
+
+    public static let string = PropType(kind: .string)
+    public static let number = PropType(kind: .number)
+    public static let boolean = PropType(kind: .boolean)
     /// Anything (`{}` in JSON Schema).
-    case any
+    public static let any = PropType(kind: .any)
+    /// An action: one `@step`, or `Action([...])` with several (`ActionExpression` in signatures).
+    public static let action = PropType(kind: .action)
+
     /// One of a fixed set of strings: `"a" | "b"`.
-    case enumeration([String])
+    public static func enumeration(_ values: [String]) -> PropType {
+        PropType(kind: .enumeration(values))
+    }
+
     /// A single string literal: `"open_url"`.
-    case literal(String)
+    public static func literal(_ value: String) -> PropType {
+        PropType(kind: .literal(value))
+    }
+
     /// An array; `minItems` adds a JSON Schema length constraint.
-    case array(PropType, minItems: Int? = nil)
+    public static func array(_ items: PropType, minItems: Int? = nil) -> PropType {
+        PropType(kind: .array(items, minItems: minItems))
+    }
+
     /// A nested object with named fields.
-    case object([PropField])
+    public static func object(_ fields: [PropField]) -> PropType {
+        PropType(kind: .object(fields))
+    }
+
     /// `Record<string, Value>`.
-    case record(PropType)
+    public static func record(_ value: PropType) -> PropType {
+        PropType(kind: .record(value))
+    }
+
     /// A reference to another component in the library (rendered as its name in signatures).
-    case component(String)
+    public static func component(_ name: String) -> PropType {
+        PropType(kind: .component(name))
+    }
+
     /// Any of several types: `A | B`.
-    case union([PropType])
-    /// An `Action([...])` expression (or a legacy action object).
-    case action
+    public static func union(_ options: [PropType]) -> PropType {
+        PropType(kind: .union(options))
+    }
+
+    /// An action slot that takes only the listed steps, such as `["CopyToClipboard", "OpenUrl"]`
+    /// (`@CopyToClipboard | @OpenUrl` in signatures). Built-in steps with a JSON shape are `OpenUrl`
+    /// and `ToAssistant`; any other name is one of the library's custom actions.
+    public static func actions(_ names: [String]) -> PropType {
+        PropType(kind: .actions(names))
+    }
 
     /// The JSON Schema for this type (matches the output of Zod's `toJSONSchema`).
     public var jsonSchema: OpenUIValue {
-        switch self {
+        switch kind {
         case .string:
             return ["type": "string"]
         case .number:
@@ -63,13 +113,15 @@ public indirect enum PropType: Sendable, Hashable {
         case .union(let options):
             return ["anyOf": .array(options.map(\.jsonSchema))]
         case .action:
-            return Self.actionSchema
+            return ["$ref": .string("#/$defs/\(Self.actionExpressionName)")]
+        case .actions(let names):
+            return ["anyOf": .array(names.map { ["$ref": .string("#/$defs/\($0)")] })]
         }
     }
 
     /// The type annotation used in prompt signatures (e.g. `string`, `Series[]`, `(A | B)[]`).
     public var signature: String {
-        switch self {
+        switch kind {
         case .string: return "string"
         case .number: return "number"
         case .boolean: return "boolean"
@@ -77,7 +129,7 @@ public indirect enum PropType: Sendable, Hashable {
         case .enumeration(let values): return values.map { "\"\($0)\"" }.joined(separator: " | ")
         case .literal(let value): return "\"\(value)\""
         case .array(let items, _):
-            if case .union = items { return "(\(items.signature))[]" }
+            if case .union = items.kind { return "(\(items.signature))[]" }
             return "\(items.signature)[]"
         case .object(let fields):
             return "{" + fields.map(\.signature).joined(separator: ", ") + "}"
@@ -88,43 +140,108 @@ public indirect enum PropType: Sendable, Hashable {
         case .union(let options):
             return options.map(\.signature).joined(separator: " | ")
         case .action:
-            return "ActionExpression"
+            return Self.actionExpressionName
+        case .actions(let names):
+            return names.map { "@\($0)" }.joined(separator: " | ")
+        }
+    }
+
+    /// A `$defs` entry a type refers to: a component, or the JSON shape of an action.
+    enum Definition: Hashable {
+        case component(String)
+        case action(String)
+    }
+
+    /// The `$defs` entries this type refers to, in declaration order.
+    var definitionReferences: [Definition] {
+        switch kind {
+        case .component(let name):
+            return [.component(name)]
+        case .array(let items, _):
+            return items.definitionReferences
+        case .union(let options):
+            return options.flatMap(\.definitionReferences)
+        case .object(let fields):
+            return fields.flatMap(\.type.definitionReferences)
+        case .record(let value):
+            return value.definitionReferences
+        case .action:
+            return [.action(Self.actionExpressionName)]
+        case .actions(let names):
+            return names.map(Definition.action)
+        case .string, .number, .boolean, .any, .enumeration, .literal:
+            return []
         }
     }
 
     /// Component names referenced by this type, in declaration order.
     var componentReferences: [String] {
-        switch self {
+        definitionReferences.compactMap { reference in
+            if case .component(let name) = reference { return name }
+            return nil
+        }
+    }
+
+    /// The type without `names` among the options of its unions. A union keeps them when they are
+    /// all it has.
+    func removingComponents(_ names: Set<String>) -> PropType {
+        switch kind {
+        case .union(let options):
+            let kept = options.filter { option in
+                guard case .component(let name) = option.kind else { return true }
+                return !names.contains(name)
+            }
+            return kept.isEmpty ? self : .union(kept.map { $0.removingComponents(names) })
+        case .array(let items, let minItems):
+            return .array(items.removingComponents(names), minItems: minItems)
+        case .record(let value):
+            return .record(value.removingComponents(names))
+        case .object(let fields):
+            return .object(fields.map { field in
+                var field = field
+                field.type = field.type.removingComponents(names)
+                return field
+            })
+        case .string, .number, .boolean, .any, .enumeration, .literal, .component, .action, .actions:
+            return self
+        }
+    }
+
+    /// The components this type can't do without when `names` are removed: a slot's only type, or
+    /// the types of a union that would be left with none.
+    func neededComponents(removing names: Set<String>) -> [String] {
+        switch kind {
         case .component(let name):
             return [name]
-        case .array(let items, _):
-            return items.componentReferences
         case .union(let options):
-            return options.flatMap(\.componentReferences)
-        case .object(let fields):
-            return fields.flatMap(\.type.componentReferences)
+            let components = options.compactMap { option -> String? in
+                guard case .component(let name) = option.kind else { return nil }
+                return name
+            }
+            let nested = options.flatMap { option -> [String] in
+                if case .component = option.kind { return [] }
+                return option.neededComponents(removing: names)
+            }
+            let keepsOne = options.count > components.count || components.contains { !names.contains($0) }
+            return (keepsOne ? [] : components) + nested
+        case .array(let items, _):
+            return items.neededComponents(removing: names)
         case .record(let value):
-            return value.componentReferences
-        case .string, .number, .boolean, .any, .enumeration, .literal, .action:
+            return value.neededComponents(removing: names)
+        case .object(let fields):
+            return fields.flatMap { $0.type.neededComponents(removing: names) }
+        case .string, .number, .boolean, .any, .enumeration, .literal, .action, .actions:
             return []
         }
     }
 
+    static let actionExpressionName = "ActionExpression"
+
     /// The legacy action object contract (the JSON Schema side of `ActionExpression`).
     static let actionSchema: OpenUIValue = [
         "anyOf": [
-            [
-                "type": "object",
-                "properties": ["type": ["type": "string", "const": "open_url"], "url": ["type": "string"]],
-                "required": ["type", "url"],
-                "additionalProperties": false
-            ],
-            [
-                "type": "object",
-                "properties": ["type": ["type": "string", "const": "continue_conversation"], "context": ["type": "string"]],
-                "required": ["type"],
-                "additionalProperties": false
-            ],
+            openURLSchema,
+            toAssistantSchema,
             [
                 "type": "object",
                 "properties": [
@@ -135,6 +252,22 @@ public indirect enum PropType: Sendable, Hashable {
                 "additionalProperties": false
             ]
         ]
+    ]
+
+    /// The JSON shape of `@OpenUrl` (`$defs.OpenUrl`).
+    static let openURLSchema: OpenUIValue = [
+        "type": "object",
+        "properties": ["type": ["type": "string", "const": "open_url"], "url": ["type": "string"]],
+        "required": ["type", "url"],
+        "additionalProperties": false
+    ]
+
+    /// The JSON shape of `@ToAssistant` (`$defs.ToAssistant`).
+    static let toAssistantSchema: OpenUIValue = [
+        "type": "object",
+        "properties": ["type": ["type": "string", "const": "continue_conversation"], "context": ["type": "string"]],
+        "required": ["type"],
+        "additionalProperties": false
     ]
 }
 

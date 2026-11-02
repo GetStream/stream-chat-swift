@@ -47,23 +47,25 @@ public struct ActionEvent: Sendable, Hashable {
         return URL(string: string)
     }
 
-    /// The `context` param of a continue-conversation action.
-    public var context: String? {
-        params["context"]?.stringValue
+    /// The `context` of a `@ToAssistant(message, context)` step: any value, passed through unchanged.
+    public var context: OpenUIValue? {
+        params["context"]
     }
 
-    /// Builds the user message sent back to the model for a continue-conversation action, using the
-    /// OpenUI chat envelope: the visible text plus a context section with what was clicked and the
-    /// form state (see ``MessageEnvelope``).
+    /// The user message sent back to the model for a continue-conversation action, in the OpenUI
+    /// message protocol: the visible text, plus a context of what was clicked, the form state and
+    /// the step's context (upstream `buildActionUserMessage`).
     public var assistantMessage: String {
-        var contextItems: [OpenUIValue] = [.string("User clicked: \(humanFriendlyMessage)")]
-        if let context, !context.isEmpty {
-            contextItems.append(.string(context))
+        var items: [OpenUIValue] = [.string("User clicked: \(humanFriendlyMessage)")]
+        if formState != nil || context != nil {
+            items.append(.object(formState ?? [:]))
         }
-        if let formState {
-            contextItems.append(.object(formState))
+        if let context {
+            items.append(context)
         }
-        let content = humanFriendlyMessage.isEmpty ? "" : MessageEnvelope.wrapContent(humanFriendlyMessage)
-        return content + MessageEnvelope.wrapContext(OpenUIJSON.stringify(.array(contextItems)))
+        let message = MessageEnvelope.build(content: humanFriendlyMessage, context: .array(items))
+        // No message: stored without the content line.
+        guard humanFriendlyMessage.isEmpty, let newline = message.firstIndex(of: "\n") else { return message }
+        return String(message[message.index(after: newline)...])
     }
 }

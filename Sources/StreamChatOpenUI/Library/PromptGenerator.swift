@@ -60,6 +60,8 @@ public struct PromptOptions: Sendable, Hashable {
     public var toolCalls: Bool?
     /// `$variables`, `@Set`, `@Reset`. Defaults to `toolCalls`.
     public var bindings: Bool?
+    /// Lists the built-in functions (`@Count`, `@Sum`, ...). Defaults to `toolCalls || bindings`.
+    public var builtinFunctions: Bool?
 
     public init(
         preamble: String? = nil,
@@ -70,7 +72,8 @@ public struct PromptOptions: Sendable, Hashable {
         editMode: Bool = false,
         inlineMode: Bool = false,
         toolCalls: Bool? = nil,
-        bindings: Bool? = nil
+        bindings: Bool? = nil,
+        builtinFunctions: Bool? = nil
     ) {
         self.preamble = preamble
         self.additionalRules = additionalRules
@@ -81,6 +84,7 @@ public struct PromptOptions: Sendable, Hashable {
         self.inlineMode = inlineMode
         self.toolCalls = toolCalls
         self.bindings = bindings
+        self.builtinFunctions = builtinFunctions
     }
 }
 
@@ -102,12 +106,25 @@ public struct PromptSpec: Sendable, Hashable {
     public var root: String?
     public var components: [Component]
     public var componentGroups: [ComponentGroup]
+    /// The library's functions, listed with the built-in ones.
+    public var functions: [Component]
+    /// The library's custom actions, listed with the built-in action steps.
+    public var actions: [Component]
     public var options: PromptOptions
 
-    public init(root: String?, components: [Component], componentGroups: [ComponentGroup] = [], options: PromptOptions = PromptOptions()) {
+    public init(
+        root: String?,
+        components: [Component],
+        componentGroups: [ComponentGroup] = [],
+        functions: [Component] = [],
+        actions: [Component] = [],
+        options: PromptOptions = PromptOptions()
+    ) {
         self.root = root
         self.components = components
         self.componentGroups = componentGroups
+        self.functions = functions
+        self.actions = actions
         self.options = options
     }
 }
@@ -124,7 +141,7 @@ public enum PromptGenerator {
         let toolCalls = options.toolCalls ?? hasTools
         let bindings = options.bindings ?? toolCalls
         let supportsExpressions = toolCalls || bindings
-        let usesActionExpression = spec.components.contains { $0.signature.contains("ActionExpression") }
+        let usesActionExpression = spec.components.contains { $0.signature.contains("ActionExpression") || hasRestrictedSlot($0.signature) }
 
         var parts: [String] = []
         parts.append(options.preamble ?? defaultPreamble)
@@ -133,9 +150,14 @@ public enum PromptGenerator {
         parts.append("")
         parts.append(componentSignatures(spec, toolCalls: toolCalls, bindings: bindings, usesActionExpression: usesActionExpression))
 
-        if supportsExpressions {
+        // Library functions get the section alone when built-ins are not listed.
+        let customFunctions = spec.functions.map(functionLine)
+        if options.builtinFunctions ?? supportsExpressions {
             parts.append("")
-            parts.append(builtinFunctionsSection())
+            parts.append(builtinFunctionsSection(customFunctions, toolCalls: toolCalls))
+        } else if !customFunctions.isEmpty {
+            parts.append("")
+            parts.append("## Built-in Functions\n\n" + customFunctions.joined(separator: "\n"))
         }
         if toolCalls {
             parts.append("")
@@ -143,9 +165,14 @@ public enum PromptGenerator {
             parts.append("")
             parts.append(mutationSection)
         }
+        // Library actions get the Action section alone when no component uses ActionExpression.
+        let customActions = spec.actions.map { "- " + functionLine($0) }
         if usesActionExpression {
             parts.append("")
-            parts.append(actionSection(toolCalls: toolCalls, bindings: bindings))
+            parts.append(actionSection(toolCalls: toolCalls, bindings: bindings, custom: customActions))
+        } else if !customActions.isEmpty {
+            parts.append("")
+            parts.append("\(actionHeader)\n\nPass one step, or Action([...]) with several steps, as a button's action.\n\nAvailable steps:\n" + customActions.joined(separator: "\n"))
         }
         if toolCalls && bindings {
             parts.append("")
@@ -161,7 +188,7 @@ public enum PromptGenerator {
         }
 
         parts.append("")
-        parts.append(streamingRules(rootName: rootName, supportsExpressions: supportsExpressions))
+        parts.append(streamingRules(rootName: rootName, supportsExpressions: supportsExpressions, toolCalls: toolCalls))
 
         let allExamples = options.examples + options.toolExamples
         if !allExamples.isEmpty {
@@ -282,15 +309,80 @@ public enum PromptGenerator {
         return lines.joined(separator: "\n")
     }
 
-    static func builtinFunctionsSection() -> String {
-        let builtinLines = Builtins.definitions.map { "@\($0.signature) — \($0.description)" }
-        let lazyLines = Builtins.lazyDefinitions.map { "@\($0.signature) — \($0.description)" }
-        let lines = (builtinLines + lazyLines).joined(separator: "\n")
+    // The built-in functions' prompt signatures, as upstream generates them from their schemas.
+    static let builtinFunctionSignatures: [String: String] = [
+        "Count": "Count(array: any[]) → number",
+        "First": "First(array: any[]) → any",
+        "Last": "Last(array: any[]) → any",
+        "Sum": "Sum(numbers: number[]) → number",
+        "Avg": "Avg(numbers: number[]) → number",
+        "Min": "Min(numbers: number[]) → number",
+        "Max": "Max(numbers: number[]) → number",
+        "Sort": "Sort(array: any[], field: string, direction?: \"asc\" | \"desc\") → any[]",
+        "Filter": "Filter(array: any[], field: string, operator: \"==\" | \"!=\" | \">\" | \"<\" | \">=\" | \"<=\" | \"contains\", value: any) → any[]",
+        "Round": "Round(number: number, decimals?: number) → number",
+        "Abs": "Abs(number: number) → number",
+        "Floor": "Floor(number: number) → number",
+        "Ceil": "Ceil(number: number) → number"
+    ]
+
+    static let eachSignature = "Each(array: any[], varName: string, template: any)"
+
+    // The built-in action steps, in prompt order, with the flag each needs.
+    static let builtinSteps: [(name: String, signature: String, description: String)] = [
+        ("Run", "Run(ref: Query | Mutation)", "Execute a Mutation or re-fetch a Query (ref must be a declared Query/Mutation)"),
+        (
+            "ToAssistant",
+            "ToAssistant(message: string, context?: any)",
+            "Send a message to the assistant (for conversational buttons like \"Tell me more\", \"Explain this\"). The optional context is any value (object, array, string, number) passed to the assistant as hidden data, e.g. @ToAssistant(\"Show details\", {orderId: 42})"
+        ),
+        ("OpenUrl", "OpenUrl(url: string)", "Navigate to a URL"),
+        ("Set", "Set(variable: $variable, value: any)", "Set a $variable to a specific value"),
+        (
+            "Reset",
+            "Reset(variable: $variable)",
+            "Reset $variables to their declared defaults; pass several to reset each (e.g. @Reset($title, $priority) restores $title=\"\" and $priority=\"medium\")"
+        )
+    ]
+
+    static let actionHeader = "## Action — Button Behavior"
+
+    /// The built-in steps the prompt lists: `@Run` needs tool calls, `@Set` and `@Reset` bindings.
+    static func listedSteps(toolCalls: Bool, bindings: Bool) -> [(name: String, signature: String, description: String)] {
+        builtinSteps.filter { step in
+            switch step.name {
+            case "Run": return toolCalls
+            case "Set", "Reset": return bindings
+            default: return true
+            }
+        }
+    }
+
+    static func functionLine(_ function: PromptSpec.Component) -> String {
+        guard let description = function.description, !description.isEmpty else { return "@\(function.signature)" }
+        return "@\(function.signature) — \(description)"
+    }
+
+    /// Whether a signature has a slot that takes only some steps: `share?: @CopyToClipboard | @OpenUrl`.
+    static func hasRestrictedSlot(_ signature: String) -> Bool {
+        signature.range(of: "[:|] @[A-Z]", options: .regularExpression) != nil
+    }
+
+    static func builtinFunctionsSection(_ custom: [String], toolCalls: Bool) -> String {
+        let builtinLines = Builtins.definitions.map { definition in
+            functionLine(PromptSpec.Component(
+                name: definition.name,
+                signature: builtinFunctionSignatures[definition.name] ?? definition.signature,
+                description: definition.description
+            ))
+        }
+        let lazyLines = Builtins.lazyDefinitions.map { functionLine(PromptSpec.Component(name: "Each", signature: eachSignature, description: $0.description)) }
+        let lines = (builtinLines + lazyLines + custom).joined(separator: "\n")
         return """
         ## Built-in Functions
 
         Data functions prefixed with `@` to distinguish from components. These are the ONLY functions available — do NOT invent new ones.
-        Use @-prefixed built-in functions (@Count, @Sum, @Avg, @Min, @Max, @Round) on Query results — do NOT hardcode computed values.
+        Use @-prefixed built-in functions (@Count, @Sum, @Avg, @Min, @Max, @Round) on \(toolCalls ? "Query results" : "data"). Do NOT hardcode computed values.
 
         \(lines)
 
@@ -299,8 +391,8 @@ public enum PromptGenerator {
         Array pluck: `data.rows.field` extracts a field from every row → use with @Sum, @Avg, charts, tables.
 
         IMPORTANT @Each rule: The loop variable (e.g. "item") is ONLY available inside the @Each template expression. Always inline the template — do NOT extract it to a separate statement.
-        CORRECT: `Col("Actions", @Each(rows, "t", Button("Edit", Action([@Set($id, t.id)]))))`
-        WRONG: `myBtn = Button("Edit", Action([@Set($id, t.id)]))` then `Col("Actions", @Each(rows, "t", myBtn))` — t is undefined in myBtn.
+        CORRECT: `list = @Each(rows, "t", Comp(t.name))`
+        WRONG: `item = Comp(t.name)` then `list = @Each(rows, "t", item)`, because t is undefined in item.
         """
     }
 
@@ -341,18 +433,10 @@ public enum PromptGenerator {
     - Show loading state: `result.status == "loading" ? TextContent("Saving...") : null`
     """
 
-    static func actionSection(toolCalls: Bool, bindings: Bool) -> String {
-        var steps = [
-            "- @ToAssistant(\"message\") — Send a message to the assistant (for conversational buttons like \"Tell me more\", \"Explain this\")",
-            "- @OpenUrl(\"https://...\") — Navigate to a URL"
-        ]
-        if bindings {
-            steps.append("- @Set($variable, value) — Set a $variable to a specific value")
-            steps.append("- @Reset($var1, $var2, ...) — Reset $variables to their declared defaults (e.g. @Reset($title, $priority) restores $title=\"\" and $priority=\"medium\")")
-        }
-        if toolCalls {
-            steps.insert("- @Run(queryOrMutationRef) — Execute a Mutation or re-fetch a Query (ref must be a declared Query/Mutation)", at: 0)
-        }
+    static func actionSection(toolCalls: Bool, bindings: Bool, custom: [String]) -> String {
+        let steps = listedSteps(toolCalls: toolCalls, bindings: bindings).map { step in
+            "- " + functionLine(PromptSpec.Component(name: step.name, signature: step.signature, description: step.description))
+        } + custom
 
         var examples: [String] = []
         if toolCalls {
@@ -369,12 +453,12 @@ public enum PromptGenerator {
         examples.append("""
         Example — simple nav:
         ```
-        viewBtn = Button("View", Action([@OpenUrl("https://example.com")]))
+        viewBtn = Button("View", @OpenUrl("https://example.com"))
         ```
         """)
 
         var rules = [
-            "- Action can be assigned to a variable or inlined: Button(\"Go\", onSubmit) and Button(\"Go\", Action([...])) both work"
+            "- An action can be assigned to a variable or inlined: Button(\"Go\", onSubmit) and Button(\"Go\", Action([...])) both work"
         ]
         if toolCalls {
             rules.append("- If a @Run(mutation) step fails, remaining steps are skipped (halt on failure)")
@@ -382,10 +466,10 @@ public enum PromptGenerator {
         }
 
         return """
-        ## Action — Button Behavior
+        \(actionHeader)
 
-        Action([@steps...]) wires button clicks to operations. Steps are @-prefixed built-in actions. Steps execute in order.
-        Buttons without an explicit Action prop automatically send their label to the assistant (equivalent to Action([@ToAssistant(label)])).
+        An action wires a button click to operations. Pass one @-prefixed step bare, e.g. Button("Ask", @ToAssistant("Tell me more")). Put several steps in Action([...]), e.g. Button("Read", Action([@OpenUrl("https://example.com"), @ToAssistant("Summarize this page")])). Steps execute in order.
+        Buttons without an action automatically send their label to the assistant (equivalent to @ToAssistant(label)).
 
         Available steps:
         \(steps.joined(separator: "\n"))
@@ -464,13 +548,16 @@ public enum PromptGenerator {
     - If you are about to output more than 10 statements, reconsider — most edits need fewer
     """
 
-    static func streamingRules(rootName: String, supportsExpressions: Bool) -> String {
+    static func streamingRules(rootName: String, supportsExpressions: Bool, toolCalls: Bool) -> String {
         var steps = ["1. `root = \(rootName)(...)` — UI shell appears immediately"]
         if supportsExpressions {
             steps.append("2. $variable declarations — state ready for bindings")
-            steps.append("3. Query statements — defaults resolve immediately so components render with data")
-            steps.append("4. Component definitions — fill in with data already available")
-            steps.append("5. Data values — leaf content last")
+            if toolCalls {
+                steps.append("3. Query statements — defaults resolve immediately so components render with data")
+            }
+            let count = steps.count
+            steps.append("\(count + 1). Component definitions — fill in with data already available")
+            steps.append("\(count + 2). Data values — leaf content last")
         } else {
             steps.append("2. Component definitions — fill in as they stream")
             steps.append("3. Data values — leaf content last")
@@ -522,7 +609,7 @@ public enum PromptGenerator {
     When tools are available, follow this workflow:
     1. FIRST: Call the most relevant tool to inspect the real data shape before generating code
     2. Use Query() for READ operations (data that should stay live) — NEVER hardcode tool results as literal arrays or objects
-    3. Use Mutation() for WRITE operations (create, update, delete) — triggered by button clicks via Action([@Run(mutationRef)])
+    3. Use Mutation() for WRITE operations (create, update, delete) — triggered by button clicks via @Run(mutationRef)
     4. Use the real data from step 1 as condensed Query defaults (3-5 rows) so the UI renders immediately
     5. Use @-prefixed builtins (@Count, @Filter, @Sort, @Sum) on Query results for KPIs and aggregations — the runtime evaluates these live on every refresh
     6. Hardcoded arrays are ONLY for static display data (labels, options) where no tool exists
@@ -626,9 +713,11 @@ public enum PromptGenerator {
             "Arguments marked with ? are optional. Sub-components can be inline or referenced; prefer references for better streaming."
         ]
         if usesActionExpression {
-            let steps = [toolCalls ? "@Run" : "", "@ToAssistant", "@OpenUrl", bindings ? "@Set" : "", bindings ? "@Reset" : ""]
-                .filter { !$0.isEmpty }
-            lines.append("Props typed `ActionExpression` accept an Action([@steps...]) expression. See the Action section for available steps (\(steps.joined(separator: ", "))).")
+            let steps = (listedSteps(toolCalls: toolCalls, bindings: bindings).map(\.name) + spec.actions.map(\.name)).map { "@\($0)" }
+            lines.append("Props typed `ActionExpression` accept one @step, or Action([@steps...]) for several. See the Action section for available steps (\(steps.joined(separator: ", "))).")
+            if spec.components.contains(where: { hasRestrictedSlot($0.signature) }) {
+                lines.append("Props typed like `@OpenUrl | @ToAssistant` accept only the steps listed.")
+            }
         }
         if bindings || spec.components.contains(where: { $0.signature.contains("$binding") }) {
             lines.append("Props marked `$binding<type>` accept a `$variable` reference for two-way binding.")

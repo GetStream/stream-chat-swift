@@ -33,6 +33,20 @@ struct LibraryConformanceTests {
     }
 
     @Test(arguments: [0, 1])
+    func defaultPromptOptionsMatchUpstreamPromptOptions(_ index: Int) throws {
+        let (name, library, file) = Self.pairs[index]
+        let upstream = try #require(try Fixtures.json(file)["promptOptions"])
+
+        let examples = upstream["examples"]?.arrayValue?.compactMap(\.stringValue) ?? []
+        let rules = upstream["additionalRules"]?.arrayValue?.compactMap(\.stringValue) ?? []
+
+        #expect(library.defaultPromptOptions.examples == examples, "\(name) examples")
+        if !rules.isEmpty {
+            #expect(library.defaultPromptOptions.additionalRules == rules, "\(name) rules")
+        }
+    }
+
+    @Test(arguments: [0, 1])
     func jsonSchemaMatches(_ index: Int) throws {
         let (name, library, file) = Self.pairs[index]
         let upstream = try #require(try Fixtures.json(file)["schema"])
@@ -109,8 +123,31 @@ struct PromptConformanceTests {
             editMode: json["editMode"]?.boolValue ?? false,
             inlineMode: json["inlineMode"]?.boolValue ?? false,
             toolCalls: json["toolCalls"]?.boolValue,
-            bindings: json["bindings"]?.boolValue
+            bindings: json["bindings"]?.boolValue,
+            builtinFunctions: json["builtinFunctions"]?.boolValue
         )
+    }
+
+    static func specFile(_ library: String) -> String {
+        switch library {
+        case "chat": return "upstream-chat-library.spec.json"
+        case "spec": return "spec-library.json"
+        default: return "upstream-playground-library.spec.json"
+        }
+    }
+
+    static func swiftLibrary(_ library: String) -> ComponentLibrary {
+        switch library {
+        case "chat": return .openUIChat
+        case "spec": return SpecLibrary.library
+        default: return .openUI
+        }
+    }
+
+    static func calls(_ json: OpenUIValue?) -> [PromptSpec.Component] {
+        (json?.objectValue?.entries ?? []).map { name, call in
+            PromptSpec.Component(name: name, signature: call["signature"]?.stringValue ?? "", description: call["description"]?.stringValue)
+        }
     }
 
     static func firstLineDifference(_ actual: String, _ expected: String) -> String? {
@@ -128,13 +165,14 @@ struct PromptConformanceTests {
     }
 
     @Test func goldensAreLoaded() {
-        #expect(Self.goldens.count == 6)
+        #expect(Self.goldens.count == 14)
+        #expect(Set(Self.goldens.map(\.library)) == ["chat", "standard", "spec"])
     }
 
     /// The generator alone, fed the upstream spec.
     @Test(arguments: goldens)
     func generatorMatchesUpstream(_ golden: Golden) throws {
-        let spec = try Fixtures.json(golden.library == "chat" ? "upstream-chat-library.spec.json" : "upstream-playground-library.spec.json")
+        let spec = try Fixtures.json(Self.specFile(golden.library))
         let components = (spec["components"]?.objectValue?.entries ?? []).map { name, component in
             PromptSpec.Component(name: name, signature: component["signature"]?.stringValue ?? "", description: component["description"]?.stringValue)
         }
@@ -149,6 +187,8 @@ struct PromptConformanceTests {
             root: spec["root"]?.stringValue,
             components: components,
             componentGroups: groups,
+            functions: Self.calls(spec["functions"]),
+            actions: Self.calls(spec["actions"]),
             options: Self.promptOptions(golden.options)
         ))
         let difference = Self.firstLineDifference(prompt, golden.prompt)
@@ -158,8 +198,7 @@ struct PromptConformanceTests {
     /// End to end: the Swift library definitions + generator.
     @Test(arguments: goldens)
     func swiftLibraryPromptMatchesUpstream(_ golden: Golden) {
-        let library: ComponentLibrary = golden.library == "chat" ? .openUIChat : .openUI
-        let prompt = library.systemPrompt(Self.promptOptions(golden.options))
+        let prompt = Self.swiftLibrary(golden.library).systemPrompt(Self.promptOptions(golden.options))
         let difference = Self.firstLineDifference(prompt, golden.prompt)
         #expect(difference == nil, "\(golden.name): \(difference ?? "")")
     }

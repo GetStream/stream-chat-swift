@@ -6,7 +6,7 @@ import Foundation
 
 /// Schemas specific to the chat library (`openuiChatLibrary`).
 @available(iOS 17.0, macOS 14.0, *)
-public enum ChatSchemas {
+enum ChatSchemas {
     static let card = ComponentSchema(
         "Card",
         description: "Vertical container for all content in a chat response. Children stack top to bottom automatically. Optional sources ([{ title, sourceName, url }]) render as a Sources strip at the bottom and back inline [n] citations in TextContent.",

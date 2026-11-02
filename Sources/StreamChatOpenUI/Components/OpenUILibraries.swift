@@ -11,7 +11,7 @@ public extension ComponentLibrary {
     static let openUIChat = ComponentLibrary(
         root: ChatLibraryDefinition.root,
         components: ChatLibraryDefinition.schemas.map { schema in
-            ComponentDefinition(schema, renderer: BuiltInRenderers.renderer(for: schema.name, library: .chat))
+            OpenUIComponentDefinition(schema, renderer: BuiltInRenderers.renderer(for: schema.name, library: .chat))
         },
         componentGroups: ChatLibraryDefinition.componentGroups,
         defaultPromptOptions: PromptOptions(
@@ -25,7 +25,7 @@ public extension ComponentLibrary {
     static let openUI = ComponentLibrary(
         root: StandardLibraryDefinition.root,
         components: StandardLibraryDefinition.schemas.map { schema in
-            ComponentDefinition(schema, renderer: BuiltInRenderers.renderer(for: schema.name, library: .standard))
+            OpenUIComponentDefinition(schema, renderer: BuiltInRenderers.renderer(for: schema.name, library: .standard))
         },
         componentGroups: StandardLibraryDefinition.componentGroups,
         defaultPromptOptions: PromptOptions(

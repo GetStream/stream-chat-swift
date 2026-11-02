@@ -6,9 +6,9 @@ import Foundation
 
 /// Component content unions (mirrors `unions.ts`).
 @available(iOS 17.0, macOS 14.0, *)
-public enum ContentUnions {
+enum ContentUnions {
     /// Components allowed inside layout containers.
-    public static let base: [String] = [
+    static let base: [String] = [
         "TextContent",
         "MarkDownRenderer",
         "CardHeader",
@@ -45,7 +45,7 @@ public enum ContentUnions {
     ]
 
     /// Everything a nested chat container may hold.
-    public static let chatNested: [String] = base + ["ListBlock", "FollowUpBlock"]
+    static let chatNested: [String] = base + ["ListBlock", "FollowUpBlock"]
 }
 
 @available(iOS 17.0, macOS 14.0, *)

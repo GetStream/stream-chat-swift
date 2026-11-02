@@ -306,7 +306,7 @@ public enum JS {
         case (.number(let a), .number(let b)):
             return a == b
         case (.string(let a), .string(let b)):
-            return a == b
+            return sameCodeUnits(a, b)
         case (.bool(let a), .bool(let b)):
             return a == b
         case (.number(let a), .string(let b)):
@@ -339,9 +339,17 @@ public enum JS {
         switch (lhs, rhs) {
         case (.number(let a)?, .number(let b)?):
             return a == b || (a.isNaN && b.isNaN)
+        case (.string(let a)?, .string(let b)?):
+            return sameCodeUnits(a, b)
         default:
             return lhs == rhs
         }
+    }
+
+    /// String equality as JavaScript has it: UTF-16 code units, not Swift's canonical equivalence,
+    /// under which `"é"` and `"e\u{301}"` are equal.
+    static func sameCodeUnits(_ lhs: String, _ rhs: String) -> Bool {
+        lhs.utf16.elementsEqual(rhs.utf16)
     }
 
     // MARK: - Property access

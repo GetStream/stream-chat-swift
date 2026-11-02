@@ -6,7 +6,7 @@ import Foundation
 
 /// Schemas specific to the standard library (`openuiLibrary`).
 @available(iOS 17.0, macOS 14.0, *)
-public enum StandardSchemas {
+enum StandardSchemas {
     static let card = ComponentSchema(
         "Card",
         description: "Styled container. variant: \"card\" (default, elevated) | \"sunk\" (recessed) | \"clear\" (transparent). Always full width. Accepts all Stack flex params (default: direction \"column\"). Cards flex to share space in row/wrap layouts.",

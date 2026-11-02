@@ -310,8 +310,8 @@ Code documentation
 
 OpenUI
 
-- StreamChatOpenUI is a port of upstream `@openuidev/lang-core` and the react-ui libraries as of 2026-10-08, before OpenUI 1.0. Check behaviour against the spec (`spec/language.md`, `spec/prompt.md`) and its conformance cases (`spec/fixtures/1.0`) in the upstream repo.
-- `Tests/StreamChatOpenUITests/Fixtures` hold the upstream parser, evaluator, library and prompt output the conformance tests compare against. Regenerate them from upstream instead of editing them.
+- StreamChatOpenUI follows OpenUI 1.0: upstream `@openuidev/lang-core` 1.0.1 and the react-ui libraries at commit `729ac8b`, and the spec (`spec/language.md`, `spec/prompt.md`, `spec/fixtures/1.0`) in the upstream repo.
+- `Tests/StreamChatOpenUITests/Fixtures` hold upstream's parser, evaluator, library and prompt output, and the spec's test library and interaction cases. Regenerate them with `Scripts/openui-fixtures` (see its README) instead of editing them; `SpecInteractionTests` runs the spec's interaction cases.
 - The model writes every program, so treat its numbers, nesting and URLs as untrusted: no unchecked `Int(_:)` of a `Double`, no unbounded recursion, and links only for http, https and mailto.
 
 Accessibility & UI quality

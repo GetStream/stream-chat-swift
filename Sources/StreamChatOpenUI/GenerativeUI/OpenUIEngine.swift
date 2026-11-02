@@ -20,7 +20,7 @@ final class OpenUIEngine: AIUIEngine {
         self.host = host
         self.toolProvider = toolProvider
         self.library = library
-        let components = OpenUIRenderer.placeableSchemas(of: host.components, in: library).map { placeable -> ComponentDefinition in
+        let components = OpenUIRenderer.placeableSchemas(of: host.components, in: library).map { placeable -> OpenUIComponentDefinition in
             let component: any AIUIComponent = placeable.component
             return definition(of: component, schema: placeable.schema)
         }
@@ -50,8 +50,8 @@ final class OpenUIEngine: AIUIEngine {
     }
 
     // The OpenUI component that shows one of the app's, with the app's view as it is.
-    private func definition(of component: some AIUIComponent, schema: ComponentSchema) -> ComponentDefinition {
-        ComponentDefinition(schema) { [weak self] context in
+    private func definition(of component: some AIUIComponent, schema: ComponentSchema) -> OpenUIComponentDefinition {
+        OpenUIComponentDefinition(schema) { [weak self] context in
             self?.view(of: component, in: context)
         }
     }
@@ -84,8 +84,8 @@ final class OpenUIEngine: AIUIEngine {
         }
         var payload: [String: RawJSON] = [:]
         var params = event.params
-        if let context = event.context, !context.isEmpty {
-            payload["context"] = .string(context)
+        if let context = event.context {
+            payload["context"] = context.rawJSON
         }
         params["context"] = nil
         if !params.isEmpty {
@@ -97,7 +97,7 @@ final class OpenUIEngine: AIUIEngine {
         if let values = event.formState, !values.isEmpty {
             payload["values"] = .dictionary(values.rawJSON)
         }
-        let label = event.humanFriendlyMessage.isEmpty ? (event.context ?? event.type) : event.humanFriendlyMessage
+        let label = event.humanFriendlyMessage.isEmpty ? (event.context?.stringValue ?? event.type) : event.humanFriendlyMessage
         host.send(AIUIAction(messageID: messageID, format: .openUI, name: event.type, label: label, payload: payload))
     }
 }

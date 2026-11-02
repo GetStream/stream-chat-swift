@@ -62,38 +62,68 @@ public struct OpenUIParser: Sendable {
 
     // MARK: - Schema compilation
 
+    /// The action `$defs` of every library: `action` props are `{"$ref": "#/$defs/ActionExpression"}`.
+    static let actionDefinitionNames = ["ActionExpression", "OpenUrl", "ToAssistant"]
+
     /// Compiles a library JSON Schema into positional parameter definitions. Each component lives in
-    /// `$defs` (keyed by name); its `properties` order defines the positional argument order.
+    /// `$defs` (keyed by name); its `properties` order defines the positional argument order. The
+    /// library's `functions` and `actions` join the built-in calls.
     public static func compileSchema(_ schema: OpenUIValue) -> ParamMap {
         var map = ParamMap()
         guard case .object(let root) = schema else { return map }
-        let definitions: OpenUIObject
-        if case .object(let defs)? = root["$defs"] { definitions = defs } else { definitions = [:] }
-        var componentNames: Set<String>?
-        if case .object(let properties)? = root["properties"] {
-            componentNames = Set(properties.keys)
+        let definitions = root["$defs"]?.objectValue ?? [:]
+        let componentNames = root["properties"]?.objectValue.map { Set($0.keys) }
+        // Action $defs (ActionExpression, OpenUrl, custom actions) are data shapes, never components.
+        var actionDefinitions: [String: OpenUIValue] = [:]
+        for name in actionDefinitionNames + (root["actions"]?.objectValue?.keys ?? []) {
+            if let body = definitions[name], componentNames?.contains(name) != true {
+                actionDefinitions["#/$defs/\(name)"] = body
+            }
         }
-
         for (name, definition) in definitions.entries {
             // Skip non-component defs (e.g. zod's hoisted recursive schemas).
-            if let componentNames, !componentNames.contains(name) { continue }
-            guard case .object(let def) = definition else { continue }
-            let properties: OpenUIObject
-            if case .object(let props)? = def["properties"] { properties = props } else { properties = [:] }
-            var required: [String] = []
-            if case .array(let names)? = def["required"] {
-                required = names.compactMap(\.stringValue)
+            if let componentNames {
+                if !componentNames.contains(name) { continue }
+            } else if actionDefinitions["#/$defs/\(name)"] != nil {
+                continue
             }
-            map[name] = properties.entries.map { key, property in
-                ParamDef(
-                    name: key,
-                    required: required.contains(key),
-                    defaultValue: SchemaValidation.defaultValue(of: property),
-                    schema: property
-                )
-            }
+            map[name] = compileParams(definition, actionDefinitions)
+        }
+        for (name, function) in root["functions"]?.objectValue?.entries ?? [] {
+            map.callDefs[name] = CallDef(kind: .function, params: compileParams(function["params"], actionDefinitions))
+        }
+        for (name, action) in root["actions"]?.objectValue?.entries ?? [] {
+            map.callDefs[name] = CallDef(kind: .action, params: compileParams(action["params"], actionDefinitions))
         }
         return map
+    }
+
+    private static func compileParams(_ definition: OpenUIValue?, _ actionDefinitions: [String: OpenUIValue]) -> [ParamDef] {
+        let properties = definition?["properties"]?.objectValue ?? [:]
+        let required = (definition?["required"]?.arrayValue ?? []).compactMap(\.stringValue)
+        return properties.entries.map { key, property in
+            ParamDef(
+                name: key,
+                required: required.contains(key),
+                defaultValue: SchemaValidation.defaultValue(of: property),
+                schema: actionDefinitions.isEmpty ? property : inlineActionRefs(property, actionDefinitions)
+            )
+        }
+    }
+
+    // `{"$ref": "#/$defs/ActionExpression"}` → its body, so action slots validate as inline unions.
+    private static func inlineActionRefs(_ node: OpenUIValue, _ definitions: [String: OpenUIValue]) -> OpenUIValue {
+        switch node {
+        case .object(let object):
+            if case .string(let ref)? = object["$ref"] {
+                return definitions[ref].map { inlineActionRefs($0, definitions) } ?? node
+            }
+            return .object(object.mapValues { inlineActionRefs($0, definitions) })
+        case .array(let items):
+            return .array(items.map { inlineActionRefs($0, definitions) })
+        default:
+            return node
+        }
     }
 
     // MARK: - Core pipeline
@@ -107,17 +137,15 @@ public struct OpenUIParser: Sendable {
         if raw.isEmpty { return .empty(incomplete: wasIncomplete) }
 
         var table = StatementTable()
-        var firstId = ""
         for statement in raw {
             table.set(classify(statement, ExpressionParser.parse(statement.tokens)))
-            if firstId.isEmpty { firstId = statement.id }
         }
-        return buildResult(table, firstId: firstId, wasIncomplete: wasIncomplete, statementCount: table.count, paramMap: paramMap, rootName: rootName)
+        return buildResult(table, wasIncomplete: wasIncomplete, statementCount: table.count, paramMap: paramMap, rootName: rootName)
     }
 
     /// Classifies a statement from its identifier token and expression shape.
     static func classify(_ raw: RawStatement, _ expression: ASTNode) -> Statement {
-        if case .comp(let name, let args, _) = expression {
+        if case .comp(let name, let args, _, _) = expression {
             if name == Builtins.query {
                 let deps = args.count > 1 ? args[1].stateReferences : []
                 return .query(id: raw.id, args: args, expr: expression, deps: deps.isEmpty ? nil : deps)
@@ -132,41 +160,67 @@ public struct OpenUIParser: Sendable {
         return .value(id: raw.id, expr: expression)
     }
 
-    private static func isComponentStatement(_ statement: Statement) -> String? {
-        guard case .value(_, let expression) = statement,
-              case .comp(let name, _, _) = expression,
+    /// A call to a library component: not an `@` function, built-in, `Query` or `Mutation`.
+    private static func componentCallName(_ node: ASTNode?) -> String? {
+        guard case .comp(let name, _, _, let isFunction)? = node,
+              !isFunction,
               !Builtins.isBuiltin(name),
               !Builtins.isReservedCall(name) else { return nil }
         return name
     }
 
-    private static func pickEntryId(_ table: StatementTable, firstId: String, rootName: String?) -> String {
-        if table.contains("root") { return "root" }
-        if let rootName, table.contains(rootName) { return rootName }
-        let statements = table.values
-        if let rootName, let preferred = statements.first(where: { isComponentStatement($0) == rootName }) {
-            return preferred.id
+    /// The entry: `root`, else the first statement that calls the root component (a fallback).
+    private static func pickEntry(_ table: StatementTable, rootName: String?) -> (id: String, isFallback: Bool)? {
+        if table.contains("root") { return ("root", false) }
+        for statement in table.values {
+            if case .value(let id, let expression) = statement, let name = componentCallName(expression), name == rootName {
+                return (id, true)
+            }
         }
-        return statements.first(where: { isComponentStatement($0) != nil })?.id ?? firstId
+        return nil
+    }
+
+    /// Follows refs to the entry's value; a component call that didn't render was dropped by validation.
+    private static func resolvesToComponentCall(_ node: ASTNode?, _ symbols: [String: ASTNode]) -> Bool {
+        var node = node
+        var seen = Set<String>()
+        while case .ref(let name)? = node, seen.insert(name).inserted {
+            node = symbols[name]
+        }
+        return componentCallName(node) != nil
+    }
+
+    /// Whether a runtime expression can produce a component, such as `$t ? A : B`.
+    private static func containsComponent(_ node: ASTNode) -> Bool {
+        var found = false
+        node.walk { current in
+            if componentCallName(current) != nil { found = true }
+        }
+        return found
+    }
+
+    /// A `$name` at the very end of streamed text, which may still be growing (`$d` of `$dishes`).
+    struct PartialReference {
+        let name: String
+        let statementIds: Set<String>
     }
 
     static func buildResult(
         _ table: StatementTable,
-        firstId: String,
         wasIncomplete: Bool,
         statementCount: Int,
         paramMap: ParamMap?,
-        rootName: String?
+        rootName: String?,
+        partialReference: PartialReference? = nil
     ) -> ParseResult {
-        let entryId = pickEntryId(table, firstId: firstId, rootName: rootName)
-        guard let entry = table[entryId] else { return .empty(incomplete: wasIncomplete) }
+        let entry = pickEntry(table, rootName: rootName)
 
         var symbols: [String: ASTNode] = [:]
         var unreached: [String] = []
         for statement in table.values {
             symbols[statement.id] = statement.symbol
             switch statement {
-            case .value where statement.id != entryId:
+            case .value where statement.id != entry?.id:
                 unreached.append(statement.id)
             default:
                 break
@@ -177,14 +231,21 @@ public struct OpenUIParser: Sendable {
             symbols: symbols,
             catalog: paramMap,
             partial: wasIncomplete,
-            currentStatementId: entryId,
+            currentStatementId: entry?.id,
             unreached: unreached
         )
-        let materialized = Materializer.materializeValue(entry.symbol, context)
         var root: ElementNode?
-        if case .element(var element) = materialized {
-            element.statementId = entryId
-            root = element
+        var rootExpression: ASTNode?
+        if let entry, let entrySymbol = symbols[entry.id] {
+            switch Materializer.materializeValue(entrySymbol, context) {
+            case .element(var element):
+                element.statementId = entry.id
+                root = element
+            case .expression(let expression) where containsComponent(expression):
+                rootExpression = expression
+            default:
+                break
+            }
         }
 
         // Extract typed declarations (state defaults are materialized to plain values).
@@ -196,7 +257,8 @@ public struct OpenUIParser: Sendable {
             switch statement {
             case .state(let id, let initial):
                 stateDeclarations[id] = Materializer.materializeValue(initial, context)
-            case .query(let id, let args, _, let deps):
+            case .query(let id, let rawArgs, _, let deps):
+                let args = Materializer.nameRawCallArgs(rawArgs, context, statementId: id)
                 queries.append(QueryStatementInfo(
                     statementId: id,
                     toolAST: args.count > 0 ? args[0] : nil,
@@ -206,7 +268,8 @@ public struct OpenUIParser: Sendable {
                     deps: deps,
                     complete: true
                 ))
-            case .mutation(let id, let args, _):
+            case .mutation(let id, let rawArgs, _):
+                let args = Materializer.nameRawCallArgs(rawArgs, context, statementId: id)
                 mutations.append(MutationStatementInfo(
                     statementId: id,
                     toolAST: args.count > 0 ? args[0] : nil,
@@ -217,7 +280,8 @@ public struct OpenUIParser: Sendable {
             }
         }
 
-        // Auto-declare: any $variable referenced but not declared gets a null default.
+        // Auto-declare: any $variable referenced but not declared gets a null default, except a
+        // `$name` that may still be streaming in.
         for statement in statements {
             let nodes: [ASTNode]
             switch statement {
@@ -227,17 +291,33 @@ public struct OpenUIParser: Sendable {
             }
             for node in nodes {
                 for dependency in node.stateReferences where !stateDeclarations.contains(dependency) {
+                    if let partialReference, partialReference.name == dependency, partialReference.statementIds.contains(statement.id) {
+                        continue
+                    }
                     stateDeclarations[dependency] = .null
                 }
             }
         }
 
+        // Streaming consumers drop parser errors until the stream ends, so this reads as a stream-end check.
+        context.currentStatementId = entry?.id
+        let component = rootName ?? ""
+        if entry == nil {
+            SchemaValidation.push(context, component: component, path: "", issue: .noRoot(.missing))
+        } else if let entry, root == nil, rootExpression == nil, !resolvesToComponentCall(symbols[entry.id], symbols) {
+            SchemaValidation.push(context, component: component, path: "", issue: .noRoot(.notComponent))
+        } else if let entry, entry.isFallback {
+            SchemaValidation.push(context, component: component, path: "", issue: .noRoot(root != nil ? .fallback : .missing))
+        }
+
         return ParseResult(
             root: root,
+            rootExpression: rootExpression,
             meta: ParseMeta(
                 incomplete: wasIncomplete,
                 unresolved: context.unresolved,
-                orphaned: context.orphaned,
+                // With no entry nothing is reachable; `no-root` alone describes the problem.
+                orphaned: entry == nil ? [] : context.orphaned,
                 statementCount: statementCount,
                 errors: context.errors
             ),
@@ -265,7 +345,6 @@ public struct OpenUIStreamParser: Sendable {
     private var completedEnd = 0
     private var completed = StatementTable()
     private var completedCount = 0
-    private var firstId = ""
 
     public init(paramMap: ParamMap, rootName: String? = nil) {
         self.paramMap = paramMap
@@ -276,26 +355,27 @@ public struct OpenUIStreamParser: Sendable {
         self.init(paramMap: OpenUIParser.compileSchema(schema), rootName: rootName)
     }
 
-    /// Appends a chunk and returns the latest result.
-    public mutating func push(_ chunk: String) -> ParseResult {
+    /// Appends a chunk and returns the latest result. Pass `complete` once the stream has ended.
+    public mutating func push(_ chunk: String, complete: Bool = false) -> ParseResult {
         buffer += chunk
-        return currentResult()
+        return currentResult(complete: complete)
     }
 
-    /// Sets the full text so far. Resets when the text no longer extends the previous buffer.
-    public mutating func set(_ fullText: String) -> ParseResult {
+    /// Sets the full text so far. Resets when the text no longer extends the previous buffer. Pass
+    /// `complete` once the stream has ended.
+    public mutating func set(_ fullText: String, complete: Bool = false) -> ParseResult {
         if fullText.utf8.count < buffer.utf8.count || !fullText.utf8.starts(with: buffer.utf8) {
             reset()
         }
         if fullText.utf8.count > buffer.utf8.count {
             buffer = fullText
         }
-        return currentResult()
+        return currentResult(complete: complete)
     }
 
     /// The latest result without consuming new data.
-    public mutating func result() -> ParseResult {
-        currentResult()
+    public mutating func result(complete: Bool = false) -> ParseResult {
+        currentResult(complete: complete)
     }
 
     public mutating func reset() {
@@ -304,7 +384,6 @@ public struct OpenUIStreamParser: Sendable {
         completedEnd = 0
         completed.removeAll()
         completedCount = 0
-        firstId = ""
     }
 
     private mutating func addStatements(_ text: String) {
@@ -313,7 +392,6 @@ public struct OpenUIStreamParser: Sendable {
         for raw in Statements.split(Lexer.tokenize(trimmed)) {
             completed.set(OpenUIParser.classify(raw, ExpressionParser.parse(raw.tokens)))
             completedCount += 1
-            if firstId.isEmpty { firstId = raw.id }
         }
     }
 
@@ -324,7 +402,6 @@ public struct OpenUIStreamParser: Sendable {
             completedEnd = 0
             completed.removeAll()
             completedCount = 0
-            firstId = ""
         }
         cleaned = next
     }
@@ -384,31 +461,66 @@ public struct OpenUIStreamParser: Sendable {
         return statementStart
     }
 
-    private mutating func currentResult() -> ParseResult {
+    private mutating func currentResult(complete: Bool) -> ParseResult {
         refreshCleaned()
         let pendingStart = scanNewCompleted()
         let pendingText = JS.trim(String(decoding: cleaned[min(pendingStart, cleaned.count)...], as: UTF8.self))
 
         if pendingText.isEmpty {
             if completedCount == 0 { return .empty() }
-            return OpenUIParser.buildResult(completed, firstId: firstId, wasIncomplete: false, statementCount: completedCount, paramMap: paramMap, rootName: rootName)
+            return OpenUIParser.buildResult(completed, wasIncomplete: false, statementCount: completedCount, paramMap: paramMap, rootName: rootName)
         }
 
         let (closed, wasIncomplete) = Statements.autoClose(pendingText)
         let raw = Statements.split(Lexer.tokenize(closed))
         if raw.isEmpty {
             if completedCount == 0 { return .empty(incomplete: wasIncomplete) }
-            return OpenUIParser.buildResult(completed, firstId: firstId, wasIncomplete: wasIncomplete, statementCount: completedCount, paramMap: paramMap, rootName: rootName)
+            return OpenUIParser.buildResult(completed, wasIncomplete: wasIncomplete, statementCount: completedCount, paramMap: paramMap, rootName: rootName)
         }
 
         // New IDs render progressively; existing IDs are only replaced once the pending
         // statement no longer needs automatic closing.
         var all = completed
+        var pendingIds = Set<String>()
         for statement in raw {
             if completed.contains(statement.id) && wasIncomplete { continue }
             all.set(OpenUIParser.classify(statement, ExpressionParser.parse(statement.tokens)))
+            pendingIds.insert(statement.id)
         }
-        let entryFallback = firstId.isEmpty ? raw[0].id : firstId
-        return OpenUIParser.buildResult(all, firstId: entryFallback, wasIncomplete: wasIncomplete, statementCount: completedCount + raw.count, paramMap: paramMap, rootName: rootName)
+        let tail = complete ? nil : Self.partialStateName(buffer: buffer, pendingText: pendingText)
+        return OpenUIParser.buildResult(
+            all,
+            wasIncomplete: wasIncomplete,
+            statementCount: completedCount + raw.count,
+            paramMap: paramMap,
+            rootName: rootName,
+            partialReference: tail.map { OpenUIParser.PartialReference(name: $0, statementIds: pendingIds) }
+        )
+    }
+
+    /// A `$name` ending the raw text may still be growing (`$d` of `$dishes`): it isn't declared
+    /// unless the same name already appears in full in the pending text.
+    static func partialStateName(buffer: String, pendingText: String) -> String? {
+        let scalars = Array(buffer.unicodeScalars)
+        var start = scalars.count
+        while start > 0, isWordCharacter(scalars[start - 1]) { start -= 1 }
+        guard start > 0, start < scalars.count, scalars[start - 1] == "$" else { return nil }
+        let tail = "$" + String(String.UnicodeScalarView(scalars[start...]))
+        guard pendingText.hasSuffix(tail) else { return nil }
+        let before = Array(pendingText.unicodeScalars.dropLast(tail.unicodeScalars.count))
+        let needle = Array(tail.unicodeScalars)
+        var index = 0
+        while index + needle.count <= before.count {
+            if Array(before[index..<index + needle.count]) == needle {
+                let next = index + needle.count
+                if next >= before.count || !isWordCharacter(before[next]) { return nil }
+            }
+            index += 1
+        }
+        return tail
+    }
+
+    private static func isWordCharacter(_ scalar: Unicode.Scalar) -> Bool {
+        scalar == "_" || ("a"..."z").contains(scalar) || ("A"..."Z").contains(scalar) || ("0"..."9").contains(scalar)
     }
 }

@@ -64,13 +64,23 @@ public struct ElementNode: Sendable, Hashable {
 
 /// Machine-readable validation error codes.
 @available(iOS 17.0, macOS 14.0, *)
-public enum ValidationErrorCode: String, Sendable, Hashable {
-    case missingRequired = "missing-required"
-    case nullRequired = "null-required"
-    case unknownComponent = "unknown-component"
-    case inlineReserved = "inline-reserved"
-    case excessArgs = "excess-args"
-    case typeMismatch = "type-mismatch"
+public struct ValidationErrorCode: RawRepresentable, Sendable, Hashable, ExpressibleByStringLiteral, CustomStringConvertible {
+    public let rawValue: String
+
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public init(stringLiteral value: String) { rawValue = value }
+    public var description: String { rawValue }
+
+    public static let missingRequired: ValidationErrorCode = "missing-required"
+    public static let nullRequired: ValidationErrorCode = "null-required"
+    public static let unknownComponent: ValidationErrorCode = "unknown-component"
+    public static let inlineReserved: ValidationErrorCode = "inline-reserved"
+    public static let excessArgs: ValidationErrorCode = "excess-args"
+    public static let typeMismatch: ValidationErrorCode = "type-mismatch"
+    /// An `@Name(...)` call that is not a built-in or one of the library's functions or actions.
+    public static let unknownFunction: ValidationErrorCode = "unknown-function"
+    /// No entry statement, or one that doesn't render a component.
+    public static let noRoot: ValidationErrorCode = "no-root"
 }
 
 /// A prop validation error. Components with unsalvageable props are dropped from the tree.
@@ -85,6 +95,8 @@ public struct ValidationError: Sendable, Hashable, CustomStringConvertible {
     public var message: String
     /// Statement that triggered the error.
     public var statementId: String?
+    /// Whether the program still renders despite it, such as a `no-root` fallback entry.
+    public var isWarning = false
 
     public var description: String { message }
 }
@@ -145,6 +157,8 @@ public struct MutationStatementInfo: Sendable, Hashable {
 public struct ParseResult: Sendable, Hashable {
     /// The root element, or `nil` if nothing can be rendered yet.
     public var root: ElementNode?
+    /// Set when the entry picks a component at runtime, such as `root = $dark ? a : b`.
+    public var rootExpression: ASTNode?
     public var meta: ParseMeta
     /// `$variable` declarations mapped to their default values (in declaration order).
     public var stateDeclarations: OpenUIObject
@@ -173,6 +187,7 @@ public struct ParseResult: Sendable, Hashable {
                 "message": .string(error.message)
             ]
             if let statementId = error.statementId { object["statementId"] = .string(statementId) }
+            if error.isWarning { object["severity"] = "warning" }
             return .object(object)
         }
         let queries: [OpenUIValue] = queryStatements.map { query in
@@ -194,19 +209,19 @@ public struct ParseResult: Sendable, Hashable {
                 "argsAST": ast(mutation.argsAST)
             ]
         }
-        return [
-            "root": root?.jsonValue ?? .null,
-            "meta": [
-                "incomplete": .bool(meta.incomplete),
-                "unresolved": .array(meta.unresolved.map(OpenUIValue.string)),
-                "orphaned": .array(meta.orphaned.map(OpenUIValue.string)),
-                "statementCount": .number(Double(meta.statementCount)),
-                "errors": .array(errors)
-            ],
-            "stateDeclarations": .object(stateDeclarations.mapValues(\.plainJSON)),
-            "queryStatements": .array(queries),
-            "mutationStatements": .array(mutations)
+        var result: OpenUIObject = ["root": root?.jsonValue ?? .null]
+        if let rootExpression { result["rootExpression"] = rootExpression.jsonValue }
+        result["meta"] = [
+            "incomplete": .bool(meta.incomplete),
+            "unresolved": .array(meta.unresolved.map(OpenUIValue.string)),
+            "orphaned": .array(meta.orphaned.map(OpenUIValue.string)),
+            "statementCount": .number(Double(meta.statementCount)),
+            "errors": .array(errors)
         ]
+        result["stateDeclarations"] = .object(stateDeclarations.mapValues(\.plainJSON))
+        result["queryStatements"] = .array(queries)
+        result["mutationStatements"] = .array(mutations)
+        return .object(result)
     }
 }
 
@@ -228,11 +243,38 @@ public struct ParamDef: Sendable, Hashable {
     }
 }
 
-/// Component name → ordered parameters, preserving library order.
+/// A call the runtime evaluates, with its positional parameters: a built-in or library function,
+/// or an action step.
+@available(iOS 17.0, macOS 14.0, *)
+public struct CallDef: Sendable, Hashable {
+    /// Whether a call computes a value or is an action step.
+    public enum Kind: String, Sendable, Hashable {
+        case function
+        case action
+    }
+
+    public var kind: Kind
+    public var params: [ParamDef]
+    /// Built-ins coerce their arguments, so they aren't checked against the parameters.
+    public var isBuiltin: Bool
+    /// Lazy calls (`@Each`, `Action`, `@Run`, `@Set`, `@Reset`) get their arguments unevaluated.
+    public var isLazy: Bool
+
+    public init(kind: Kind, params: [ParamDef], isBuiltin: Bool = false, isLazy: Bool = false) {
+        self.kind = kind
+        self.params = params
+        self.isBuiltin = isBuiltin
+        self.isLazy = isLazy
+    }
+}
+
+/// Component name → ordered parameters, preserving library order, plus the calls programs can make.
 @available(iOS 17.0, macOS 14.0, *)
 public struct ParamMap: Sendable, Hashable {
     public private(set) var componentNames: [String] = []
     private var params: [String: [ParamDef]] = [:]
+    /// The built-in functions and steps, and the library's own functions and actions.
+    public var callDefs: [String: CallDef] = Builtins.calls
 
     public init() {}
 

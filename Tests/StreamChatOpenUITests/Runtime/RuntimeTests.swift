@@ -135,6 +135,25 @@ struct QueryManagerTests {
         #expect(provider.calls.count == 2)
     }
 
+    @Test func togglingBackToCachedArgumentsWhileAFetchIsInFlightStopsLoading() async {
+        let provider = RecordingToolProvider { _, args, _ in
+            if args["q"] == "b" { try await Task.sleep(nanoseconds: 150_000_000) }
+            return ["rows": [args["q"] ?? "none"]]
+        }
+        let manager = QueryManager(toolProvider: provider)
+        manager.evaluateQueries([node("data", args: ["q": "a"], deps: ["$q": "a"])])
+        #expect(await waitUntil { manager.result(for: "data") == ["rows": ["a"]] })
+
+        manager.evaluateQueries([node("data", args: ["q": "b"], deps: ["$q": "b"])])
+        manager.evaluateQueries([node("data", args: ["q": "a"], deps: ["$q": "a"])])
+
+        #expect(!manager.isLoading("data"))
+        #expect(manager.result(for: "data") == ["rows": ["a"]])
+        try? await Task.sleep(nanoseconds: 250_000_000)
+        #expect(!manager.isAnyLoading, "the superseded fetch finishing doesn't leave it loading")
+        #expect(manager.result(for: "data") == ["rows": ["a"]])
+    }
+
     @Test func invalidateRefetchesAndQueuesWhileInFlight() async {
         let provider = RecordingToolProvider { _, _, count in
             try await Task.sleep(nanoseconds: 50_000_000)
@@ -185,7 +204,7 @@ struct QueryManagerTests {
         }
         let manager = QueryManager(toolProvider: provider)
         manager.registerMutations([.init(statementId: "create", toolName: "create"), .init(statementId: "broken", toolName: "fail")])
-        #expect(manager.mutationResult(for: "create") == ["status": "idle"])
+        #expect(manager.mutationResult(for: "create") == ["status": "idle", "data": .null, "error": .null])
 
         async let first = manager.fireMutation("create", arguments: ["title": "A"])
         try? await Task.sleep(nanoseconds: 5_000_000)

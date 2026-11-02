@@ -41,7 +41,7 @@ public final class OpenUIRenderer: AIUIRenderer {
     /// The fence the agent writes its program in, and the instructions its model needs to write
     /// one with the app's components.
     public func capabilities(components: [any AIUIComponent]) -> [String: RawJSON] {
-        let definitions = Self.placeableSchemas(of: components, in: library).map { ComponentDefinition($0.schema, renderer: nil) }
+        let definitions = Self.placeableSchemas(of: components, in: library).map { OpenUIComponentDefinition($0.schema, renderer: nil) }
         let library = library.addingContent(definitions)
         return ["fence": .string("openui-lang"), "instructions": .string(library.systemPrompt())]
     }

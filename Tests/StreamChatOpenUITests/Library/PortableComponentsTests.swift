@@ -60,7 +60,7 @@ struct PortableComponentsTests {
     }
 
     @Test func aDefinitionNeedsAName() {
-        #expect(throws: PortableComponentError.self) {
+        #expect(throws: OpenUIPortableComponentError.self) {
             try ComponentSchema(portableDefinition: ["description": "No name"])
         }
     }
@@ -68,7 +68,7 @@ struct PortableComponentsTests {
     @Test func addedContentIsPlaceableWhereTheLibraryContentGoes() throws {
         let schema = try ComponentSchema(portableDefinition: Self.placeCard)
 
-        let library = ComponentLibrary.openUIChat.addingContent([ComponentDefinition(schema, renderer: nil)], notes: ["Use it for places."])
+        let library = ComponentLibrary.openUIChat.addingContent([OpenUIComponentDefinition(schema, renderer: nil)], notes: ["Use it for places."])
 
         #expect(library.component(named: "PlaceCard") != nil)
         #expect(library.componentGroups.last?.name == "App components")
@@ -77,5 +77,73 @@ struct PortableComponentsTests {
         #expect(result.meta.errors.isEmpty)
         #expect(result.root?.props["children"]?.arrayValue?.first?.elementValue?.typeName == "PlaceCard")
         #expect(library.systemPrompt().contains("PlaceCard(title: string, summary?: string"))
+    }
+
+    @Test func descriptionsStayOnOneLine() throws {
+        let schema = try ComponentSchema(portableDefinition: [
+            "name": "note",
+            "description": "First line\nsecond  line\n",
+            "parameters": ["type": "object", "properties": ["text": ["type": "string", "description": "The\ttext"]]]
+        ])
+
+        #expect(schema.description == "First line second line. text: The text.")
+    }
+
+    @Test func aNameRepeatedInXOrderIsOneProp() throws {
+        let schema = try ComponentSchema(portableDefinition: [
+            "name": "pair",
+            "parameters": [
+                "type": "object",
+                "properties": ["a": ["type": "string"], "b": ["type": "number"]],
+                "x-order": ["b", "a", "b"]
+            ]
+        ])
+
+        #expect(schema.props.map(\.name) == ["b", "a"])
+    }
+
+    @Test func readsNullableTypesDefaultsAndOtherEnums() throws {
+        let schema = try ComponentSchema(portableDefinition: [
+            "name": "settings",
+            "parameters": [
+                "type": "object",
+                "properties": [
+                    "title": ["type": ["string", "null"]],
+                    "count": ["type": "integer", "default": 3],
+                    "level": ["type": "number", "enum": [1, 2, 3]],
+                    "mixed": ["enum": ["a", 1]],
+                    "kind": ["const": "place"],
+                    "either": ["anyOf": [["type": "string"], ["type": "number"], ["type": "null"]]],
+                    "maybe": ["oneOf": [["type": "boolean"], ["type": "null"]]],
+                    "scores": ["type": "object", "additionalProperties": ["type": "number"]]
+                ],
+                "required": ["count"]
+            ]
+        ])
+        let props = Dictionary(uniqueKeysWithValues: schema.props.map { ($0.name, $0) })
+
+        #expect(props["title"]?.type == .string)
+        #expect(props["count"]?.type == .number)
+        #expect(props["count"]?.defaultValue == 3)
+        #expect(props["count"]?.isOptional == true)
+        #expect(schema.jsonSchema["required"] == ["count"])
+        #expect(props["level"]?.type == .number)
+        #expect(props["mixed"]?.type == .any)
+        #expect(props["kind"]?.type == .literal("place"))
+        #expect(props["either"]?.type == .union([.string, .number]))
+        #expect(props["maybe"]?.type == .boolean)
+        #expect(props["scores"]?.type == .record(.number))
+    }
+
+    @Test func aDefaultReachesTheParsedProps() throws {
+        let schema = try ComponentSchema(portableDefinition: [
+            "name": "counter",
+            "parameters": ["type": "object", "properties": ["count": ["type": "number", "default": 3]]]
+        ])
+        let library = ComponentLibrary(root: "Counter", components: [OpenUIComponentDefinition(schema, renderer: nil)])
+
+        let result = library.parser.parse("root = Counter()")
+
+        #expect(result.root?.props["count"] == 3)
     }
 }

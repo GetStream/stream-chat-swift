@@ -13,15 +13,29 @@ public struct EvaluationContext {
     public var resolveRef: (String) -> OpenUIValue?
     /// Extra scope used when evaluating reactive setters (`$value`).
     public var extraScope: [String: OpenUIValue]?
+    /// The library's functions, called as `@Name(...)`.
+    public var functions: [String: OpenUIFunction]
+    /// The library's custom actions, used as `@Name(...)` steps.
+    public var actions: [String: OpenUICustomAction]
+    /// Reports a runtime error, such as a library function call that evaluated to null.
+    public var reportError: ((String) -> Void)?
+    // Reports an error of one prop of an element, which `PropEvaluator` turns into `reportError`.
+    var reportPropError: ((_ component: String, _ statementId: String?, _ prop: String, _ message: String) -> Void)?
 
     public init(
         getState: @escaping (String) -> OpenUIValue?,
         resolveRef: @escaping (String) -> OpenUIValue?,
-        extraScope: [String: OpenUIValue]? = nil
+        extraScope: [String: OpenUIValue]? = nil,
+        functions: [String: OpenUIFunction] = [:],
+        actions: [String: OpenUICustomAction] = [:],
+        reportError: ((String) -> Void)? = nil
     ) {
         self.getState = getState
         self.resolveRef = resolveRef
         self.extraScope = extraScope
+        self.functions = functions
+        self.actions = actions
+        self.reportError = reportError
     }
 }
 
@@ -98,15 +112,24 @@ public enum Evaluator {
             }
             return .object(object)
 
-        case .comp(let name, let args, let mappedProps):
+        case .comp(let name, let args, let mappedProps, _):
+            // Built-ins coerce their args, so they skip validation. Lazy ones get them unevaluated.
             if Builtins.lazyNames.contains(name) {
                 return evaluateLazyBuiltin(name, args, context, schema)
             }
             if let builtin = Builtins.definitionsByName[name] {
-                return builtin.function(args.map { evaluate($0, context) })
+                let params = Builtins.functionParams[name] ?? []
+                let named = mappedProps ?? Materializer.nameArgs(args, params.map { ParamDef(name: $0, required: false) })
+                return builtin.function(params.map { param in named.first { $0.key == param }.flatMap { evaluate($0.value, context) } })
             }
             if Builtins.actionNames.contains(name) {
-                return evaluateActionCall(name, args, context)
+                return evaluateActionCall(name, args, mappedProps, context)
+            }
+            if let function = context.functions[name] {
+                return callFunction(function, args, mappedProps, context)
+            }
+            if let action = context.actions[name] {
+                return customActionPlan(action, args, mappedProps, context)
             }
             guard let mappedProps else {
                 // After materialization only builtins and mapped catalog calls reach here.
@@ -242,6 +265,10 @@ public enum Evaluator {
         var evaluated = element
         var props = OpenUIObject()
         for (key, value) in element.props.entries {
+            var context = context
+            if let reportPropError = context.reportPropError {
+                context.reportError = { reportPropError(element.typeName, element.statementId, key, $0) }
+            }
             let isReactive = schema.isReactiveProp(component: element.typeName, prop: key)
             props[key] = PropEvaluator.evaluateProp(value, context, schema, isReactive: isReactive) { child in
                 evaluateElementInline(child, context, schema)
@@ -253,51 +280,124 @@ public enum Evaluator {
 
     // MARK: - Actions
 
-    private static func evaluateActionCall(_ name: String, _ args: [ASTNode], _ context: EvaluationContext) -> OpenUIValue {
+    // MARK: - Library functions and custom actions
+
+    /// A library function's or action's args by name. An explicit null for an optional param is
+    /// left out, so its default applies.
+    private static func callArgs(_ params: [PropField], _ args: [ASTNode], _ mappedProps: [ASTEntry]?, _ context: EvaluationContext) -> OpenUIObject {
+        let named = mappedProps ?? Materializer.nameArgs(args, params.map { ParamDef(name: $0.name, required: false) })
+        var result = OpenUIObject()
+        for entry in named {
+            let value = evaluate(entry.value, context)
+            let isOptional = params.first { $0.name == entry.key }?.isOptional ?? true
+            if JS.isNullish(value) && isOptional { continue }
+            result[entry.key] = value ?? .null
+        }
+        return result
+    }
+
+    /// Whether a required arg without a default is missing, such as `@Percent($p)` with `$p` unset.
+    private static func missesRequired(_ args: OpenUIObject, _ params: [PropField]) -> Bool {
+        params.contains { param in
+            !param.isOptional && JS.isNullish(args[param.name]) && param.defaultValue == nil
+        }
+    }
+
+    /// Checks a value against a schema, reporting each problem. Returns `nil` when it is invalid,
+    /// or, when `strict`, when anything was reported.
+    private static func checkValue(_ value: OpenUIValue, _ schema: OpenUIValue, name: String, path: String, _ context: EvaluationContext, strict: Bool = false) -> OpenUIValue? {
+        let validation = MaterializeContext(symbols: [:], catalog: nil, partial: false, currentStatementId: nil, unreached: nil)
+        var checked = value
+        let invalid = SchemaValidation.validate(&checked, schema: schema, component: name, path: path, context: validation)
+        for error in validation.errors {
+            context.reportError?("@\(name): \(error.message)")
+        }
+        if invalid || (strict && !validation.errors.isEmpty) { return nil }
+        return checked
+    }
+
+    /// `@Percent(3, 4)` → the function's result for `part: 3, total: 4`; bad args or result, or a
+    /// throw, give null.
+    private static func callFunction(_ function: OpenUIFunction, _ args: [ASTNode], _ mappedProps: [ASTEntry]?, _ context: EvaluationContext) -> OpenUIValue {
+        let raw = callArgs(function.params, args, mappedProps, context)
+        if missesRequired(raw, function.params) { return .null }
+        guard case .object(let checked)? = checkValue(.object(raw), function.paramsSchema, name: function.name, path: "", context) else {
+            return .null
+        }
+        let result: OpenUIValue
+        do {
+            result = try function.implementation(checked)
+        } catch {
+            context.reportError?("@\(function.name) threw: \(error.localizedDescription)")
+            return .null
+        }
+        guard let returns = function.returns else { return result }
+        return checkValue(result, returns.jsonSchema, name: function.name, path: "/returns", context) ?? .null
+    }
+
+    /// A custom action call is a one-step plan. Any invalid arg gives an empty plan, a no-op, even an
+    /// optional one with a default: an action never runs with a value the model didn't write.
+    private static func customActionPlan(_ action: OpenUICustomAction, _ args: [ASTNode], _ mappedProps: [ASTEntry]?, _ context: EvaluationContext) -> OpenUIValue {
+        let raw = callArgs(action.params, args, mappedProps, context)
+        if missesRequired(raw, action.params) { return ActionPlan.empty }
+        guard let params = checkValue(.object(raw), action.paramsSchema, name: action.name, path: "", context, strict: true) else {
+            return ActionPlan.empty
+        }
+        return ActionPlan.plan([ActionPlan.customStep(name: action.name, params: params)])
+    }
+
+    // MARK: - Actions
+
+    /// A step call is a one-step plan and an invalid step an empty plan; `Action([...])` flattens.
+    private static func evaluateActionCall(_ name: String, _ args: [ASTNode], _ mappedProps: [ASTEntry]?, _ context: EvaluationContext) -> OpenUIValue {
+        if name == "Action" {
+            let list = args.isEmpty ? .array([]) : evaluate(args[0], context)
+            return ActionPlan.flatten(list?.arrayValue ?? [])
+        }
+        let step: OpenUIValue?
         switch name {
-        case "Action":
-            let stepsArgument = args.isEmpty ? .array([]) : evaluate(args[0], context)
-            guard case .array(let rawSteps)? = stepsArgument else { return ["steps": .array([])] }
-            let steps = rawSteps.filter { step in
-                switch step {
-                case .object(let object): return object.contains("type")
-                case .element: return true
-                default: return false
-                }
-            }
-            return ["steps": .array(steps)]
-
         case "Run":
-            guard let first = args.first, case .runtimeRef(let statementId, let refType) = first else { return .null }
-            return ["type": .string(ActionStepType.run), "statementId": .string(statementId), "refType": .string(refType.rawValue)]
-
-        case "ToAssistant":
-            let message = args.isEmpty ? "" : stringValue(evaluate(args[0], context))
-            var step: OpenUIObject = ["type": .string(ActionStepType.continueConversation), "message": .string(message)]
-            if args.count > 1 {
-                step["context"] = .string(stringValue(evaluate(args[1], context)))
+            if let first = args.first, case .runtimeRef(let statementId, let refType) = first {
+                step = ["type": .string(ActionStepType.run), "statementId": .string(statementId), "refType": .string(refType.rawValue)]
+            } else {
+                step = nil
             }
-            return .object(step)
-
+        case "ToAssistant":
+            let named = stepArgs(name, args, mappedProps, context)
+            var object: OpenUIObject = ["type": .string(ActionStepType.continueConversation), "message": .string(stringValue(named["message"]))]
+            // The context may be any value and is passed through unchanged; null means none.
+            if let assistantContext = named["context"], !JS.isNullish(assistantContext) {
+                object["context"] = assistantContext
+            }
+            step = .object(object)
         case "OpenUrl":
-            let url = args.isEmpty ? "" : stringValue(evaluate(args[0], context))
-            return ["type": .string(ActionStepType.openURL), "url": .string(url)]
-
+            let named = stepArgs(name, args, mappedProps, context)
+            step = ["type": .string(ActionStepType.openURL), "url": .string(stringValue(named["url"]))]
         case "Set":
-            guard args.count >= 2, case .stateRef(let target) = args[0] else { return .null }
-            return ["type": .string(ActionStepType.set), "target": .string(target), "valueAST": .expression(args[1])]
-
+            if args.count >= 2, case .stateRef(let target) = args[0] {
+                step = ["type": .string(ActionStepType.set), "target": .string(target), "valueAST": .expression(args[1])]
+            } else {
+                step = nil
+            }
         case "Reset":
             let targets: [OpenUIValue] = args.compactMap { arg in
                 if case .stateRef(let name) = arg { return .string(name) }
                 return nil
             }
-            guard !targets.isEmpty else { return .null }
-            return ["type": .string(ActionStepType.reset), "targets": .array(targets)]
-
+            step = targets.isEmpty ? nil : ["type": .string(ActionStepType.reset), "targets": .array(targets)]
         default:
-            return .null
+            step = nil
         }
+        return ActionPlan.plan(step.map { [$0] } ?? [])
+    }
+
+    private static func stepArgs(_ name: String, _ args: [ASTNode], _ mappedProps: [ASTEntry]?, _ context: EvaluationContext) -> OpenUIObject {
+        let params = (Builtins.stepParams[name]?.params ?? []).map { ParamDef(name: $0, required: false) }
+        var result = OpenUIObject()
+        for entry in mappedProps ?? Materializer.nameArgs(args, params) {
+            result[entry.key] = evaluate(entry.value, context) ?? .null
+        }
+        return result
     }
 
     /// `String(value ?? "")`
@@ -380,11 +480,21 @@ public enum Evaluator {
             return .arr(elements.map { substituteRef($0, variableName, value) })
         case .obj(let entries):
             return .obj(entries.map { ASTEntry($0.key, substituteRef($0.value, variableName, value)) })
-        case .comp(let name, let args, let mappedProps):
+        case .comp(let name, let args, let mappedProps, let isFunction):
+            // An inner `@Each` with the same loop variable shadows this one in its template.
+            if Builtins.lazyNames.contains(name), args.count >= 3, args[1] == .ref(variableName) || args[1] == .str(variableName) {
+                return .comp(
+                    name: name,
+                    args: args.enumerated().map { index, arg in index == 0 ? substituteRef(arg, variableName, value) : arg },
+                    mappedProps: mappedProps,
+                    isFunction: isFunction
+                )
+            }
             return .comp(
                 name: name,
                 args: args.map { substituteRef($0, variableName, value) },
-                mappedProps: mappedProps?.map { ASTEntry($0.key, substituteRef($0.value, variableName, value)) }
+                mappedProps: mappedProps?.map { ASTEntry($0.key, substituteRef($0.value, variableName, value)) },
+                isFunction: isFunction
             )
         case .assign(let target, let expression):
             return .assign(target, substituteRef(expression, variableName, value))
@@ -397,12 +507,42 @@ public enum Evaluator {
 /// Prop evaluation shared by the inline and tree paths (port of `evaluate-prop.ts` / `evaluate-tree.ts`).
 @available(iOS 17.0, macOS 14.0, *)
 public enum PropEvaluator {
+    /// Evaluates `root`, or the component a runtime entry (`root = $t ? A : B`) picks, with the
+    /// runtime errors evaluation reports (upstream `evaluateRoot`).
+    static func evaluateRoot(_ result: ParseResult?, _ context: EvaluationContext, _ schema: ReactivePropResolver) -> (root: ElementNode?, errors: [OpenUIError]) {
+        let collector = RuntimeErrorCollector()
+        var context = context
+        context.reportPropError = { component, statementId, prop, message in
+            collector.errors.append(OpenUIError(
+                source: .runtime,
+                code: "runtime-error",
+                message: "Evaluating prop \"\(prop)\" on \(component) failed: \(message)",
+                statementId: statementId,
+                component: component,
+                hint: "Check the expression used for prop \"\(prop)\""
+            ))
+        }
+        if let root = result?.root {
+            return (evaluateElementProps(root, context, schema), collector.errors)
+        }
+        guard let rootExpression = result?.rootExpression else { return (nil, collector.errors) }
+        if case .element(let element)? = Evaluator.evaluate(rootExpression, context, schema) {
+            return (evaluateElementProps(element, context, schema), collector.errors)
+        }
+        collector.errors.append(OpenUIError(source: .runtime, code: "no-root", message: "root does not evaluate to a component", statementId: "root"))
+        return (nil, collector.errors)
+    }
+
     /// Evaluates every dynamic prop of an element tree into concrete values.
     public static func evaluateElementProps(_ element: ElementNode, _ context: EvaluationContext, _ schema: ReactivePropResolver) -> ElementNode {
         if element.hasDynamicProps == false { return element }
         var evaluated = element
         var props = OpenUIObject()
         for (key, value) in element.props.entries {
+            var context = context
+            if let reportPropError = context.reportPropError {
+                context.reportError = { reportPropError(element.typeName, element.statementId, key, $0) }
+            }
             let isReactive = schema.isReactiveProp(component: element.typeName, prop: key)
             props[key] = evaluateProp(value, context, schema, isReactive: isReactive) { child in
                 evaluateElementProps(child, context, schema)
@@ -415,6 +555,18 @@ public enum PropEvaluator {
     /// Evaluates a single prop value: AST nodes are resolved (or turned into reactive binding markers),
     /// nested elements recurse, action plans are preserved for click-time evaluation.
     static func evaluateProp(
+        _ value: OpenUIValue?,
+        _ context: EvaluationContext,
+        _ schema: ReactivePropResolver,
+        isReactive: Bool,
+        recurseElement: (ElementNode) -> ElementNode
+    ) -> OpenUIValue? {
+        let result = evaluatePropValue(value, context, schema, isReactive: isReactive, recurseElement: recurseElement)
+        // Only real calls make custom steps: a plan read from data loses them.
+        return ActionPlan.isPlan(result) ? result.map(ActionPlan.ownSteps) : result
+    }
+
+    private static func evaluatePropValue(
         _ value: OpenUIValue?,
         _ context: EvaluationContext,
         _ schema: ReactivePropResolver,
@@ -455,9 +607,8 @@ public enum PropEvaluator {
             return .element(recurseElement(element))
 
         case .object(let object):
-            // Action plans / steps are preserved for deferred (click-time) evaluation.
+            // Action plans are preserved for deferred (click-time) evaluation.
             if case .array? = object["steps"] { return value }
-            if object.contains("type") && object.contains("valueAST") { return value }
             let needsEvaluation = object.values.contains { nested in
                 switch nested {
                 case .array, .object, .element, .expression: return true
@@ -472,4 +623,9 @@ public enum PropEvaluator {
             return .object(result)
         }
     }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+private final class RuntimeErrorCollector {
+    var errors: [OpenUIError] = []
 }

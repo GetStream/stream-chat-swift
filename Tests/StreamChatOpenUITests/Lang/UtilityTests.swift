@@ -112,25 +112,74 @@ struct FormValidationTests {
 
 @Suite("Message envelope")
 struct MessageEnvelopeTests {
-    @Test func wrapsAndParsesContentAndContext() {
-        let message = MessageEnvelope.wrap(content: "Submit", context: ["User clicked: Submit", ["form": ["a": 1]]])
+    @Test func buildsAndParsesContentContextAndAttributes() {
+        let message = MessageEnvelope.build(
+            content: "Submit",
+            context: ["User clicked: Submit", ["form": ["a": 1]]],
+            attributes: ["library": "chat ui", "v": "1&2"],
+            end: true
+        )
+        #expect(message == "]]>openui:content?library=chat+ui&v=1%262\nSubmit\n]]>openui:context\n[\"User clicked: Submit\",{\"form\":{\"a\":1}}]\n]]>openui:end")
+
         let parsed = MessageEnvelope.parse(message)
+
         #expect(parsed.content == "Submit")
-        #expect(parsed.context == #"["User clicked: Submit",{"form":{"a":1}}]"#)
-        #expect(parsed.contentHeader == MessageEnvelope.contentMarker)
+        #expect(parsed.context == ["User clicked: Submit", ["form": ["a": 1]]])
+        #expect(parsed.attributes == ["library": "chat ui", "v": "1&2"])
+        #expect(parsed.isEnded)
     }
 
-    @Test func handlesPlainLegacyAndStreamingTails() {
+    @Test func aStringContextIsWrittenAsIsAndNonJSONContextReadsAsText() {
+        let message = MessageEnvelope.build(content: "x", context: "not json")
+
+        #expect(message == "]]>openui:content\nx\n]]>openui:context\nnot json")
+        #expect(MessageEnvelope.parse(message).context == "not json")
+        #expect(MessageEnvelope.build(content: "x", context: .null) == "]]>openui:content\nx")
+    }
+
+    @Test func plainAndLegacyMessagesRead() {
         #expect(MessageEnvelope.parse("root = Card([])").content == "root = Card([])")
+        #expect(MessageEnvelope.parse("root = Card([])").context == nil)
         let legacy = MessageEnvelope.parse("<content>root = Card([])</content><context>[1]</context>")
         #expect(legacy.content == "root = Card([])")
-        #expect(legacy.context == "[1]")
-        #expect(MessageEnvelope.parse("root = Card([])\n]]>openui:con").content == "root = Card([])")
-        let ended = MessageEnvelope.parse("]]>openui:content\nhello\n]]>openui:end")
-        #expect(ended.content == "hello")
-        #expect(ended.ended)
+        #expect(legacy.context == [1])
         #expect(MessageEnvelope.hasLangSyntax("text\nroot = Card([])"))
         #expect(!MessageEnvelope.hasLangSyntax("plain markdown"))
+    }
+
+    @Test func aCompleteMessageKeepsContentEndingInABracket() {
+        #expect(MessageEnvelope.parse("]]>openui:content\ncols = [\"a\", \"b\"]").content == "cols = [\"a\", \"b\"]")
+        #expect(MessageEnvelope.parse("text [1]").content == "text [1]")
+    }
+
+    @Test func streamingHoldsBackAMarkerCutMidLine() {
+        #expect(MessageEnvelope.parse("]]>openui:content\nroot = Card([])\n]]>openui:con", isStreaming: true).content == "root = Card([])")
+        #expect(MessageEnvelope.parse("]]>openui:content\nroot = Card([])\nmore").content == "root = Card([])\nmore")
+        #expect(MessageEnvelope.parse("]]>openui:content\nroot = Card([]) ]]>openui:con", isStreaming: true).content == "root = Card([]) ")
+    }
+
+    @Test func aRegeneratedResponseWins() {
+        let message = "]]>openui:content\nroot = Card([cut]]>openui:content\nroot = Card([])\n]]>openui:end"
+
+        let parsed = MessageEnvelope.parse(message)
+
+        #expect(parsed.content == "root = Card([])")
+        #expect(parsed.isEnded)
+    }
+
+    @Test func anEndMarkerMidLineStaysInTheContent() {
+        let parsed = MessageEnvelope.parse("]]>openui:content\nhello ]]>openui:end there")
+
+        #expect(parsed.content == "hello ]]>openui:end there")
+        #expect(!parsed.isEnded)
+    }
+
+    @Test func contextOfAnEarlierAttemptIsIgnored() {
+        let parsed = MessageEnvelope.parse("]]>openui:content\na\n]]>openui:context\n[1]\n]]>openui:end\n]]>openui:content\nb")
+
+        #expect(parsed.content == "b")
+        #expect(parsed.context == nil)
+        #expect(!parsed.isEnded)
     }
 }
 

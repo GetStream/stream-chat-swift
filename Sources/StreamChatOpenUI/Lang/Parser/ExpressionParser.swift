@@ -124,7 +124,9 @@ struct ExpressionParser {
             return .ref(name)
         case .builtinCall:
             if peek(1)?.kind == .lParen {
-                return parseCall()
+                let call = parseCall()
+                guard case .comp(let name, let args, let mappedProps, _) = call, !Builtins.isBuiltin(name) else { return call }
+                return .comp(name: name, args: args, mappedProps: mappedProps, isFunction: true)
             }
             advance()
             return .ref(token.text ?? "")

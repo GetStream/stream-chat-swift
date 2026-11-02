@@ -14,12 +14,14 @@ extension ComponentLibrary {
             root: root,
             components: components.map { definition in
                 guard let renderer = definition.renderer else { return definition }
-                return ComponentDefinition(definition.schema) { context in
+                return OpenUIComponentDefinition(definition.schema) { context in
                     renderer(context).aiUIEntrance()
                 }
             },
             componentGroups: componentGroups,
-            defaultPromptOptions: defaultPromptOptions
+            defaultPromptOptions: defaultPromptOptions,
+            functions: functions,
+            customActions: customActions
         )
     }
 }

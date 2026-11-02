@@ -23,9 +23,144 @@ enum Materializer {
         case .element(let element):
             return element.props.values.contains(where: containsDynamicValue)
         case .object(let object):
+            // A `{steps: [...]}` literal is evaluated too, so data can't pose as custom action steps.
+            if case .array? = object["steps"] { return true }
             return object.values.contains(where: containsDynamicValue)
         case .null, .bool, .number, .string:
             return false
+        }
+    }
+
+    // MARK: - Calls
+
+    static func callDefs(_ context: MaterializeContext) -> [String: CallDef] {
+        context.catalog?.callDefs ?? Builtins.calls
+    }
+
+    /// Calls the runtime evaluates, which stay AST: functions, steps and reserved calls.
+    static func isRuntimeCall(_ name: String, _ context: MaterializeContext) -> Bool {
+        callDefs(context)[name] != nil || Builtins.isReservedCall(name)
+    }
+
+    /// `[Num 1, Ref x]` with params `[a, b]` → `a: Num 1, b: Ref x`; extra args are dropped.
+    static func nameArgs(_ args: [ASTNode], _ params: [ParamDef]) -> [ASTEntry] {
+        zip(params, args).map { ASTEntry($0.name, $1) }
+    }
+
+    /// Maps a library call's args to its params and checks the literal ones like props. Returns
+    /// `nil` when the call is invalid: it then evaluates to null, or is a no-op for an action.
+    static func mapCallArgs(_ name: String, _ args: [ASTNode], _ def: CallDef, _ context: MaterializeContext) -> [ASTEntry]? {
+        let params = def.params
+        if args.count > params.count {
+            SchemaValidation.push(context, component: name, path: "", issue: .excessArgs(declared: params.count, got: args.count))
+        }
+        var mapped = nameArgs(args, params)
+        var invalid = false
+        let errorsBefore = context.errors.count
+        for param in params {
+            let index = mapped.firstIndex { $0.key == param.name }
+            var literal: OpenUIValue?
+            if let index {
+                guard let value = mapped[index].value.literalValue else { continue }
+                literal = value
+            }
+            guard let value = literal, value != .null else {
+                if !param.required || param.defaultValue != nil { continue }
+                let signature = SchemaValidation.paramsSignature(component: name, params: params)
+                SchemaValidation.push(
+                    context,
+                    component: name,
+                    path: "/\(param.name)",
+                    issue: index == nil ? .missingRequired(signature: signature) : .nullRequired(signature: signature)
+                )
+                invalid = true
+                continue
+            }
+            guard let schema = param.schema, let index else { continue }
+            var next = value
+            if SchemaValidation.validate(&next, schema: schema, component: name, path: "/\(param.name)", context: context) {
+                if let defaultValue = param.defaultValue {
+                    next = defaultValue
+                } else if param.required {
+                    invalid = true
+                    continue
+                } else {
+                    mapped.remove(at: index)
+                    continue
+                }
+            }
+            if next != value {
+                mapped[index].value = ASTNode(literal: next)
+            }
+        }
+        // An action never runs with a value the model didn't write.
+        if def.kind == .action && context.errors.count > errorsBefore { invalid = true }
+        return invalid ? nil : mapped
+    }
+
+    /// `@Percent(3, total)` → `mappedProps` `part: Num 3, total: <total AST>`. An invalid library
+    /// function is null, and an invalid action step an empty plan.
+    private static func materializeCall(
+        _ name: String,
+        _ args: [ASTNode],
+        _ existingMappedProps: [ASTEntry]?,
+        _ isFunction: Bool,
+        _ context: MaterializeContext,
+        materializeArg: (ASTNode) -> ASTNode
+    ) -> ASTNode {
+        let recursed = args.map(materializeArg)
+        guard let def = callDefs(context)[name], !def.isLazy else {
+            return .comp(name: name, args: recursed, mappedProps: existingMappedProps, isFunction: isFunction)
+        }
+        let mapped = def.isBuiltin ? nameArgs(recursed, def.params) : mapCallArgs(name, recursed, def, context)
+        if let mapped {
+            return .comp(name: name, args: recursed, mappedProps: mapped, isFunction: isFunction)
+        }
+        return def.kind == .action ? .call("Action", [.arr([])]) : .null
+    }
+
+    /// Names the args of the calls inside a `Query` or `Mutation`'s args, such as
+    /// `Query("s", {n: @Count(rows)})`. Literal library args are checked like props; an invalid
+    /// call keeps its raw names and is null at runtime.
+    static func nameRawCallArgs(_ args: [ASTNode], _ context: MaterializeContext, statementId: String) -> [ASTNode] {
+        let previousStatementId = context.currentStatementId
+        context.currentStatementId = statementId
+        defer { context.currentStatementId = previousStatementId }
+        return args.map { nameCallArgs($0, context) }
+    }
+
+    private static func nameCallArgs(_ node: ASTNode, _ context: MaterializeContext) -> ASTNode {
+        switch node {
+        case .comp(let name, let args, let mappedProps, let isFunction):
+            guard let def = callDefs(context)[name], !def.isLazy else {
+                return .comp(
+                    name: name,
+                    args: args.map { nameCallArgs($0, context) },
+                    mappedProps: mappedProps?.map { ASTEntry($0.key, nameCallArgs($0.value, context)) },
+                    isFunction: isFunction
+                )
+            }
+            let checked = def.isBuiltin ? nil : mapCallArgs(name, args, def, context)
+            let named = (checked ?? nameArgs(args, def.params)).map { ASTEntry($0.key, nameCallArgs($0.value, context)) }
+            return .comp(name: name, args: args.map { nameCallArgs($0, context) }, mappedProps: named, isFunction: isFunction)
+        case .arr(let elements):
+            return .arr(elements.map { nameCallArgs($0, context) })
+        case .obj(let entries):
+            return .obj(entries.map { ASTEntry($0.key, nameCallArgs($0.value, context)) })
+        case .binary(let op, let left, let right):
+            return .binary(op, nameCallArgs(left, context), nameCallArgs(right, context))
+        case .unary(let op, let operand):
+            return .unary(op, nameCallArgs(operand, context))
+        case .ternary(let condition, let then, let otherwise):
+            return .ternary(nameCallArgs(condition, context), nameCallArgs(then, context), nameCallArgs(otherwise, context))
+        case .member(let object, let field):
+            return .member(nameCallArgs(object, context), field)
+        case .index(let object, let index):
+            return .index(nameCallArgs(object, context), nameCallArgs(index, context))
+        case .assign(let target, let value):
+            return .assign(target, nameCallArgs(value, context))
+        case .str, .num, .bool, .null, .ref, .placeholder, .stateRef, .runtimeRef:
+            return node
         }
     }
 
@@ -48,7 +183,7 @@ enum Materializer {
         }
         context.markReached(name)
 
-        if case .comp(let callee, _, _) = target, Builtins.isReservedCall(callee) {
+        if case .comp(let callee, _, _, _) = target, Builtins.isReservedCall(callee) {
             let node = ASTNode.runtimeRef(name, refType: callee == Builtins.mutation ? .mutation : .query)
             return mode == .expression ? .expression(node) : .value(.expression(node))
         }
@@ -77,7 +212,7 @@ enum Materializer {
     /// For lazy builtins like `@Each(array, varName, template)`, scopes the loop variable while
     /// materializing so template references resolve at runtime. Returns `nil` otherwise.
     private static func materializeLazyBuiltin(_ name: String, _ args: [ASTNode], _ context: MaterializeContext, scopedRefs: Set<String>) -> ASTNode? {
-        guard Builtins.lazyNames.contains(name), args.count >= 3 else { return nil }
+        guard let def = callDefs(context)[name], def.kind == .function, def.isLazy, args.count >= 3 else { return nil }
         let variableName: String
         switch args[1] {
         case .ref(let ref): variableName = ref
@@ -110,14 +245,20 @@ enum Materializer {
         case .placeholder:
             return node
 
-        case .comp(let name, let args, let existingMappedProps):
+        case .comp(let name, let args, let existingMappedProps, let isFunction):
+            if isFunction && !isRuntimeCall(name, context) {
+                SchemaValidation.push(context, component: name, path: "", issue: .unknownFunction)
+                return .null
+            }
             if let lazy = materializeLazyBuiltin(name, args, context, scopedRefs: scopedRefs) {
                 return lazy
             }
-            let recursed = args.map { materializeExpression($0, context, scopedRefs: scopedRefs) }
-            if Builtins.isBuiltin(name) || Builtins.isReservedCall(name) {
-                return .comp(name: name, args: recursed, mappedProps: existingMappedProps)
+            if isRuntimeCall(name, context) {
+                return materializeCall(name, args, existingMappedProps, isFunction, context) {
+                    materializeExpression($0, context, scopedRefs: scopedRefs)
+                }
             }
+            let recursed = args.map { materializeExpression($0, context, scopedRefs: scopedRefs) }
             if let params = context.catalog?[name] {
                 var mappedProps: [ASTEntry] = []
                 for (index, param) in params.enumerated() where index < recursed.count {
@@ -206,7 +347,21 @@ enum Materializer {
             }
             return .object(object)
 
-        case .comp(let name, let args, _):
+        case .comp(let name, let args, let mappedProps, let isFunction):
+            if isFunction && !isRuntimeCall(name, context) {
+                SchemaValidation.push(context, component: name, path: "", issue: .unknownFunction)
+                return .null
+            }
+            if Builtins.isReservedCall(name) {
+                SchemaValidation.push(context, component: name, path: "", issue: .inlineReserved)
+                return .null
+            }
+            if isRuntimeCall(name, context) {
+                if let lazy = materializeLazyBuiltin(name, args, context, scopedRefs: []) {
+                    return .expression(lazy)
+                }
+                return .expression(materializeCall(name, args, mappedProps, isFunction, context) { materializeExpression($0, context) })
+            }
             return materializeComponent(name, args, context)
 
         case .stateRef, .runtimeRef, .binary, .unary, .ternary, .member, .index, .assign:
@@ -215,18 +370,6 @@ enum Materializer {
     }
 
     private static func materializeComponent(_ name: String, _ args: [ASTNode], _ context: MaterializeContext) -> OpenUIValue {
-        if Builtins.isBuiltin(name) {
-            if let lazy = materializeLazyBuiltin(name, args, context, scopedRefs: []) {
-                return .expression(lazy)
-            }
-            return .expression(.comp(name: name, args: args.map { materializeExpression($0, context) }, mappedProps: nil))
-        }
-
-        if Builtins.isReservedCall(name) {
-            SchemaValidation.push(context, component: name, path: "", issue: .inlineReserved)
-            return .null
-        }
-
         guard let params = context.catalog?[name] else {
             SchemaValidation.push(context, component: name, path: "", issue: .unknownComponent(available: context.catalog?.componentNames))
             return .null

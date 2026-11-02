@@ -68,6 +68,9 @@ public final class OpenUIRuntime {
     @ObservationIgnored private var lastErrorKey = ""
     @ObservationIgnored private var isRecomputing = false
     @ObservationIgnored private var needsRecompute = false
+    @ObservationIgnored private var runtimeErrors: [OpenUIError] = []
+    @ObservationIgnored private let functions: [String: OpenUIFunction]
+    @ObservationIgnored private let customActions: [String: OpenUICustomAction]
 
     /// - Parameters:
     ///   - library: The component library the model was prompted with.
@@ -80,6 +83,8 @@ public final class OpenUIRuntime {
         self.queryManager = QueryManager(toolProvider: toolProvider)
         self.streamParser = library.makeStreamParser()
         self.initialState = initialState
+        self.functions = Dictionary(library.functions.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })
+        self.customActions = Dictionary(library.customActions.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })
         store.onChange = { [weak self] key in self?.storeDidChange(key) }
         queryManager.onChange = { [weak self] in self?.queryManagerDidChange() }
     }
@@ -94,9 +99,10 @@ public final class OpenUIRuntime {
         self.response = response
         self.isStreaming = isStreaming
 
-        if responseChanged || parseResult == nil {
+        // The end of the stream completes a `$name` that was still streaming in.
+        if responseChanged || streamingChanged || parseResult == nil {
             if let response, !response.isEmpty {
-                parseResult = streamParser.set(response)
+                parseResult = streamParser.set(response, complete: !isStreaming)
             } else {
                 parseResult = nil
             }
@@ -135,7 +141,9 @@ public final class OpenUIRuntime {
         let queryManager = self.queryManager
         return EvaluationContext(
             getState: { name in Self.unwrapFieldValue(store.get(name)) },
-            resolveRef: { name in queryManager.mutationResult(for: name) ?? queryManager.result(for: name) }
+            resolveRef: { name in queryManager.mutationResult(for: name) ?? queryManager.result(for: name) },
+            functions: functions,
+            actions: customActions
         )
     }
 
@@ -161,8 +169,8 @@ public final class OpenUIRuntime {
         repeat {
             needsRecompute = false
             passes += 1
-            let context = evaluationContext
-            let evaluated = parseResult?.root.map { PropEvaluator.evaluateElementProps($0, context, library) }
+            let (evaluated, errors) = PropEvaluator.evaluateRoot(parseResult, evaluationContext, library)
+            runtimeErrors = errors
             if evaluated != root { root = evaluated }
             let loading = !queryManager.snapshot.loading.isEmpty
             if loading != isQueryLoading { isQueryLoading = loading }
@@ -251,19 +259,19 @@ public final class OpenUIRuntime {
             return
         }
         var collected: [OpenUIError] = []
-        if let response, !response.isEmpty, parseResult?.root == nil {
+        // A missing or unusable entry is reported by the parser as `no-root`.
+        if let response, !response.isEmpty, (parseResult?.meta.statementCount ?? 0) == 0 {
             collected.append(OpenUIError(
                 source: .parser,
                 code: "parse-failed",
-                message: parseResult != nil
-                    ? "Code parsed but produced no renderable root component"
-                    : "Response could not be parsed as valid openui-lang",
+                message: "Response could not be parsed as valid openui-lang",
                 hint: "The entire response must be valid openui-lang code starting with root = \(library.root ?? "Root")(...)"
             ))
         }
         if let validationErrors = parseResult?.meta.errors, !validationErrors.isEmpty {
             collected += OpenUIError.enriched(validationErrors, schema: library.jsonSchema, componentNames: library.componentNames)
         }
+        collected += runtimeErrors
         collected += queryManager.snapshot.errors
 
         let key = collected.map(\.description).joined(separator: "\n") + "#\(collected.count)"
@@ -324,23 +332,24 @@ public final class OpenUIRuntime {
 
     // MARK: - Actions
 
-    /// Runs an action: an `Action([...])` plan (sequential steps, halting when a mutation fails),
-    /// a legacy action object (`{ type, params }` / `{ type: "open_url", url }`), or — when `action`
-    /// is `nil` — a continue-conversation event carrying `label`.
+    /// Runs an action: a plan of steps (one step, or several in `Action([...])`, halting when a
+    /// mutation fails), a legacy action object (`{ type, params }` / `{ type: "open_url", url }`), or,
+    /// when `action` is `nil`, a continue-conversation event carrying `label`. Each step reads the
+    /// form state when it runs, so an earlier `@Set` in the same plan is visible.
     public func triggerAction(label: String, formName: String? = nil, action: OpenUIValue? = nil) async {
-        let formState = formPayload(formName)
-
         if case .object(let object)? = action, object["steps"] == nil {
+            let type = object["type"].flatMap { JS.isTruthy($0) ? JS.toString($0) : nil } ?? BuiltinActionType.continueConversation
+            // Only a real call delivers a custom action; a legacy object can't pose as one.
+            if customActions[type] != nil { return }
             var params = object["params"]?.objectValue ?? [:]
             if let url = object["url"], JS.isTruthy(url) { params["url"] = url }
             if let context = object["context"], JS.isTruthy(context) { params["context"] = context }
-            let type = object["type"].flatMap { JS.isTruthy($0) ? JS.toString($0) : nil } ?? BuiltinActionType.continueConversation
-            onAction?(ActionEvent(type: type, params: params, humanFriendlyMessage: label, formState: formState, formName: formName))
+            onAction?(ActionEvent(type: type, params: params, humanFriendlyMessage: label, formState: formPayload(formName), formName: formName))
             return
         }
 
-        if case .array(let steps)? = action?["steps"] {
-            for step in steps {
+        if ActionPlan.isPlan(action) {
+            for step in ActionPlan.steps(of: action.map(ActionPlan.ownSteps)) {
                 guard let type = step["type"]?.stringValue else { continue }
                 switch type {
                 case ActionStepType.run:
@@ -355,12 +364,12 @@ public final class OpenUIRuntime {
                     }
                 case ActionStepType.continueConversation:
                     var params = OpenUIObject()
-                    if let context = step["context"], JS.isTruthy(context) { params["context"] = context }
+                    if let context = step["context"] { params["context"] = context }
                     onAction?(ActionEvent(
                         type: BuiltinActionType.continueConversation,
                         params: params,
                         humanFriendlyMessage: step["message"].map { JS.toString($0) } ?? "",
-                        formState: formState,
+                        formState: formPayload(formName),
                         formName: formName
                     ))
                 case ActionStepType.openURL:
@@ -368,7 +377,16 @@ public final class OpenUIRuntime {
                         type: BuiltinActionType.openURL,
                         params: ["url": step["url"] ?? .string("")],
                         humanFriendlyMessage: "",
-                        formState: formState,
+                        formState: formPayload(formName),
+                        formName: formName
+                    ))
+                case ActionStepType.customAction:
+                    guard let name = step["name"]?.stringValue else { continue }
+                    onAction?(ActionEvent(
+                        type: name,
+                        params: step["params"]?.objectValue ?? [:],
+                        humanFriendlyMessage: "",
+                        formState: formPayload(formName),
                         formName: formName
                     ))
                 case ActionStepType.set:
@@ -377,7 +395,7 @@ public final class OpenUIRuntime {
                 case ActionStepType.reset:
                     let declarations = parseResult?.stateDeclarations ?? [:]
                     for target in step["targets"]?.arrayValue?.compactMap(\.stringValue) ?? [] {
-                        store.set(target, declarations[target] ?? .null)
+                        store.set(target, declarations[target] ?? .null, pristine: true)
                     }
                 default:
                     break
@@ -389,7 +407,7 @@ public final class OpenUIRuntime {
         onAction?(ActionEvent(
             type: BuiltinActionType.continueConversation,
             humanFriendlyMessage: label,
-            formState: formState,
+            formState: formPayload(formName),
             formName: formName
         ))
     }

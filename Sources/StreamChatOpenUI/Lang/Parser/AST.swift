@@ -39,7 +39,9 @@ public enum RuntimeRefType: String, Sendable, Hashable {
 /// - ``member(_:_:)`` (`a.b`), ``index(_:_:)`` (`a[b]`), ``assign(_:_:)`` (`$a = expr`)
 @available(iOS 17.0, macOS 14.0, *)
 public indirect enum ASTNode: Sendable, Hashable {
-    case comp(name: String, args: [ASTNode], mappedProps: [ASTEntry]?)
+    /// A call: a component, built-in, library function or action step. `isFunction` marks an
+    /// `@Name(...)` call whose name is not a built-in.
+    case comp(name: String, args: [ASTNode], mappedProps: [ASTEntry]?, isFunction: Bool = false)
     case str(String)
     case num(Double)
     case bool(Bool)
@@ -62,6 +64,44 @@ public indirect enum ASTNode: Sendable, Hashable {
         .comp(name: name, args: args, mappedProps: nil)
     }
 
+    /// The literal AST of a plain value: `{n: [1]}` → `Obj(n: Arr(Num 1))`.
+    init(literal value: OpenUIValue) {
+        switch value {
+        case .string(let string): self = .str(string)
+        case .number(let number): self = .num(number)
+        case .bool(let bool): self = .bool(bool)
+        case .array(let items): self = .arr(items.map(ASTNode.init(literal:)))
+        case .object(let object): self = .obj(object.entries.map { ASTEntry($0.key, ASTNode(literal: $0.value)) })
+        case .null, .element, .expression: self = .null
+        }
+    }
+
+    /// The value of a literal AST, or `nil` when it holds a reference, call or expression.
+    var literalValue: OpenUIValue? {
+        switch self {
+        case .str(let string): return .string(string)
+        case .num(let number): return .number(number)
+        case .bool(let bool): return .bool(bool)
+        case .null: return .null
+        case .arr(let elements):
+            var items: [OpenUIValue] = []
+            for element in elements {
+                guard let item = element.literalValue else { return nil }
+                items.append(item)
+            }
+            return .array(items)
+        case .obj(let entries):
+            var object = OpenUIObject()
+            for entry in entries {
+                guard let item = entry.value.literalValue else { return nil }
+                object[entry.key] = item
+            }
+            return .object(object)
+        default:
+            return nil
+        }
+    }
+
     /// True for nodes that survive parser lowering and are resolved by the evaluator.
     public var isRuntimeExpression: Bool {
         switch self {
@@ -76,7 +116,7 @@ public indirect enum ASTNode: Sendable, Hashable {
     public func walk(_ visit: (ASTNode) -> Void) {
         visit(self)
         switch self {
-        case .comp(_, let args, let mappedProps):
+        case .comp(_, let args, let mappedProps, _):
             args.forEach { $0.walk(visit) }
             mappedProps?.forEach { $0.value.walk(visit) }
         case .arr(let elements):
@@ -119,8 +159,9 @@ public indirect enum ASTNode: Sendable, Hashable {
     /// The JSON shape used by the reference implementation (`{ k: "Comp", name, args, ... }`).
     public var jsonValue: OpenUIValue {
         switch self {
-        case .comp(let name, let args, let mappedProps):
+        case .comp(let name, let args, let mappedProps, let isFunction):
             var object: OpenUIObject = ["k": "Comp", "name": .string(name), "args": .array(args.map(\.jsonValue))]
+            if isFunction { object["fn"] = true }
             if let mappedProps {
                 object["mappedProps"] = .object(OpenUIObject(mappedProps.map { ($0.key, $0.value.jsonValue) }))
             }

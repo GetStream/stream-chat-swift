@@ -19,10 +19,10 @@ struct CustomLibraryTests {
     ])
 
     static let library = ComponentLibrary(root: "Trips", components: [
-        ComponentDefinition(trips) { context in
+        OpenUIComponentDefinition(trips) { context in
             VStack(alignment: .leading) { context.render(prop: "items") }
         },
-        ComponentDefinition(tripCard) { context in
+        OpenUIComponentDefinition(tripCard) { context in
             Text("\(context.props.text("title") ?? "") · \(Int(context.props.number("days") ?? 0)) days")
         }
     ])

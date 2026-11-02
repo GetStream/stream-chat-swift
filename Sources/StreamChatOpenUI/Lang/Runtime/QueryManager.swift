@@ -193,6 +193,7 @@ public final class QueryManager {
                 } else {
                     // The query was removed or moved to another cache key while in flight.
                     entry.inFlight = false
+                    cleanupCacheEntry(cacheKey)
                 }
             }
         case .failure(let error):
@@ -328,6 +329,14 @@ public final class QueryManager {
             let hasSettledData = entry?.data != nil && entry?.inFlight == false
             if toolProvider != nil, !hasSettledData, entry?.inFlight != true {
                 startFetch(cacheKey: cacheKey, statementId: node.statementId)
+            } else if hasSettledData, query.loading {
+                // Back on args whose data is cached while another fetch was in flight: that fetch
+                // no longer concerns this query, so it must not keep it loading.
+                query.loading = false
+                if let previousKey = query.previousCacheKey, previousKey != cacheKey {
+                    query.previousCacheKey = nil
+                    cleanupCacheEntry(previousKey)
+                }
             }
 
             let interval = node.refreshInterval ?? 0
@@ -417,7 +426,7 @@ public final class QueryManager {
                     existing.error = nil
                 }
             } else {
-                mutations[node.statementId] = MutationEntry(toolName: node.toolName, result: ["status": "idle"])
+                mutations[node.statementId] = MutationEntry(toolName: node.toolName, result: ["status": "idle", "data": .null, "error": .null])
                 mutationOrder.append(node.statementId)
             }
         }

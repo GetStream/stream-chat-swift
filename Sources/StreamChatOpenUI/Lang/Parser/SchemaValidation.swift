@@ -53,6 +53,14 @@ enum ValidationIssue {
     case unknownComponent(available: [String]?)
     case inlineReserved
     case excessArgs(declared: Int, got: Int)
+    case unknownFunction
+    case noRoot(NoRootReason)
+
+    enum NoRootReason {
+        case missing
+        case notComponent
+        case fallback
+    }
 
     var code: ValidationErrorCode {
         switch self {
@@ -62,7 +70,14 @@ enum ValidationIssue {
         case .unknownComponent: return .unknownComponent
         case .inlineReserved: return .inlineReserved
         case .excessArgs: return .excessArgs
+        case .unknownFunction: return .unknownFunction
+        case .noRoot: return .noRoot
         }
+    }
+
+    var isWarning: Bool {
+        if case .noRoot(.fallback) = self { return true }
+        return false
     }
 }
 
@@ -162,6 +177,16 @@ enum SchemaValidation {
             return "\(component)() must be declared as a top-level statement, not used inline as a value"
         case .excessArgs(let declared, let got):
             return "\(component) takes \(declared) arg(s), got \(got) (\(got - declared) excess dropped)"
+        case .unknownFunction:
+            return "Unknown function \"@\(component)\": not a built-in or action step. The call evaluates to null"
+        case .noRoot(.notComponent):
+            return "root does not evaluate to a component"
+        case .noRoot(.fallback):
+            return "No root statement. Rendering the first statement that calls the root component \(component)"
+        case .noRoot(.missing):
+            return component.isEmpty
+                ? "No root statement"
+                : "No root statement, and no statement calls the root component \(component)"
         }
     }
 
@@ -171,7 +196,8 @@ enum SchemaValidation {
             component: component,
             path: path,
             message: message(component: component, path: path, issue: issue),
-            statementId: context.currentStatementId
+            statementId: context.currentStatementId,
+            isWarning: issue.isWarning
         ))
     }
 

@@ -10,8 +10,17 @@ import Foundation
 /// suitable for an automated correction loop (send them back to the model as a follow-up).
 @available(iOS 17.0, macOS 14.0, *)
 public struct OpenUIError: Sendable, Hashable, CustomStringConvertible {
-    public enum Source: String, Sendable, Hashable {
-        case parser, runtime, query, mutation
+    /// Where an error comes from.
+    public struct Source: RawRepresentable, Sendable, Hashable, ExpressibleByStringLiteral {
+        public let rawValue: String
+
+        public init(rawValue: String) { self.rawValue = rawValue }
+        public init(stringLiteral value: String) { rawValue = value }
+
+        public static let parser: Source = "parser"
+        public static let runtime: Source = "runtime"
+        public static let query: Source = "query"
+        public static let mutation: Source = "mutation"
     }
 
     public var source: Source
@@ -27,6 +36,8 @@ public struct OpenUIError: Sendable, Hashable, CustomStringConvertible {
     public var toolName: String?
     /// Actionable fix context (available components, the correct signature, ...).
     public var hint: String?
+    /// Whether the program still renders despite it, such as a `no-root` fallback entry.
+    public var isWarning: Bool
 
     public init(
         source: Source,
@@ -36,7 +47,8 @@ public struct OpenUIError: Sendable, Hashable, CustomStringConvertible {
         component: String? = nil,
         path: String? = nil,
         toolName: String? = nil,
-        hint: String? = nil
+        hint: String? = nil,
+        isWarning: Bool = false
     ) {
         self.source = source
         self.code = code
@@ -46,6 +58,7 @@ public struct OpenUIError: Sendable, Hashable, CustomStringConvertible {
         self.path = path
         self.toolName = toolName
         self.hint = hint
+        self.isWarning = isWarning
     }
 
     public var description: String {
@@ -61,7 +74,8 @@ public struct OpenUIError: Sendable, Hashable, CustomStringConvertible {
                 message: error.message,
                 statementId: error.statementId,
                 component: error.component,
-                path: error.path.isEmpty ? nil : error.path
+                path: error.path.isEmpty ? nil : error.path,
+                isWarning: error.isWarning
             )
             switch error.code {
             case .unknownComponent where !componentNames.isEmpty:

@@ -60,7 +60,7 @@ struct RobustnessTests {
         let parsed = MessageEnvelope.parse(message)
 
         #expect(parsed.content == "root = Stack([])")
-        #expect(parsed.context == "[1]")
+        #expect(parsed.context == [1])
     }
 
     @Test func messageEnvelopeKeepsTheLastCharacterBeforeAWindowsSeparator() {

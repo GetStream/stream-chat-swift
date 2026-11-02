@@ -27,9 +27,14 @@ public final class OpenUIStore {
         snapshot[name]
     }
 
-    /// Sets a value (`nil` removes it). Equal values don't notify.
-    public func set(_ name: String, _ value: OpenUIValue?) {
-        defaultedKeys.remove(name)
+    /// Sets a value (`nil` removes it). Equal values don't notify. A `pristine` value, such as one
+    /// `@Reset` restored, still follows its declaration.
+    public func set(_ name: String, _ value: OpenUIValue?, pristine: Bool = false) {
+        if pristine {
+            defaultedKeys.insert(name)
+        } else {
+            defaultedKeys.remove(name)
+        }
         if snapshot[name] == value { return }
         snapshot[name] = value
         onChange?(name)
@@ -38,10 +43,7 @@ public final class OpenUIStore {
     /// Applies persisted values (explicit restore) and declaration defaults. Values that were set or
     /// restored are never overwritten or deleted — declarations can temporarily disappear while
     /// streaming.
-    ///
-    /// Unlike upstream, a value that still holds its declared default follows the declaration while
-    /// it streams in: a render while `$servings = "` is mid-stream would otherwise keep `""` instead
-    /// of the final `"2"` (and `$limit = 1` instead of `100`).
+    /// A value that still holds its declared default follows the declaration while it streams in.
     public func initialize(defaults: OpenUIObject, persisted: OpenUIObject) {
         var next = snapshot
         for (key, value) in persisted.entries {
