@@ -351,6 +351,7 @@ Compatibility & distribution
 - Prefer prefixes that match the change type: `add/`, `fix/`, `docs/`, etc. Do **not** use personal name prefixes (e.g. `nuno/...`) or ticket IDs (e.g. `ios-1932`, `IOS-1932`) in branch names.
 - Update `CHANGELOG.md` under the `# Upcoming` section when making client-facing changes (follow the Keep a Changelog format with the file's existing `### ✅ Added`, `### 🐞 Fixed`, `### 🔄 Changed` subsections).
 - The changelog has separate subsections for **StreamChat**, **StreamChatUI**, **StreamChatCommonUI**, and **StreamChatAI**.
+- After a release, `# Upcoming` holds only an empty `### 🔄 Changed` placeholder. When adding the first entry, remove that empty placeholder, unless the new entry belongs under `### 🔄 Changed`.
 - Only update `CHANGELOG.md` **after the PR has been opened**, so the entry can include the PR link (e.g. `[#1234](https://github.com/GetStream/stream-chat-swift/pull/1234)`). Push the changelog update as a follow-up commit on the same branch.
 - Keep changelog entries as short and high-level as possible. Describe the user-visible outcome in one line and do not explain implementation details, file names, or internal APIs.
 
