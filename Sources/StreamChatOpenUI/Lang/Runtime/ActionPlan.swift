@@ -36,7 +36,7 @@ enum ActionPlan {
 
     /// Flattens plans (and stray step objects) into one plan; other values are dropped.
     static func flatten(_ values: [OpenUIValue]) -> OpenUIValue {
-        let steps = values.flatMap { value -> [OpenUIValue] in
+        let flattened = values.flatMap { value -> [OpenUIValue] in
             if isPlan(value) { return steps(of: value) }
             switch value {
             case .object(let object) where object.contains("type"): return [value]
@@ -44,7 +44,7 @@ enum ActionPlan {
             default: return []
             }
         }
-        return ownSteps(plan(steps))
+        return ownSteps(plan(flattened))
     }
 
     /// Drops the custom steps no real call made.
