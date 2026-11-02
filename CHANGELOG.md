@@ -11,12 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatAI
 ### ✅ Added
 - Add a failure message when photos picked in the composer can't be loaded [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
+- Add `AIChat`, the state behind an AI conversation: its messages, status and errors, with sending, stopping, regenerating, editing and rating through an `AIChatTransport`, shown by `AIConversationView(chat:)` and `AIComposerView(chat:)` [#4375](https://github.com/GetStream/stream-chat-swift/pull/4375)
 ### 🐞 Fixed
 - Fix a photo picked again from the library being attached twice [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🔄 Changed
 - `AIComposerView` is available on iOS 15, with a single-line text field and no "All photos" button there [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🎭 New Localizations
 - Add `composer.photos_failed.*` keys [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
+- Add `chat.error.agent` key [#4375](https://github.com/GetStream/stream-chat-swift/pull/4375)
 
 # [5.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.15.0)
 _October 22, 2026_
