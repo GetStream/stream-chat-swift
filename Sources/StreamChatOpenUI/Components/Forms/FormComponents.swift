@@ -188,7 +188,7 @@ struct SelectView: View {
             }
         } label: {
             HStack {
-                Text(selectedLabel ?? props.text("placeholder") ?? "Select...")
+                Text(selectedLabel ?? props.text("placeholder") ?? L10n.Select.placeholder)
                     .foregroundStyle(selectedLabel == nil ? theme.colors.textTertiary : theme.colors.textPrimary)
                     .lineLimit(1)
                 Spacer(minLength: theme.spacing.s)
@@ -227,13 +227,13 @@ struct DatePickerView: View {
                 let from = DateFormatting.date(from: field.value?["from"]?.stringValue)
                 let to = DateFormatting.date(from: field.value?["to"]?.stringValue)
                 VStack(alignment: .leading, spacing: theme.spacing.s) {
-                    dateRow("From", date: from) { date in
+                    dateRow(L10n.DatePicker.from, date: from) { date in
                         var range = field.value?.objectValue ?? [:]
                         range["from"] = .string(DateFormatting.string(from: date))
                         if let to, to < date { range["to"] = .string(DateFormatting.string(from: date)) }
                         update(field, value: .object(range), name: name, rules: rules)
                     }
-                    dateRow("To", date: to, minimum: from) { date in
+                    dateRow(L10n.DatePicker.to, date: to, minimum: from) { date in
                         var range = field.value?.objectValue ?? [:]
                         range["to"] = .string(DateFormatting.string(from: date))
                         if range["from"] == nil { range["from"] = .string(DateFormatting.string(from: date)) }
@@ -241,7 +241,7 @@ struct DatePickerView: View {
                     }
                 }
             } else {
-                dateRow("Date", date: DateFormatting.date(from: field.value?.stringValue)) { date in
+                dateRow(L10n.DatePicker.date, date: DateFormatting.date(from: field.value?.stringValue)) { date in
                     update(field, value: .string(DateFormatting.string(from: date)), name: name, rules: rules)
                 }
             }
@@ -272,7 +272,7 @@ struct DatePickerView: View {
                 .foregroundStyle(theme.colors.textSecondary)
             Spacer()
             if date == nil {
-                Button("Choose") { onChange(minimum ?? Date()) }
+                Button(L10n.DatePicker.choose) { onChange(minimum ?? Date()) }
                     .font(theme.fonts.bodySmall.weight(.medium))
             } else {
                 DatePicker(
@@ -450,7 +450,7 @@ struct CheckboxToggleStyle: ToggleStyle {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityValue(Text(configuration.isOn ? "Checked" : "Unchecked"))
+        .accessibilityValue(Text(configuration.isOn ? L10n.Toggle.checked : L10n.Toggle.unchecked))
     }
 }
 

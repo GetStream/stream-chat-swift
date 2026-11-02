@@ -192,7 +192,7 @@ struct TrendBadge: View {
             let color = up ? theme.colors.success : theme.colors.danger
             HStack(spacing: 2) {
                 Image(systemName: up ? "arrow.up.right" : "arrow.down.right")
-                Text("\(JS.numberToString(abs(value)))%")
+                Text(NumberFormatting.percent(abs(value)))
             }
             .font(.caption.weight(.semibold))
             .monospacedDigit()
@@ -200,7 +200,7 @@ struct TrendBadge: View {
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
             .background(color.opacity(0.12), in: Capsule())
-            .accessibilityLabel(Text("\(up ? "Up" : "Down") \(JS.numberToString(abs(value))) percent"))
+            .accessibilityLabel(Text(up ? L10n.Trend.up(NumberFormatting.decimal(abs(value))) : L10n.Trend.down(NumberFormatting.decimal(abs(value)))))
         }
     }
 }
@@ -376,7 +376,7 @@ struct SnippetCardBlockView: View {
                 cardTap(
                     context,
                     action: block.action,
-                    label: stringProp(lhs, "title") ?? id ?? "Snippet card \(index + 1)",
+                    label: stringProp(lhs, "title") ?? id ?? L10n.CardBlock.snippet(index + 1),
                     item: ItemActionContext.object([
                         ("itemIndex", .number(Double(index))), ("itemId", id.map(OpenUIValue.string)),
                         ("itemTitle", stringProp(lhs, "title").map(OpenUIValue.string)),
@@ -436,7 +436,7 @@ struct OverviewCardBlockView: View {
                 cardTap(
                     context,
                     action: block.action,
-                    label: title ?? id ?? "Overview card \(index + 1)",
+                    label: title ?? id ?? L10n.CardBlock.overview(index + 1),
                     item: ItemActionContext.object([
                         ("itemIndex", .number(Double(index))), ("itemId", id.map(OpenUIValue.string)),
                         ("itemTitle", title.map(OpenUIValue.string)),
@@ -485,7 +485,7 @@ struct ContextCardBlockView: View {
                 cardTap(
                     context,
                     action: block.action,
-                    label: title.isEmpty ? (props.text("id") ?? "Context card \(index + 1)") : title,
+                    label: title.isEmpty ? (props.text("id") ?? L10n.CardBlock.context(index + 1)) : title,
                     item: ItemActionContext.object([
                         ("itemIndex", .number(Double(index))), ("itemId", props["id"]),
                         ("itemTitle", .string(title)), ("itemBody", props["body"]),
@@ -581,7 +581,7 @@ struct CompositeCardBlockView: View {
                 cardTap(
                     context,
                     action: block.action,
-                    label: title ?? alt ?? id ?? "Composite card \(index + 1)",
+                    label: title ?? alt ?? id ?? L10n.CardBlock.composite(index + 1),
                     item: ItemActionContext.object([
                         ("itemIndex", .number(Double(index))), ("itemId", id.map(OpenUIValue.string)),
                         ("itemHeaderTitle", title.map(OpenUIValue.string)), ("itemHeaderSubtitle", subtitle.map(OpenUIValue.string)),
@@ -688,7 +688,7 @@ struct VisualCardBlockView: View {
                 cardTap(
                     context,
                     action: block.action,
-                    label: bodyValue ?? tagText ?? props.text("id") ?? "Visual card \(index + 1)",
+                    label: bodyValue ?? tagText ?? props.text("id") ?? L10n.CardBlock.visual(index + 1),
                     item: ItemActionContext.object([
                         ("itemIndex", .number(Double(index))), ("itemId", props["id"]),
                         ("itemTag", tagText.map(OpenUIValue.string)), ("itemBody", bodyValue.map(OpenUIValue.string)),

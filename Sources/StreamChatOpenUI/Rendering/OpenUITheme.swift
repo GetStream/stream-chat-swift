@@ -22,6 +22,13 @@ public struct OpenUITheme: Sendable {
 
     public static let `default` = OpenUITheme()
 
+    /// Returns the text for a key of a strings table. Replace it to change or translate the
+    /// components' texts, such as button titles and validation messages.
+    public static var localizationProvider: @Sendable (_ key: String, _ table: String) -> String {
+        get { LocalizationProviderStorage.current }
+        set { LocalizationProviderStorage.current = newValue }
+    }
+
     public struct Colors: Sendable {
         public var accent: Color = .accentColor
         public var onAccent: Color = .white

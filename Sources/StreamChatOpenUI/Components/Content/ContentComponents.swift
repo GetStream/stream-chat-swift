@@ -88,7 +88,7 @@ struct SourcesStrip: View {
     var body: some View {
         VStack(alignment: .leading, spacing: theme.spacing.s) {
             Divider()
-            Text("Sources")
+            Text(L10n.Sources.title)
                 .font(theme.fonts.caption.weight(.semibold))
                 .foregroundStyle(theme.colors.textSecondary)
             ScrollView(.horizontal, showsIndicators: false) {
@@ -105,7 +105,7 @@ struct SourcesStrip: View {
                                     .frame(width: 18, height: 18)
                                     .background(theme.colors.accent, in: Circle())
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(source["title"]?.stringValue ?? "Source")
+                                    Text(source["title"]?.stringValue ?? L10n.Sources.untitled)
                                         .font(theme.fonts.caption.weight(.medium))
                                         .foregroundStyle(theme.colors.textPrimary)
                                         .lineLimit(2)
@@ -461,7 +461,7 @@ struct GalleryPreview: View {
             #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button(L10n.Gallery.done) { dismiss() }
                 }
             }
         }

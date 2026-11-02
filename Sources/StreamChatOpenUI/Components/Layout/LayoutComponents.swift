@@ -176,7 +176,7 @@ struct DisclosureRow<Content: View>: View {
             }
             .buttonStyle(.plain)
             .accessibilityAddTraits(.isHeader)
-            .accessibilityValue(Text(isExpanded ? "Expanded" : "Collapsed"))
+            .accessibilityValue(Text(isExpanded ? L10n.Disclosure.expanded : L10n.Disclosure.collapsed))
             if isExpanded {
                 VStack(alignment: .leading, spacing: theme.spacing.m) {
                     content()
@@ -410,7 +410,7 @@ struct ModalView: View {
                                 } label: {
                                     Image(systemName: "xmark")
                                 }
-                                .accessibilityLabel("Close")
+                                .accessibilityLabel(Text(L10n.Modal.close))
                             }
                         }
                 }

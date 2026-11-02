@@ -118,41 +118,41 @@ struct CartesianChartView: View {
         switch kind {
         case .bar:
             if variant == "stacked" {
-                BarMark(x: .value("Category", point.category), y: .value("Value", point.value))
-                    .foregroundStyle(by: .value("Series", point.series))
+                BarMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value))
+                    .foregroundStyle(by: .value(L10n.Chart.series, point.series))
                     .cornerRadius(3)
             } else {
-                BarMark(x: .value("Category", point.category), y: .value("Value", point.value))
-                    .foregroundStyle(by: .value("Series", point.series))
-                    .position(by: .value("Series", point.series))
+                BarMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value))
+                    .foregroundStyle(by: .value(L10n.Chart.series, point.series))
+                    .position(by: .value(L10n.Chart.series, point.series))
                     .cornerRadius(3)
             }
         case .horizontalBar:
             if variant == "stacked" {
-                BarMark(x: .value("Value", point.value), y: .value("Category", point.category))
-                    .foregroundStyle(by: .value("Series", point.series))
+                BarMark(x: .value(L10n.Chart.value, point.value), y: .value(L10n.Chart.category, point.category))
+                    .foregroundStyle(by: .value(L10n.Chart.series, point.series))
                     .cornerRadius(3)
             } else {
-                BarMark(x: .value("Value", point.value), y: .value("Category", point.category))
-                    .foregroundStyle(by: .value("Series", point.series))
-                    .position(by: .value("Series", point.series))
+                BarMark(x: .value(L10n.Chart.value, point.value), y: .value(L10n.Chart.category, point.category))
+                    .foregroundStyle(by: .value(L10n.Chart.series, point.series))
+                    .position(by: .value(L10n.Chart.series, point.series))
                     .cornerRadius(3)
             }
         case .line:
-            LineMark(x: .value("Category", point.category), y: .value("Value", point.value))
-                .foregroundStyle(by: .value("Series", point.series))
+            LineMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value))
+                .foregroundStyle(by: .value(L10n.Chart.series, point.series))
                 .interpolationMethod(interpolation)
                 .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
-            PointMark(x: .value("Category", point.category), y: .value("Value", point.value))
-                .foregroundStyle(by: .value("Series", point.series))
+            PointMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value))
+                .foregroundStyle(by: .value(L10n.Chart.series, point.series))
                 .symbolSize(24)
         case .area:
-            AreaMark(x: .value("Category", point.category), y: .value("Value", point.value), stacking: .unstacked)
-                .foregroundStyle(by: .value("Series", point.series))
+            AreaMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value), stacking: .unstacked)
+                .foregroundStyle(by: .value(L10n.Chart.series, point.series))
                 .interpolationMethod(interpolation)
                 .opacity(0.25)
-            LineMark(x: .value("Category", point.category), y: .value("Value", point.value))
-                .foregroundStyle(by: .value("Series", point.series))
+            LineMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value))
+                .foregroundStyle(by: .value(L10n.Chart.series, point.series))
                 .interpolationMethod(interpolation)
                 .lineStyle(StrokeStyle(lineWidth: 2))
         }
@@ -160,7 +160,7 @@ struct CartesianChartView: View {
 
     static func summary(points: [ChartPoint], series: [String]) -> String {
         series.map { name in
-            let values = points.filter { $0.series == name }.map { "\($0.category) \(JS.numberToString($0.value))" }
+            let values = points.filter { $0.series == name }.map { "\($0.category) \(NumberFormatting.decimal($0.value))" }
             return "\(name): " + values.joined(separator: ", ")
         }.joined(separator: ". ")
     }
@@ -204,7 +204,7 @@ struct ScatterChartView: View {
                 ChartFrame(height: 240, xLabel: context.props.text("xLabel"), yLabel: context.props.text("yLabel")) {
                     Chart(points) { point in
                         PointMark(x: .value("X", point.x), y: .value("Y", point.y))
-                            .foregroundStyle(by: .value("Series", point.series))
+                            .foregroundStyle(by: .value(L10n.Chart.series, point.series))
                             .symbolSize(point.z.map { 30 + 170 * $0 / max(maxZ, 1) } ?? 50)
                             .opacity(0.8)
                     }
@@ -237,12 +237,12 @@ struct LegendView: View {
                         .foregroundStyle(theme.colors.textPrimary)
                         .lineLimit(1)
                     Spacer(minLength: theme.spacing.s)
-                    Text(JS.numberToString(entry.value))
+                    Text(NumberFormatting.decimal(entry.value))
                         .font(theme.fonts.caption.weight(.semibold))
                         .monospacedDigit()
                         .foregroundStyle(theme.colors.textPrimary)
                     if showPercent, total > 0, let percent = Self.percent(entry.value, of: total) {
-                        Text("\(percent)%")
+                        Text(NumberFormatting.percent(Double(percent)))
                             .font(theme.fonts.caption)
                             .monospacedDigit()
                             .foregroundStyle(theme.colors.textSecondary)
@@ -321,10 +321,10 @@ struct PieChartView: View {
                     }
                     if donut {
                         VStack(spacing: 0) {
-                            Text(JS.numberToString((total * 100).rounded() / 100))
+                            Text(NumberFormatting.decimal((total * 100).rounded() / 100))
                                 .font(.title3.weight(.semibold))
                                 .monospacedDigit()
-                            Text("Total")
+                            Text(L10n.Chart.total)
                                 .font(.caption2)
                                 .foregroundStyle(theme.colors.textSecondary)
                         }
@@ -336,7 +336,7 @@ struct PieChartView: View {
                 LegendView(entries: slices, showPercent: true)
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(slices.map { "\($0.label) \(JS.numberToString($0.value))" }.joined(separator: ", ")))
+            .accessibilityLabel(Text(slices.map { "\($0.label) \(NumberFormatting.decimal($0.value))" }.joined(separator: ", ")))
         }
     }
 }
@@ -370,7 +370,7 @@ struct RadialChartView: View {
                 LegendView(entries: slices, showPercent: false)
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(slices.map { "\($0.label) \(JS.numberToString($0.value))" }.joined(separator: ", ")))
+            .accessibilityLabel(Text(slices.map { "\($0.label) \(NumberFormatting.decimal($0.value))" }.joined(separator: ", ")))
         }
     }
 }
@@ -400,7 +400,7 @@ struct SingleStackedBarView: View {
                 LegendView(entries: slices, showPercent: true)
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(slices.map { "\($0.label) \(JS.numberToString($0.value))" }.joined(separator: ", ")))
+            .accessibilityLabel(Text(slices.map { "\($0.label) \(NumberFormatting.decimal($0.value))" }.joined(separator: ", ")))
         }
     }
 }

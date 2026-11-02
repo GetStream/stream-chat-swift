@@ -81,67 +81,67 @@ public enum FormValidation {
 
     public static let builtInValidators: [String: Validator] = [
         "required": { value, _ in
-            if isEmpty(value) { return "This field is required" }
+            if isEmpty(value) { return L10n.Validation.required }
             if case .object(let object)? = value {
                 let values = object.values
                 if !values.isEmpty, values.allSatisfy({ $0.boolValue != nil }), !values.contains(.bool(true)) {
-                    return "At least one option is required"
+                    return L10n.Validation.requiredOption
                 }
             }
             return nil
         },
         "email": { value, _ in
             if isEmpty(value) { return nil }
-            guard case .string(let string)? = value else { return "Please enter a valid email" }
+            guard case .string(let string)? = value else { return L10n.Validation.email }
             let valid = string.range(of: #"^[^\s@]+@[^\s@]+\.[^\s@]+$"#, options: .regularExpression) != nil
-            return valid ? nil : "Please enter a valid email"
+            return valid ? nil : L10n.Validation.email
         },
         "url": { value, _ in
             if isEmpty(value) { return nil }
             guard case .string(let string)? = value,
                   let components = URLComponents(string: string),
                   let scheme = components.scheme, !scheme.isEmpty,
-                  string.contains(":") else { return "Please enter a valid URL" }
+                  string.contains(":") else { return L10n.Validation.url }
             return nil
         },
         "numeric": { value, _ in
             if isEmpty(value) { return nil }
             if case .number(let number)? = value, !number.isNaN { return nil }
             if case .string(let string)? = value, !JS.parseFloat(string).isNaN, !JS.trim(string).isEmpty { return nil }
-            return "Must be a number"
+            return L10n.Validation.numeric
         },
         "min": { value, argument in
             if isEmpty(value) { return nil }
             let n = number(value)
             if n.isNaN { return nil }
             let min = JS.toNumber(argument)
-            return n >= min ? nil : "Must be at least \(JS.numberToString(min))"
+            return n >= min ? nil : L10n.Validation.min(JS.numberToString(min))
         },
         "max": { value, argument in
             if isEmpty(value) { return nil }
             let n = number(value)
             if n.isNaN { return nil }
             let max = JS.toNumber(argument)
-            return n <= max ? nil : "Must be no more than \(JS.numberToString(max))"
+            return n <= max ? nil : L10n.Validation.max(JS.numberToString(max))
         },
         "minLength": { value, argument in
             if isEmpty(value) { return nil }
             guard case .string(let string)? = value else { return nil }
             let min = JS.toNumber(argument)
-            return Double(string.utf16.count) >= min ? nil : "Must be at least \(JS.numberToString(min)) characters"
+            return Double(string.utf16.count) >= min ? nil : L10n.Validation.minLength(JS.numberToString(min))
         },
         "maxLength": { value, argument in
             if isEmpty(value) { return nil }
             guard case .string(let string)? = value else { return nil }
             let max = JS.toNumber(argument)
-            return Double(string.utf16.count) <= max ? nil : "Must be no more than \(JS.numberToString(max)) characters"
+            return Double(string.utf16.count) <= max ? nil : L10n.Validation.maxLength(JS.numberToString(max))
         },
         "pattern": { value, argument in
             if isEmpty(value) { return nil }
             guard case .string(let string)? = value, case .string(let pattern)? = argument,
                   let regex = try? NSRegularExpression(pattern: pattern) else { return nil }
             let range = NSRange(string.startIndex..., in: string)
-            return regex.firstMatch(in: string, range: range) != nil ? nil : "Invalid format"
+            return regex.firstMatch(in: string, range: range) != nil ? nil : L10n.Validation.pattern
         }
     ]
 

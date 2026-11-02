@@ -53,14 +53,14 @@ struct TableView: View {
                     HStack(spacing: theme.spacing.s) {
                         Button { page = max(0, current - 1) } label: { Image(systemName: "chevron.left") }
                             .disabled(current == 0)
-                            .accessibilityLabel("Previous page")
-                        Text("\(current + 1) / \(pages)")
+                            .accessibilityLabel(Text(L10n.Pagination.previousPage))
+                        Text(L10n.Pagination.position(current + 1, of: pages))
                             .font(theme.fonts.caption)
                             .monospacedDigit()
                             .foregroundStyle(theme.colors.textSecondary)
                         Button { page = min(pages - 1, current + 1) } label: { Image(systemName: "chevron.right") }
                             .disabled(current >= pages - 1)
-                            .accessibilityLabel("Next page")
+                            .accessibilityLabel(Text(L10n.Pagination.nextPage))
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
@@ -139,7 +139,7 @@ struct TableSkeleton: View {
         .opacity(pulse ? 0.5 : 1)
         .animation(.easeInOut(duration: 0.8).repeatForever(), value: pulse)
         .onAppear { pulse = true }
-        .accessibilityLabel("Loading")
+        .accessibilityLabel(Text(L10n.Table.loading))
     }
 }
 
@@ -213,13 +213,13 @@ struct EditableTableView: View {
             }
             if changed > 0 {
                 HStack {
-                    Text("\(changed) change\(changed == 1 ? "" : "s")")
+                    Text(L10n.EditableTable.changes(changed))
                         .font(theme.fonts.caption)
                         .foregroundStyle(theme.colors.textSecondary)
                     Spacer()
-                    Button("Reset") { rows = baseline }
+                    Button(L10n.EditableTable.reset) { rows = baseline }
                         .buttonStyle(.bordered)
-                    Button("Save Changes") { save(columns) }
+                    Button(L10n.EditableTable.save) { save(columns) }
                         .buttonStyle(.borderedProminent)
                 }
                 .controlSize(.small)
@@ -308,7 +308,7 @@ struct EditableTableView: View {
             ["id": row["id"] ?? .string(""), "values": .array(columns.map { row[$0.key] ?? .string("") })]
         }
         context.runtime.setFieldValue(formName: tableName, componentType: "EditableTable", name: tableName, value: .array(data))
-        context.trigger(label: "Save Changes", formName: tableName)
+        context.trigger(label: L10n.EditableTable.save, formName: tableName)
         baseline = rows
     }
 }

@@ -212,7 +212,7 @@ public struct CodeBlockView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text(language?.isEmpty == false ? language! : "code")
+                Text(language?.isEmpty == false ? language! : L10n.CodeBlock.languageFallback)
                     .font(theme.fonts.caption.weight(.medium))
                     .foregroundStyle(theme.colors.textSecondary)
                 Spacer()
@@ -224,7 +224,7 @@ public struct CodeBlockView: View {
                         copied = false
                     }
                 } label: {
-                    Label(copied ? "Copied" : "Copy", systemImage: copied ? "checkmark" : "doc.on.doc")
+                    Label(copied ? L10n.CodeBlock.copied : L10n.CodeBlock.copy, systemImage: copied ? "checkmark" : "doc.on.doc")
                         .font(theme.fonts.caption)
                 }
                 .buttonStyle(.borderless)
