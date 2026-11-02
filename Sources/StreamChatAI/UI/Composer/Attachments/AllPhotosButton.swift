@@ -9,7 +9,10 @@ import SwiftUI
 /// Opens the full photo library to pick up to ten photos.
 @available(iOS 16, *)
 struct AllPhotosButton: View {
-    @Binding var selection: [PhotosPickerItem]
+    let onPick: ([PhotosPickerItem]) -> Void
+
+    // What the picker shows as selected while it's open. It's cleared once the photos are handed over.
+    @State private var selection: [PhotosPickerItem] = []
 
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.tokens.layout) private var layout
@@ -21,12 +24,20 @@ struct AllPhotosButton: View {
         PhotosPicker(
             selection: $selection,
             maxSelectionCount: 10,
-            matching: .images
+            matching: .images,
+            // Without a library, picked items have no identifier to find their asset by.
+            photoLibrary: .shared()
         ) {
             Text(L10n.Composer.buttonAllPhotos)
                 .padding(padding)
                 .background(background)
                 .clipShape(Capsule())
+        }
+        .onChange(of: selection) { newItems in
+            guard !newItems.isEmpty else { return }
+
+            onPick(newItems)
+            selection = []
         }
     }
 }

@@ -40,6 +40,7 @@ public struct SpeechToTextButton: View {
                 }
             } label: {
                 (speech.isRecording ? images.composerStopDictation : images.composerStartDictation)
+                    .fontWeightIfAvailable(.semibold)
                     .foregroundStyle(Color(colors.composerIcon))
             }
         }
