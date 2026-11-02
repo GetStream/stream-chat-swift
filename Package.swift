@@ -32,6 +32,10 @@ let package = Package(
             targets: ["StreamChatAI"]
         ),
         .library(
+            name: "StreamChatOpenUI",
+            targets: ["StreamChatOpenUI"]
+        ),
+        .library(
             name: "StreamChatTestTools",
             targets: ["StreamChatTestTools"]
         ),
@@ -77,6 +81,12 @@ let package = Package(
         ),
         // cmark-gfm from swift-markdown-ui, which StreamChatAI embeds
         .target(name: "StreamChatAICMark"),
+        // The OpenUI Lang renderer, and the renderer of StreamChatAI's generated UI built on it
+        .target(
+            name: "StreamChatOpenUI",
+            dependencies: ["StreamChatAI"],
+            exclude: ["Info.plist"]
+        ),
         .target(
             name: "StreamChatLogsUI",
             dependencies: [

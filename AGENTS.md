@@ -7,6 +7,7 @@ This repo hosts Stream's iOS Chat SDK in Swift. It provides:
 - A UIKit-based UI SDK (**StreamChatUI**) that provides ready-made chat screens and components
 - A shared UI module (**StreamChatCommonUI**) with appearance tokens, localization, and formatters used by both UIKit and SwiftUI SDKs
 - SwiftUI AI components (**StreamChatAI**) for AI chat experiences: streaming markdown messages, reasoning, tool calls, charts, and a prompt composer. It depends on StreamCore (`StreamCore` and `StreamCoreUI`) but not on the other modules
+- An [OpenUI](https://github.com/thesysdev/openui) Lang renderer (**StreamChatOpenUI**): parser, streaming parser, evaluator, reactive state, `Query`/`Mutation` tools, the chat and standard component libraries in SwiftUI, the system prompt generator, and `OpenUIRenderer`, which shows a reply's OpenUI in StreamChatAI's generated UI. It depends on StreamChatAI, and no other SDK target depends on it. Requires iOS 17 / macOS 14, so every declaration carries `@available(iOS 17.0, macOS 14.0, *)`
 
 Agents should prioritize backwards compatibility, API stability, and high test coverage when changing code. Avoid doing any source-breaking changes without adding deprecations.
 
@@ -105,6 +106,12 @@ Sources/
     StreamMarkdownUI/      # Vendored — do not edit
     StreamNetworkImage/    # Vendored — do not edit
   StreamChatAICMark/       # Vendored cmark-gfm C target for StreamChatAI — do not edit
+  StreamChatOpenUI/        # OpenUI Lang renderer
+    Lang/                  # Parser, streaming parser, evaluator, runtime, store, queries, message envelope
+    Library/               # Component schemas, the chat and standard libraries, prompt generator
+    Components/            # SwiftUI views of the library components
+    Rendering/             # OpenUIView, theme, icons, Markdown
+    GenerativeUI/          # OpenUIRenderer: OpenUI replies in StreamChatAI's generated UI
 
 DemoApp/                   # Primary demo app (use to validate UI changes)
 DemoAppPush/               # Push notification extension for the demo
@@ -119,6 +126,7 @@ Tests/
   StreamChatUITests/       # Snapshot & unit tests for StreamChatUI
   StreamChatCommonUITests/ # Tests for StreamChatCommonUI
   StreamChatAITests/       # Tests for StreamChatAI
+  StreamChatOpenUITests/   # Tests for StreamChatOpenUI (Swift Testing), with upstream conformance fixtures
 StreamChatUITestsApp/      # Test harness app for E2E tests
 StreamChatUITestsAppUITests/ # E2E / UI automation tests
 Scripts/                   # Helper scripts (bootstrap, dependency updates)
@@ -151,6 +159,7 @@ Available shared schemes (under `StreamChat.xcodeproj/xcshareddata/xcschemes/`):
   - `StreamChatUI` — builds the UIKit framework
   - `StreamChatCommonUI` — builds the shared UI framework
   - `StreamChatAI` — builds the AI components framework and runs its tests
+  - `StreamChatOpenUI` — builds the OpenUI renderer and runs its tests
   - `StreamChatTests` — runs core unit tests
   - `StreamChatTestToolsTests` — runs test tools tests
   - `DemoApp` — builds and runs the demo app
@@ -232,6 +241,7 @@ CI is driven by Fastlane (see `fastlane/Fastfile`). Key lanes:
 - `test_ui` — runs StreamChatUI snapshot/unit tests
 - `test_common_ui` — runs StreamChatCommonUI tests
 - `test_ai` — runs StreamChatAI tests
+- `test_openui` — runs StreamChatOpenUI tests
 - `test_e2e_mock` — runs E2E tests against a mock server
 - `build_demo` — builds the demo app
 - `build_test_app_and_frameworks` — builds test app and SDK frameworks
@@ -297,6 +307,12 @@ Code documentation
 - Do not add doc comments to `internal`, `private`, or test code.
 - Keep doc comments concise: a one-line summary; add parameter/return docs only when they are not obvious from the signature.
 - Do not add inline comments narrating what the code or a change does; comment only non-obvious constraints or reasoning.
+
+OpenUI
+
+- StreamChatOpenUI is a port of upstream `@openuidev/lang-core` and the react-ui libraries as of 2026-10-08, before OpenUI 1.0. Check behaviour against the spec (`spec/language.md`, `spec/prompt.md`) and its conformance cases (`spec/fixtures/1.0`) in the upstream repo.
+- `Tests/StreamChatOpenUITests/Fixtures` hold the upstream parser, evaluator, library and prompt output the conformance tests compare against. Regenerate them from upstream instead of editing them.
+- The model writes every program, so treat its numbers, nesting and URLs as untrusted: no unchecked `Int(_:)` of a `Double`, no unbounded recursion, and links only for http, https and mailto.
 
 Accessibility & UI quality
 
