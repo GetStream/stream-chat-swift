@@ -107,8 +107,6 @@ struct CartesianChartView: View {
                 .chartLegend(seriesNames.count > 1 ? .visible : .hidden)
                 .chartLegend(position: .bottom, alignment: .leading)
             }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(Self.summary(points: points, series: seriesNames)))
         }
     }
 
@@ -351,27 +349,36 @@ struct RadialChartView: View {
         let slices = ChartData.slices(labels: context.props.array("labels"), values: context.props.array("values"))
         let maximum = slices.map(\.value).max() ?? 0
         if !slices.isEmpty, maximum > 0 {
+            let rings = Self.rings(count: slices.count, diameter: Self.diameter)
             VStack(spacing: theme.spacing.m) {
                 ZStack {
                     ForEach(Array(slices.enumerated()), id: \.offset) { index, slice in
-                        let inset = CGFloat(index) * 16
+                        let inset = CGFloat(index) * rings.pitch + rings.lineWidth / 2
                         Circle()
-                            .stroke(theme.colors.sunkenSurface, lineWidth: 11)
+                            .stroke(theme.colors.sunkenSurface, lineWidth: rings.lineWidth)
                             .padding(inset)
                         Circle()
                             .trim(from: 0, to: max(0, slice.value) / maximum * 0.75)
-                            .stroke(theme.colors.chartColor(index), style: StrokeStyle(lineWidth: 11, lineCap: .round))
+                            .stroke(theme.colors.chartColor(index), style: StrokeStyle(lineWidth: rings.lineWidth, lineCap: .round))
                             .rotationEffect(.degrees(-90))
                             .padding(inset)
                     }
                 }
-                .frame(width: 180, height: 180)
+                .frame(width: Self.diameter, height: Self.diameter)
                 .frame(maxWidth: .infinity)
                 LegendView(entries: slices, showPercent: false)
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(slices.map { "\($0.label) \(NumberFormatting.decimal($0.value))" }.joined(separator: ", ")))
         }
+    }
+
+    static let diameter: CGFloat = 180
+
+    // Rings get thinner as categories are added, so every ring fits around a small hole.
+    static func rings(count: Int, diameter: CGFloat) -> (pitch: CGFloat, lineWidth: CGFloat) {
+        let pitch = min(16, max(0, diameter / 2 - 12) / CGFloat(max(count, 1)))
+        return (pitch, pitch * 11 / 16)
     }
 }
 
@@ -412,8 +419,9 @@ struct RadarChartView: View {
     @Environment(\.openUITheme) private var theme
 
     var body: some View {
-        let labels = context.props.strings("labels")
-        let (points, seriesNames) = ChartData.points(labels: context.props.array("labels"), series: context.props.array("series"))
+        let series = context.props.array("series")
+        let (points, seriesNames) = ChartData.points(labels: context.props.array("labels"), series: series)
+        let labels = Self.axes(labels: context.props.strings("labels"), series: series, points: points)
         let maximum = max(points.map(\.value).max() ?? 0, 1)
         if labels.count >= 3, !points.isEmpty {
             VStack(spacing: theme.spacing.m) {
@@ -470,5 +478,17 @@ struct RadarChartView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(CartesianChartView.summary(points: points, series: seriesNames)))
         }
+    }
+
+    // One axis per category: the labels for `Series` data, and each row's first cell for tabular
+    // data, whose labels name the series instead.
+    static func axes(labels: [String], series: [OpenUIValue], points: [ChartPoint]) -> [String] {
+        guard case .array? = series.first else { return labels }
+        var categories: [Int: String] = [:]
+        for point in points where categories[point.order] == nil {
+            categories[point.order] = point.category
+        }
+        let count = (categories.keys.max() ?? -1) + 1
+        return (0..<count).map { categories[$0] ?? "" }
     }
 }
