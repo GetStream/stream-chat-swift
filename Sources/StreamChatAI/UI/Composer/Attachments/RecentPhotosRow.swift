@@ -7,7 +7,6 @@ import SwiftUI
 import UIKit
 
 /// The camera, then the most recent photos, each selectable as an attachment.
-@available(iOS 16, *)
 struct RecentPhotosRow: View {
     @ObservedObject var viewModel: AIComposerViewModel
     @ObservedObject var photoLibrary: PhotoLibraryService
@@ -25,7 +24,7 @@ struct RecentPhotosRow: View {
                 } label: {
                     AttachmentTile {
                         images.attachmentPickerCamera
-                            .fontWeight(.semibold)
+                            .fontWeightIfAvailable(.semibold)
                             .foregroundStyle(Color(colors.attachmentPickerTileIcon))
                     }
                 }
