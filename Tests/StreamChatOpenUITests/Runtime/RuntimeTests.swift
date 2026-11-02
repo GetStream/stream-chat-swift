@@ -22,9 +22,11 @@ final class RecordingToolProvider: OpenUIToolProvider, @unchecked Sendable {
     private let lock = NSLock()
     private var _calls: [(String, OpenUIObject)] = []
     let handler: @Sendable (String, OpenUIObject, Int) async throws -> OpenUIValue
+    let minimumRefreshInterval: TimeInterval
 
-    init(handler: @escaping @Sendable (String, OpenUIObject, Int) async throws -> OpenUIValue) {
+    init(minimumRefreshInterval: TimeInterval = 0.01, handler: @escaping @Sendable (String, OpenUIObject, Int) async throws -> OpenUIValue) {
         self.handler = handler
+        self.minimumRefreshInterval = minimumRefreshInterval
     }
 
     var calls: [(String, OpenUIObject)] {
@@ -194,6 +196,17 @@ struct QueryManagerTests {
         let count = provider.calls.count
         try? await Task.sleep(nanoseconds: 200_000_000)
         #expect(provider.calls.count <= count + 1)
+    }
+
+    @Test func refreshIntervalWaitsAtLeastTheToolProvidersMinimum() async {
+        let provider = RecordingToolProvider(minimumRefreshInterval: 1) { _, _, count in ["n": .number(Double(count))] }
+        let manager = QueryManager(toolProvider: provider)
+        manager.evaluateQueries([node("health", refresh: 0.001)])
+        #expect(await waitUntil { provider.calls.count == 1 })
+        try? await Task.sleep(nanoseconds: 200_000_000)
+
+        #expect(provider.calls.count == 1)
+        manager.evaluateQueries([])
     }
 
     @Test func mutationsReportStatusAndRejectConcurrentCalls() async {

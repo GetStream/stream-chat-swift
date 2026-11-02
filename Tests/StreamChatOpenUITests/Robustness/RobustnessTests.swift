@@ -69,12 +69,20 @@ struct RobustnessTests {
         #expect(parsed.content == "root = Stack([])")
     }
 
-    @Test func refreshIntervalsAreClampedLikeSetInterval() {
-        #expect(QueryManager.refreshNanoseconds(5) == 5_000_000_000)
-        #expect(QueryManager.refreshNanoseconds(.infinity) == 2_147_483_647_000_000)
-        #expect(QueryManager.refreshNanoseconds(1e300) == 2_147_483_647_000_000)
-        #expect(QueryManager.refreshNanoseconds(1e-12) == 1_000_000)
-        #expect(QueryManager.refreshNanoseconds(.nan) == 1_000_000)
+    @Test func refreshIntervalsWaitAtLeastTheToolProvidersMinimumAndAreClampedLikeSetInterval() {
+        #expect(QueryManager.refreshNanoseconds(30, minimum: 5) == 30_000_000_000)
+        #expect(QueryManager.refreshNanoseconds(0.001, minimum: 5) == 5_000_000_000)
+        #expect(QueryManager.refreshNanoseconds(.nan, minimum: 5) == 5_000_000_000)
+        #expect(QueryManager.refreshNanoseconds(.infinity, minimum: 5) == 2_147_483_647_000_000)
+        #expect(QueryManager.refreshNanoseconds(1e300, minimum: 5) == 2_147_483_647_000_000)
+        #expect(QueryManager.refreshNanoseconds(1e-12, minimum: 0) == 1_000_000)
+        #expect(QueryManager.refreshNanoseconds(1e-12, minimum: .nan) == 1_000_000)
+    }
+
+    @Test func toolProvidersRefreshEveryFiveSecondsAtMostByDefault() {
+        #expect(FunctionToolProvider([:]).minimumRefreshInterval == 5)
+        #expect(FunctionToolProvider([:], minimumRefreshInterval: 1).minimumRefreshInterval == 1)
+        #expect(HostToolProvider(host: nil).minimumRefreshInterval == 5)
     }
 
     @Test func queryWithAnInfiniteRefreshIntervalDoesNotCrash() async throws {

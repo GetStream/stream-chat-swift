@@ -131,6 +131,10 @@ final class ForwardingToolProvider: OpenUIToolProvider {
         target.withLock { $0 = provider }
     }
 
+    var minimumRefreshInterval: TimeInterval {
+        target.withLock { $0.minimumRefreshInterval }
+    }
+
     func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue {
         let provider = target.withLock { $0 }
         return try await provider.callTool(name, arguments: arguments)

@@ -354,7 +354,7 @@ public final class QueryManager {
     }
 
     private func makeRefreshTimer(query: QueryEntry, statementId: String, interval: Double) -> Task<Void, Never> {
-        let nanoseconds = Self.refreshNanoseconds(interval)
+        let nanoseconds = Self.refreshNanoseconds(interval, minimum: toolProvider?.minimumRefreshInterval ?? 5)
         return Task { [weak self, weak query] in
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: nanoseconds)
@@ -367,10 +367,12 @@ public final class QueryManager {
         }
     }
 
-    // The model writes the interval, so it can be any number: like a browser's `setInterval`, it
-    // waits at least a millisecond, and at most about 24.8 days (2^31 - 1 ms).
-    static func refreshNanoseconds(_ interval: Double) -> UInt64 {
-        let seconds = interval.isNaN ? 0.001 : min(max(interval, 0.001), 2_147_483.647)
+    // The model writes the interval, so it can be any number: it waits at least the tool
+    // provider's minimum, and like a browser's `setInterval`, at least a millisecond and at most
+    // about 24.8 days (2^31 - 1 ms).
+    static func refreshNanoseconds(_ interval: Double, minimum: TimeInterval) -> UInt64 {
+        let shortest = minimum.isNaN ? 0.001 : min(max(minimum, 0.001), 2_147_483.647)
+        let seconds = interval.isNaN ? shortest : min(max(interval, shortest), 2_147_483.647)
         return UInt64(seconds * 1_000_000_000)
     }
 

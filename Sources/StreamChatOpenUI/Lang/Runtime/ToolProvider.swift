@@ -11,6 +11,15 @@ import Foundation
 @available(iOS 17.0, macOS 14.0, *)
 public protocol OpenUIToolProvider: Sendable {
     func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue
+
+    /// The shortest time between two refreshes of a query, in seconds. The model writes a query's
+    /// refresh interval, so a shorter one waits this long. Five seconds by default.
+    var minimumRefreshInterval: TimeInterval { get }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+public extension OpenUIToolProvider {
+    var minimumRefreshInterval: TimeInterval { 5 }
 }
 
 /// Thrown when a function-map provider has no handler for a tool.
@@ -55,10 +64,14 @@ public struct MCPToolError: Error, LocalizedError, Sendable, Equatable {
 public struct FunctionToolProvider: OpenUIToolProvider {
     public typealias Handler = @Sendable (OpenUIObject) async throws -> OpenUIValue
 
+    public let minimumRefreshInterval: TimeInterval
     private let names: [String]
     private let handlers: [String: Handler]
 
-    public init(_ handlers: KeyValuePairs<String, Handler>) {
+    /// - Parameters:
+    ///   - handlers: The tools, by name.
+    ///   - minimumRefreshInterval: The shortest time between two refreshes of a query, in seconds.
+    public init(_ handlers: KeyValuePairs<String, Handler>, minimumRefreshInterval: TimeInterval = 5) {
         var names: [String] = []
         var map: [String: Handler] = [:]
         for (name, handler) in handlers {
@@ -66,6 +79,7 @@ public struct FunctionToolProvider: OpenUIToolProvider {
         }
         self.names = names
         self.handlers = map
+        self.minimumRefreshInterval = minimumRefreshInterval
     }
 
     public func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue {
