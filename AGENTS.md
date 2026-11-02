@@ -7,6 +7,7 @@ This repo hosts Stream's iOS Chat SDK in Swift. It provides:
 - A UIKit-based UI SDK (**StreamChatUI**) that provides ready-made chat screens and components
 - A shared UI module (**StreamChatCommonUI**) with appearance tokens, localization, and formatters used by both UIKit and SwiftUI SDKs
 - SwiftUI AI components (**StreamChatAI**) for AI chat experiences: streaming markdown messages, reasoning, tool calls, charts, and a prompt composer. It depends on StreamCore (`StreamCore` and `StreamCoreUI`) but not on the other modules
+- An [A2UI](https://a2ui.org) 1.0 renderer (**StreamChatA2UI**): the protocol's messages, data model, expressions and functions, the basic catalog in SwiftUI, the A2A transport, and `A2UIRenderer`, which shows a reply's A2UI in StreamChatAI's generated UI. It depends on StreamChatAI, and no other SDK target depends on it
 
 Agents should prioritize backwards compatibility, API stability, and high test coverage when changing code. Avoid doing any source-breaking changes without adding deprecations.
 
@@ -105,6 +106,13 @@ Sources/
     StreamMarkdownUI/      # Vendored — do not edit
     StreamNetworkImage/    # Vendored — do not edit
   StreamChatAICMark/       # Vendored cmark-gfm C target for StreamChatAI — do not edit
+  StreamChatA2UI/          # A2UI 1.0 renderer
+    A2A/                   # A2A transport binding and the content generator
+    AIUI/                  # A2UIRenderer: A2UI replies in StreamChatAI's generated UI
+    Catalog/               # Catalogs, the basic catalog's components and functions
+    Core/                  # Message processor, expression evaluator, surface rendering
+    Facade/                # Conversation, prompt builder, chat-reply helpers
+    Model/                 # Wire messages, components, dynamic values, data model
 
 DemoApp/                   # Primary demo app (use to validate UI changes)
 DemoAppPush/               # Push notification extension for the demo
@@ -119,6 +127,7 @@ Tests/
   StreamChatUITests/       # Snapshot & unit tests for StreamChatUI
   StreamChatCommonUITests/ # Tests for StreamChatCommonUI
   StreamChatAITests/       # Tests for StreamChatAI
+  StreamChatA2UITests/     # Tests for StreamChatA2UI (Swift Testing; XCTest under AIUI/)
 StreamChatUITestsApp/      # Test harness app for E2E tests
 StreamChatUITestsAppUITests/ # E2E / UI automation tests
 Scripts/                   # Helper scripts (bootstrap, dependency updates)
@@ -151,6 +160,7 @@ Available shared schemes (under `StreamChat.xcodeproj/xcshareddata/xcschemes/`):
   - `StreamChatUI` — builds the UIKit framework
   - `StreamChatCommonUI` — builds the shared UI framework
   - `StreamChatAI` — builds the AI components framework and runs its tests
+  - `StreamChatA2UI` — builds the A2UI renderer and runs its tests
   - `StreamChatTests` — runs core unit tests
   - `StreamChatTestToolsTests` — runs test tools tests
   - `DemoApp` — builds and runs the demo app
@@ -232,6 +242,7 @@ CI is driven by Fastlane (see `fastlane/Fastfile`). Key lanes:
 - `test_ui` — runs StreamChatUI snapshot/unit tests
 - `test_common_ui` — runs StreamChatCommonUI tests
 - `test_ai` — runs StreamChatAI tests
+- `test_a2ui` — runs StreamChatA2UI tests
 - `test_e2e_mock` — runs E2E tests against a mock server
 - `build_demo` — builds the demo app
 - `build_test_app_and_frameworks` — builds test app and SDK frameworks
@@ -298,6 +309,12 @@ Code documentation
 - Keep doc comments concise: a one-line summary; add parameter/return docs only when they are not obvious from the signature.
 - Do not add inline comments narrating what the code or a change does; comment only non-obvious constraints or reasoning.
 
+A2UI
+
+- StreamChatA2UI follows the [A2UI 1.0 specification](https://github.com/a2ui-project/a2ui/tree/main/specification/v1_0): `"version": "1.0"`, `@path`/`@call`/`@index` directives, and the error codes of `renderer_to_agent.json`. Check behaviour against the spec's conformance suite (`conformance/core/*.yaml`) and name a test after the case it reproduces.
+- Only `AIUI/` imports StreamChatAI; the protocol implementation outside it stays Foundation and SwiftUI only. StreamChatAI must not depend on StreamChatA2UI.
+- JSON values are `any Sendable` (`JsonMap`, `JsonArray`). Decode JSON with `Json.decode`, which turns Foundation numbers into `Bool`, `Int` or `Double`, never with `JSONSerialization` directly.
+
 Accessibility & UI quality
 
 - Ensure UIKit components have accessibility labels, traits, and dynamic type support.
@@ -313,6 +330,7 @@ Testing policy
   - `Tests/StreamChatUITests/` for UIKit component tests (including snapshot tests)
   - `Tests/StreamChatCommonUITests/` for shared UI module tests
   - `Tests/StreamChatAITests/` for AI components tests
+  - `Tests/StreamChatA2UITests/` for A2UI renderer tests
 - Test infrastructure (mocks, shared helpers, fixtures) lives in `TestTools/StreamChatTestTools/`
 - Use fakes/mocks from the test helpers provided by the repo when possible.
 - Use `waitFor` from StreamChatTestTools to await async completion handlers instead of manual `XCTestExpectation` + `waitForExpectations`.
@@ -347,7 +365,7 @@ Compatibility & distribution
 - Name branches with a type prefix and a short kebab-case description, e.g. `add/dynamic-search-debounce`, `fix/empty-search-results`, `docs/channel-search`.
 - Prefer prefixes that match the change type: `add/`, `fix/`, `docs/`, etc. Do **not** use personal name prefixes (e.g. `nuno/...`) or ticket IDs (e.g. `ios-1932`, `IOS-1932`) in branch names.
 - Update `CHANGELOG.md` under the `# Upcoming` section when making client-facing changes (follow the Keep a Changelog format with `### Added`, `### Fixed`, `### Changed` subsections).
-- The changelog has separate subsections for **StreamChat**, **StreamChatUI**, **StreamChatCommonUI**, and **StreamChatAI**.
+- The changelog has separate subsections for **StreamChat**, **StreamChatUI**, **StreamChatCommonUI**, **StreamChatAI**, and **StreamChatA2UI**.
 - Only update `CHANGELOG.md` **after the PR has been opened**, so the entry can include the PR link (e.g. `[#1234](https://github.com/GetStream/stream-chat-swift/pull/1234)`). Push the changelog update as a follow-up commit on the same branch.
 - Keep changelog entries as short and high-level as possible. Describe the user-visible outcome in one line and do not explain implementation details, file names, or internal APIs.
 
