@@ -7,7 +7,7 @@ import Foundation
 @testable import StreamChatA2UI
 import Testing
 
-/// Serves canned A2A responses, picked by the request's `X-Scenario` header and path.
+/// Serves canned A2A responses, picked by the request's `X-Scenario` header, path and `Authorization` header.
 private final class StubA2AProtocol: URLProtocol {
     struct Response {
         var status = 200
@@ -38,7 +38,9 @@ private final class StubA2AProtocol: URLProtocol {
         "mismatch POST /": Response(contentType: "text/event-stream", body: #"data: {"jsonrpc": "2.0", "id": 9, "result": {}}"#),
         "rpc-error POST /": Response(contentType: "text/event-stream", body: #"data: {"jsonrpc": "2.0", "id": 1, "error": {"code": -32600, "message": "Bad request"}}"#),
         "bad-card GET /.well-known/agent-card.json": Response(body: #"{"name": "No url"}"#),
-        "artifacts POST /": Response(contentType: "text/event-stream", body: artifactEvents)
+        "artifacts POST /": Response(contentType: "text/event-stream", body: artifactEvents),
+        "expired POST / Bearer old": Response(status: 401, body: #"{"error": "token expired"}"#),
+        "expired POST / Bearer fresh": Response(contentType: "text/event-stream", body: streamEvents)
     ]
 
     // An artifact streamed as it's made, then the final task repeating it with one more.
@@ -53,7 +55,8 @@ private final class StubA2AProtocol: URLProtocol {
 
     override func startLoading() {
         let scenario = request.value(forHTTPHeaderField: "X-Scenario") ?? "ok"
-        let key = "\(scenario) \(request.httpMethod ?? "GET") \(request.url?.path.isEmpty == false ? request.url!.path : "/")"
+        let authorization = request.value(forHTTPHeaderField: "Authorization").map { " \($0)" } ?? ""
+        let key = "\(scenario) \(request.httpMethod ?? "GET") \(request.url?.path.isEmpty == false ? request.url!.path : "/")\(authorization)"
         let response = Self.responses[key] ?? Response(status: 404, body: "{}")
         let http = HTTPURLResponse(
             url: request.url!,
@@ -67,15 +70,41 @@ private final class StubA2AProtocol: URLProtocol {
     }
 }
 
+// Signs requests with an old token and offers `refreshed` when the agent turns one down.
+private actor RefreshingAuthentication: A2AAuthenticationHandler {
+    let refreshed: String
+    private(set) var turnedDownBodies: [String] = []
+    private(set) var savedHeaders: [[String: String]] = []
+
+    init(refreshed: String) {
+        self.refreshed = refreshed
+    }
+
+    var headers: [String: String] {
+        ["Authorization": "Bearer old"]
+    }
+
+    func shouldRetryWithHeaders(request: URLRequest, response: HTTPURLResponse, body: Data?) -> [String: String]? {
+        guard response.statusCode == 401 else { return nil }
+        turnedDownBodies.append(String(decoding: body ?? Data(), as: UTF8.self))
+        return ["Authorization": "Bearer \(refreshed)"]
+    }
+
+    func onSuccessfulRetry(_ headers: [String: String]) {
+        savedHeaders.append(headers)
+    }
+}
+
 @MainActor
 @Suite("A2A client")
 struct A2AClientTests {
-    private func client(_ scenario: String = "ok") -> A2AClient {
+    private func client(_ scenario: String = "ok", authentication: A2AAuthenticationHandler? = nil) -> A2AClient {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [StubA2AProtocol.self]
         return A2AClient(
             baseUrl: "https://agent.test/",
             customHeaders: ["X-Scenario": scenario],
+            authenticationHandler: authentication,
             agentCardBackgroundFetch: false,
             session: URLSession(configuration: configuration)
         )
@@ -127,6 +156,30 @@ struct A2AClientTests {
             if let error = event as? A2AJSONRPCErrorResponseSSM { errors.append(error) }
         }
         #expect(errors.first?.error?.message == "Bad request")
+    }
+
+    @Test("A stream turned down for its credentials is retried once with the refreshed ones")
+    func streamingRefreshesCredentials() async throws {
+        let authentication = RefreshingAuthentication(refreshed: "fresh")
+        var events: [A2ASendStreamMessageResponse] = []
+        for try await event in client("expired", authentication: authentication).sendMessageStream(payload()) {
+            events.append(event)
+        }
+
+        #expect(events.count == 3)
+        #expect(await authentication.turnedDownBodies == [#"{"error": "token expired"}"#])
+        #expect(await authentication.savedHeaders == [["Authorization": "Bearer fresh"]])
+    }
+
+    @Test("A stream whose refreshed credentials are turned down too fails without saving them")
+    func streamingRefreshFails() async throws {
+        let authentication = RefreshingAuthentication(refreshed: "stale")
+
+        await #expect(throws: A2AClientError.self) {
+            for try await _ in client("expired", authentication: authentication).sendMessageStream(payload()) {}
+        }
+        #expect(await authentication.turnedDownBodies.count == 1)
+        #expect(await authentication.savedHeaders.isEmpty)
     }
 
     @Test("message/send posts to the agent card's endpoint")
