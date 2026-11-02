@@ -196,6 +196,19 @@ struct OpenUIRendererTests {
         #expect(host.sent.isEmpty)
     }
 
+    @Test func linksToOtherAppsDontOpen() throws {
+        let host = FakeHost()
+        let engine = OpenUIEngine(library: .openUIChat, host: host, toolProvider: FunctionToolProvider([:]))
+
+        for link in ["tel:+15550100", "facetime:someone@example.com", "otherapp://pay?to=x", "file:///etc/hosts", "javascript:alert(1)"] {
+            engine.handle(ActionEvent(type: BuiltinActionType.openURL, params: ["url": .string(link)], humanFriendlyMessage: "Open"), messageID: "m1")
+        }
+        engine.handle(ActionEvent(type: BuiltinActionType.openURL, params: ["url": "mailto:a@b.co"], humanFriendlyMessage: "Mail"), messageID: "m1")
+
+        #expect(host.opened == [try #require(URL(string: "mailto:a@b.co"))])
+        #expect(host.sent.isEmpty)
+    }
+
     @Test func actionsAfterTheConversationClosedAreDropped() {
         var host: FakeHost? = FakeHost()
         let engine = OpenUIEngine(library: .openUIChat, host: host!, toolProvider: FunctionToolProvider([:]))

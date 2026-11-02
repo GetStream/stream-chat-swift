@@ -65,10 +65,6 @@ enum MarkdownCache {
 /// Inline Markdown → `AttributedString` (falls back to plain text when parsing fails).
 @available(iOS 17.0, macOS 14.0, *)
 enum InlineMarkdown {
-    // The model writes the links, so only the schemes react-markdown keeps by default for web
-    // links and email open; a link to another app or a phone number shows as plain text.
-    static let linkSchemes: Set<String> = ["http", "https", "mailto"]
-
     @MainActor
     static func cached(_ text: String) -> AttributedString {
         MarkdownCache.inline(for: text)
@@ -83,7 +79,7 @@ enum InlineMarkdown {
         var string = (try? AttributedString(markdown: text, options: options)) ?? AttributedString(text)
         let unsafeLinks = string.runs.filter { run in
             guard let link = run.link else { return false }
-            return !linkSchemes.contains(link.scheme?.lowercased() ?? "")
+            return !OpenUILink.isOpenable(link)
         }.map(\.range)
         for range in unsafeLinks {
             string[range].link = nil

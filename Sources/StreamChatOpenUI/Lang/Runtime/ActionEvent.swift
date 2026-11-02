@@ -41,10 +41,13 @@ public struct ActionEvent: Sendable, Hashable {
     public var isContinueConversation: Bool { type == BuiltinActionType.continueConversation }
     public var isOpenURL: Bool { type == BuiltinActionType.openURL }
 
-    /// The URL of an open-url action.
+    /// The URL of an open-url action, when it's a web or email link. The model writes it, so a
+    /// link to another app or a phone number is `nil`.
     public var url: URL? {
-        guard let string = params["url"]?.stringValue else { return nil }
-        return URL(string: string)
+        guard let string = params["url"]?.stringValue, let url = URL(string: string), OpenUILink.isOpenable(url) else {
+            return nil
+        }
+        return url
     }
 
     /// The `context` of a `@ToAssistant(message, context)` step: any value, passed through unchanged.
