@@ -912,6 +912,12 @@ extension DemoChatChannelListRouter {
                     vc.livestreamChannelController = livestreamController
                     vc.hidesBottomBarWhenPushed = true
                     self.rootViewController.navigationController?.pushViewController(vc, animated: true)
+                },
+                .item("Show as AI Chat") { [unowned self] in
+                    let vc = UIHostingController(rootView: DemoAIChatView(channel: context.client.channelController(for: cid)))
+                    vc.title = context.channel?.name ?? "AI Chat"
+                    vc.hidesBottomBarWhenPushed = true
+                    self.rootViewController.navigationController?.pushViewController(vc, animated: true)
                 }
             ])
         ]
