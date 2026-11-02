@@ -51,14 +51,15 @@ struct TableView: View {
                 }
                 if pages > 1 {
                     HStack(spacing: theme.spacing.s) {
-                        Button { page = max(0, current - 1) } label: { Image(systemName: "chevron.left") }
+                        Button { page = max(0, current - 1) } label: { Image(systemName: "chevron.backward") }
                             .disabled(current == 0)
                             .accessibilityLabel(Text(L10n.Pagination.previousPage))
                         Text(L10n.Pagination.position(current + 1, of: pages))
                             .font(theme.fonts.caption)
                             .monospacedDigit()
                             .foregroundStyle(theme.colors.textSecondary)
-                        Button { page = min(pages - 1, current + 1) } label: { Image(systemName: "chevron.right") }
+                            .accessibilityLabel(Text(L10n.Pagination.positionAccessibility(current + 1, of: pages)))
+                        Button { page = min(pages - 1, current + 1) } label: { Image(systemName: "chevron.forward") }
                             .disabled(current >= pages - 1)
                             .accessibilityLabel(Text(L10n.Pagination.nextPage))
                     }
@@ -150,9 +151,7 @@ struct TableSkeleton: View {
 struct EditableTableView: View {
     let context: ComponentContext
     @Environment(\.openUITheme) private var theme
-    @State private var rows: [[String: OpenUIValue]] = []
-    @State private var baseline: [[String: OpenUIValue]] = []
-    @State private var loadedSignature = ""
+    @State private var table = EditableTableRows()
 
     private struct Column {
         let type: String
@@ -181,7 +180,8 @@ struct EditableTableView: View {
 
     var body: some View {
         let columns = self.columns
-        let changed = changedCellCount(columns)
+        let keys = columns.map(\.key)
+        let changed = table.changedCellCount(keys: keys)
         VStack(alignment: .leading, spacing: theme.spacing.s) {
             ScrollView(.horizontal, showsIndicators: false) {
                 Grid(alignment: .leading, horizontalSpacing: 0, verticalSpacing: 0) {
@@ -196,7 +196,7 @@ struct EditableTableView: View {
                         }
                     }
                     .background(theme.colors.subtleFill)
-                    ForEach(rows.indices, id: \.self) { rowIndex in
+                    ForEach(table.rows.indices, id: \.self) { rowIndex in
                         Divider().gridCellUnsizedAxes(.horizontal)
                         GridRow {
                             ForEach(Array(columns.enumerated()), id: \.offset) { _, column in
@@ -217,7 +217,7 @@ struct EditableTableView: View {
                         .font(theme.fonts.caption)
                         .foregroundStyle(theme.colors.textSecondary)
                     Spacer()
-                    Button(L10n.EditableTable.reset) { rows = baseline }
+                    Button(L10n.EditableTable.reset) { table.reset() }
                         .buttonStyle(.bordered)
                     Button(L10n.EditableTable.save) { save(columns) }
                         .buttonStyle(.borderedProminent)
@@ -227,21 +227,22 @@ struct EditableTableView: View {
             }
         }
         .disabled(context.isStreaming)
-        .onAppear { load(columns) }
-        .onChange(of: OpenUIJSON.stringify(context.props["data"]?.plainJSON ?? .null)) { _, _ in load(columns) }
+        .onAppear { load(keys) }
+        .onChange(of: context.props["data"]) { _, _ in load(keys) }
+        .onChange(of: context.isStreaming) { _, _ in load(keys) }
     }
 
     @ViewBuilder
     private func editor(_ column: Column, row: Int) -> some View {
         let binding = Binding<String>(
-            get: { row < rows.count ? rows[row][column.key].map { JS.isNullish($0) ? "" : JS.toString($0) } ?? "" : "" },
+            get: { row < table.rows.count ? table.rows[row][column.key].map { JS.isNullish($0) ? "" : JS.toString($0) } ?? "" : "" },
             set: { newValue in
-                guard row < rows.count else { return }
+                guard row < table.rows.count else { return }
                 if column.type == "number" {
                     let number = JS.stringToNumber(newValue)
-                    rows[row][column.key] = number.isNaN || newValue.isEmpty ? .string(newValue) : .number(number)
+                    table.rows[row][column.key] = number.isNaN || newValue.isEmpty ? .string(newValue) : .number(number)
                 } else {
-                    rows[row][column.key] = .string(newValue)
+                    table.rows[row][column.key] = .string(newValue)
                 }
             }
         )
@@ -275,41 +276,75 @@ struct EditableTableView: View {
         }
     }
 
-    private func load(_ columns: [Column]) {
+    private func load(_ keys: [String]) {
         let stored = context.runtime.fieldValue(formName: tableName, name: tableName)
         let source = (stored.map { JS.isNullish($0) } ?? true) ? context.props["data"] : stored
-        let signature = OpenUIJSON.stringify(source?.plainJSON ?? .null)
-        guard signature != loadedSignature else { return }
-        loadedSignature = signature
-        let parsed: [[String: OpenUIValue]] = (source?.arrayValue ?? []).map { row in
-            var values: [String: OpenUIValue] = ["id": row["id"] ?? .string("")]
-            let cells = row["values"]?.arrayValue ?? []
-            for (index, column) in columns.enumerated() {
-                values[column.key] = index < cells.count ? cells[index] : .string("")
-            }
-            return values
-        }
-        rows = parsed
-        if baseline.isEmpty || !context.isStreaming { baseline = parsed }
+        table.load(source, keys: keys, isStreaming: context.isStreaming)
     }
 
-    private func changedCellCount(_ columns: [Column]) -> Int {
+    private func save(_ columns: [Column]) {
+        let keys = columns.map(\.key)
+        context.runtime.setFieldValue(formName: tableName, componentType: "EditableTable", name: tableName, value: table.data(keys: keys))
+        context.trigger(label: L10n.EditableTable.save, formName: tableName)
+        table.markSaved()
+    }
+}
+
+// The edited rows of an `EditableTable`, and the rows they are compared with to count changes.
+// The comparison starts only once the model has finished writing the table, as partial rows
+// would otherwise count as edits.
+@available(iOS 17.0, macOS 14.0, *)
+struct EditableTableRows {
+    var rows: [[String: OpenUIValue]] = []
+    private(set) var baseline: [[String: OpenUIValue]]?
+    private var loadedSource: OpenUIValue?
+    private var loadedKeys: [String] = []
+
+    mutating func load(_ source: OpenUIValue?, keys: [String], isStreaming: Bool) {
+        if source != loadedSource || keys != loadedKeys {
+            loadedSource = source
+            loadedKeys = keys
+            rows = Self.rows(from: source, keys: keys)
+        }
+        if baseline == nil, !isStreaming {
+            baseline = rows
+        }
+    }
+
+    func changedCellCount(keys: [String]) -> Int {
+        guard let baseline else { return 0 }
         var count = 0
         for (index, row) in rows.enumerated() where index < baseline.count {
-            for column in columns where row[column.key] != baseline[index][column.key] {
+            for key in keys where row[key] != baseline[index][key] {
                 count += 1
             }
         }
         return count
     }
 
-    private func save(_ columns: [Column]) {
-        let data: [OpenUIValue] = rows.map { row in
-            ["id": row["id"] ?? .string(""), "values": .array(columns.map { row[$0.key] ?? .string("") })]
-        }
-        context.runtime.setFieldValue(formName: tableName, componentType: "EditableTable", name: tableName, value: .array(data))
-        context.trigger(label: L10n.EditableTable.save, formName: tableName)
+    mutating func reset() {
+        if let baseline { rows = baseline }
+    }
+
+    mutating func markSaved() {
         baseline = rows
+    }
+
+    func data(keys: [String]) -> OpenUIValue {
+        .array(rows.map { row in
+            ["id": row["id"] ?? .string(""), "values": .array(keys.map { row[$0] ?? .string("") })]
+        })
+    }
+
+    static func rows(from source: OpenUIValue?, keys: [String]) -> [[String: OpenUIValue]] {
+        (source?.arrayValue ?? []).map { row in
+            var values: [String: OpenUIValue] = ["id": row["id"] ?? .string("")]
+            let cells = row["values"]?.arrayValue ?? []
+            for (index, key) in keys.enumerated() {
+                values[key] = index < cells.count ? cells[index] : .string("")
+            }
+            return values
+        }
     }
 }
 
