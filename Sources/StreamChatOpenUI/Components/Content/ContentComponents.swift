@@ -20,28 +20,91 @@ extension EnvironmentValues {
     }
 }
 
+// Turns `[1]` citations into links to their sources, leaving code spans and fenced code as written.
 @available(iOS 17.0, macOS 14.0, *)
 enum Citations {
-    /// Turns `[1]` citations into links when a source URL exists for them.
     static func link(_ text: String, sources: [Int: String]) -> String {
         guard !sources.isEmpty, text.contains("[") else { return text }
-        let pattern = #"\[(\d{1,2})\](?!\()"#
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return text }
-        let nsText = text as NSString
         var result = ""
-        var cursor = 0
-        for match in regex.matches(in: text, range: NSRange(location: 0, length: nsText.length)) {
-            let number = Int(nsText.substring(with: match.range(at: 1))) ?? 0
-            result += nsText.substring(with: NSRange(location: cursor, length: match.range.location - cursor))
-            if let url = sources[number], let encoded = url.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) {
-                result += "[[\(number)]](\(encoded))"
+        result.reserveCapacity(text.utf8.count)
+        var fence: Substring?
+        for (index, line) in text.split(separator: "\n", omittingEmptySubsequences: false).enumerated() {
+            if index > 0 { result += "\n" }
+            let trimmed = line.drop { $0 == " " || $0 == "\t" }
+            if let marker = fence {
+                if trimmed.hasPrefix(marker) { fence = nil }
+                result += line
+            } else if trimmed.hasPrefix("```") || trimmed.hasPrefix("~~~") {
+                fence = trimmed.prefix(3)
+                result += line
             } else {
-                result += nsText.substring(with: match.range)
+                result += linkLine(Array(line), sources: sources)
             }
-            cursor = match.range.location + match.range.length
         }
-        result += nsText.substring(from: cursor)
         return result
+    }
+
+    private static func linkLine(_ line: [Character], sources: [Int: String]) -> String {
+        var result = ""
+        var index = 0
+        while index < line.count {
+            let character = line[index]
+            if character == "`" {
+                let end = codeSpanEnd(line, from: index)
+                result += String(line[index..<end])
+                index = end
+            } else if character == "[", let (number, end) = citation(line, at: index), let url = sources[number], let destination = destination(url) {
+                result += "[[\(number)]](\(destination))"
+                index = end
+            } else {
+                result.append(character)
+                index += 1
+            }
+        }
+        return result
+    }
+
+    // The end of the code span opened at `start`, or just past its backticks when it isn't closed.
+    private static func codeSpanEnd(_ line: [Character], from start: Int) -> Int {
+        var openEnd = start
+        while openEnd < line.count, line[openEnd] == "`" { openEnd += 1 }
+        let length = openEnd - start
+        var index = openEnd
+        while index < line.count {
+            guard line[index] == "`" else {
+                index += 1
+                continue
+            }
+            var runEnd = index
+            while runEnd < line.count, line[runEnd] == "`" { runEnd += 1 }
+            if runEnd - index == length { return runEnd }
+            index = runEnd
+        }
+        return openEnd
+    }
+
+    // `[n]` with one or two digits that isn't already a link, a link's text or an escaped bracket.
+    private static func citation(_ line: [Character], at start: Int) -> (number: Int, end: Int)? {
+        if start > 0, line[start - 1] == "[" || line[start - 1] == "\\" { return nil }
+        var index = start + 1
+        var digits = ""
+        while index < line.count, digits.count < 3, let digit = line[index].wholeNumberValue, line[index].isASCII {
+            digits.append(String(digit))
+            index += 1
+        }
+        guard (1...2).contains(digits.count), index < line.count, line[index] == "]", let number = Int(digits) else { return nil }
+        let end = index + 1
+        if end < line.count, line[end] == "(" || line[end] == ":" { return nil }
+        return (number, end)
+    }
+
+    // The URL as a Markdown link destination: invalid characters are percent-encoded once, and
+    // parentheses are encoded so they can't end the link early.
+    static func destination(_ url: String) -> String? {
+        guard let parsed = URL(string: url.trimmingCharacters(in: .whitespacesAndNewlines)), parsed.scheme != nil else { return nil }
+        return parsed.absoluteString
+            .replacingOccurrences(of: "(", with: "%28")
+            .replacingOccurrences(of: ")", with: "%29")
     }
 }
 
@@ -84,6 +147,8 @@ struct SourcesStrip: View {
     let sources: [OpenUIObject]
     let runtime: OpenUIRuntime
     @Environment(\.openUITheme) private var theme
+    @ScaledMetric(relativeTo: .caption2) private var badgeSize: CGFloat = 18
+    @ScaledMetric(relativeTo: .caption) private var cardWidth: CGFloat = 180
 
     var body: some View {
         VStack(alignment: .leading, spacing: theme.spacing.s) {
@@ -102,7 +167,7 @@ struct SourcesStrip: View {
                                 Text("\(index + 1)")
                                     .font(.caption2.weight(.bold))
                                     .foregroundStyle(theme.colors.onAccent)
-                                    .frame(width: 18, height: 18)
+                                    .frame(width: badgeSize, height: badgeSize)
                                     .background(theme.colors.accent, in: Circle())
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(source["title"]?.stringValue ?? L10n.Sources.untitled)
@@ -115,7 +180,7 @@ struct SourcesStrip: View {
                                         .lineLimit(1)
                                 }
                             }
-                            .frame(width: 180, alignment: .leading)
+                            .frame(width: cardWidth, alignment: .leading)
                             .padding(theme.spacing.s)
                             .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
                         }
@@ -227,12 +292,12 @@ struct CardHeaderView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: theme.spacing.xs) {
             if let title = context.props.text("title"), !title.isEmpty {
-                Text(InlineMarkdown.attributed(title))
+                Text(InlineMarkdown.cached(title))
                     .font(theme.fonts.title)
                     .foregroundStyle(theme.colors.textPrimary)
             }
             if let subtitle = context.props.text("subtitle"), !subtitle.isEmpty {
-                Text(InlineMarkdown.attributed(subtitle))
+                Text(InlineMarkdown.cached(subtitle))
                     .font(theme.fonts.bodySmall)
                     .foregroundStyle(theme.colors.textSecondary)
             }
@@ -251,11 +316,11 @@ struct InlineHeaderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(InlineMarkdown.attributed(context.props.text("heading") ?? ""))
+            Text(InlineMarkdown.cached(context.props.text("heading") ?? ""))
                 .font(theme.fonts.heading)
                 .foregroundStyle(theme.colors.textPrimary)
             if let description = context.props.text("description"), !description.isEmpty {
-                Text(InlineMarkdown.attributed(description))
+                Text(InlineMarkdown.cached(description))
                     .font(theme.fonts.caption)
                     .foregroundStyle(theme.colors.textSecondary)
             }
@@ -350,7 +415,7 @@ struct TextCalloutView: View {
                         .foregroundStyle(theme.colors.textPrimary)
                 }
                 if let description = context.props.text("description"), !description.isEmpty {
-                    Text(InlineMarkdown.attributed(description))
+                    Text(InlineMarkdown.cached(description))
                         .font(theme.fonts.bodySmall)
                         .foregroundStyle(theme.colors.textSecondary)
                 }

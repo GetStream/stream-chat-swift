@@ -19,7 +19,7 @@ struct TextBlockView: View {
         let size = sizeOverride ?? props.string("size") ?? "md"
         let isNumber = props.string("variant") == "number"
         VStack(alignment: .leading, spacing: 2) {
-            Text(InlineMarkdown.attributed(props.text("value") ?? ""))
+            Text(InlineMarkdown.cached(props.text("value") ?? ""))
                 .font(primaryFont(size).weight(bold ? .semibold : .regular))
                 .monospacedDigit(isNumber)
                 .foregroundStyle(theme.colors.textPrimary)
@@ -61,9 +61,10 @@ struct IconBadge: View {
     let variant: String?
     let size: String?
     @Environment(\.openUITheme) private var theme
+    @ScaledMetric(relativeTo: .body) private var scale: CGFloat = 1
 
     var body: some View {
-        let dimension = Self.dimension(size)
+        let dimension = Self.dimension(size) * scale
         let color: Color = {
             switch variant {
             case "inverted", "filled": return theme.colors.onAccent
@@ -85,6 +86,7 @@ struct IconBadge: View {
             .foregroundStyle(variant == "soft" ? theme.colors.accent : color)
             .frame(width: dimension, height: dimension)
             .background(background, in: RoundedRectangle(cornerRadius: dimension * 0.28, style: .continuous))
+            .accessibilityHidden(true)
     }
 
     static func dimension(_ size: String?) -> CGFloat {
@@ -127,12 +129,12 @@ struct TitleSubtitle: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(InlineMarkdown.attributed(title))
+            Text(InlineMarkdown.cached(title))
                 .font(theme.fonts.bodySmall.weight(bold ? .semibold : .medium))
                 .foregroundStyle(theme.colors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
             if let subtitle, !subtitle.isEmpty {
-                Text(InlineMarkdown.attributed(subtitle))
+                Text(InlineMarkdown.cached(subtitle))
                     .font(theme.fonts.caption)
                     .foregroundStyle(theme.colors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -192,6 +194,7 @@ struct TrendBadge: View {
             let color = up ? theme.colors.success : theme.colors.danger
             HStack(spacing: 2) {
                 Image(systemName: up ? "arrow.up.right" : "arrow.down.right")
+                    .accessibilityHidden(true)
                 Text(NumberFormatting.percent(abs(value)))
             }
             .font(.caption.weight(.semibold))
@@ -531,7 +534,7 @@ private struct ContextCard: View {
             }
             Spacer(minLength: hasImage ? 40 : 0)
             if let body = props.text("body"), !body.isEmpty {
-                Text(InlineMarkdown.attributed(body))
+                Text(InlineMarkdown.cached(body))
                     .font(theme.fonts.bodySmall.weight(.semibold))
                     .foregroundStyle(hasImage ? .white : theme.colors.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)

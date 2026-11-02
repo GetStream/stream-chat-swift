@@ -159,6 +159,7 @@ struct ButtonsView: View {
 struct IconButtonView: View {
     let context: ComponentContext
     @Environment(\.openUIFormName) private var formName
+    @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 20
 
     var body: some View {
         let props = context.props
@@ -168,13 +169,13 @@ struct IconButtonView: View {
             context.trigger(label: name, formName: formName, action: props["action"])
         } label: {
             OpenUIIconImage(element: props.element("icon"))
-                .frame(width: 20, height: 20)
+                .frame(width: iconSize, height: iconSize)
         }
         .modifier(OpenUIButtonStyle(variant: variant))
         .buttonBorderShape(props.string("shape") == "circle" ? .circle : .roundedRectangle)
         .controlSize(ButtonComponentView.controlSize(props.string("size") ?? "medium"))
         .disabled(context.isStreaming)
-        .accessibilityLabel(Text(name))
+        .accessibilityLabel(Text(name.isEmpty ? OpenUIIcons.accessibilityName(for: props.element("icon")?.props["name"]?.stringValue) : name))
     }
 }
 
@@ -224,6 +225,7 @@ struct ListBlockView: View {
     let context: ComponentContext
     var sizeOverride: String?
     @Environment(\.openUITheme) private var theme
+    @ScaledMetric(relativeTo: .caption) private var scale: CGFloat = 1
 
     var body: some View {
         let items = context.props.elements("items")
@@ -240,22 +242,22 @@ struct ListBlockView: View {
                 let row = HStack(alignment: hasSubtitle ? .top : .center, spacing: theme.spacing.m) {
                     if variant == "image", let image = props.object("image") {
                         RemoteImage(url: image["src"]?.stringValue, alt: image["alt"]?.stringValue)
-                            .frame(width: small ? 36 : 48, height: small ? 36 : 48)
+                            .frame(width: (small ? 36 : 48) * scale, height: (small ? 36 : 48) * scale)
                             .clipShape(RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
                     } else {
                         Text("\(index + 1)")
                             .font(.caption.weight(.semibold))
                             .monospacedDigit()
                             .foregroundStyle(theme.colors.accent)
-                            .frame(width: small ? 20 : 24, height: small ? 20 : 24)
+                            .frame(width: (small ? 20 : 24) * scale, height: (small ? 20 : 24) * scale)
                             .background(theme.colors.accent.opacity(0.12), in: Circle())
                     }
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(InlineMarkdown.attributed(title))
+                        Text(InlineMarkdown.cached(title))
                             .font(small ? theme.fonts.caption.weight(.medium) : theme.fonts.bodySmall.weight(.medium))
                             .foregroundStyle(theme.colors.textPrimary)
                         if let subtitle = props.text("subtitle") {
-                            Text(InlineMarkdown.attributed(subtitle))
+                            Text(InlineMarkdown.cached(subtitle))
                                 .font(small ? .caption2 : theme.fonts.caption)
                                 .foregroundStyle(theme.colors.textSecondary)
                         }
@@ -267,7 +269,9 @@ struct ListBlockView: View {
                             if let actionLabel = props.text("actionLabel") {
                                 Text(actionLabel).font(theme.fonts.caption.weight(.medium))
                             }
-                            Image(systemName: "chevron.right").font(.caption.weight(.semibold))
+                            Image(systemName: "chevron.forward")
+                                .font(.caption.weight(.semibold))
+                                .accessibilityHidden(true)
                         }
                         .foregroundStyle(theme.colors.textSecondary)
                     }
@@ -321,6 +325,7 @@ struct TagPill: View {
             if let icon {
                 OpenUIIconImage(element: icon)
                     .font(font.weight(.semibold))
+                    .accessibilityHidden(true)
             }
             Text(text)
                 .font(font.weight(.medium))
