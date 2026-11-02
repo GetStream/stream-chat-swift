@@ -23,6 +23,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add the `StreamChatA2UI` library, an A2UI 1.0 renderer that shows replies written in A2UI in StreamChatAI's generated UI [#4373](https://github.com/GetStream/stream-chat-swift/pull/4373)
 
+## StreamChatOpenUI
+### ✅ Added
+- Add the `StreamChatOpenUI` library, an OpenUI Lang 1.0 renderer that shows replies written in OpenUI in StreamChatAI's generated UI [#4374](https://github.com/GetStream/stream-chat-swift/pull/4374)
+
 # [5.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.15.0)
 _October 22, 2026_
 
