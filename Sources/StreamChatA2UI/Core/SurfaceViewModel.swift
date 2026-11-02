@@ -37,7 +37,7 @@ public final class SurfaceViewModel: ObservableObject {
     public init(surfaceId: String, dataModel: DataModel = DataModel()) {
         self.surfaceId = surfaceId
         self.dataModel = dataModel
-        dataModel.observe { [weak self] _ in
+        _ = dataModel.observe { [weak self] _ in
             self?.revision += 1
         }
     }

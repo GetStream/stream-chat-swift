@@ -883,13 +883,7 @@ public final class A2AClient: A2AClientProtocol {
                     }
                     request.httpBody = try JSONSerialization.data(withJSONObject: rpcRequest.toJson())
 
-                    let (bytes, response) = try await session.bytes(for: request)
-                    guard let httpResponse = response as? HTTPURLResponse else {
-                        throw A2AClientError.invalidResponse
-                    }
-                    guard (200..<300).contains(httpResponse.statusCode) else {
-                        throw A2AClientError.invalidResponse
-                    }
+                    let (bytes, httpResponse) = try await streamWithAuthenticationRetry(request)
                     guard let contentType = httpResponse.value(forHTTPHeaderField: "Content-Type"),
                           contentType.starts(with: "text/event-stream") else {
                         throw A2AClientError.invalidContentType
@@ -914,6 +908,49 @@ public final class A2AClient: A2AClientProtocol {
             continuation.onTermination = { _ in task.cancel() }
         }
     }
+
+    private func streamWithAuthenticationRetry(_ request: URLRequest) async throws -> (URLSession.AsyncBytes, HTTPURLResponse) {
+        let (bytes, httpResponse) = try await openStream(request)
+        if (200..<300).contains(httpResponse.statusCode) {
+            return (bytes, httpResponse)
+        }
+        guard let authHandler = authenticationHandler else {
+            throw A2AClientError.invalidResponse
+        }
+        let body = try await Self.errorBody(of: bytes)
+        guard let retryHeaders = await authHandler.shouldRetryWithHeaders(request: request, response: httpResponse, body: body) else {
+            throw A2AClientError.invalidResponse
+        }
+        var retryRequest = request
+        for (key, value) in retryHeaders {
+            retryRequest.setValue(value, forHTTPHeaderField: key)
+        }
+        let (retryBytes, retryResponse) = try await openStream(retryRequest)
+        guard (200..<300).contains(retryResponse.statusCode) else {
+            throw A2AClientError.invalidResponse
+        }
+        await authHandler.onSuccessfulRetry(retryHeaders)
+        return (retryBytes, retryResponse)
+    }
+
+    private func openStream(_ request: URLRequest) async throws -> (URLSession.AsyncBytes, HTTPURLResponse) {
+        let (bytes, response) = try await session.bytes(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw A2AClientError.invalidResponse
+        }
+        return (bytes, httpResponse)
+    }
+
+    private static func errorBody(of bytes: URLSession.AsyncBytes) async throws -> Data {
+        var body = Data()
+        for try await byte in bytes {
+            body.append(byte)
+            if body.count >= maxErrorBodyLength { break }
+        }
+        return body
+    }
+
+    private static let maxErrorBodyLength = 64 * 1024
 
     private func serviceEndpoint() async throws -> URL {
         if let serviceEndpointUrl, let url = URL(string: serviceEndpointUrl) {
