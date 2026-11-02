@@ -67,7 +67,8 @@ public enum A2UIPromptBuilder {
     Rules:
 
     1. Components are a flat adjacency list. Each component has a unique `id`, a `component` type, and its \
-    properties inline. Exactly one component must have the id `root`.
+    properties inline. Exactly one component must have the id `root`. An id is an identifier: letters, \
+    digits and underscores, not starting with a digit, such as `saturday_plan` (never `saturday-plan`).
     2. Children are referenced by id, never nested inline. Use an array of ids, or \
     `{"componentId": "...", "path": "/items"}` to repeat a template for every item of a data model list.
     3. Any property may be a literal, a data binding `{"@path": "/a/b"}` or a function call \

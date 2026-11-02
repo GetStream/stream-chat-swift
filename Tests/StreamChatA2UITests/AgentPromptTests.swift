@@ -126,6 +126,19 @@ struct AgentPromptTests {
         #expect(A2UIProgram.problems(in: deep, catalog: catalog) == ["surface s nests components deeper than 50 levels"])
     }
 
+    @Test("test_v10_uax31_invalid_identifier_error: component ids are identifiers")
+    func identifierIds() {
+        let catalog = BasicCatalog.catalog.adding(components: [], catalogId: "app")
+        let text = """
+        {"version":"1.0","createSurface":{"surfaceId":"s","catalogId":"app","components":[{"id":"root","component":"Column","children":["day-plan"]},{"id":"day-plan","component":"Text","text":"x"}]}}
+        """
+
+        #expect(A2UIProgram.problems(in: text, catalog: catalog) == [
+            "day-plan isn't an identifier: use letters, digits and _, not starting with a digit"
+        ])
+        #expect(A2UIPromptBuilder.protocolOverview.contains("`saturday_plan` (never `saturday-plan`)"))
+    }
+
     @Test("The tabs of a container are followed")
     func tabs() {
         let catalog = BasicCatalog.catalog.adding(components: [], catalogId: "app")
