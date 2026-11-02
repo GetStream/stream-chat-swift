@@ -112,6 +112,8 @@ Sources/
     Components/            # SwiftUI views of the library components
     Rendering/             # OpenUIView, theme, icons, Markdown
     GenerativeUI/          # OpenUIRenderer: OpenUI replies in StreamChatAI's generated UI
+    Resources/             # Localization files (en.lproj)
+    Utils/                 # Localization accessors
 
 DemoApp/                   # Primary demo app (use to validate UI changes)
 DemoAppPush/               # Push notification extension for the demo
@@ -291,6 +293,8 @@ Rules:
 The SDK uses `defaultLocalization: "en"`. String resources live in `Sources/StreamChatCommonUI/Resources/`. After modifying `.strings` files, regenerate `L10n.swift` by running SwiftGen (or let CI handle it). Always use `L10n` accessors for user-facing strings rather than raw string literals.
 
 StreamChatAI keeps its own strings in `Sources/StreamChatAI/Resources/en.lproj/Localizable.strings`, read through the internal `L10n` in `Sources/StreamChatAI/Utils/Localization.swift`. That file is written by hand: add an accessor there for each new key. `L10n` reads every string through `AIAppearance.localizationProvider`, so apps can override them.
+
+StreamChatOpenUI keeps its strings in `Sources/StreamChatOpenUI/Resources/en.lproj` (`Localizable.strings`, plus `Localizable.stringsdict` for plurals), read through the hand-written `L10n` in `Sources/StreamChatOpenUI/Utils/Localization.swift`. Apps override them with `OpenUITheme.localizationProvider`.
 
 ### Concurrency model
 

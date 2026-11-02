@@ -111,3 +111,6 @@ buildServer.json
 
 # Claude
 .claude/
+
+# OpenUI fixture generator dependencies
+Scripts/openui-fixtures/node_modules/
