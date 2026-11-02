@@ -33,18 +33,21 @@ public extension AIConversationView {
         @ViewBuilder footer: () -> Footer = { EmptyView() },
         @ViewBuilder emptyContent: () -> EmptyContent = { EmptyView() }
     ) where Message == AIConversationEntry<Item>, MessageContent == EquatableView<AIConversationEntryView<Item, Factory>> {
+        let footer = footer()
+        let emptyContent = emptyContent()
         self.init(
             content: { tracker in
                 let entries = tracker.entries(for: messages, pending: pendingMessage)
                 return (entries, isThinking || tracker.isAwaitingReply(in: messages, pending: pendingMessage))
             },
             isSentByCurrentUser: \.isFromUser,
-            loadOlderMessages: loadOlderMessages,
+            loadOlderMessages: { loadOlderMessages },
             messageContent: { entry in
-                AIConversationEntryView(entry: entry, factory: viewFactory, approver: approver).equatable()
+                AIConversationEntryView(entry: entry, factory: viewFactory, approver: approver, chat: nil).equatable()
             },
-            footer: footer(),
-            emptyContent: emptyContent()
+            footer: { footer },
+            emptyContent: { emptyContent },
+            changes: .none
         )
     }
 

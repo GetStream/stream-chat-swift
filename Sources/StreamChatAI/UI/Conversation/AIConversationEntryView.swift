@@ -13,6 +13,8 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
     let entry: AIConversationEntry<Message>
     let factory: Factory
     let approver: AIToolApprover?
+    // The chat the conversation shows, which offers what the person can do with the message.
+    let chat: AIChat<Message>?
     // Compared rather than the row, whose message and factory belong to the main actor.
     nonisolated let shown: AIConversationEntrySnapshot
 
@@ -23,11 +25,12 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
-    init(entry: AIConversationEntry<Message>, factory: Factory, approver: AIToolApprover?) {
+    init(entry: AIConversationEntry<Message>, factory: Factory, approver: AIToolApprover?, chat: AIChat<Message>?) {
         self.entry = entry
         self.factory = factory
         self.approver = approver
-        shown = AIConversationEntrySnapshot(entry: entry, approver: approver)
+        self.chat = chat
+        shown = AIConversationEntrySnapshot(entry: entry, approver: approver, chat: chat)
     }
 
     public var body: some View {
@@ -37,7 +40,8 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
                     options: AIUserMessageViewOptions(
                         message: message,
                         text: message.text,
-                        attachments: entry.sentAttachments.isEmpty ? message.attachments : entry.sentAttachments
+                        attachments: entry.sentAttachments.isEmpty ? message.attachments : entry.sentAttachments,
+                        onEdit: chat?.editAction(for: message)
                     )
                 )
             } else {
@@ -58,7 +62,8 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
                             options: AIReplyActionsViewOptions(
                                 message: message,
                                 text: message.text,
-                                isLatestReply: entry.isLatestReply
+                                isLatestReply: entry.isLatestReply,
+                                actions: chat?.replyActions(for: message, isLatestReply: entry.isLatestReply)
                             )
                         )
                         .transition(.opacity)
@@ -85,7 +90,7 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
 }
 
 // What a row shows, including each reasoning step's whole thinking, which can grow while the
-// message stays the same.
+// message stays the same, and what its chat offers to do with it.
 final class AIConversationEntrySnapshot: Equatable, Sendable {
     let isPending: Bool
     let role: AIMessageRole
@@ -96,10 +101,25 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
     let attachments: [AIMessageAttachment]
     let approver: [String]
     let isLatestReply: Bool
+    let hasChat: Bool
+    let rating: AIMessageRating?
+    let offersRegenerate: Bool
+    let offersEdit: Bool
 
-    init<Message: AIMessage>(entry: AIConversationEntry<Message>, approver: AIToolApprover?) {
+    @MainActor
+    init<Message: AIMessage>(entry: AIConversationEntry<Message>, approver: AIToolApprover?, chat: AIChat<Message>?) {
         self.approver = approver.map { [$0.userID, $0.clientID, $0.authorizer?.callbackScheme ?? ""] } ?? []
         isLatestReply = entry.isLatestReply
+        hasChat = chat != nil
+        if let chat, let message = entry.message {
+            rating = message.role == .user ? nil : chat.ratings[message.id]
+            offersRegenerate = message.role != .user && chat.offersRegenerate(isLatestReply: entry.isLatestReply)
+            offersEdit = chat.offersEdit(message)
+        } else {
+            rating = nil
+            offersRegenerate = false
+            offersEdit = false
+        }
         if let message = entry.message {
             isPending = false
             role = message.role
@@ -129,5 +149,9 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
             && lhs.attachments == rhs.attachments
             && lhs.approver == rhs.approver
             && lhs.isLatestReply == rhs.isLatestReply
+            && lhs.hasChat == rhs.hasChat
+            && lhs.rating == rhs.rating
+            && lhs.offersRegenerate == rhs.offersRegenerate
+            && lhs.offersEdit == rhs.offersEdit
     }
 }

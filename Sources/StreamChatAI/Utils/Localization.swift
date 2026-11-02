@@ -35,6 +35,12 @@ enum L10n {
         }
     }
 
+    enum Chat {
+        static var agentError: String {
+            localized("chat.error.agent", comment: "Shown when the agent said it couldn't answer, without saying why.")
+        }
+    }
+
     enum Attachment {
         static var image: String {
             localized("attachment.image", comment: "The name of an image attachment without one of its own.")

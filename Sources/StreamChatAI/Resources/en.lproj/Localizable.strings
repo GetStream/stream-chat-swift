@@ -4,6 +4,7 @@
 "composer.photos_failed.message" = "Some photos couldn't be loaded. If they're in iCloud, check your internet connection and try again.";
 "streaming.code_block.language_fallback" = "plain text";
 "conversation.button.scroll_to_latest" = "Scroll to latest";
+"chat.error.agent" = "The agent couldn't answer. Try again.";
 "attachment.image" = "Image";
 "attachment.file" = "File";
 "attachment.details" = "%1$@ · %2$@";

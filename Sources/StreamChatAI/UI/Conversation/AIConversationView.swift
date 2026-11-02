@@ -34,6 +34,13 @@ import SwiftUI
 /// )
 /// ```
 ///
+/// Or give it an ``AIChat``, which holds the conversation and acts on what the person does, and
+/// it follows the chat as it changes:
+///
+/// ```swift
+/// AIConversationView(chat: chat)
+/// ```
+///
 /// Or show messages of any kind your own way:
 ///
 /// ```swift
@@ -51,15 +58,18 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
     // The rows and whether the agent is thinking, which can depend on the messages on their way.
     var content: (AIPendingMessageTracker) -> (messages: [Message], isThinking: Bool)
     var isSentByCurrentUser: (Message) -> Bool
-    var loadOlderMessages: (@MainActor () async -> Void)?
+    // Read as the list shows, like the rows, which can come from an object that changes.
+    var loadOlderMessages: () -> (@MainActor () async -> Void)?
     var messageContent: (Message) -> MessageContent
-    var footer: Footer
-    var emptyContent: EmptyContent
+    var footer: () -> Footer
+    var emptyContent: () -> EmptyContent
 
     // Where the turns in view are, read when what is above them changes.
     @State private var positions = AITurnPositions()
     @State private var clock = AIThinkingClock()
     @State private var tracker = AIPendingMessageTracker()
+    // The object the rows come from, such as an AIChat, whose changes show at once.
+    @ObservedObject private var changes: AIObservedChanges
 
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
@@ -87,23 +97,27 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
         @ViewBuilder footer: () -> Footer = { EmptyView() },
         @ViewBuilder emptyContent: () -> EmptyContent = { EmptyView() }
     ) {
+        let footer = footer()
+        let emptyContent = emptyContent()
         self.init(
             content: { _ in (messages, isThinking) },
             isSentByCurrentUser: isSentByCurrentUser,
-            loadOlderMessages: loadOlderMessages,
+            loadOlderMessages: { loadOlderMessages },
             messageContent: messageContent,
-            footer: footer(),
-            emptyContent: emptyContent()
+            footer: { footer },
+            emptyContent: { emptyContent },
+            changes: .none
         )
     }
 
     init(
         content: @escaping (AIPendingMessageTracker) -> (messages: [Message], isThinking: Bool),
         isSentByCurrentUser: @escaping (Message) -> Bool,
-        loadOlderMessages: (@MainActor () async -> Void)?,
+        loadOlderMessages: @escaping () -> (@MainActor () async -> Void)?,
         messageContent: @escaping (Message) -> MessageContent,
-        footer: Footer,
-        emptyContent: EmptyContent
+        footer: @escaping () -> Footer,
+        emptyContent: @escaping () -> EmptyContent,
+        changes: AIObservedChanges
     ) {
         self.content = content
         self.isSentByCurrentUser = isSentByCurrentUser
@@ -111,14 +125,16 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
         self.messageContent = messageContent
         self.footer = footer
         self.emptyContent = emptyContent
+        self.changes = changes
     }
 
     public var body: some View {
         let (messages, isThinking) = content(tracker)
+        let loadOlder = loadOlderMessages()
         let turns = AIMessageTurn.turns(of: messages, isSentByCurrentUser: isSentByCurrentUser)
         let above = AIConversationScrollView.Above(
             firstTurnID: turns.first.map { AnyHashable($0.id) },
-            loadsOlder: loadOlderMessages != nil
+            loadsOlder: loadOlder != nil
         )
         // Both repeat harmlessly on every update: a turn's thinking starts and ends once, and
         // what is above the turns is noted only when it changes.
@@ -137,24 +153,34 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
                 proxy.scrollTo(turn.id, anchor: anchor)
             },
             content: { height in
-                AnyView(turnList(turns, isThinking: isThinking, height: height))
+                AnyView(turnList(turns, isThinking: isThinking, loadOlder: loadOlder, height: height))
             }
         )
     }
 
     @ViewBuilder
-    private func turnList(_ turns: [AIMessageTurn<Message>], isThinking: Bool, height: CGFloat) -> some View {
+    private func turnList(
+        _ turns: [AIMessageTurn<Message>],
+        isThinking: Bool,
+        loadOlder: (@MainActor () async -> Void)?,
+        height: CGFloat
+    ) -> some View {
         if turns.isEmpty {
-            emptyContent
+            emptyContent()
                 .frame(maxWidth: .infinity, minHeight: height)
         } else {
-            turnStack(turns, isThinking: isThinking, height: height)
+            turnStack(turns, isThinking: isThinking, loadOlder: loadOlder, height: height)
         }
     }
 
     // The turns, the latest at least as tall as the list, after a spinner while older messages
     // can still load.
-    private func turnStack(_ turns: [AIMessageTurn<Message>], isThinking: Bool, height: CGFloat) -> some View {
+    private func turnStack(
+        _ turns: [AIMessageTurn<Message>],
+        isThinking: Bool,
+        loadOlder loadOlderMessages: (@MainActor () async -> Void)?,
+        height: CGFloat
+    ) -> some View {
         LazyVStack(spacing: layout.spacingXs) {
             if let loadOlderMessages {
                 // Loads once the spinner has stayed in view a moment, rather than for the frame a
@@ -177,7 +203,7 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
                         AIThinkingView()
                     }
                     if isLatest {
-                        footer
+                        footer()
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

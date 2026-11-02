@@ -16,6 +16,7 @@ final class Localization_Tests: XCTestCase {
         )
         XCTAssertEqual(L10n.StreamingMessage.codeBlockLanguageFallback, "plain text")
         XCTAssertEqual(L10n.Conversation.scrollToLatest, "Scroll to latest")
+        XCTAssertEqual(L10n.Chat.agentError, "The agent couldn't answer. Try again.")
         XCTAssertEqual(L10n.Attachment.image, "Image")
         XCTAssertEqual(L10n.Attachment.file, "File")
         XCTAssertEqual(L10n.Attachment.details("PDF", "2.4 MB"), "PDF · 2.4 MB")

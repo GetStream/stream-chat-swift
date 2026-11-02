@@ -78,7 +78,8 @@ final class AIConversationEntryView_Tests: XCTestCase {
         AIConversationEntryView(
             entry: AIConversationEntry(id: AnyHashable(message.id), message: message, sentAttachments: []),
             factory: .shared,
-            approver: approver
+            approver: approver,
+            chat: nil
         )
     }
 }
