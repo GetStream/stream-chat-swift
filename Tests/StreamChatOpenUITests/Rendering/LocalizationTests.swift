@@ -52,6 +52,14 @@ struct LocalizationTests {
         #expect(L10n.Modal.close == "Close")
     }
 
+    @Test func providersCanBeReadAndWrittenBackRepeatedly() {
+        for _ in 0..<20000 {
+            OpenUITheme.localizationProvider = OpenUITheme.localizationProvider
+        }
+
+        #expect(L10n.Modal.close == "Close")
+    }
+
     @Test func displayedNumbersFollowTheLocale() {
         #expect(NumberFormatting.integer(3) == 3.formatted(.number))
         #expect(NumberFormatting.decimal(1234.5) == 1234.5.formatted(.number.precision(.fractionLength(0...6))))

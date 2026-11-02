@@ -265,14 +265,27 @@ enum L10n {
 enum LocalizationProviderStorage {
     typealias Provider = @Sendable (_ key: String, _ table: String) -> String
 
+    // Boxed, so storing a provider that wraps the previous one doesn't wrap it in conversion
+    // thunks each time it is read and written back.
+    private final class Box: Sendable {
+        let provider: Provider
+
+        init(_ provider: @escaping Provider) {
+            self.provider = provider
+        }
+    }
+
     static let defaultProvider: Provider = { key, table in
         Bundle.streamChatOpenUI.localizedString(forKey: key, value: nil, table: table)
     }
 
-    private static let lock = OSAllocatedUnfairLock<Provider>(initialState: defaultProvider)
+    private static let box = OSAllocatedUnfairLock(initialState: Box(defaultProvider))
 
     static var current: Provider {
-        get { lock.withLock { $0 } }
-        set { lock.withLock { $0 = newValue } }
+        get { box.withLock { $0 }.provider }
+        set {
+            let replacement = Box(newValue)
+            box.withLock { $0 = replacement }
+        }
     }
 }
