@@ -226,6 +226,29 @@ final class AIUIHost_Tests: XCTestCase {
         XCTAssertEqual(sent, [action])
     }
 
+    func testWhatThePersonDoesGoesToTheAgentInTheOrderItHappened() async {
+        var events: [String] = []
+        var finishFirst: CheckedContinuation<Void, Never>?
+        let host = AIUIHost { TestRenderer() } send: { action in
+            events.append("start \(action.name)")
+            if action.name == "first" {
+                await withCheckedContinuation { finishFirst = $0 }
+            }
+            events.append("end \(action.name)")
+        }
+
+        host.send(AIUIAction(messageID: "m1", format: .openUI, name: "first", label: "First"))
+        host.send(AIUIAction(messageID: "m1", format: .openUI, name: "second", label: "Second"))
+        for _ in 0..<10 { await Task.yield() }
+
+        XCTAssertEqual(events, ["start first"])
+
+        finishFirst?.resume()
+        for _ in 0..<100 where events.count < 4 { await Task.yield() }
+
+        XCTAssertEqual(events, ["start first", "end first", "start second", "end second"])
+    }
+
     func testTheUIRunsTheAppsTools() async throws {
         let tool = Tool()
         let host = AIUIHost(tools: [tool]) { TestRenderer() } send: { _ in }

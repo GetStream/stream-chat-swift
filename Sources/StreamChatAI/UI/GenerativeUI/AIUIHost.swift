@@ -62,6 +62,7 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
     private let engines = AIUIEngines()
     private var states: [String: RawJSON] = [:]
     private var received: [String: AIUIDocument] = [:]
+    private var lastSend: Task<Void, Never>?
 
     /// - Parameters:
     ///   - components: The app's views the agent can place.
@@ -86,8 +87,12 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
         renderers.reads(document)
     }
 
+    /// Sends what the person did to the agent, after everything sent before it, so the agent gets
+    /// a reply's actions in the order they happened.
     public func send(_ action: AIUIAction) {
-        Task { @MainActor in
+        let previous = lastSend
+        lastSend = Task { @MainActor in
+            await previous?.value
             do {
                 try await sendAction(action)
             } catch {
