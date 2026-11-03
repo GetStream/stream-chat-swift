@@ -214,7 +214,9 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         )
         let components = validated(message.components, surfaceId: message.surfaceId, catalogId: message.catalogId)
         definition.merge(components)
-        CompositionValidator.errors(in: definition, batch: message.components, catalogs: catalogs).forEach(report)
+        for error in CompositionValidator.errors(in: definition, batch: message.components, catalogs: catalogs) {
+            report(error)
+        }
 
         var dataModel = message.dataModel
         if Json.exceedsDepth(dataModel, limit: A2UIProtocol.maxNestingDepth) {
@@ -246,7 +248,9 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         }
         viewModel.merge(components: validated(message.components, surfaceId: message.surfaceId, catalogId: current.catalogId))
         guard let definition = viewModel.definition else { return }
-        CompositionValidator.errors(in: definition, batch: message.components, catalogs: catalogs).forEach(report)
+        for error in CompositionValidator.errors(in: definition, batch: message.components, catalogs: catalogs) {
+            report(error)
+        }
         a2uiLogger.info("Updated \(message.components.count) component(s) on surface '\(message.surfaceId)'.")
         surfaceUpdatesSubject.send(SurfaceUpdated(surfaceId: message.surfaceId, definition: definition))
     }
