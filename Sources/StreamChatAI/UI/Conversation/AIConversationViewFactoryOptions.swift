@@ -61,7 +61,7 @@ public final class AIAssistantMessageViewOptions {
 public final class AIReplyActionsViewOptions {
     /// The reply, which is one of the app's own messages: cast it to act on it.
     public let message: any AIMessage
-    /// The reply's text, in Markdown.
+    /// The reply's text, in Markdown, which a reply that shows generated UI may not have.
     public let text: String
     /// Whether it is the latest reply in the conversation, such as the only one an app offers to
     /// regenerate.

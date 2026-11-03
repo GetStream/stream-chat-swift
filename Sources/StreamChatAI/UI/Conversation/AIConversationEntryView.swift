@@ -2,7 +2,6 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import StreamCore
 import SwiftUI
 
 /// A row of an ``AIConversationView`` of ``AIMessage``s, made by its view factory.
@@ -16,13 +15,6 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
     // Compared rather than the row, whose message and factory belong to the main actor.
     nonisolated let shown: AIConversationEntrySnapshot
 
-    // Whether the reply's answer is still being written out, which its actions wait for so they
-    // do not move down with it. `nil` when its view does not say.
-    @State private var isWriting: Bool?
-
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Injected(\.aiAppearance.tokens.layout) private var layout
-
     init(entry: AIConversationEntry<Message>, factory: Factory, approver: AIToolApprover?) {
         self.entry = entry
         self.factory = factory
@@ -31,51 +23,7 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
     }
 
     public var body: some View {
-        if let message = entry.message {
-            if message.role == .user {
-                factory.makeUserMessageView(
-                    options: AIUserMessageViewOptions(
-                        message: message,
-                        text: message.text,
-                        attachments: entry.sentAttachments.isEmpty ? message.attachments : entry.sentAttachments
-                    )
-                )
-            } else {
-                VStack(alignment: .leading, spacing: layout.spacingXs) {
-                    factory.makeAssistantMessageView(
-                        options: AIAssistantMessageViewOptions(
-                            message: message,
-                            text: message.text,
-                            isGenerating: message.isGenerating,
-                            parts: message.parts,
-                            attachments: message.attachments,
-                            reasoningText: message.reasoningText(for:),
-                            approver: approver
-                        )
-                    )
-                    if !message.isGenerating && !message.text.isEmpty && isWriting != true {
-                        factory.makeReplyActionsView(
-                            options: AIReplyActionsViewOptions(
-                                message: message,
-                                text: message.text,
-                                isLatestReply: entry.isLatestReply
-                            )
-                        )
-                        .transition(.opacity)
-                    }
-                }
-                .onPreferenceChange(AnswerWritingKey.self) { writing in
-                    guard writing != isWriting else { return }
-                    withAnimation(reduceMotion ? nil : .easeOut(duration: 0.2)) {
-                        isWriting = writing
-                    }
-                }
-            }
-        } else if let pending = entry.pending {
-            factory.makeUserMessageView(
-                options: AIUserMessageViewOptions(message: nil, text: pending.text, attachments: pending.attachments)
-            )
-        }
+        AIConversationRow<Message, Factory, Never>(entry: entry, factory: factory, approver: approver, generated: nil)
     }
 
     // SwiftUI compares rows of the same message, so what they show is all that can differ.
@@ -96,10 +44,13 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
     let attachments: [AIMessageAttachment]
     let approver: [String]
     let isLatestReply: Bool
+    let uiDocument: AIUIDocument?
+    let host: ObjectIdentifier?
 
-    init<Message: AIMessage>(entry: AIConversationEntry<Message>, approver: AIToolApprover?) {
+    init<Message: AIMessage>(entry: AIConversationEntry<Message>, approver: AIToolApprover?, host: AnyObject? = nil) {
         self.approver = approver.map { [$0.userID, $0.clientID, $0.authorizer?.callbackScheme ?? ""] } ?? []
         isLatestReply = entry.isLatestReply
+        self.host = host.map(ObjectIdentifier.init)
         if let message = entry.message {
             isPending = false
             role = message.role
@@ -108,6 +59,7 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
             parts = message.parts
             reasoning = message.parts.map { $0.reasoning.flatMap(message.reasoningText(for:)) }
             attachments = entry.sentAttachments + message.attachments
+            uiDocument = message.uiDocument
         } else {
             isPending = true
             role = .user
@@ -116,6 +68,7 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
             parts = []
             reasoning = []
             attachments = entry.sentAttachments + (entry.pending?.attachments ?? [])
+            uiDocument = nil
         }
     }
 
@@ -129,5 +82,7 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
             && lhs.attachments == rhs.attachments
             && lhs.approver == rhs.approver
             && lhs.isLatestReply == rhs.isLatestReply
+            && lhs.uiDocument == rhs.uiDocument
+            && lhs.host == rhs.host
     }
 }

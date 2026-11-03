@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatAI
 ### ✅ Added
+- Add generative UI: a reply can show interactive UI its agent wrote, in a format such as OpenUI or A2UI, in place of its text [#4370](https://github.com/GetStream/stream-chat-swift/pull/4370)
 - Add a failure message when photos picked in the composer can't be loaded [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🐞 Fixed
 - Fix a photo picked again from the library being attached twice [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)

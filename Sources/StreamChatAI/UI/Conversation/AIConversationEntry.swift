@@ -54,10 +54,11 @@ final class AIPendingMessageTracker {
     nonisolated init() { /* Nothing to set up. */ }
 
     // The rows of a conversation: its messages, apart from replies with nothing to show yet,
-    // and a message on its way until its copy arrives.
+    // and a message on its way until its copy arrives. A reply's UI shows when `ui` reads it.
     func entries<Message: AIMessage>(
         for messages: [Message],
-        pending: AIPendingMessage?
+        pending: AIPendingMessage?,
+        ui: (any AIUIDocumentReader)? = nil
     ) -> [AIConversationEntry<Message>] {
         var showsPending = pending != nil
         // A copy that arrives in the update that stops passing its pending message still
@@ -77,7 +78,7 @@ final class AIPendingMessageTracker {
             }
         }
         lastPending = pending
-        var entries = messages.filter { !$0.showsNothing }.map { message in
+        var entries = messages.filter { Self.showsSomething($0, ui: ui) }.map { message in
             let taken = copies[AnyHashable(message.id)]
             return AIConversationEntry(
                 id: taken.map { AnyHashable($0.id) } ?? AnyHashable(message.id),
@@ -118,12 +119,23 @@ final class AIPendingMessageTracker {
     // Whether the latest message is surely waiting for a reply that shows nothing yet: it is on
     // its way, it is the copy of the one on its way, or its reply is being written but shows
     // nothing. Call it after `entries`, which matches the copies.
-    func isAwaitingReply<Message: AIMessage>(in messages: [Message], pending: AIPendingMessage?) -> Bool {
-        if let last = messages.last, last.role != .user, last.isGenerating, last.showsNothing {
+    func isAwaitingReply<Message: AIMessage>(
+        in messages: [Message],
+        pending: AIPendingMessage?,
+        ui: (any AIUIDocumentReader)? = nil
+    ) -> Bool {
+        if let last = messages.last, last.role != .user, last.isGenerating, !Self.showsSomething(last, ui: ui) {
             return true
         }
         guard let pending else { return false }
         guard let copy = copies.first(where: { $0.value.id == pending.id })?.key else { return true }
         return messages.last.map { AnyHashable($0.id) == copy } ?? false
+    }
+
+    // Whether a message shows anything: a reply needs content of its own, or UI that `ui` reads.
+    private static func showsSomething<Message: AIMessage>(_ message: Message, ui: (any AIUIDocumentReader)?) -> Bool {
+        guard message.hasEmptyContent else { return true }
+        guard let ui, let document = message.uiDocument else { return false }
+        return ui.canShow(document)
     }
 }
