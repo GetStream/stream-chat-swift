@@ -193,6 +193,14 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
     }
 }
 
+// What tells whether a reply's UI shows, such as a conversation's host.
+@MainActor
+protocol AIUIDocumentReader {
+    func canShow(_ document: AIUIDocument) -> Bool
+}
+
+extension AIUIHost: AIUIDocumentReader {}
+
 // The links a reply's UI opens unless the app opens them itself.
 enum AIUILinks {
     static let schemes: Set<String> = ["http", "https", "mailto"]
