@@ -21,6 +21,8 @@ public struct EvaluationContext {
     public var reportError: ((String) -> Void)?
     // Reports an error of one prop of an element, which `PropEvaluator` turns into `reportError`.
     var reportPropError: ((_ component: String, _ statementId: String?, _ prop: String, _ message: String) -> Void)?
+    // Shared by every copy of this context, so one evaluation pass stops at the same bound.
+    var budget = EvaluationBudget()
 
     public init(
         getState: @escaping (String) -> OpenUIValue?,
@@ -36,6 +38,36 @@ public struct EvaluationContext {
         self.functions = functions
         self.actions = actions
         self.reportError = reportError
+    }
+}
+
+// How many nodes one evaluation pass may evaluate. Templates multiply, such as six nested `@Each`
+// over ten items building a million elements, so past this they evaluate to nothing.
+@available(iOS 17.0, macOS 14.0, *)
+final class EvaluationBudget {
+    static let maxNodes = 200_000
+
+    private var remaining: Int
+    private var reported = false
+
+    init(nodes: Int = maxNodes) {
+        remaining = nodes
+    }
+
+    // Whether a node is left, reporting, once, when none is.
+    func hasRemaining(reportError: ((String) -> Void)?) -> Bool {
+        if remaining > 0 { return true }
+        if !reported {
+            reported = true
+            reportError?("Evaluation stopped after \(Self.maxNodes) nodes: nest fewer @Each loops or loop over less data")
+        }
+        return false
+    }
+
+    func spend(reportError: ((String) -> Void)?) -> Bool {
+        guard hasRemaining(reportError: reportError) else { return false }
+        remaining -= 1
+        return true
     }
 }
 
@@ -85,6 +117,7 @@ public enum ReactiveBinding {
 public enum Evaluator {
     /// Evaluates an expression. Returns `nil` for JavaScript `undefined`.
     public static func evaluate(_ node: ASTNode, _ context: EvaluationContext, _ schema: ReactivePropResolver? = nil) -> OpenUIValue? {
+        guard context.budget.spend(reportError: context.reportError) else { return nil }
         switch node {
         case .str(let value):
             return .string(value)
@@ -423,7 +456,9 @@ public enum Evaluator {
         guard !variableName.isEmpty else { return .array([]) }
         let template = args[2]
 
-        return .array(items.map { item in
+        var results: [OpenUIValue] = []
+        for item in items {
+            guard context.budget.hasRemaining(reportError: context.reportError) else { break }
             let substituted = substituteRef(template, variableName, item)
             var childContext = context
             let parentResolve = context.resolveRef
@@ -432,10 +467,12 @@ public enum Evaluator {
             }
             let result = evaluate(substituted, childContext, schema)
             if let schema, case .element(let element)? = result {
-                return .element(evaluateElementInline(element, childContext, schema))
+                results.append(.element(evaluateElementInline(element, childContext, schema)))
+            } else {
+                results.append(result ?? .null)
             }
-            return result ?? .null
-        })
+        }
+        return .array(results)
     }
 
     /// Converts a runtime value back into a literal AST node.

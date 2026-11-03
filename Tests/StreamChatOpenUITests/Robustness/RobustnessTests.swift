@@ -211,6 +211,29 @@ struct RobustnessTests {
         #expect(ProcessInfo.processInfo.systemUptime - started < 2)
     }
 
+    @Test func nestedEachLoopsStopAtTheEvaluationBudget() {
+        let items = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+        let template = (0..<6).reduce(#"TextContent("x")"#) { inner, level in #"@Each(\#(items), "v\#(level)", \#(inner))"# }
+        let runtime = OpenUIRuntime(library: .openUI)
+
+        runtime.update(response: "root = Stack([\(template)])", isStreaming: false)
+
+        let elements = elementCount(runtime.root.map(OpenUIValue.element) ?? .null)
+        #expect(elements > 1000)
+        #expect(elements < EvaluationBudget.maxNodes)
+        #expect(runtime.errors.filter { $0.message.contains("Evaluation stopped") }.count == 1)
+    }
+
+    @Test func eachLoopsWithinTheBudgetAreKept() {
+        let items = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+        let runtime = OpenUIRuntime(library: .openUI)
+
+        runtime.update(response: #"root = Stack([@Each(\#(items), "a", @Each(\#(items), "b", TextContent("x")))])"#, isStreaming: false)
+
+        #expect(elementCount(runtime.root.map(OpenUIValue.element) ?? .null) == 101)
+        #expect(runtime.errors.isEmpty)
+    }
+
     @Test func aPatternThatBacktracksGivesUpInsteadOfFreezing() throws {
         let expression = try NSRegularExpression(pattern: "^(a+)+$")
         let started = ProcessInfo.processInfo.systemUptime
@@ -282,4 +305,23 @@ private func treeHeight(_ node: ASTNode) -> Int {
         height = max(height, treeHeight(child))
     }
     return 1 + height
+}
+
+private func elementCount(_ value: OpenUIValue) -> Int {
+    switch value {
+    case .element(let element):
+        var count = 1
+        for child in element.props.values {
+            count += elementCount(child)
+        }
+        return count
+    case .array(let items):
+        var count = 0
+        for item in items {
+            count += elementCount(item)
+        }
+        return count
+    case .object, .null, .bool, .number, .string, .expression:
+        return 0
+    }
 }
