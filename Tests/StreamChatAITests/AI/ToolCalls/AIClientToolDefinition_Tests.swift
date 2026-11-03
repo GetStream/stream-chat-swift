@@ -6,7 +6,7 @@
 import XCTest
 
 final class AIClientToolDefinition_Tests: XCTestCase {
-    func test_init_whenCreatedFromMCPTool_readsNameDescriptionAndSchema() throws {
+    func test_init_whenCreatedFromMCPTool_readsNameDescriptionSchemaAndReadOnlyHint() throws {
         let tool = MCPStyleTool(
             name: "get_weather",
             title: "Weather",
@@ -20,8 +20,17 @@ final class AIClientToolDefinition_Tests: XCTestCase {
         XCTAssertEqual(definition, AIClientToolDefinition(
             name: "get_weather",
             description: "Gets the weather for a city.",
-            inputSchema: ["type": "object", "properties": ["city": ["type": "string"]]]
+            inputSchema: ["type": "object", "properties": ["city": ["type": "string"]]],
+            annotations: .init(readOnlyHint: true)
         ))
+        XCTAssertTrue(definition.isReadOnly)
+    }
+
+    func test_isReadOnly_onlyWhenTheHintSaysSo() {
+        XCTAssertFalse(AIClientToolDefinition(name: "send_email").isReadOnly)
+        XCTAssertFalse(AIClientToolDefinition(name: "send_email", annotations: .init(readOnlyHint: false)).isReadOnly)
+        XCTAssertFalse(AIClientToolDefinition(name: "send_email", annotations: .init()).isReadOnly)
+        XCTAssertTrue(AIClientToolDefinition(name: "list_events", annotations: .init(readOnlyHint: true)).isReadOnly)
     }
 
     func test_init_whenToolHasNoName_throws() {
@@ -36,6 +45,10 @@ final class AIClientToolDefinition_Tests: XCTestCase {
         let json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(definition)) as? NSDictionary
 
         XCTAssertEqual(json, ["name": "get_weather", "description": "Weather", "inputSchema": ["type": "object"]] as NSDictionary)
+
+        let readOnly = AIClientToolDefinition(name: "list_events", annotations: .init(readOnlyHint: true))
+        let readOnlyJSON = try JSONSerialization.jsonObject(with: JSONEncoder().encode(readOnly)) as? NSDictionary
+        XCTAssertEqual(readOnlyJSON, ["name": "list_events", "annotations": ["readOnlyHint": true]] as NSDictionary)
     }
 }
 

@@ -268,6 +268,22 @@ struct FunctionCallProcessingTests {
         #expect(response.value == nil)
     }
 
+    @Test("A call a person's gesture starts is sent every time, apart from the rendered ones")
+    func userActivatedAgentCalls() throws {
+        let harness = ProcessorHarness()
+        harness.createSurface(components: [Component(id: "root", type: "Text", properties: ["text": "x"])])
+
+        for _ in 0..<2 {
+            _ = try harness.processor.agentFunctionValue(
+                for: "addReminder", catalogId: nil, arguments: [:], surfaceId: "main", userActivated: true
+            )
+        }
+        _ = try harness.processor.agentFunctionValue(for: "addReminder", catalogId: nil, arguments: [:], surfaceId: "main")
+        _ = try harness.processor.agentFunctionValue(for: "addReminder", catalogId: nil, arguments: [:], surfaceId: "main")
+
+        #expect(harness.agentCalls.map(\.userActivated) == [true, true, false])
+    }
+
     @Test("Unresolved functions are routed to the agent and cached on response")
     func agentRouting() throws {
         let harness = ProcessorHarness()

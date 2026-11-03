@@ -15,6 +15,8 @@ struct A2UIInstructions {
     var preamble: String?
     /// Guidance on using the app's components.
     var notes: [String]
+    /// The app's tools the UI can call, each a line of Markdown.
+    var tools: [String]
     /// Rules added after the protocol's.
     var rules: [String]
     /// Examples of replies with their UI.
@@ -25,6 +27,7 @@ struct A2UIInstructions {
         fence: String,
         preamble: String? = nil,
         notes: [String] = [],
+        tools: [String] = [],
         rules: [String] = [],
         examples: [String] = []
     ) {
@@ -32,6 +35,7 @@ struct A2UIInstructions {
         self.fence = fence
         self.preamble = preamble
         self.notes = notes
+        self.tools = tools
         self.rules = rules
         self.examples = examples
     }
@@ -49,6 +53,9 @@ struct A2UIInstructions {
         }
         if !notes.isEmpty {
             sections.append("## The app's components\n\n" + notes.joined(separator: "\n"))
+        }
+        if !tools.isEmpty {
+            sections.append(Self.toolsIntroduction + "\n\n" + tools.joined(separator: "\n"))
         }
         sections.append("## The catalog `\(catalog.catalogId)`\n\n```json\n\(document)\n```")
         if !rules.isEmpty {
@@ -81,6 +88,15 @@ struct A2UIInstructions {
         what you need to know, bound to the data model.
         """
     }
+
+    private static let toolsIntroduction = """
+    ## The app's tools
+
+    These run on the person's device. Call one as you call a function the catalog doesn't \
+    define, with `{"@call": "<name>", "args": {…}}`, and its output is the call's value. A \
+    read-only tool runs wherever you call it, such as in a binding that shows its output. Any \
+    other runs only from a button's `functionCall` action, when the person taps it.
+    """
 
     // The catalog as one line of JSON, its keys sorted so the same catalog always reads the same.
     // Its guidelines are a section of their own.

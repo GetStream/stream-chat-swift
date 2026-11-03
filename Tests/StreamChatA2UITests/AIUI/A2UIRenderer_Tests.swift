@@ -53,7 +53,7 @@ final class A2UIRenderer_Tests: XCTestCase {
     }
 
     func test_capabilities_describeTheAppsComponents() throws {
-        let capabilities = A2UIRenderer(catalogId: "app").capabilities(components: [PlaceCard()])
+        let capabilities = A2UIRenderer(catalogId: "app").capabilities(components: [PlaceCard()], tools: [])
 
         XCTAssertEqual(capabilities["fence"], .string("ui:a2ui@1.0"))
         XCTAssertEqual(capabilities["catalog_id"], .string("app"))
@@ -63,10 +63,31 @@ final class A2UIRenderer_Tests: XCTestCase {
     }
 
     func test_capabilities_followTheAppsInstructions() throws {
-        let capabilities = A2UIRenderer(instructions: "Show places as cards.").capabilities(components: [])
+        let capabilities = A2UIRenderer(instructions: "Show places as cards.").capabilities(components: [], tools: [])
         let instructions = try XCTUnwrap(capabilities["instructions"]?.stringValue)
 
         XCTAssertTrue(instructions.hasPrefix("Show places as cards."))
+    }
+
+    func test_capabilities_listTheAppsToolsAndWhichOnlyRead() throws {
+        let tools = [
+            AIClientToolDefinition(
+                name: "list_events",
+                description: "Lists the person's events.",
+                inputSchema: ["type": "object", "properties": ["day": ["type": "string"]]],
+                annotations: .init(readOnlyHint: true)
+            ),
+            AIClientToolDefinition(name: "add_reminder", description: "Adds a reminder.")
+        ]
+        let instructions = try XCTUnwrap(A2UIRenderer().capabilities(components: [], tools: tools)["instructions"]?.stringValue)
+
+        XCTAssertTrue(instructions.contains("## The app's tools"))
+        XCTAssertTrue(instructions.contains(
+            #"- `list_events` (read-only): Lists the person's events. Arguments: `{"properties":{"day":{"type":"string"}},"type":"object"}`"#
+        ))
+        XCTAssertTrue(instructions.contains("- `add_reminder`: Adds a reminder."))
+        XCTAssertFalse(try XCTUnwrap(A2UIRenderer().capabilities(components: [], tools: [])["instructions"]?.stringValue)
+            .contains("## The app's tools"))
     }
 
     func test_definitions_leaveOutComponentsNamedLikeTheCatalogs() {

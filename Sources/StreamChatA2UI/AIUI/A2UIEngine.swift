@@ -130,16 +130,18 @@ final class A2UIEngine: AIUIEngine {
     }
 
     // A function the catalog doesn't define runs as one of the host's tools, on this device, as a
-    // chat has no channel to ask the agent. Without that tool it fails at once.
+    // chat has no channel to ask the agent. While a surface renders only a read-only tool runs; any
+    // other only from a person's gesture. Without that tool it fails at once.
     private func run(_ call: CallAgentFunctionMessage, messageID: String) {
         guard let host else { return }
         let callId = call.functionCallId
         let name = call.callFunction.name
+        let userActivated = call.userActivated
         let arguments = call.callFunction.arguments.mapValues { RawJSON(a2ui: $0) }
         Task { [weak self] in
             let response: FunctionResponse
             do {
-                let output = try await host.runTool(name, arguments: arguments)
+                let output = try await host.runTool(name, arguments: arguments, userInitiated: userActivated)
                 response = FunctionResponse(functionCallId: callId, value: output.a2uiValue)
             } catch {
                 response = FunctionResponse(

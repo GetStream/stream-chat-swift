@@ -21,7 +21,8 @@ protocol RemoteFunctionRouter: AnyObject {
         for name: String,
         catalogId: String?,
         arguments: [String: any Sendable],
-        surfaceId: String
+        surfaceId: String,
+        userActivated: Bool
     ) throws -> (any Sendable)?
 
     /// Reports a renderer-side error to the agent.
@@ -204,7 +205,8 @@ final class ExpressionEvaluator {
                 for: name,
                 catalogId: catalogId,
                 arguments: resolvedArguments,
-                surfaceId: surfaceId
+                surfaceId: surfaceId,
+                userActivated: userActivationDepth > 0
             )
         } catch {
             a2uiLogger.warning("Agent function '\(name)' failed: \(A2UIErrorFormatter.describe(error))")

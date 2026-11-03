@@ -22,8 +22,8 @@ public protocol AIUIRenderer: AIUIRendererList where Content == Engine.Content {
     /// version by default.
     func supports(version: String?) -> Bool
     /// What the agent's backend needs to have its model write UI this renderer shows with
-    /// `components`, such as the model's instructions. None by default.
-    func capabilities(components: [any AIUIComponent]) -> [String: RawJSON]
+    /// `components`, and runs `tools` from, such as the model's instructions. None by default.
+    func capabilities(components: [any AIUIComponent], tools: [AIClientToolDefinition]) -> [String: RawJSON]
     /// Makes what shows the documents of one conversation. Keep `host` weakly: it keeps the
     /// engine.
     func makeEngine(host: any AIUIHosting) -> Engine
@@ -31,7 +31,7 @@ public protocol AIUIRenderer: AIUIRendererList where Content == Engine.Content {
 
 public extension AIUIRenderer {
     func supports(version: String?) -> Bool { true }
-    func capabilities(components: [any AIUIComponent]) -> [String: RawJSON] { [:] }
+    func capabilities(components: [any AIUIComponent], tools: [AIClientToolDefinition]) -> [String: RawJSON] { [:] }
 
     var all: [any AIUIRenderer] { [self] }
 

@@ -170,7 +170,8 @@ final class StubRemoteRouter: RemoteFunctionRouter {
         for name: String,
         catalogId: String?,
         arguments: [String: any Sendable],
-        surfaceId: String
+        surfaceId: String,
+        userActivated: Bool
     ) throws -> (any Sendable)? {
         calls.append((name, arguments))
         return answers[name]
