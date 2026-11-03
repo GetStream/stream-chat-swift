@@ -12,7 +12,7 @@ import Foundation
 /// - `name = null` in the patch → the statement is deleted.
 /// - Statements no longer reachable from the root are garbage-collected (`$state` is always kept).
 @available(iOS 17.0, macOS 14.0, *)
-public enum StatementMerger {
+enum StatementMerger {
     private struct ParsedStatement {
         let id: String
         let ast: ASTNode
@@ -20,7 +20,7 @@ public enum StatementMerger {
     }
 
     /// Merges `patch` into `existing` and returns the merged program text.
-    public static func merge(_ existing: String, patch: String, rootId: String = "root") -> String {
+    static func merge(_ existing: String, patch: String, rootId: String = "root") -> String {
         let existingStatements = parseStatements(existing)
         let patchStatements = parseStatements(Preprocessor.stripFences(patch))
 

@@ -63,7 +63,7 @@ struct RemoteImage: View {
             if let systemImage {
                 VStack(spacing: 4) {
                     Image(systemName: systemImage)
-                        .font(.title3)
+                        .font(theme.fonts.bodyLarge)
                     if let alt, !alt.isEmpty {
                         Text(alt)
                             .font(theme.fonts.caption)

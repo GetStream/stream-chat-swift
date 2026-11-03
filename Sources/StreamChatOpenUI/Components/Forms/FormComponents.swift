@@ -86,6 +86,7 @@ struct TextInputView: View {
     let multiline: Bool
     @Environment(\.openUIFormName) private var formName
     @Environment(\.openUIFormValidation) private var validation
+    @Environment(\.openUITheme) private var theme
     @FocusState private var focused: Bool
 
     var body: some View {
@@ -126,7 +127,7 @@ struct TextInputView: View {
             }
         }
         .focused($focused)
-        .font(.body)
+        .font(theme.fonts.body)
         .modifier(FieldChrome(hasError: validation?.error(for: name) != nil, isFocused: focused))
         .disabled(context.isStreaming)
         .onChange(of: focused) { _, isFocused in
@@ -199,7 +200,7 @@ struct SelectView: View {
                     .lineLimit(1)
                 Spacer(minLength: theme.spacing.s)
                 Image(systemName: "chevron.up.chevron.down")
-                    .font(.caption.weight(.semibold))
+                    .font(theme.fonts.caption.weight(.semibold))
                     .foregroundStyle(theme.colors.textSecondary)
                     .accessibilityHidden(true)
             }
@@ -340,7 +341,7 @@ struct SliderView: View {
                 Spacer()
                 Text(NumberFormatting.decimal(bounds.upperBound))
             }
-            .font(.caption2)
+            .font(theme.fonts.caption)
             .monospacedDigit()
             .foregroundStyle(theme.colors.textTertiary)
             .accessibilityHidden(true)
@@ -488,7 +489,7 @@ struct CheckboxToggleStyle: ToggleStyle {
         } label: {
             HStack(alignment: .top, spacing: theme.spacing.m) {
                 Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
-                    .font(.title3)
+                    .font(theme.fonts.bodyLarge)
                     .foregroundStyle(configuration.isOn ? theme.colors.accent : theme.colors.textTertiary)
                     .accessibilityHidden(true)
                 configuration.label
@@ -530,7 +531,7 @@ struct RadioGroupView: View {
                     } label: {
                         HStack(alignment: .top, spacing: theme.spacing.m) {
                             Image(systemName: selected ? "largecircle.fill.circle" : "circle")
-                                .font(.title3)
+                                .font(theme.fonts.bodyLarge)
                                 .foregroundStyle(selected ? theme.colors.accent : theme.colors.textTertiary)
                                 .accessibilityHidden(true)
                             TitleSubtitle(title: itemProps.text("label") ?? value, subtitle: itemProps.text("description"))
@@ -624,14 +625,14 @@ struct SelectionFieldView: View {
             HStack(spacing: 6) {
                 if let icon = props.element("icon") {
                     OpenUIIconImage(element: icon)
-                        .font(.footnote.weight(.semibold))
+                        .font(theme.fonts.bodySmall.weight(.semibold))
                         .accessibilityHidden(true)
                 }
                 Text(props.text("label") ?? value)
                     .font(theme.fonts.bodySmall.weight(.medium))
                 if selected {
                     Image(systemName: "checkmark")
-                        .font(.caption.weight(.bold))
+                        .font(theme.fonts.caption.weight(.bold))
                         .accessibilityHidden(true)
                 }
             }

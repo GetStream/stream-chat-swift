@@ -6,11 +6,11 @@ import Foundation
 
 /// Built-in action types dispatched to the host (`BuiltinActionType`).
 @available(iOS 17.0, macOS 14.0, *)
-public enum BuiltinActionType {
+enum BuiltinActionType {
     /// Send the user's intent back to the model (`@ToAssistant`, follow-ups, plain buttons).
-    public static let continueConversation = "continue_conversation"
+    static let continueConversation = "continue_conversation"
     /// Open a URL (`@OpenUrl`).
-    public static let openURL = "open_url"
+    static let openURL = "open_url"
 }
 
 /// A structured action fired by an interactive component (mirrors `ActionEvent`).
@@ -18,23 +18,23 @@ public enum BuiltinActionType {
 /// `@Run`, `@Set` and `@Reset` steps are handled by the runtime; conversation and navigation
 /// steps (and any custom action types) are forwarded to the host as ``ActionEvent``s.
 @available(iOS 17.0, macOS 14.0, *)
-public struct ActionEvent: Sendable, Hashable {
+struct ActionEvent: Sendable, Hashable {
     /// Action type: ``BuiltinActionType/continueConversation``, ``BuiltinActionType/openURL`` or a custom type.
-    public var type: String
+    var type: String
     /// Action-specific params, e.g. `url` for open-url or `context` for continue-conversation.
-    public var params: OpenUIObject
+    var params: OpenUIObject
     /// The message the model wrote for the action, such as a `@ToAssistant` step's, or the
     /// label of the control when it wrote none.
-    public var humanFriendlyMessage: String
+    var humanFriendlyMessage: String
     /// The label of the control the person used, such as a button's title. A chat shows it as
     /// their message, as the model's words could say something they never chose.
-    public var label: String
+    var label: String
     /// Raw form state at the time of the action.
-    public var formState: OpenUIObject?
+    var formState: OpenUIObject?
     /// The form that scoped the action, if any.
-    public var formName: String?
+    var formName: String?
 
-    public init(
+    init(
         type: String,
         params: OpenUIObject = [:],
         humanFriendlyMessage: String,
@@ -50,12 +50,12 @@ public struct ActionEvent: Sendable, Hashable {
         self.formName = formName
     }
 
-    public var isContinueConversation: Bool { type == BuiltinActionType.continueConversation }
-    public var isOpenURL: Bool { type == BuiltinActionType.openURL }
+    var isContinueConversation: Bool { type == BuiltinActionType.continueConversation }
+    var isOpenURL: Bool { type == BuiltinActionType.openURL }
 
     /// The URL of an open-url action, when it's a web or email link. The model writes it, so a
     /// link to another app or a phone number is `nil`.
-    public var url: URL? {
+    var url: URL? {
         guard let string = params["url"]?.stringValue, let url = URL(string: string), OpenUILink.isOpenable(url) else {
             return nil
         }
@@ -63,14 +63,14 @@ public struct ActionEvent: Sendable, Hashable {
     }
 
     /// The `context` of a `@ToAssistant(message, context)` step: any value, passed through unchanged.
-    public var context: OpenUIValue? {
+    var context: OpenUIValue? {
         params["context"]
     }
 
     /// The user message sent back to the model for a continue-conversation action, in the OpenUI
     /// message protocol: the visible text, plus a context of what was clicked, the form state and
     /// the step's context (upstream `buildActionUserMessage`).
-    public var assistantMessage: String {
+    var assistantMessage: String {
         var items: [OpenUIValue] = [.string("User clicked: \(humanFriendlyMessage)")]
         if formState != nil || context != nil {
             items.append(.object(formState?.withoutSecrets ?? [:]))

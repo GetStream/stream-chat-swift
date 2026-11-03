@@ -18,27 +18,27 @@ import Foundation
 /// A regenerated response writes a new content line after the cut-off one; the last content wins.
 /// Messages in the older `<content>`/`<context>` XML envelope still read.
 @available(iOS 17.0, macOS 14.0, *)
-public enum MessageEnvelope {
+enum MessageEnvelope {
     static let prefix = "]]>openui:"
-    public static let contentMarker = prefix + "content"
-    public static let contextMarker = prefix + "context"
-    public static let endMarker = prefix + "end"
+    static let contentMarker = prefix + "content"
+    static let contextMarker = prefix + "context"
+    static let endMarker = prefix + "end"
 
     /// The parts of a stored message.
-    public struct Parsed: Sendable, Equatable {
+    struct Parsed: Sendable, Equatable {
         /// The body of the last `content` section, or the whole text when there is none.
-        public var content: String
+        var content: String
         /// The body of the `context` section: parsed JSON, else the raw text. `nil` when absent.
-        public var context: OpenUIValue?
+        var context: OpenUIValue?
         /// The string attributes of the winning `content` marker.
-        public var attributes: [String: String]
+        var attributes: [String: String]
         /// Whether an `end` line follows the winning `content` section.
-        public var isEnded: Bool
+        var isEnded: Bool
     }
 
     /// Splits a stored message into its content, context, attributes and end flag. While
     /// `isStreaming`, a last line that may be a marker cut mid-stream is held back.
-    public static func parse(_ raw: String, isStreaming: Bool = false) -> Parsed {
+    static func parse(_ raw: String, isStreaming: Bool = false) -> Parsed {
         let parsed = parseMarkers(raw, isStreaming: isStreaming)
         if parsed.hasMarkers { return parsed.message }
         return parseLegacyXML(raw) ?? parsed.message
@@ -46,7 +46,7 @@ public enum MessageEnvelope {
 
     /// Writes a stored message with its marker lines. The context is written as is when it is a
     /// string, else as JSON, and left out when `nil`.
-    public static func build(
+    static func build(
         content: String,
         context: OpenUIValue? = nil,
         attributes: KeyValuePairs<String, String> = [:],
@@ -61,7 +61,7 @@ public enum MessageEnvelope {
     }
 
     /// Whether the text contains recognizable OpenUI Lang (a fenced block or a top-level `root =`).
-    public static func hasLangSyntax(_ content: String?) -> Bool {
+    static func hasLangSyntax(_ content: String?) -> Bool {
         guard let content, !content.isEmpty else { return false }
         if content.contains("```openui-lang") { return true }
         return content.range(of: #"(^|\n)\s*root\s*="#, options: .regularExpression) != nil

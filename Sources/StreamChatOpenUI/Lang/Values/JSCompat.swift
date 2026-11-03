@@ -10,7 +10,7 @@ import Foundation
 /// conversion and comparisons follow JavaScript rules. These helpers reproduce the parts the
 /// language relies on so that output matches the reference renderers.
 @available(iOS 17.0, macOS 14.0, *)
-public enum JS {
+enum JS {
     // MARK: - Whitespace
 
     /// ECMAScript `WhiteSpace` + `LineTerminator` code points (used by `trim`, `Number`, `parseFloat`).
@@ -26,19 +26,19 @@ public enum JS {
     }
 
     /// `String.prototype.trim`.
-    public static func trim(_ string: String) -> String {
+    static func trim(_ string: String) -> String {
         trimEnd(trimStart(string))
     }
 
     /// `String.prototype.trimStart`.
-    public static func trimStart(_ string: String) -> String {
+    static func trimStart(_ string: String) -> String {
         let scalars = string.unicodeScalars
         guard let start = scalars.firstIndex(where: { !isWhitespace($0) }) else { return "" }
         return String(scalars[start...])
     }
 
     /// `String.prototype.trimEnd`.
-    public static func trimEnd(_ string: String) -> String {
+    static func trimEnd(_ string: String) -> String {
         let scalars = string.unicodeScalars
         guard let last = scalars.lastIndex(where: { !isWhitespace($0) }) else { return "" }
         return String(scalars[...last])
@@ -47,7 +47,7 @@ public enum JS {
     // MARK: - Numbers
 
     /// `Number.prototype.toString()` (ECMA-262 Number::toString with radix 10).
-    public static func numberToString(_ value: Double) -> String {
+    static func numberToString(_ value: Double) -> String {
         if value.isNaN { return "NaN" }
         if value == 0 { return "0" }
         if value.isInfinite { return value < 0 ? "-Infinity" : "Infinity" }
@@ -107,7 +107,7 @@ public enum JS {
     }
 
     /// `Number(string)` — ECMAScript StringToNumber.
-    public static func stringToNumber(_ string: String) -> Double {
+    static func stringToNumber(_ string: String) -> Double {
         let trimmed = trim(string)
         if trimmed.isEmpty { return 0 }
         let bytes = Array(trimmed.utf8)
@@ -137,7 +137,7 @@ public enum JS {
     }
 
     /// `parseFloat(string)`.
-    public static func parseFloat(_ string: String) -> Double {
+    static func parseFloat(_ string: String) -> Double {
         let bytes = Array(trimStart(string).utf8)
         guard let (value, _) = scanDecimalLiteral(bytes, from: 0) else { return .nan }
         return value
@@ -208,7 +208,7 @@ public enum JS {
 
     /// The language's lenient numeric coercion (builtins `toNumber`): numbers pass through,
     /// numeric strings convert (invalid ones become `0`), booleans become `1`/`0`, anything else `0`.
-    public static func toNumber(_ value: OpenUIValue?) -> Double {
+    static func toNumber(_ value: OpenUIValue?) -> Double {
         switch value {
         case .number(let number):
             return number
@@ -223,20 +223,20 @@ public enum JS {
     }
 
     /// `Math.round` — rounds half up towards +∞.
-    public static func round(_ value: Double) -> Double {
+    static func round(_ value: Double) -> Double {
         guard value.isFinite else { return value }
         let floor = value.rounded(.down)
         return value - floor >= 0.5 ? floor + 1 : floor
     }
 
     /// `Math.min` over two values (propagates NaN).
-    public static func min(_ lhs: Double, _ rhs: Double) -> Double {
+    static func min(_ lhs: Double, _ rhs: Double) -> Double {
         if lhs.isNaN || rhs.isNaN { return .nan }
         return Swift.min(lhs, rhs)
     }
 
     /// `Math.max` over two values (propagates NaN).
-    public static func max(_ lhs: Double, _ rhs: Double) -> Double {
+    static func max(_ lhs: Double, _ rhs: Double) -> Double {
         if lhs.isNaN || rhs.isNaN { return .nan }
         return Swift.max(lhs, rhs)
     }
@@ -244,7 +244,7 @@ public enum JS {
     // MARK: - Conversions
 
     /// `String(value)`.
-    public static func toString(_ value: OpenUIValue?) -> String {
+    static func toString(_ value: OpenUIValue?) -> String {
         guard let value else { return "undefined" }
         switch value {
         case .null: return "null"
@@ -262,7 +262,7 @@ public enum JS {
     }
 
     /// JavaScript truthiness.
-    public static func isTruthy(_ value: OpenUIValue?) -> Bool {
+    static func isTruthy(_ value: OpenUIValue?) -> Bool {
         guard let value else { return false }
         switch value {
         case .null: return false
@@ -274,7 +274,7 @@ public enum JS {
     }
 
     /// `typeof value`.
-    public static func typeOf(_ value: OpenUIValue?) -> String {
+    static func typeOf(_ value: OpenUIValue?) -> String {
         guard let value else { return "undefined" }
         switch value {
         case .string: return "string"
@@ -296,7 +296,7 @@ public enum JS {
     ///
     /// Arrays and objects are compared structurally; the reference implementation compares them by
     /// identity, which has no value-semantics equivalent.
-    public static func looseEquals(_ lhs: OpenUIValue?, _ rhs: OpenUIValue?) -> Bool {
+    static func looseEquals(_ lhs: OpenUIValue?, _ rhs: OpenUIValue?) -> Bool {
         let leftNullish = isNullish(lhs)
         let rightNullish = isNullish(rhs)
         if leftNullish || rightNullish { return leftNullish && rightNullish }
@@ -327,7 +327,7 @@ public enum JS {
     }
 
     /// `value == null` (true for `null` and `undefined`).
-    public static func isNullish(_ value: OpenUIValue?) -> Bool {
+    static func isNullish(_ value: OpenUIValue?) -> Bool {
         switch value {
         case .none, .some(.null): return true
         default: return false
@@ -335,7 +335,7 @@ public enum JS {
     }
 
     /// `SameValueZero` (used by `Array.prototype.includes`).
-    public static func sameValueZero(_ lhs: OpenUIValue?, _ rhs: OpenUIValue?) -> Bool {
+    static func sameValueZero(_ lhs: OpenUIValue?, _ rhs: OpenUIValue?) -> Bool {
         switch (lhs, rhs) {
         case (.number(let a)?, .number(let b)?):
             return a == b || (a.isNaN && b.isNaN)
@@ -355,7 +355,7 @@ public enum JS {
     // MARK: - Property access
 
     /// `value[key]` for own properties (no prototype lookups).
-    public static func property(of value: OpenUIValue?, key: String) -> OpenUIValue? {
+    static func property(of value: OpenUIValue?, key: String) -> OpenUIValue? {
         guard let value else { return nil }
         switch value {
         case .object(let object):
@@ -390,7 +390,7 @@ public enum JS {
     // MARK: - JSON
 
     /// `JSON.stringify(value)`. Returns `nil` for `undefined`.
-    public static func jsonStringify(_ value: OpenUIValue?) -> String? {
+    static func jsonStringify(_ value: OpenUIValue?) -> String? {
         guard let value else { return nil }
         var output = ""
         writeJSON(value, into: &output)

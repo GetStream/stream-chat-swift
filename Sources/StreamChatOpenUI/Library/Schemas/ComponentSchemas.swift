@@ -56,7 +56,7 @@ extension PropType {
     }
 
     /// Structured form validation rules: `{required: true, email: true, minLength: 8, ...}`.
-    public static let validationRules: PropType = .object([.optional("required", .boolean), .optional("email", .boolean), .optional("url", .boolean), .optional("numeric", .boolean), .optional("min", .number), .optional("max", .number), .optional("minLength", .number), .optional("maxLength", .number), .optional("pattern", .string)])
+    static let validationRules: PropType = .object([.optional("required", .boolean), .optional("email", .boolean), .optional("url", .boolean), .optional("numeric", .boolean), .optional("min", .number), .optional("max", .number), .optional("minLength", .number), .optional("maxLength", .number), .optional("pattern", .string)])
 }
 
 /// Schemas shared by the chat and standard libraries.

@@ -6,11 +6,11 @@ import Foundation
 
 /// A parsed validation rule, e.g. `required`, `minLength:3`, `pattern:^[a-z]+$`.
 @available(iOS 17.0, macOS 14.0, *)
-public struct ValidationRule: Sendable, Hashable {
-    public var type: String
-    public var argument: OpenUIValue?
+struct ValidationRule: Sendable, Hashable {
+    var type: String
+    var argument: OpenUIValue?
 
-    public init(type: String, argument: OpenUIValue? = nil) {
+    init(type: String, argument: OpenUIValue? = nil) {
         self.type = type
         self.argument = argument
     }
@@ -18,13 +18,13 @@ public struct ValidationRule: Sendable, Hashable {
 
 /// Form field validation (port of `utils/validation.ts`).
 @available(iOS 17.0, macOS 14.0, *)
-public enum FormValidation {
-    public typealias Validator = @Sendable (OpenUIValue?, OpenUIValue?) -> String?
+enum FormValidation {
+    typealias Validator = @Sendable (OpenUIValue?, OpenUIValue?) -> String?
 
     private static let numericRules: Set<String> = ["min", "max", "minLength", "maxLength"]
 
     /// Parses `"min:8"`-style rule strings.
-    public static func parseRule(_ rule: String) -> ValidationRule {
+    static func parseRule(_ rule: String) -> ValidationRule {
         guard let colon = rule.firstIndex(of: ":") else { return ValidationRule(type: rule) }
         let type = String(rule[..<colon])
         let rawArgument = String(rule[rule.index(after: colon)...])
@@ -35,14 +35,14 @@ public enum FormValidation {
     }
 
     /// Parses an array of rule strings (non-strings are ignored).
-    public static func parseRules(_ rules: OpenUIValue?) -> [ValidationRule] {
+    static func parseRules(_ rules: OpenUIValue?) -> [ValidationRule] {
         guard case .array(let items)? = rules else { return [] }
         return items.compactMap(\.stringValue).map(parseRule)
     }
 
     /// Parses a structured rules object: `{required: true, minLength: 5, email: true}`.
     /// Keys with `false`/`null` values are skipped.
-    public static func parseStructuredRules(_ rules: OpenUIValue?) -> [ValidationRule] {
+    static func parseStructuredRules(_ rules: OpenUIValue?) -> [ValidationRule] {
         guard case .object(let object)? = rules else { return [] }
         return object.entries.compactMap { key, value in
             switch value {
@@ -54,7 +54,7 @@ public enum FormValidation {
     }
 
     /// Parses either rule format.
-    public static func rules(from value: OpenUIValue?) -> [ValidationRule] {
+    static func rules(from value: OpenUIValue?) -> [ValidationRule] {
         if case .array? = value { return parseRules(value) }
         return parseStructuredRules(value)
     }
@@ -79,7 +79,7 @@ public enum FormValidation {
         return JS.parseFloat(JS.toString(value))
     }
 
-    public static let builtInValidators: [String: Validator] = [
+    static let builtInValidators: [String: Validator] = [
         "required": { value, _ in
             if isEmpty(value) { return L10n.Validation.required }
             if case .object(let object)? = value {
@@ -164,7 +164,7 @@ public enum FormValidation {
     }
 
     /// Runs rules against a value, stopping at the first error. Custom validators take precedence.
-    public static func validate(_ value: OpenUIValue?, rules: [ValidationRule], customValidators: [String: Validator] = [:]) -> String? {
+    static func validate(_ value: OpenUIValue?, rules: [ValidationRule], customValidators: [String: Validator] = [:]) -> String? {
         for rule in rules {
             guard let validator = customValidators[rule.type] ?? builtInValidators[rule.type] else { continue }
             if let error = validator(value, rule.argument) { return error }

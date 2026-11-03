@@ -189,7 +189,7 @@ struct DisclosureRow<Content: View>: View {
                         .multilineTextAlignment(.leading)
                     Spacer(minLength: theme.spacing.s)
                     Image(systemName: "chevron.down")
-                        .font(.caption.weight(.semibold))
+                        .font(theme.fonts.caption.weight(.semibold))
                         .foregroundStyle(theme.colors.textSecondary)
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
                         .accessibilityHidden(true)
@@ -307,7 +307,7 @@ struct StepsView: View {
                 HStack(alignment: .top, spacing: theme.spacing.m) {
                     VStack(spacing: 0) {
                         Text("\(index + 1)")
-                            .font(.caption.weight(.bold))
+                            .font(theme.fonts.caption.weight(.bold))
                             .monospacedDigit()
                             .foregroundStyle(theme.colors.onAccent)
                             .frame(width: markerSize, height: markerSize)
@@ -400,7 +400,7 @@ struct CarouselView: View {
         Button {
             withAnimation { action() }
         } label: {
-            Image(systemName: systemName).font(.caption.weight(.semibold))
+            Image(systemName: systemName).font(theme.fonts.caption.weight(.semibold))
         }
         .buttonStyle(.bordered)
         .buttonBorderShape(.circle)

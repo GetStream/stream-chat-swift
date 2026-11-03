@@ -6,11 +6,11 @@ import Foundation
 
 /// Errors thrown by ``OpenUIJSON``.
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUIJSONError: Error, Sendable, Equatable, CustomStringConvertible {
-    public let message: String
-    public let offset: Int
+struct OpenUIJSONError: Error, Sendable, Equatable, CustomStringConvertible {
+    let message: String
+    let offset: Int
 
-    public var description: String { "\(message) at offset \(offset)" }
+    var description: String { "\(message) at offset \(offset)" }
 }
 
 /// A strict JSON parser with `JSON.parse` semantics that preserves object key order.
@@ -18,14 +18,14 @@ public struct OpenUIJSONError: Error, Sendable, Equatable, CustomStringConvertib
 /// Key order is part of the OpenUI contract (component props are positional and follow the order
 /// of the schema's `properties`), so Foundation's `JSONSerialization` is not suitable.
 @available(iOS 17.0, macOS 14.0, *)
-public enum OpenUIJSON {
+enum OpenUIJSON {
     /// Parses JSON text into an ``OpenUIValue``.
-    public static func parse(_ text: String) throws -> OpenUIValue {
+    static func parse(_ text: String) throws -> OpenUIValue {
         try parse(Array(text.utf8))
     }
 
     /// Parses UTF-8 encoded JSON data into an ``OpenUIValue``.
-    public static func parse(_ data: Data) throws -> OpenUIValue {
+    static func parse(_ data: Data) throws -> OpenUIValue {
         try parse([UInt8](data))
     }
 
@@ -47,7 +47,7 @@ public enum OpenUIJSON {
     }
 
     /// Serializes a value as compact JSON (`JSON.stringify` semantics).
-    public static func stringify(_ value: OpenUIValue) -> String {
+    static func stringify(_ value: OpenUIValue) -> String {
         JS.jsonStringify(value) ?? "null"
     }
 

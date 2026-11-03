@@ -6,20 +6,20 @@ import Foundation
 
 /// The `@`-prefixed builtin functions and action steps of OpenUI Lang (port of `builtins.ts`).
 @available(iOS 17.0, macOS 14.0, *)
-public enum Builtins {
+enum Builtins {
     /// A data builtin: its prompt signature/description and runtime implementation.
-    public struct Definition: Sendable {
+    struct Definition: Sendable {
         /// PascalCase name, e.g. `Count`.
-        public let name: String
+        let name: String
         /// Signature for prompt docs, e.g. `Count(array) → number`.
-        public let signature: String
+        let signature: String
         /// One-line description for prompt docs.
-        public let description: String
+        let description: String
         let function: @Sendable ([OpenUIValue?]) -> OpenUIValue
     }
 
     /// Data builtins in registry order (the order matters for prompt generation).
-    public static let definitions: [Definition] = [
+    static let definitions: [Definition] = [
         Definition(name: "Count", signature: "Count(array) → number", description: "Returns array length") { args in
             guard case .array(let items)? = args.first ?? nil else { return .number(0) }
             return .number(Double(items.count))
@@ -88,7 +88,7 @@ public enum Builtins {
     static let lazyNames: Set<String> = ["Each"]
 
     /// Prompt docs for lazy builtins.
-    public static let lazyDefinitions: [(signature: String, description: String)] = [
+    static let lazyDefinitions: [(signature: String, description: String)] = [
         (
             "Each(array, varName, template)",
             "Evaluate template for each element. varName is the loop variable — use it ONLY inside the template expression (inline). Do NOT create a separate statement for the template."
@@ -110,7 +110,7 @@ public enum Builtins {
     static let allNames: Set<String> = Set(definitions.map(\.name)).union(lazyNames).union(actionNames)
 
     /// Whether `name` is a builtin function or action expression (not a component).
-    public static func isBuiltin(_ name: String) -> Bool {
+    static func isBuiltin(_ name: String) -> Bool {
         allNames.contains(name)
     }
 
@@ -133,7 +133,7 @@ public enum Builtins {
     ]
 
     /// The built-in functions, steps and `Action`: the base of every library's call registry.
-    public static let calls: [String: CallDef] = {
+    static let calls: [String: CallDef] = {
         var calls: [String: CallDef] = [:]
         for (name, params) in functionParams {
             calls[name] = CallDef(
@@ -155,7 +155,7 @@ public enum Builtins {
     static let mutation = "Mutation"
 
     /// Whether `name` is a reserved statement call (`Query`, `Mutation`).
-    public static func isReservedCall(_ name: String) -> Bool {
+    static func isReservedCall(_ name: String) -> Bool {
         name == query || name == mutation
     }
 
@@ -250,12 +250,12 @@ public enum Builtins {
 
 /// Runtime action step type identifiers (match `ACTION_STEPS` values in the reference implementation).
 @available(iOS 17.0, macOS 14.0, *)
-public enum ActionStepType {
-    public static let run = "run"
-    public static let continueConversation = "continue_conversation"
-    public static let openURL = "open_url"
-    public static let set = "set"
-    public static let reset = "reset"
+enum ActionStepType {
+    static let run = "run"
+    static let continueConversation = "continue_conversation"
+    static let openURL = "open_url"
+    static let set = "set"
+    static let reset = "reset"
     /// A step of one of the library's custom actions.
-    public static let customAction = "custom_action"
+    static let customAction = "custom_action"
 }

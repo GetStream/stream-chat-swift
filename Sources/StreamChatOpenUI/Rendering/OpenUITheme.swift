@@ -156,7 +156,7 @@ private struct OpenUIThemeKey: EnvironmentKey {
 }
 
 @available(iOS 17.0, macOS 14.0, *)
-public extension EnvironmentValues {
+extension EnvironmentValues {
     var openUITheme: OpenUITheme {
         get { self[OpenUIThemeKey.self] }
         set { self[OpenUIThemeKey.self] = newValue }
@@ -164,7 +164,7 @@ public extension EnvironmentValues {
 }
 
 @available(iOS 17.0, macOS 14.0, *)
-public extension View {
+extension View {
     /// Applies a theme to OpenUI components rendered inside this view.
     func openUITheme(_ theme: OpenUITheme) -> some View {
         environment(\.openUITheme, theme)

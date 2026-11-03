@@ -7,24 +7,24 @@ import SwiftUI
 
 /// Renders a component from its evaluated props.
 @available(iOS 17.0, macOS 14.0, *)
-public typealias ComponentRenderer = @MainActor @Sendable (ComponentContext) -> AnyView
+typealias ComponentRenderer = @MainActor @Sendable (ComponentContext) -> AnyView
 
 /// A component: its schema (the model-facing contract) and its SwiftUI renderer.
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUIComponentDefinition: Sendable {
-    public var schema: ComponentSchema
+struct OpenUIComponentDefinition: Sendable {
+    var schema: ComponentSchema
     /// `nil` for data-only components that are consumed by their parent (e.g. `SelectItem`, `Series`).
-    public var renderer: ComponentRenderer?
+    var renderer: ComponentRenderer?
 
-    public var name: String { schema.name }
+    var name: String { schema.name }
 
-    public init(_ schema: ComponentSchema, renderer: ComponentRenderer?) {
+    init(_ schema: ComponentSchema, renderer: ComponentRenderer?) {
         self.schema = schema
         self.renderer = renderer
     }
 
     /// Defines a component with a SwiftUI view builder.
-    public init<Content: View>(_ schema: ComponentSchema, @ViewBuilder view: @escaping @MainActor @Sendable (ComponentContext) -> Content) {
+    init<Content: View>(_ schema: ComponentSchema, @ViewBuilder view: @escaping @MainActor @Sendable (ComponentContext) -> Content) {
         self.schema = schema
         self.renderer = { context in AnyView(view(context)) }
     }
@@ -35,21 +35,21 @@ public struct OpenUIComponentDefinition: Sendable {
 @available(iOS 17.0, macOS 14.0, *)
 public struct ComponentLibrary: Sendable {
     /// Root component name (e.g. `"Card"` for chat, `"Stack"` for the standard library).
-    public let root: String?
+    let root: String?
     /// Components in library order.
-    public let components: [OpenUIComponentDefinition]
-    public let componentGroups: [ComponentGroup]
+    let components: [OpenUIComponentDefinition]
+    let componentGroups: [ComponentGroup]
     /// Prompt examples and rules recommended for this library.
-    public let defaultPromptOptions: PromptOptions
+    let defaultPromptOptions: PromptOptions
     /// The app's functions, called as `@Name(...)` in programs.
-    public let functions: [OpenUIFunction]
+    let functions: [OpenUIFunction]
     /// The app's action steps, used as `@Name(...)` in action props.
-    public let customActions: [OpenUICustomAction]
+    let customActions: [OpenUICustomAction]
 
     /// The library JSON Schema (`library.toJSONSchema()`).
-    public let jsonSchema: OpenUIValue
+    let jsonSchema: OpenUIValue
     /// Compiled positional parameters used by the parser.
-    public let paramMap: ParamMap
+    let paramMap: ParamMap
 
     // Tells this library from one made apart from it, whose renderers, functions and actions
     // are closures that can't be compared.
@@ -57,7 +57,7 @@ public struct ComponentLibrary: Sendable {
     private let definitionsByName: [String: OpenUIComponentDefinition]
     private let reactiveProps: [String: Set<String>]
 
-    public init(
+    init(
         root: String?,
         components: [OpenUIComponentDefinition],
         componentGroups: [ComponentGroup] = [],
@@ -129,17 +129,17 @@ public struct ComponentLibrary: Sendable {
         identity == other.identity || (root == other.root && jsonSchema == other.jsonSchema)
     }
 
-    public func component(named name: String) -> OpenUIComponentDefinition? {
+    func component(named name: String) -> OpenUIComponentDefinition? {
         definitionsByName[name]
     }
 
     /// A parser for this library.
-    public var parser: OpenUIParser {
+    var parser: OpenUIParser {
         OpenUIParser(paramMap: paramMap, rootName: root)
     }
 
     /// A streaming parser for this library.
-    public func makeStreamParser() -> OpenUIStreamParser {
+    func makeStreamParser() -> OpenUIStreamParser {
         OpenUIStreamParser(paramMap: paramMap, rootName: root)
     }
 
@@ -148,7 +148,7 @@ public struct ComponentLibrary: Sendable {
     /// Returns a library with `components` added. A component is left out when the library already
     /// has one of that name, or its name can't be called in a program: it must start with an upper
     /// case letter and not be a built-in, `Query` or `Mutation`.
-    public func adding(_ components: [OpenUIComponentDefinition], groups: [ComponentGroup] = []) -> ComponentLibrary {
+    func adding(_ components: [OpenUIComponentDefinition], groups: [ComponentGroup] = []) -> ComponentLibrary {
         ComponentLibrary(
             root: root,
             components: self.components + addable(components),
@@ -241,11 +241,11 @@ public struct ComponentLibrary: Sendable {
     // MARK: - Prompt & spec
 
     /// Generates the system prompt for this library. Uses ``defaultPromptOptions`` when `options` is `nil`.
-    public func systemPrompt(_ options: PromptOptions? = nil) -> String {
+    func systemPrompt(_ options: PromptOptions? = nil) -> String {
         PromptGenerator.generate(promptSpec(options ?? defaultPromptOptions))
     }
 
-    public func promptSpec(_ options: PromptOptions) -> PromptSpec {
+    func promptSpec(_ options: PromptOptions) -> PromptSpec {
         PromptSpec(
             root: root,
             components: components.map { PromptSpec.Component(name: $0.name, signature: $0.schema.signature, description: $0.schema.description) },
@@ -277,7 +277,7 @@ public struct ComponentLibrary: Sendable {
 
     /// The library spec in the `LibrarySpec` format of `@openuidev/lang-core` (`library.toSpec()`),
     /// suitable for generating prompts on a server with `generateSystemPrompt({ library })`.
-    public var specJSON: OpenUIValue {
+    var specJSON: OpenUIValue {
         var spec = OpenUIObject()
         if let root { spec["root"] = .string(root) }
         spec["components"] = .object(OpenUIObject(components.map { component in
@@ -364,7 +364,7 @@ public struct ComponentLibrary: Sendable {
 
 @available(iOS 17.0, macOS 14.0, *)
 extension ComponentLibrary: ReactivePropResolver {
-    public func isReactiveProp(component: String, prop: String) -> Bool {
+    func isReactiveProp(component: String, prop: String) -> Bool {
         reactiveProps[component]?.contains(prop) ?? false
     }
 }

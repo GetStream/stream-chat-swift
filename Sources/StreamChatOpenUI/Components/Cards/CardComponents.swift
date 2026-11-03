@@ -197,7 +197,7 @@ struct TrendBadge: View {
                     .accessibilityHidden(true)
                 Text(NumberFormatting.percent(abs(value)))
             }
-            .font(.caption.weight(.semibold))
+            .font(theme.fonts.caption.weight(.semibold))
             .monospacedDigit()
             .foregroundStyle(color)
             .padding(.horizontal, 6)
@@ -725,7 +725,7 @@ private struct VisualCard: View {
                     .foregroundStyle(.white)
                 if let subtext = bodyProps?.text("subtext"), !subtext.isEmpty {
                     Text(subtext)
-                        .font(.caption)
+                        .font(theme.fonts.caption)
                         .foregroundStyle(.white.opacity(0.85))
                 }
             }

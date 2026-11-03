@@ -19,15 +19,15 @@ import Foundation
 /// Arguments are checked against `params`, and the result against `returns`. A call with invalid
 /// arguments, or whose implementation throws, evaluates to null and reports a runtime error.
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUIFunction: Sendable {
-    public var name: String
-    public var description: String
-    public var params: [PropField]
-    public var returns: PropType?
+struct OpenUIFunction: Sendable {
+    var name: String
+    var description: String
+    var params: [PropField]
+    var returns: PropType?
     /// Runs the function with its arguments by name, schema defaults applied.
-    public var implementation: @Sendable (OpenUIObject) throws -> OpenUIValue
+    var implementation: @Sendable (OpenUIObject) throws -> OpenUIValue
 
-    public init(
+    init(
         _ name: String,
         description: String,
         params: [PropField],
@@ -46,7 +46,7 @@ public struct OpenUIFunction: Sendable {
     }
 
     /// The prompt signature: `Percent(part: number, total: number) → number`.
-    public var signature: String {
+    var signature: String {
         let base = "\(name)(" + params.map(\.signature).joined(separator: ", ") + ")"
         return returns.map { "\(base) → \($0.signature)" } ?? base
     }
@@ -58,12 +58,12 @@ public struct OpenUIFunction: Sendable {
 /// On click it reaches `OpenUIRuntime.onAction` as an ``ActionEvent`` whose `type` is the action's
 /// name and whose `params` are its arguments. A step with invalid arguments does nothing.
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUICustomAction: Sendable, Hashable {
-    public var name: String
-    public var description: String
-    public var params: [PropField]
+struct OpenUICustomAction: Sendable, Hashable {
+    var name: String
+    var description: String
+    var params: [PropField]
 
-    public init(_ name: String, description: String, params: [PropField]) {
+    init(_ name: String, description: String, params: [PropField]) {
         self.name = name
         self.description = description
         self.params = params
@@ -74,7 +74,7 @@ public struct OpenUICustomAction: Sendable, Hashable {
     }
 
     /// The prompt signature: `CopyToClipboard(text: string)`.
-    public var signature: String {
+    var signature: String {
         "\(name)(" + params.map(\.signature).joined(separator: ", ") + ")"
     }
 

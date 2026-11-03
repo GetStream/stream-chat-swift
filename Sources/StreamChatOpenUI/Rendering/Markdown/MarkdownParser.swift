@@ -6,7 +6,7 @@ import Foundation
 
 /// A block of Markdown content.
 @available(iOS 17.0, macOS 14.0, *)
-public enum MarkdownBlock: Sendable, Hashable {
+enum MarkdownBlock: Sendable, Hashable {
     case heading(level: Int, text: String)
     case paragraph(String)
     case list(MarkdownList)
@@ -17,36 +17,36 @@ public enum MarkdownBlock: Sendable, Hashable {
 }
 
 @available(iOS 17.0, macOS 14.0, *)
-public struct MarkdownList: Sendable, Hashable {
-    public struct Item: Sendable, Hashable {
-        public var text: String
+struct MarkdownList: Sendable, Hashable {
+    struct Item: Sendable, Hashable {
+        var text: String
         /// `true`/`false` for task list items (`- [x]`), `nil` otherwise.
-        public var checked: Bool?
-        public var children: [MarkdownBlock]
+        var checked: Bool?
+        var children: [MarkdownBlock]
     }
 
-    public var ordered: Bool
-    public var start: Int
-    public var items: [Item]
+    var ordered: Bool
+    var start: Int
+    var items: [Item]
 }
 
 @available(iOS 17.0, macOS 14.0, *)
-public struct MarkdownTable: Sendable, Hashable {
-    public enum Alignment: Sendable, Hashable {
+struct MarkdownTable: Sendable, Hashable {
+    enum Alignment: Sendable, Hashable {
         case leading, center, trailing
     }
 
-    public var header: [String]
-    public var alignments: [Alignment]
-    public var rows: [[String]]
+    var header: [String]
+    var alignments: [Alignment]
+    var rows: [[String]]
 }
 
 /// A small, streaming-tolerant Markdown block parser (CommonMark/GFM subset: headings, paragraphs,
 /// nested lists, task lists, block quotes, fenced code, tables and rules). Inline formatting is
 /// handled by `AttributedString(markdown:)` when rendering.
 @available(iOS 17.0, macOS 14.0, *)
-public enum MarkdownParser {
-    public static func parse(_ text: String) -> [MarkdownBlock] {
+enum MarkdownParser {
+    static func parse(_ text: String) -> [MarkdownBlock] {
         let lines = text.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n")
         var index = 0
         return parseBlocks(lines, &index, indent: 0, depth: 0)

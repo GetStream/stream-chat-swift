@@ -10,8 +10,8 @@ import SwiftUI
 @available(iOS 17.0, macOS 14.0, *)
 @MainActor
 @Observable
-public final class FormValidationModel {
-    public private(set) var errors: [String: String] = [:]
+final class FormValidationModel {
+    private(set) var errors: [String: String] = [:]
 
     private struct Registration {
         var rules: [ValidationRule]
@@ -20,29 +20,29 @@ public final class FormValidationModel {
 
     @ObservationIgnored private var fields: [String: Registration] = [:]
 
-    public init() {}
+    init() {}
 
-    public func error(for name: String) -> String? {
+    func error(for name: String) -> String? {
         errors[name]
     }
 
-    public func register(_ name: String, rules: [ValidationRule], value: @escaping @MainActor () -> OpenUIValue?) {
+    func register(_ name: String, rules: [ValidationRule], value: @escaping @MainActor () -> OpenUIValue?) {
         fields[name] = Registration(rules: rules, value: value)
     }
 
-    public func unregister(_ name: String) {
+    func unregister(_ name: String) {
         fields.removeValue(forKey: name)
     }
 
     @discardableResult
-    public func validateField(_ name: String, value: OpenUIValue?, rules: [ValidationRule]) -> Bool {
+    func validateField(_ name: String, value: OpenUIValue?, rules: [ValidationRule]) -> Bool {
         let error = FormValidation.validate(value, rules: rules)
         if errors[name] != error { errors[name] = error }
         return error == nil
     }
 
     /// Validates every registered field; returns `true` when the form is valid.
-    public func validateForm() -> Bool {
+    func validateForm() -> Bool {
         var next: [String: String] = [:]
         for (name, registration) in fields {
             var value = registration.value()
@@ -57,7 +57,7 @@ public final class FormValidationModel {
         return next.isEmpty
     }
 
-    public func clearError(_ name: String) {
+    func clearError(_ name: String) {
         if errors[name] != nil { errors[name] = nil }
     }
 }
@@ -73,7 +73,7 @@ private struct FormValidationKey: EnvironmentKey {
 }
 
 @available(iOS 17.0, macOS 14.0, *)
-public extension EnvironmentValues {
+extension EnvironmentValues {
     /// The enclosing `Form`'s name (form fields are stored under it).
     var openUIFormName: String? {
         get { self[FormNameKey.self] }

@@ -9,7 +9,7 @@ import Foundation
 /// Works with any backend (REST, GraphQL, MCP, local functions). The renderer calls the provider
 /// when queries load or refresh, and when an `Action` runs a mutation.
 @available(iOS 17.0, macOS 14.0, *)
-public protocol OpenUIToolProvider: Sendable {
+protocol OpenUIToolProvider: Sendable {
     func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue
 
     /// Runs a tool, saying whether the person asked for it: a `Mutation` runs from a tap, while a
@@ -22,7 +22,7 @@ public protocol OpenUIToolProvider: Sendable {
 }
 
 @available(iOS 17.0, macOS 14.0, *)
-public extension OpenUIToolProvider {
+extension OpenUIToolProvider {
     var minimumRefreshInterval: TimeInterval { 5 }
 
     func callTool(_ name: String, arguments: OpenUIObject, userInitiated: Bool) async throws -> OpenUIValue {
@@ -32,16 +32,16 @@ public extension OpenUIToolProvider {
 
 /// Thrown when a function-map provider has no handler for a tool.
 @available(iOS 17.0, macOS 14.0, *)
-public struct ToolNotFoundError: Error, LocalizedError, Sendable, Equatable {
-    public let toolName: String
-    public let availableTools: [String]
+struct ToolNotFoundError: Error, LocalizedError, Sendable, Equatable {
+    let toolName: String
+    let availableTools: [String]
 
-    public init(toolName: String, availableTools: [String] = []) {
+    init(toolName: String, availableTools: [String] = []) {
         self.toolName = toolName
         self.availableTools = availableTools
     }
 
-    public var errorDescription: String? {
+    var errorDescription: String? {
         let available = availableTools.isEmpty ? "(none)" : availableTools.joined(separator: ", ")
         return "[openui] No handler for tool \"\(toolName)\". Available: \(available)"
     }
@@ -49,14 +49,14 @@ public struct ToolNotFoundError: Error, LocalizedError, Sendable, Equatable {
 
 /// Thrown when an MCP tool call returns `isError: true`.
 @available(iOS 17.0, macOS 14.0, *)
-public struct MCPToolError: Error, LocalizedError, Sendable, Equatable {
-    public let toolErrorText: String
+struct MCPToolError: Error, LocalizedError, Sendable, Equatable {
+    let toolErrorText: String
 
-    public init(_ toolErrorText: String) {
+    init(_ toolErrorText: String) {
         self.toolErrorText = toolErrorText
     }
 
-    public var errorDescription: String? {
+    var errorDescription: String? {
         "MCP tool error: \(toolErrorText.isEmpty ? "Unknown error" : toolErrorText)"
     }
 }
@@ -69,17 +69,17 @@ public struct MCPToolError: Error, LocalizedError, Sendable, Equatable {
 /// ])
 /// ```
 @available(iOS 17.0, macOS 14.0, *)
-public struct FunctionToolProvider: OpenUIToolProvider {
-    public typealias Handler = @Sendable (OpenUIObject) async throws -> OpenUIValue
+struct FunctionToolProvider: OpenUIToolProvider {
+    typealias Handler = @Sendable (OpenUIObject) async throws -> OpenUIValue
 
-    public let minimumRefreshInterval: TimeInterval
+    let minimumRefreshInterval: TimeInterval
     private let names: [String]
     private let handlers: [String: Handler]
 
     /// - Parameters:
     ///   - handlers: The tools, by name.
     ///   - minimumRefreshInterval: The shortest time between two refreshes of a query, in seconds.
-    public init(_ handlers: KeyValuePairs<String, Handler>, minimumRefreshInterval: TimeInterval = 5) {
+    init(_ handlers: KeyValuePairs<String, Handler>, minimumRefreshInterval: TimeInterval = 5) {
         var names: [String] = []
         var map: [String: Handler] = [:]
         for (name, handler) in handlers {
@@ -90,7 +90,7 @@ public struct FunctionToolProvider: OpenUIToolProvider {
         self.minimumRefreshInterval = minimumRefreshInterval
     }
 
-    public func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue {
+    func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue {
         guard let handler = handlers[name] else {
             throw ToolNotFoundError(toolName: name, availableTools: names)
         }
@@ -102,22 +102,22 @@ public struct FunctionToolProvider: OpenUIToolProvider {
 
 /// The result envelope of an MCP `tools/call` request.
 @available(iOS 17.0, macOS 14.0, *)
-public struct MCPToolResult: Sendable, Hashable {
-    public struct Content: Sendable, Hashable {
-        public var type: String
-        public var text: String?
+struct MCPToolResult: Sendable, Hashable {
+    struct Content: Sendable, Hashable {
+        var type: String
+        var text: String?
 
-        public init(type: String, text: String? = nil) {
+        init(type: String, text: String? = nil) {
             self.type = type
             self.text = text
         }
     }
 
-    public var content: [Content]
-    public var structuredContent: OpenUIValue?
-    public var isError: Bool
+    var content: [Content]
+    var structuredContent: OpenUIValue?
+    var isError: Bool
 
-    public init(content: [Content], structuredContent: OpenUIValue? = nil, isError: Bool = false) {
+    init(content: [Content], structuredContent: OpenUIValue? = nil, isError: Bool = false) {
         self.content = content
         self.structuredContent = structuredContent
         self.isError = isError
@@ -125,7 +125,7 @@ public struct MCPToolResult: Sendable, Hashable {
 
     /// Extracts the tool's data: prefers `structuredContent`, then JSON-parses the text content
     /// (falling back to the raw text). Throws ``MCPToolError`` for error results.
-    public func extractedValue() throws -> OpenUIValue {
+    func extractedValue() throws -> OpenUIValue {
         let texts = content.filter { $0.type == "text" }.map { $0.text ?? "" }
         if isError {
             throw MCPToolError(texts.joined(separator: "\n"))
@@ -141,20 +141,20 @@ public struct MCPToolResult: Sendable, Hashable {
 
 /// Minimal MCP client shape (any MCP SDK client can be adapted to it).
 @available(iOS 17.0, macOS 14.0, *)
-public protocol MCPClient: Sendable {
+protocol MCPClient: Sendable {
     func callTool(name: String, arguments: OpenUIObject) async throws -> MCPToolResult
 }
 
 /// Adapts an ``MCPClient`` to ``OpenUIToolProvider``.
 @available(iOS 17.0, macOS 14.0, *)
-public struct MCPToolProvider: OpenUIToolProvider {
-    public let client: any MCPClient
+struct MCPToolProvider: OpenUIToolProvider {
+    let client: any MCPClient
 
-    public init(client: any MCPClient) {
+    init(client: any MCPClient) {
         self.client = client
     }
 
-    public func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue {
+    func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue {
         try await client.callTool(name: name, arguments: arguments).extractedValue()
     }
 }

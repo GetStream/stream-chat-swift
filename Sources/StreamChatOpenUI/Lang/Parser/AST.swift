@@ -6,11 +6,11 @@ import Foundation
 
 /// A named child of an object literal or a component's mapped props.
 @available(iOS 17.0, macOS 14.0, *)
-public struct ASTEntry: Sendable, Hashable {
-    public var key: String
-    public var value: ASTNode
+struct ASTEntry: Sendable, Hashable {
+    var key: String
+    var value: ASTNode
 
-    public init(_ key: String, _ value: ASTNode) {
+    init(_ key: String, _ value: ASTNode) {
         self.key = key
         self.value = value
     }
@@ -18,7 +18,7 @@ public struct ASTEntry: Sendable, Hashable {
 
 /// Whether a runtime reference points at a `Query` or a `Mutation` declaration.
 @available(iOS 17.0, macOS 14.0, *)
-public enum RuntimeRefType: String, Sendable, Hashable {
+enum RuntimeRefType: String, Sendable, Hashable {
     case query
     case mutation
 }
@@ -38,7 +38,7 @@ public enum RuntimeRefType: String, Sendable, Hashable {
 /// - ``binary(_:_:_:)``, ``unary(_:_:)``, ``ternary(_:_:_:)``
 /// - ``member(_:_:)`` (`a.b`), ``index(_:_:)`` (`a[b]`), ``assign(_:_:)`` (`$a = expr`)
 @available(iOS 17.0, macOS 14.0, *)
-public indirect enum ASTNode: Sendable, Hashable {
+indirect enum ASTNode: Sendable, Hashable {
     /// A call: a component, built-in, library function or action step. `isFunction` marks an
     /// `@Name(...)` call whose name is not a built-in.
     case comp(name: String, args: [ASTNode], mappedProps: [ASTEntry]?, isFunction: Bool = false)
@@ -60,7 +60,7 @@ public indirect enum ASTNode: Sendable, Hashable {
     case assign(String, ASTNode)
 
     /// Convenience constructor for an unmapped call.
-    public static func call(_ name: String, _ args: [ASTNode]) -> ASTNode {
+    static func call(_ name: String, _ args: [ASTNode]) -> ASTNode {
         .comp(name: name, args: args, mappedProps: nil)
     }
 
@@ -103,7 +103,7 @@ public indirect enum ASTNode: Sendable, Hashable {
     }
 
     /// True for nodes that survive parser lowering and are resolved by the evaluator.
-    public var isRuntimeExpression: Bool {
+    var isRuntimeExpression: Bool {
         switch self {
         case .stateRef, .runtimeRef, .binary, .unary, .ternary, .member, .index, .assign:
             return true
@@ -113,7 +113,7 @@ public indirect enum ASTNode: Sendable, Hashable {
     }
 
     /// Visits this node and all of its descendants (pre-order).
-    public func walk(_ visit: (ASTNode) -> Void) {
+    func walk(_ visit: (ASTNode) -> Void) {
         visit(self)
         switch self {
         case .comp(_, let args, let mappedProps, _):
@@ -145,7 +145,7 @@ public indirect enum ASTNode: Sendable, Hashable {
     }
 
     /// Names of all `$variables` referenced by this expression, in first-seen order.
-    public var stateReferences: [String] {
+    var stateReferences: [String] {
         var seen = Set<String>()
         var result: [String] = []
         walk { node in
@@ -157,7 +157,7 @@ public indirect enum ASTNode: Sendable, Hashable {
     }
 
     /// The JSON shape used by the reference implementation (`{ k: "Comp", name, args, ... }`).
-    public var jsonValue: OpenUIValue {
+    var jsonValue: OpenUIValue {
         switch self {
         case .comp(let name, let args, let mappedProps, let isFunction):
             var object: OpenUIObject = ["k": "Comp", "name": .string(name), "args": .array(args.map(\.jsonValue))]

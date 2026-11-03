@@ -7,13 +7,13 @@ import SwiftUI
 /// Read access to a component's evaluated props with lenient, JavaScript-like conversions.
 @available(iOS 17.0, macOS 14.0, *)
 public struct ComponentProps: Sendable {
-    public let values: OpenUIObject
+    let values: OpenUIObject
 
-    public init(_ values: OpenUIObject) {
+    init(_ values: OpenUIObject) {
         self.values = values
     }
 
-    public subscript(key: String) -> OpenUIValue? {
+    subscript(key: String) -> OpenUIValue? {
         values[key]
     }
 
@@ -51,7 +51,7 @@ public struct ComponentProps: Sendable {
     }
 
     /// The value as an array: arrays as-is, `null`/absent as `[]`, anything else wrapped (`asArray`).
-    public func array(_ key: String) -> [OpenUIValue] {
+    func array(_ key: String) -> [OpenUIValue] {
         switch values[key] {
         case .array(let items)?: return items
         case nil, .null?: return []
@@ -60,17 +60,17 @@ public struct ComponentProps: Sendable {
     }
 
     /// Element nodes in an array prop (non-elements are skipped).
-    public func elements(_ key: String) -> [ElementNode] {
+    func elements(_ key: String) -> [ElementNode] {
         array(key).compactMap(\.elementValue)
     }
 
     /// The value if it is an element.
-    public func element(_ key: String) -> ElementNode? {
+    func element(_ key: String) -> ElementNode? {
         values[key]?.elementValue
     }
 
     /// The value if it is an object.
-    public func object(_ key: String) -> OpenUIObject? {
+    func object(_ key: String) -> OpenUIObject? {
         values[key]?.objectValue
     }
 
@@ -89,12 +89,12 @@ public struct ComponentProps: Sendable {
 @available(iOS 17.0, macOS 14.0, *)
 @MainActor
 public struct ComponentContext {
-    public let element: ElementNode
-    public let runtime: OpenUIRuntime
+    let element: ElementNode
+    let runtime: OpenUIRuntime
     // The library's own view of the component, when an app replaced it.
     var defaultRenderer: ComponentRenderer?
 
-    public init(element: ElementNode, runtime: OpenUIRuntime) {
+    init(element: ElementNode, runtime: OpenUIRuntime) {
         self.element = element
         self.runtime = runtime
     }
@@ -111,22 +111,22 @@ public struct ComponentContext {
     }
 
     public var props: ComponentProps { ComponentProps(element.props) }
-    public var typeName: String { element.typeName }
-    public var statementId: String? { element.statementId }
+    var typeName: String { element.typeName }
+    var statementId: String? { element.statementId }
     public var isStreaming: Bool { runtime.isStreaming }
 
     /// Renders any prop value (an element, an array of elements, or a primitive).
-    public func render(_ value: OpenUIValue?) -> OpenUINodeView {
+    func render(_ value: OpenUIValue?) -> OpenUINodeView {
         OpenUINodeView(value: value)
     }
 
     /// Renders a prop by name.
-    public func render(prop key: String) -> OpenUINodeView {
+    func render(prop key: String) -> OpenUINodeView {
         OpenUINodeView(value: element.props[key])
     }
 
     /// A copy of an element with some props overridden (used by parents to style children).
-    public static func overriding(_ element: ElementNode, _ overrides: OpenUIObject) -> ElementNode {
+    static func overriding(_ element: ElementNode, _ overrides: OpenUIObject) -> ElementNode {
         var copy = element
         for (key, value) in overrides.entries {
             copy.props[key] = value

@@ -14,9 +14,9 @@ import AppKit
 /// Resolution mirrors the reference renderer: the exact name, then the category's representative
 /// icon, then a generic fallback.
 @available(iOS 17.0, macOS 14.0, *)
-public enum OpenUIIcons {
+enum OpenUIIcons {
     /// Resolves a lucide name (and optional category) to an SF Symbol name that exists on this platform.
-    public static func symbolName(for name: String?, category: String? = nil) -> String {
+    static func symbolName(for name: String?, category: String? = nil) -> String {
         let key = (name ?? "").trimmingCharacters(in: .whitespaces).lowercased()
         if let symbol = lucideToSymbol[key], symbolExists(symbol) { return symbol }
         // Accept SF Symbol names directly.
@@ -210,22 +210,22 @@ public enum OpenUIIcons {
 
 /// Renders an `Icon` element value (or a lucide name) as an SF Symbol.
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUIIconImage: View {
+struct OpenUIIconImage: View {
     let name: String?
     let category: String?
 
-    public init(name: String?, category: String? = nil) {
+    init(name: String?, category: String? = nil) {
         self.name = name
         self.category = category
     }
 
     /// From an `Icon(name, category)` element.
-    public init(element: ElementNode?) {
+    init(element: ElementNode?) {
         self.name = element?.props["name"]?.stringValue
         self.category = element?.props["category"]?.stringValue
     }
 
-    public var body: some View {
+    var body: some View {
         let label = OpenUIIcons.accessibilityName(for: name)
         Image(systemName: OpenUIIcons.symbolName(for: name, category: category))
             .accessibilityLabel(Text(label))

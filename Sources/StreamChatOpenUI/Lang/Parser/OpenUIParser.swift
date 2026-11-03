@@ -40,23 +40,23 @@ struct StatementTable: Sendable {
 /// result.meta      // incomplete / unresolved / orphaned / errors
 /// ```
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUIParser: Sendable {
-    public let paramMap: ParamMap
-    public let rootName: String?
+struct OpenUIParser: Sendable {
+    let paramMap: ParamMap
+    let rootName: String?
 
     /// Creates a parser from a compiled parameter map.
-    public init(paramMap: ParamMap, rootName: String? = nil) {
+    init(paramMap: ParamMap, rootName: String? = nil) {
         self.paramMap = paramMap
         self.rootName = rootName
     }
 
     /// Creates a parser from a library JSON Schema document (`library.toJSONSchema()`).
-    public init(schema: OpenUIValue, rootName: String? = nil) {
+    init(schema: OpenUIValue, rootName: String? = nil) {
         self.init(paramMap: Self.compileSchema(schema), rootName: rootName)
     }
 
     /// Parses a complete (or partial) program in one pass.
-    public func parse(_ input: String) -> ParseResult {
+    func parse(_ input: String) -> ParseResult {
         Self.parse(input, paramMap: paramMap, rootName: rootName)
     }
 
@@ -68,7 +68,7 @@ public struct OpenUIParser: Sendable {
     /// Compiles a library JSON Schema into positional parameter definitions. Each component lives in
     /// `$defs` (keyed by name); its `properties` order defines the positional argument order. The
     /// library's `functions` and `actions` join the built-in calls.
-    public static func compileSchema(_ schema: OpenUIValue) -> ParamMap {
+    static func compileSchema(_ schema: OpenUIValue) -> ParamMap {
         var map = ParamMap()
         guard case .object(let root) = schema else { return map }
         let definitions = root["$defs"]?.objectValue ?? [:]
@@ -373,9 +373,9 @@ public struct OpenUIParser: Sendable {
 /// Use ``set(_:)`` with the full accumulated text (it diffs and resets automatically when the text
 /// is replaced rather than appended), or ``push(_:)`` with deltas.
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUIStreamParser: Sendable {
-    public let paramMap: ParamMap
-    public let rootName: String?
+struct OpenUIStreamParser: Sendable {
+    let paramMap: ParamMap
+    let rootName: String?
 
     private var buffer = ""
     // Preprocessed view of `buffer` (fences and comments stripped).
@@ -389,17 +389,17 @@ public struct OpenUIStreamParser: Sendable {
     private var lastVersion = 0
     private var cache: MaterializationCache? = MaterializationCache()
 
-    public init(paramMap: ParamMap, rootName: String? = nil) {
+    init(paramMap: ParamMap, rootName: String? = nil) {
         self.paramMap = paramMap
         self.rootName = rootName
     }
 
-    public init(schema: OpenUIValue, rootName: String? = nil) {
+    init(schema: OpenUIValue, rootName: String? = nil) {
         self.init(paramMap: OpenUIParser.compileSchema(schema), rootName: rootName)
     }
 
     /// Appends a chunk and returns the latest result. Pass `complete` once the stream has ended.
-    public mutating func push(_ chunk: String, complete: Bool = false) -> ParseResult {
+    mutating func push(_ chunk: String, complete: Bool = false) -> ParseResult {
         buffer += chunk
         refreshCleaned(adding: chunk.utf8)
         return currentResult(complete: complete)
@@ -407,7 +407,7 @@ public struct OpenUIStreamParser: Sendable {
 
     /// Sets the full text so far. Resets when the text no longer extends the previous buffer. Pass
     /// `complete` once the stream has ended.
-    public mutating func set(_ fullText: String, complete: Bool = false) -> ParseResult {
+    mutating func set(_ fullText: String, complete: Bool = false) -> ParseResult {
         if !Self.text(fullText, startsWith: buffer) {
             reset()
         }
@@ -424,11 +424,11 @@ public struct OpenUIStreamParser: Sendable {
     }
 
     /// The latest result without consuming new data.
-    public mutating func result(complete: Bool = false) -> ParseResult {
+    mutating func result(complete: Bool = false) -> ParseResult {
         currentResult(complete: complete)
     }
 
-    public mutating func reset() {
+    mutating func reset() {
         buffer = ""
         cleaned = IncrementalPreprocessor()
         resetCompleted()

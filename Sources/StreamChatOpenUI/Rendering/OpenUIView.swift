@@ -17,7 +17,7 @@ import SwiftUI
 /// OpenUIView(runtime: message.runtime)
 /// ```
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUIView: View {
+struct OpenUIView: View {
     private enum Source {
         case owned(response: String?, isStreaming: Bool)
         case external(OpenUIRuntime)
@@ -31,7 +31,7 @@ public struct OpenUIView: View {
     private let onAction: (@MainActor (ActionEvent) -> Void)?
 
     /// Renders with an externally owned runtime (call `runtime.update(response:isStreaming:)` as text streams).
-    public init(runtime: OpenUIRuntime) {
+    init(runtime: OpenUIRuntime) {
         self.source = .external(runtime)
         self.library = runtime.library
         self.toolProvider = nil
@@ -40,7 +40,7 @@ public struct OpenUIView: View {
     }
 
     /// Renders a response, managing the runtime internally.
-    public init(
+    init(
         response: String?,
         isStreaming: Bool = false,
         library: ComponentLibrary = .openUIChat,
@@ -55,7 +55,7 @@ public struct OpenUIView: View {
         self.onAction = onAction
     }
 
-    public var body: some View {
+    var body: some View {
         switch source {
         case .external(let runtime):
             OpenUIRuntimeView(runtime: runtime)
@@ -170,14 +170,14 @@ struct OpenUIRuntimeView: View {
 
 /// Renders any value produced by the parser/evaluator: elements, arrays (as siblings) and primitives.
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUINodeView: View {
+struct OpenUINodeView: View {
     let value: OpenUIValue?
 
-    public init(value: OpenUIValue?) {
+    init(value: OpenUIValue?) {
         self.value = value
     }
 
-    public var body: some View {
+    var body: some View {
         switch value {
         case .element(let element)?:
             OpenUIElementView(element: element)
@@ -199,15 +199,15 @@ public struct OpenUINodeView: View {
 
 /// Renders a single element with its library renderer. Unknown and data-only components render nothing.
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUIElementView: View {
+struct OpenUIElementView: View {
     let element: ElementNode
     @Environment(OpenUIRuntime.self) private var runtime
 
-    public init(element: ElementNode) {
+    init(element: ElementNode) {
         self.element = element
     }
 
-    public var body: some View {
+    var body: some View {
         if let renderer = runtime.library.component(named: element.typeName)?.renderer {
             renderer(ComponentContext(element: element, runtime: runtime))
         }

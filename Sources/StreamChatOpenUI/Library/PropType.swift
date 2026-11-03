@@ -10,7 +10,7 @@ import Foundation
 /// A prop type produces both the JSON Schema used by the parser (positional mapping and
 /// validation) and the type annotation shown to the model in the generated system prompt.
 @available(iOS 17.0, macOS 14.0, *)
-public struct PropType: Sendable, Hashable {
+struct PropType: Sendable, Hashable {
     indirect enum Kind: Sendable, Hashable {
         case string
         case number
@@ -33,58 +33,58 @@ public struct PropType: Sendable, Hashable {
         self.kind = kind
     }
 
-    public static let string = PropType(kind: .string)
-    public static let number = PropType(kind: .number)
-    public static let boolean = PropType(kind: .boolean)
+    static let string = PropType(kind: .string)
+    static let number = PropType(kind: .number)
+    static let boolean = PropType(kind: .boolean)
     /// Anything (`{}` in JSON Schema).
-    public static let any = PropType(kind: .any)
+    static let any = PropType(kind: .any)
     /// An action: one `@step`, or `Action([...])` with several (`ActionExpression` in signatures).
-    public static let action = PropType(kind: .action)
+    static let action = PropType(kind: .action)
 
     /// One of a fixed set of strings: `"a" | "b"`.
-    public static func enumeration(_ values: [String]) -> PropType {
+    static func enumeration(_ values: [String]) -> PropType {
         PropType(kind: .enumeration(values))
     }
 
     /// A single string literal: `"open_url"`.
-    public static func literal(_ value: String) -> PropType {
+    static func literal(_ value: String) -> PropType {
         PropType(kind: .literal(value))
     }
 
     /// An array; `minItems` adds a JSON Schema length constraint.
-    public static func array(_ items: PropType, minItems: Int? = nil) -> PropType {
+    static func array(_ items: PropType, minItems: Int? = nil) -> PropType {
         PropType(kind: .array(items, minItems: minItems))
     }
 
     /// A nested object with named fields.
-    public static func object(_ fields: [PropField]) -> PropType {
+    static func object(_ fields: [PropField]) -> PropType {
         PropType(kind: .object(fields))
     }
 
     /// `Record<string, Value>`.
-    public static func record(_ value: PropType) -> PropType {
+    static func record(_ value: PropType) -> PropType {
         PropType(kind: .record(value))
     }
 
     /// A reference to another component in the library (rendered as its name in signatures).
-    public static func component(_ name: String) -> PropType {
+    static func component(_ name: String) -> PropType {
         PropType(kind: .component(name))
     }
 
     /// Any of several types: `A | B`.
-    public static func union(_ options: [PropType]) -> PropType {
+    static func union(_ options: [PropType]) -> PropType {
         PropType(kind: .union(options))
     }
 
     /// An action slot that takes only the listed steps, such as `["CopyToClipboard", "OpenUrl"]`
     /// (`@CopyToClipboard | @OpenUrl` in signatures). Built-in steps with a JSON shape are `OpenUrl`
     /// and `ToAssistant`; any other name is one of the library's custom actions.
-    public static func actions(_ names: [String]) -> PropType {
+    static func actions(_ names: [String]) -> PropType {
         PropType(kind: .actions(names))
     }
 
     /// The JSON Schema for this type (matches the output of Zod's `toJSONSchema`).
-    public var jsonSchema: OpenUIValue {
+    var jsonSchema: OpenUIValue {
         switch kind {
         case .string:
             return ["type": "string"]
@@ -120,7 +120,7 @@ public struct PropType: Sendable, Hashable {
     }
 
     /// The type annotation used in prompt signatures (e.g. `string`, `Series[]`, `(A | B)[]`).
-    public var signature: String {
+    var signature: String {
         switch kind {
         case .string: return "string"
         case .number: return "number"
@@ -273,17 +273,17 @@ public struct PropType: Sendable, Hashable {
 
 /// A named prop (or nested object field) with its type and modifiers.
 @available(iOS 17.0, macOS 14.0, *)
-public struct PropField: Sendable, Hashable {
-    public var name: String
-    public var type: PropType
+struct PropField: Sendable, Hashable {
+    var name: String
+    var type: PropType
     /// Optional props may be omitted from the end of a positional call.
-    public var isOptional: Bool
+    var isOptional: Bool
     /// Schema default (used when the value is missing, `null` or invalid).
-    public var defaultValue: OpenUIValue?
+    var defaultValue: OpenUIValue?
     /// Reactive props accept a `$variable` for two-way binding (`$binding<T>` in signatures).
-    public var isReactive: Bool
+    var isReactive: Bool
 
-    public init(_ name: String, _ type: PropType, isOptional: Bool = false, defaultValue: OpenUIValue? = nil, isReactive: Bool = false) {
+    init(_ name: String, _ type: PropType, isOptional: Bool = false, defaultValue: OpenUIValue? = nil, isReactive: Bool = false) {
         self.name = name
         self.type = type
         self.isOptional = isOptional
@@ -292,22 +292,22 @@ public struct PropField: Sendable, Hashable {
     }
 
     /// A required prop.
-    public static func required(_ name: String, _ type: PropType) -> PropField {
+    static func required(_ name: String, _ type: PropType) -> PropField {
         PropField(name, type)
     }
 
     /// An optional prop.
-    public static func optional(_ name: String, _ type: PropType) -> PropField {
+    static func optional(_ name: String, _ type: PropType) -> PropField {
         PropField(name, type, isOptional: true)
     }
 
     /// A prop with a default value (optional for the model, always present after parsing).
-    public static func defaulted(_ name: String, _ type: PropType, _ defaultValue: OpenUIValue) -> PropField {
+    static func defaulted(_ name: String, _ type: PropType, _ defaultValue: OpenUIValue) -> PropField {
         PropField(name, type, isOptional: true, defaultValue: defaultValue)
     }
 
     /// An optional prop that accepts a `$variable` binding.
-    public static func binding(_ name: String, _ type: PropType) -> PropField {
+    static func binding(_ name: String, _ type: PropType) -> PropField {
         PropField(name, type, isOptional: true, isReactive: true)
     }
 
@@ -346,34 +346,34 @@ public struct PropField: Sendable, Hashable {
 
 /// The schema of a component: its name, description and ordered (positional) props.
 @available(iOS 17.0, macOS 14.0, *)
-public struct ComponentSchema: Sendable, Hashable {
-    public var name: String
-    public var description: String
-    public var props: [PropField]
+struct ComponentSchema: Sendable, Hashable {
+    var name: String
+    var description: String
+    var props: [PropField]
 
-    public init(_ name: String, description: String, props: [PropField]) {
+    init(_ name: String, description: String, props: [PropField]) {
         self.name = name
         self.description = description
         self.props = props
     }
 
     /// Prompt signature: `Name(prop: type, optional?: type, ...)`.
-    public var signature: String {
+    var signature: String {
         "\(name)(" + props.map(\.signature).joined(separator: ", ") + ")"
     }
 
     /// The component's JSON Schema definition.
-    public var jsonSchema: OpenUIValue {
+    var jsonSchema: OpenUIValue {
         PropField.objectSchema(props, description: description)
     }
 
     /// Names of reactive props.
-    public var reactiveProps: Set<String> {
+    var reactiveProps: Set<String> {
         Set(props.filter(\.isReactive).map(\.name))
     }
 
     /// Returns a copy with the prop named `name` modified.
-    public func updatingProp(_ name: String, _ update: (inout PropField) -> Void) -> ComponentSchema {
+    func updatingProp(_ name: String, _ update: (inout PropField) -> Void) -> ComponentSchema {
         var copy = self
         if let index = copy.props.firstIndex(where: { $0.name == name }) {
             update(&copy.props[index])

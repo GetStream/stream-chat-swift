@@ -12,24 +12,24 @@ import Observation
 @available(iOS 17.0, macOS 14.0, *)
 @MainActor
 @Observable
-public final class OpenUIStore {
+final class OpenUIStore {
     /// All state in insertion order.
-    public private(set) var snapshot = OpenUIObject()
+    private(set) var snapshot = OpenUIObject()
 
     /// Called after every change with the changed key.
     @ObservationIgnored var onChange: ((String) -> Void)?
     /// Keys that still hold the default from their declaration (not set by the user or restored).
     @ObservationIgnored private var defaultedKeys = Set<String>()
 
-    public init() {}
+    init() {}
 
-    public func get(_ name: String) -> OpenUIValue? {
+    func get(_ name: String) -> OpenUIValue? {
         snapshot[name]
     }
 
     /// Sets a value (`nil` removes it). Equal values don't notify. A `pristine` value, such as one
     /// `@Reset` restored, still follows its declaration.
-    public func set(_ name: String, _ value: OpenUIValue?, pristine: Bool = false) {
+    func set(_ name: String, _ value: OpenUIValue?, pristine: Bool = false) {
         if pristine {
             defaultedKeys.insert(name)
         } else {
@@ -44,7 +44,7 @@ public final class OpenUIStore {
     /// restored are never overwritten or deleted — declarations can temporarily disappear while
     /// streaming.
     /// A value that still holds its declared default follows the declaration while it streams in.
-    public func initialize(defaults: OpenUIObject, persisted: OpenUIObject) {
+    func initialize(defaults: OpenUIObject, persisted: OpenUIObject) {
         var next = snapshot
         for (key, value) in persisted.entries {
             next[key] = value
@@ -62,7 +62,7 @@ public final class OpenUIStore {
     }
 
     /// Clears all state.
-    public func reset() {
+    func reset() {
         snapshot = OpenUIObject()
         defaultedKeys.removeAll()
     }

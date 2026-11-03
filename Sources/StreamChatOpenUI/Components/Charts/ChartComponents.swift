@@ -84,11 +84,11 @@ private struct ChartFrame<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: theme.spacing.xs) {
             if let yLabel, !yLabel.isEmpty {
-                Text(yLabel).font(.caption2).foregroundStyle(theme.colors.textSecondary)
+                Text(yLabel).font(theme.fonts.caption).foregroundStyle(theme.colors.textSecondary)
             }
             content().frame(height: height)
             if let xLabel, !xLabel.isEmpty {
-                Text(xLabel).font(.caption2).foregroundStyle(theme.colors.textSecondary).frame(maxWidth: .infinity)
+                Text(xLabel).font(theme.fonts.caption).foregroundStyle(theme.colors.textSecondary).frame(maxWidth: .infinity)
             }
         }
     }
@@ -334,10 +334,10 @@ struct PieChartView: View {
                     if donut {
                         VStack(spacing: 0) {
                             Text(NumberFormatting.decimal((total * 100).rounded() / 100))
-                                .font(.title3.weight(.semibold))
+                                .font(theme.fonts.bodyLarge.weight(.semibold))
                                 .monospacedDigit()
                             Text(L10n.Chart.total)
-                                .font(.caption2)
+                                .font(theme.fonts.caption)
                                 .foregroundStyle(theme.colors.textSecondary)
                         }
                         .offset(y: semicircle ? 50 : 0)
@@ -461,7 +461,7 @@ struct RadarChartView: View {
                         axis.addLine(to: point(index, 1))
                         canvas.stroke(axis, with: .color(theme.colors.border), lineWidth: 0.5)
                         let labelPoint = point(index, 1.18)
-                        canvas.draw(Text(labels[index]).font(.caption2).foregroundStyle(theme.colors.textSecondary), at: labelPoint)
+                        canvas.draw(Text(labels[index]).font(theme.fonts.caption).foregroundStyle(theme.colors.textSecondary), at: labelPoint)
                     }
                     for (seriesIndex, name) in seriesNames.enumerated() {
                         let values = points.filter { $0.series == name }.sorted { $0.order < $1.order }

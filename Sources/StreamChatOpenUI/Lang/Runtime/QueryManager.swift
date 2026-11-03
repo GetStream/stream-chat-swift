@@ -7,20 +7,20 @@ import Foundation
 /// Manages `Query` fetching/caching and `Mutation` execution (port of `queryManager.ts`).
 @available(iOS 17.0, macOS 14.0, *)
 @MainActor
-public final class QueryManager {
+final class QueryManager {
     /// An evaluated `Query(...)` declaration.
-    public struct QueryNode: Sendable, Equatable {
-        public var statementId: String
-        public var toolName: String
-        public var args: OpenUIValue?
-        public var defaults: OpenUIValue?
+    struct QueryNode: Sendable, Equatable {
+        var statementId: String
+        var toolName: String
+        var args: OpenUIValue?
+        var defaults: OpenUIValue?
         /// Evaluated `$variable` dependencies — part of the cache key, so changes re-fetch.
-        public var deps: OpenUIValue?
+        var deps: OpenUIValue?
         /// Auto-refresh interval in seconds.
-        public var refreshInterval: Double?
-        public var complete: Bool
+        var refreshInterval: Double?
+        var complete: Bool
 
-        public init(statementId: String, toolName: String, args: OpenUIValue? = nil, defaults: OpenUIValue? = nil, deps: OpenUIValue? = nil, refreshInterval: Double? = nil, complete: Bool = true) {
+        init(statementId: String, toolName: String, args: OpenUIValue? = nil, defaults: OpenUIValue? = nil, deps: OpenUIValue? = nil, refreshInterval: Double? = nil, complete: Bool = true) {
             self.statementId = statementId
             self.toolName = toolName
             self.args = args
@@ -32,23 +32,23 @@ public final class QueryManager {
     }
 
     /// An evaluated `Mutation(...)` declaration.
-    public struct MutationNode: Sendable, Equatable {
-        public var statementId: String
-        public var toolName: String
+    struct MutationNode: Sendable, Equatable {
+        var statementId: String
+        var toolName: String
 
-        public init(statementId: String, toolName: String) {
+        init(statementId: String, toolName: String) {
             self.statementId = statementId
             self.toolName = toolName
         }
     }
 
     /// Observable snapshot of query data, loading state and errors.
-    public struct Snapshot: Sendable, Equatable {
+    struct Snapshot: Sendable, Equatable {
         /// Statement ID → current data (settled, previous while refetching, or defaults) / mutation result.
-        public var values = OpenUIObject()
-        public var loading: [String] = []
-        public var refetching: [String] = []
-        public var errors: [OpenUIError] = []
+        var values = OpenUIObject()
+        var loading: [String] = []
+        var refetching: [String] = []
+        var errors: [OpenUIError] = []
     }
 
     private final class QueryEntry {
@@ -95,7 +95,7 @@ public final class QueryManager {
         }
     }
 
-    public let toolProvider: (any OpenUIToolProvider)?
+    let toolProvider: (any OpenUIToolProvider)?
 
     private var queryOrder: [String] = []
     private var queries: [String: QueryEntry] = [:]
@@ -106,7 +106,7 @@ public final class QueryManager {
     private var refreshesPaused = false
     private var generation = 0
 
-    public private(set) var snapshot = Snapshot()
+    private(set) var snapshot = Snapshot()
 
     /// Called when the snapshot changes.
     var onChange: (() -> Void)?
@@ -115,7 +115,7 @@ public final class QueryManager {
     /// a field the person types in fetches once they pause, not on every keystroke.
     var argumentDebounce: TimeInterval = 0.3
 
-    public init(toolProvider: (any OpenUIToolProvider)?) {
+    init(toolProvider: (any OpenUIToolProvider)?) {
         self.toolProvider = toolProvider
     }
 
@@ -301,7 +301,7 @@ public final class QueryManager {
     // MARK: - Queries
 
     /// Reconciles the active queries: removes stale ones, fetches new/changed ones, and configures refresh timers.
-    public func evaluateQueries(_ nodes: [QueryNode]) {
+    func evaluateQueries(_ nodes: [QueryNode]) {
         guard !disposed else { return }
         let activeIds = Set(nodes.map(\.statementId))
 
@@ -421,23 +421,23 @@ public final class QueryManager {
     }
 
     /// Current data for a query: settled data, the previous result while refetching, or the defaults.
-    public func result(for statementId: String) -> OpenUIValue? {
+    func result(for statementId: String) -> OpenUIValue? {
         guard let query = queries[statementId] else { return .null }
         if let data = cache[query.cacheKey]?.data { return data }
         if let previousKey = query.previousCacheKey, let data = cache[previousKey]?.data { return data }
         return query.defaults
     }
 
-    public func isLoading(_ statementId: String) -> Bool {
+    func isLoading(_ statementId: String) -> Bool {
         queries[statementId]?.loading ?? false
     }
 
-    public var isAnyLoading: Bool {
+    var isAnyLoading: Bool {
         queries.values.contains { $0.loading }
     }
 
     /// Re-fetches the given queries (all when `nil`/empty). In-flight queries re-fetch when they settle.
-    public func invalidate(_ statementIds: [String]? = nil) {
+    func invalidate(_ statementIds: [String]? = nil) {
         guard !disposed, toolProvider != nil else { return }
         let targets: [String]
         if let statementIds, !statementIds.isEmpty {
@@ -457,7 +457,7 @@ public final class QueryManager {
 
     // MARK: - Mutations
 
-    public func registerMutations(_ nodes: [MutationNode]) {
+    func registerMutations(_ nodes: [MutationNode]) {
         let activeIds = Set(nodes.map(\.statementId))
         for statementId in mutationOrder where !activeIds.contains(statementId) {
             mutations.removeValue(forKey: statementId)
@@ -480,7 +480,7 @@ public final class QueryManager {
     }
 
     /// Runs a mutation. Returns `false` on failure (or if it is already running).
-    public func fireMutation(_ statementId: String, arguments: OpenUIObject, refreshQueryIds: [String]? = nil) async -> Bool {
+    func fireMutation(_ statementId: String, arguments: OpenUIObject, refreshQueryIds: [String]? = nil) async -> Bool {
         guard !disposed, let toolProvider, let mutation = mutations[statementId] else { return false }
         // Reject concurrent calls on the same mutation — prevents double submits.
         if mutation.result["status"] == "loading" { return false }
@@ -513,13 +513,13 @@ public final class QueryManager {
     }
 
     /// The `{ status, data?, error? }` result of a mutation, or `nil` if there is no such mutation.
-    public func mutationResult(for statementId: String) -> OpenUIValue? {
+    func mutationResult(for statementId: String) -> OpenUIValue? {
         mutations[statementId]?.result
     }
 
     // MARK: - Lifecycle
 
-    public func activate() {
+    func activate() {
         disposed = false
     }
 
@@ -541,7 +541,7 @@ public final class QueryManager {
     }
 
     /// Stops timers and in-flight bookkeeping. Cached data and query entries are kept.
-    public func dispose() {
+    func dispose() {
         disposed = true
         generation += 1
         onChange = nil

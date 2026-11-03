@@ -31,7 +31,6 @@ public final class OpenUIRenderer: AIUIRenderer {
     public let library: ComponentLibrary
     private let instructions: String?
     let theme: OpenUITheme?
-    private let toolProvider: (any OpenUIToolProvider)?
     private let mediaURL: @Sendable (URL) -> URL?
     private let onError: (@MainActor (OpenUIError, _ messageID: String) -> Void)?
 
@@ -41,8 +40,6 @@ public final class OpenUIRenderer: AIUIRenderer {
     ///     which answers to write as UI and when to use the app's components.
     ///   - theme: The look of the replies' OpenUI. By default it follows the conversation's
     ///     `AIAppearance`, ``OpenUITheme/init(appearance:)``.
-    ///   - toolProvider: Runs the tools of `Query()` and `Mutation()`. By default they are the
-    ///     host's tools, run on the device.
     ///   - mediaURL: The URL an image loads from, given the web link the model wrote, or `nil` to
     ///     not load it, such as to allow only your own image hosts. It gets only links the model
     ///     wrote out or a tool returned, so one built from what the person typed never loads. By
@@ -55,14 +52,12 @@ public final class OpenUIRenderer: AIUIRenderer {
         library: ComponentLibrary = .openUIChat,
         instructions: String? = nil,
         theme: OpenUITheme? = nil,
-        toolProvider: (any OpenUIToolProvider)? = nil,
         mediaURL: @escaping @Sendable (URL) -> URL? = { $0 },
         onError: (@MainActor (OpenUIError, _ messageID: String) -> Void)? = nil
     ) {
         self.library = library
         self.instructions = instructions
         self.theme = theme
-        self.toolProvider = toolProvider
         self.mediaURL = mediaURL
         self.onError = onError
     }
@@ -82,7 +77,7 @@ public final class OpenUIRenderer: AIUIRenderer {
         OpenUIEngine(
             library: library,
             host: host,
-            toolProvider: toolProvider ?? HostToolProvider(host: host),
+            toolProvider: HostToolProvider(host: host),
             mediaURL: mediaURL,
             theme: theme,
             onError: onError

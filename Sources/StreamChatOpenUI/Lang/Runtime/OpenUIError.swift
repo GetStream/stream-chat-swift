@@ -39,7 +39,7 @@ public struct OpenUIError: Sendable, Hashable, CustomStringConvertible {
     /// Whether the program still renders despite it, such as a `no-root` fallback entry.
     public var isWarning: Bool
 
-    public init(
+    init(
         source: Source,
         code: String,
         message: String,

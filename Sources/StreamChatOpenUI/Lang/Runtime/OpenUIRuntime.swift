@@ -7,12 +7,12 @@ import Observation
 
 /// A two-way bound form field (port of `resolveStateField`).
 @available(iOS 17.0, macOS 14.0, *)
-public struct StateField {
-    public let name: String
+struct StateField {
+    let name: String
     /// Current value (`nil` when unset).
-    public let value: OpenUIValue?
+    let value: OpenUIValue?
     /// Whether the field is bound to a `$variable`.
-    public let isReactive: Bool
+    let isReactive: Bool
     private let setter: (OpenUIValue?) -> Void
 
     init(name: String, value: OpenUIValue?, isReactive: Bool, setter: @escaping (OpenUIValue?) -> Void) {
@@ -22,7 +22,7 @@ public struct StateField {
         self.setter = setter
     }
 
-    public func set(_ newValue: OpenUIValue?) {
+    func set(_ newValue: OpenUIValue?) {
         setter(newValue)
     }
 }
@@ -36,30 +36,30 @@ public struct StateField {
 @available(iOS 17.0, macOS 14.0, *)
 @MainActor
 @Observable
-public final class OpenUIRuntime {
-    public private(set) var library: ComponentLibrary
-    public let store: OpenUIStore
-    @ObservationIgnored public let queryManager: QueryManager
+final class OpenUIRuntime {
+    private(set) var library: ComponentLibrary
+    let store: OpenUIStore
+    @ObservationIgnored let queryManager: QueryManager
 
     /// The raw response text.
-    public private(set) var response: String?
+    private(set) var response: String?
     /// Whether the model is still streaming (inputs are disabled and queries wait until it ends).
-    public private(set) var isStreaming = false
+    private(set) var isStreaming = false
     /// The raw parse result (runtime expressions unevaluated).
-    public private(set) var parseResult: ParseResult?
+    private(set) var parseResult: ParseResult?
     /// The evaluated root element that is rendered.
-    public private(set) var root: ElementNode?
+    private(set) var root: ElementNode?
     /// Whether any query is fetching.
-    public private(set) var isQueryLoading = false
+    private(set) var isQueryLoading = false
     /// Current structured errors (empty while streaming).
-    public private(set) var errors: [OpenUIError] = []
+    private(set) var errors: [OpenUIError] = []
 
     /// Conversation and navigation actions (`@ToAssistant`, `@OpenUrl`, follow-ups, buttons without actions).
-    @ObservationIgnored public var onAction: (@MainActor (ActionEvent) -> Void)?
+    @ObservationIgnored var onAction: (@MainActor (ActionEvent) -> Void)?
     /// Called on every user-driven state change, with the full state snapshot (persist it as-is).
-    @ObservationIgnored public var onStateUpdate: (@MainActor (OpenUIObject) -> Void)?
+    @ObservationIgnored var onStateUpdate: (@MainActor (OpenUIObject) -> Void)?
     /// Called with structured, LLM-friendly errors when streaming ends (and with `[]` when they clear).
-    @ObservationIgnored public var onError: (@MainActor ([OpenUIError]) -> Void)?
+    @ObservationIgnored var onError: (@MainActor ([OpenUIError]) -> Void)?
 
     @ObservationIgnored private var streamParser: OpenUIStreamParser
     @ObservationIgnored private var initialState: OpenUIObject?
@@ -77,7 +77,7 @@ public final class OpenUIRuntime {
     ///   - toolProvider: Executes `Query`/`Mutation` tools.
     ///   - initialState: Previously persisted state (from ``onStateUpdate``). `$`-prefixed keys
     ///     restore bindings; other keys restore form state.
-    public init(library: ComponentLibrary, toolProvider: (any OpenUIToolProvider)? = nil, initialState: OpenUIObject? = nil) {
+    init(library: ComponentLibrary, toolProvider: (any OpenUIToolProvider)? = nil, initialState: OpenUIObject? = nil) {
         self.library = library
         self.store = OpenUIStore()
         self.queryManager = QueryManager(toolProvider: toolProvider)
@@ -92,7 +92,7 @@ public final class OpenUIRuntime {
     // MARK: - Input
 
     /// Feeds the latest response text (the full text so far, not a delta).
-    public func update(response: String?, isStreaming: Bool) {
+    func update(response: String?, isStreaming: Bool) {
         let responseChanged = response != self.response
         let streamingChanged = isStreaming != self.isStreaming
         guard responseChanged || streamingChanged || parseResult == nil else { return }
@@ -127,7 +127,7 @@ public final class OpenUIRuntime {
     }
 
     /// Restores persisted state (e.g. when re-rendering a stored message).
-    public func restore(state: OpenUIObject) {
+    func restore(state: OpenUIObject) {
         initialState = state
         storeInitKey = nil
         initializeStoreIfNeeded()
@@ -135,21 +135,21 @@ public final class OpenUIRuntime {
     }
 
     /// Reactivates query execution after ``dispose()``.
-    public func activate() {
+    func activate() {
         queryManager.activate()
         queryManager.onChange = { [weak self] in self?.queryManagerDidChange() }
         runQueryEffects()
     }
 
     /// Stops refresh timers and pending work.
-    public func dispose() {
+    func dispose() {
         queryManager.dispose()
     }
 
     // MARK: - Evaluation
 
     /// Context used to evaluate expressions against the current state and query results.
-    public var evaluationContext: EvaluationContext {
+    var evaluationContext: EvaluationContext {
         let store = self.store
         let queryManager = self.queryManager
         return EvaluationContext(
@@ -167,7 +167,7 @@ public final class OpenUIRuntime {
     }
 
     /// Evaluates an expression against the current state.
-    public func evaluate(_ node: ASTNode) -> OpenUIValue? {
+    func evaluate(_ node: ASTNode) -> OpenUIValue? {
         Evaluator.evaluate(node, evaluationContext)
     }
 
@@ -297,14 +297,14 @@ public final class OpenUIRuntime {
     // MARK: - Form state
 
     /// Reads a field value: top level for `$bindings`, nested under `formName` for form fields.
-    public func fieldValue(formName: String?, name: String) -> OpenUIValue? {
+    func fieldValue(formName: String?, name: String) -> OpenUIValue? {
         guard let formName else { return Self.unwrapFieldValue(store.get(name)) }
         guard case .object(let form)? = store.get(formName) else { return nil }
         return Self.unwrapFieldValue(form[name])
     }
 
     /// Writes a field value as `{ value, componentType }`.
-    public func setFieldValue(formName: String?, componentType: String?, name: String, value: OpenUIValue?, isSecret: Bool = false) {
+    func setFieldValue(formName: String?, componentType: String?, name: String, value: OpenUIValue?, isSecret: Bool = false) {
         var wrapped: OpenUIObject = ["value": value ?? .null]
         if let componentType { wrapped["componentType"] = .string(componentType) }
         if isSecret { wrapped["secret"] = .bool(true) }
@@ -318,7 +318,7 @@ public final class OpenUIRuntime {
     }
 
     /// Resolves a field that may be bound to a `$variable` (reactive) or stored as form state.
-    public func stateField(
+    func stateField(
         name: String,
         binding: OpenUIValue?,
         formName: String?,
@@ -385,7 +385,7 @@ public final class OpenUIRuntime {
     /// mutation fails), a legacy action object (`{ type, params }` / `{ type: "open_url", url }`), or,
     /// when `action` is `nil`, a continue-conversation event carrying `label`. Each step reads the
     /// form state when it runs, so an earlier `@Set` in the same plan is visible.
-    public func triggerAction(label: String, formName: String? = nil, action: OpenUIValue? = nil) async {
+    func triggerAction(label: String, formName: String? = nil, action: OpenUIValue? = nil) async {
         if case .object(let object)? = action, object["steps"] == nil {
             let type = object["type"].flatMap { JS.isTruthy($0) ? JS.toString($0) : nil } ?? BuiltinActionType.continueConversation
             // Only a real call delivers a custom action; a legacy object can't pose as one.

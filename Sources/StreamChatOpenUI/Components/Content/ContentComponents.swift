@@ -165,7 +165,7 @@ struct SourcesStrip: View {
                         } label: {
                             HStack(alignment: .top, spacing: 6) {
                                 Text("\(index + 1)")
-                                    .font(.caption2.weight(.bold))
+                                    .font(theme.fonts.caption.weight(.bold))
                                     .foregroundStyle(theme.colors.onAccent)
                                     .frame(width: badgeSize, height: badgeSize)
                                     .background(theme.colors.accent, in: Circle())
@@ -175,7 +175,7 @@ struct SourcesStrip: View {
                                         .foregroundStyle(theme.colors.textPrimary)
                                         .lineLimit(2)
                                     Text(source["sourceName"]?.stringValue ?? "")
-                                        .font(.caption2)
+                                        .font(theme.fonts.caption)
                                         .foregroundStyle(theme.colors.textSecondary)
                                         .lineLimit(1)
                                 }
@@ -360,7 +360,7 @@ struct CalloutView: View {
             let color = theme.colors.variant(variant)
             HStack(alignment: .top, spacing: theme.spacing.m) {
                 Image(systemName: Self.icon(variant))
-                    .font(.body.weight(.semibold))
+                    .font(theme.fonts.body.weight(.semibold))
                     .foregroundStyle(color)
                 VStack(alignment: .leading, spacing: theme.spacing.xs) {
                     if let title = context.props.text("title"), !title.isEmpty {

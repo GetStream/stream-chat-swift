@@ -10,39 +10,39 @@ import Foundation
 /// the order the library schema declares them, and objects are serialized in insertion order.
 /// Re-assigning an existing key keeps its original position; removing a key drops it.
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUIObject: Sendable, Hashable {
-    public private(set) var keys: [String]
+struct OpenUIObject: Sendable, Hashable {
+    private(set) var keys: [String]
     private var storage: [String: OpenUIValue]
 
-    public init() {
+    init() {
         keys = []
         storage = [:]
     }
 
-    public init<S: Sequence>(_ pairs: S) where S.Element == (String, OpenUIValue) {
+    init<S: Sequence>(_ pairs: S) where S.Element == (String, OpenUIValue) {
         self.init()
         for (key, value) in pairs {
             self[key] = value
         }
     }
 
-    public var count: Int { keys.count }
-    public var isEmpty: Bool { keys.isEmpty }
+    var count: Int { keys.count }
+    var isEmpty: Bool { keys.isEmpty }
 
     /// Values in key order.
-    public var values: [OpenUIValue] { keys.compactMap { storage[$0] } }
+    var values: [OpenUIValue] { keys.compactMap { storage[$0] } }
 
     /// Key/value pairs in key order.
-    public var entries: [(key: String, value: OpenUIValue)] {
+    var entries: [(key: String, value: OpenUIValue)] {
         keys.compactMap { key in storage[key].map { (key, $0) } }
     }
 
-    public func contains(_ key: String) -> Bool {
+    func contains(_ key: String) -> Bool {
         storage[key] != nil
     }
 
     /// Gets or sets a value. Assigning `nil` removes the key (like `delete obj[key]`).
-    public subscript(key: String) -> OpenUIValue? {
+    subscript(key: String) -> OpenUIValue? {
         get { storage[key] }
         set {
             if let newValue {
@@ -56,7 +56,7 @@ public struct OpenUIObject: Sendable, Hashable {
     }
 
     @discardableResult
-    public mutating func removeValue(forKey key: String) -> OpenUIValue? {
+    mutating func removeValue(forKey key: String) -> OpenUIValue? {
         guard let removed = storage.removeValue(forKey: key) else { return nil }
         if let index = keys.firstIndex(of: key) {
             keys.remove(at: index)
@@ -65,7 +65,7 @@ public struct OpenUIObject: Sendable, Hashable {
     }
 
     /// Returns a copy with `other`'s entries assigned on top (like `{ ...self, ...other }`).
-    public func merging(_ other: OpenUIObject) -> OpenUIObject {
+    func merging(_ other: OpenUIObject) -> OpenUIObject {
         var result = self
         for (key, value) in other.entries {
             result[key] = value
@@ -73,7 +73,7 @@ public struct OpenUIObject: Sendable, Hashable {
         return result
     }
 
-    public func mapValues(_ transform: (OpenUIValue) throws -> OpenUIValue) rethrows -> OpenUIObject {
+    func mapValues(_ transform: (OpenUIValue) throws -> OpenUIValue) rethrows -> OpenUIObject {
         var result = OpenUIObject()
         for (key, value) in entries {
             result[key] = try transform(value)
@@ -82,18 +82,18 @@ public struct OpenUIObject: Sendable, Hashable {
     }
 
     /// Order-insensitive equality: JavaScript objects with the same own properties are treated as equal.
-    public static func == (lhs: OpenUIObject, rhs: OpenUIObject) -> Bool {
+    static func == (lhs: OpenUIObject, rhs: OpenUIObject) -> Bool {
         lhs.storage == rhs.storage
     }
 
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(storage)
     }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIObject: Sequence {
-    public func makeIterator() -> AnyIterator<(key: String, value: OpenUIValue)> {
+    func makeIterator() -> AnyIterator<(key: String, value: OpenUIValue)> {
         var iterator = entries.makeIterator()
         return AnyIterator { iterator.next() }
     }
@@ -101,7 +101,7 @@ extension OpenUIObject: Sequence {
 
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIObject: ExpressibleByDictionaryLiteral {
-    public init(dictionaryLiteral elements: (String, OpenUIValue)...) {
+    init(dictionaryLiteral elements: (String, OpenUIValue)...) {
         self.init(elements)
     }
 }

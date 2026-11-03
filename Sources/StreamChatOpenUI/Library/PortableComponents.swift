@@ -15,7 +15,7 @@ import Foundation
 ///   "events": [{ "name": "ask_about", "description": "The person asks about the place." }] }
 /// ```
 @available(iOS 17.0, macOS 14.0, *)
-public extension ComponentSchema {
+extension ComponentSchema {
     /// The OpenUI name of a portable component: OpenUI Lang calls components by capitalized
     /// names, so `place_card` is `PlaceCard`.
     static func typeName(forPortableName name: String) -> String {
@@ -70,7 +70,7 @@ public extension ComponentSchema {
 }
 
 @available(iOS 17.0, macOS 14.0, *)
-public extension PropType {
+extension PropType {
     /// The prop type closest to a JSON Schema type. `type: ["string", "null"]` reads as a string,
     /// `anyOf`/`oneOf` as a union, `const` as a literal, and an object with only
     /// `additionalProperties` as a record. Anything else it can't describe accepts any value.
@@ -155,7 +155,7 @@ extension PropType {
 }
 
 @available(iOS 17.0, macOS 14.0, *)
-public extension ComponentLibrary {
+extension ComponentLibrary {
     /// A library with `components` added, and placeable wherever the library's own content goes,
     /// such as the children of a chat `Card` or the content of a `TabItem`.
     /// - Parameters:
@@ -190,8 +190,8 @@ public extension ComponentLibrary {
 
 /// A portable component definition OpenUI can't read.
 @available(iOS 17.0, macOS 14.0, *)
-public struct OpenUIPortableComponentError: Error, LocalizedError, Sendable {
-    public let message: String
+struct OpenUIPortableComponentError: Error, LocalizedError, Sendable {
+    let message: String
 
-    public var errorDescription: String? { message }
+    var errorDescription: String? { message }
 }

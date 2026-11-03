@@ -13,7 +13,7 @@ import Foundation
 /// - ``expression(_:)``: a runtime expression (``ASTNode``) preserved by the parser and resolved
 ///   by the evaluator (state references, query results, operators, action plans, ...).
 @available(iOS 17.0, macOS 14.0, *)
-public enum OpenUIValue: Sendable, Hashable {
+enum OpenUIValue: Sendable, Hashable {
     case null
     case bool(Bool)
     case number(Double)
@@ -27,7 +27,7 @@ public enum OpenUIValue: Sendable, Hashable {
 // MARK: - Accessors
 
 @available(iOS 17.0, macOS 14.0, *)
-public extension OpenUIValue {
+extension OpenUIValue {
     var isNull: Bool {
         if case .null = self { return true }
         return false
@@ -98,49 +98,49 @@ public extension OpenUIValue {
 
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIValue: ExpressibleByBooleanLiteral {
-    public init(booleanLiteral value: Bool) {
+    init(booleanLiteral value: Bool) {
         self = .bool(value)
     }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIValue: ExpressibleByIntegerLiteral {
-    public init(integerLiteral value: Int) {
+    init(integerLiteral value: Int) {
         self = .number(Double(value))
     }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIValue: ExpressibleByFloatLiteral {
-    public init(floatLiteral value: Double) {
+    init(floatLiteral value: Double) {
         self = .number(value)
     }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIValue: ExpressibleByStringLiteral {
-    public init(stringLiteral value: String) {
+    init(stringLiteral value: String) {
         self = .string(value)
     }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIValue: ExpressibleByArrayLiteral {
-    public init(arrayLiteral elements: OpenUIValue...) {
+    init(arrayLiteral elements: OpenUIValue...) {
         self = .array(elements)
     }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIValue: ExpressibleByDictionaryLiteral {
-    public init(dictionaryLiteral elements: (String, OpenUIValue)...) {
+    init(dictionaryLiteral elements: (String, OpenUIValue)...) {
         self = .object(OpenUIObject(elements))
     }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIValue: CustomStringConvertible {
-    public var description: String {
+    var description: String {
         JS.jsonStringify(self) ?? "undefined"
     }
 }

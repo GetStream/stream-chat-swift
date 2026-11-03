@@ -6,13 +6,13 @@ import Foundation
 
 /// A tool the model can call via `Query()`/`Mutation()` (shape inspired by MCP's tool schema).
 @available(iOS 17.0, macOS 14.0, *)
-public struct ToolSpec: Sendable, Hashable {
-    public var name: String
-    public var description: String?
-    public var inputSchema: OpenUIValue
-    public var outputSchema: OpenUIValue
+struct ToolSpec: Sendable, Hashable {
+    var name: String
+    var description: String?
+    var inputSchema: OpenUIValue
+    var outputSchema: OpenUIValue
 
-    public init(name: String, description: String? = nil, inputSchema: OpenUIValue = [:], outputSchema: OpenUIValue = [:]) {
+    init(name: String, description: String? = nil, inputSchema: OpenUIValue = [:], outputSchema: OpenUIValue = [:]) {
         self.name = name
         self.description = description
         self.inputSchema = inputSchema
@@ -22,19 +22,19 @@ public struct ToolSpec: Sendable, Hashable {
 
 /// A tool listed in the prompt: just a name, or a full spec.
 @available(iOS 17.0, macOS 14.0, *)
-public enum ToolDescriptor: Sendable, Hashable {
+enum ToolDescriptor: Sendable, Hashable {
     case name(String)
     case spec(ToolSpec)
 }
 
 /// A named group of components in the prompt, with optional usage notes.
 @available(iOS 17.0, macOS 14.0, *)
-public struct ComponentGroup: Sendable, Hashable {
-    public var name: String
-    public var components: [String]
-    public var notes: [String]
+struct ComponentGroup: Sendable, Hashable {
+    var name: String
+    var components: [String]
+    var notes: [String]
 
-    public init(name: String, components: [String], notes: [String] = []) {
+    init(name: String, components: [String], notes: [String] = []) {
         self.name = name
         self.components = components
         self.notes = notes
@@ -43,27 +43,27 @@ public struct ComponentGroup: Sendable, Hashable {
 
 /// Options for system prompt generation (mirrors `PromptOptions` in `@openuidev/lang-core`).
 @available(iOS 17.0, macOS 14.0, *)
-public struct PromptOptions: Sendable, Hashable {
+struct PromptOptions: Sendable, Hashable {
     /// Replaces the default preamble.
-    public var preamble: String?
-    public var additionalRules: [String]
+    var preamble: String?
+    var additionalRules: [String]
     /// Examples (static/layout patterns).
-    public var examples: [String]
+    var examples: [String]
     /// Examples using Query/Mutation.
-    public var toolExamples: [String]
-    public var tools: [ToolDescriptor]
+    var toolExamples: [String]
+    var tools: [ToolDescriptor]
     /// Incremental editing instructions (the model outputs only changed statements).
-    public var editMode: Bool
+    var editMode: Bool
     /// Text + fenced code responses (the model can answer without generating UI).
-    public var inlineMode: Bool
+    var inlineMode: Bool
     /// `Query()`, `Mutation()`, `@Run`. Defaults to `true` when tools are provided.
-    public var toolCalls: Bool?
+    var toolCalls: Bool?
     /// `$variables`, `@Set`, `@Reset`. Defaults to `toolCalls`.
-    public var bindings: Bool?
+    var bindings: Bool?
     /// Lists the built-in functions (`@Count`, `@Sum`, ...). Defaults to `toolCalls || bindings`.
-    public var builtinFunctions: Bool?
+    var builtinFunctions: Bool?
 
-    public init(
+    init(
         preamble: String? = nil,
         additionalRules: [String] = [],
         examples: [String] = [],
@@ -90,29 +90,29 @@ public struct PromptOptions: Sendable, Hashable {
 
 /// Everything needed to render a system prompt.
 @available(iOS 17.0, macOS 14.0, *)
-public struct PromptSpec: Sendable, Hashable {
-    public struct Component: Sendable, Hashable {
-        public var name: String
-        public var signature: String
-        public var description: String?
+struct PromptSpec: Sendable, Hashable {
+    struct Component: Sendable, Hashable {
+        var name: String
+        var signature: String
+        var description: String?
 
-        public init(name: String, signature: String, description: String? = nil) {
+        init(name: String, signature: String, description: String? = nil) {
             self.name = name
             self.signature = signature
             self.description = description
         }
     }
 
-    public var root: String?
-    public var components: [Component]
-    public var componentGroups: [ComponentGroup]
+    var root: String?
+    var components: [Component]
+    var componentGroups: [ComponentGroup]
     /// The library's functions, listed with the built-in ones.
-    public var functions: [Component]
+    var functions: [Component]
     /// The library's custom actions, listed with the built-in action steps.
-    public var actions: [Component]
-    public var options: PromptOptions
+    var actions: [Component]
+    var options: PromptOptions
 
-    public init(
+    init(
         root: String?,
         components: [Component],
         componentGroups: [ComponentGroup] = [],
@@ -131,10 +131,10 @@ public struct PromptSpec: Sendable, Hashable {
 
 /// Generates the OpenUI Lang system prompt (port of `generatePrompt` in `prompt.ts`).
 @available(iOS 17.0, macOS 14.0, *)
-public enum PromptGenerator {
+enum PromptGenerator {
     static let defaultPreamble = "You are an AI assistant that responds using openui-lang, a declarative UI language. Your ENTIRE response must be valid openui-lang code — no markdown, no explanations, just openui-lang."
 
-    public static func generate(_ spec: PromptSpec) -> String {
+    static func generate(_ spec: PromptSpec) -> String {
         let options = spec.options
         let rootName = spec.root ?? "Root"
         let hasTools = !options.tools.isEmpty

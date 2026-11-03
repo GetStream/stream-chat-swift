@@ -6,25 +6,25 @@ import Foundation
 
 /// Resolves runtime values for the evaluator.
 @available(iOS 17.0, macOS 14.0, *)
-public struct EvaluationContext {
+struct EvaluationContext {
     /// Reads a `$variable` (`nil` = undefined).
-    public var getState: (String) -> OpenUIValue?
+    var getState: (String) -> OpenUIValue?
     /// Resolves a reference to another declaration's runtime value (query/mutation results, loop vars).
-    public var resolveRef: (String) -> OpenUIValue?
+    var resolveRef: (String) -> OpenUIValue?
     /// Extra scope used when evaluating reactive setters (`$value`).
-    public var extraScope: [String: OpenUIValue]?
+    var extraScope: [String: OpenUIValue]?
     /// The library's functions, called as `@Name(...)`.
-    public var functions: [String: OpenUIFunction]
+    var functions: [String: OpenUIFunction]
     /// The library's custom actions, used as `@Name(...)` steps.
-    public var actions: [String: OpenUICustomAction]
+    var actions: [String: OpenUICustomAction]
     /// Reports a runtime error, such as a library function call that evaluated to null.
-    public var reportError: ((String) -> Void)?
+    var reportError: ((String) -> Void)?
     // Reports an error of one prop of an element, which `PropEvaluator` turns into `reportError`.
     var reportPropError: ((_ component: String, _ statementId: String?, _ prop: String, _ message: String) -> Void)?
     // Shared by every copy of this context, so one evaluation pass stops at the same bound.
     var budget = EvaluationBudget()
 
-    public init(
+    init(
         getState: @escaping (String) -> OpenUIValue?,
         resolveRef: @escaping (String) -> OpenUIValue?,
         extraScope: [String: OpenUIValue]? = nil,
@@ -69,14 +69,14 @@ final class EvaluationBudget {
 
 /// Tells the evaluator which component props accept two-way `$variable` bindings.
 @available(iOS 17.0, macOS 14.0, *)
-public protocol ReactivePropResolver {
+protocol ReactivePropResolver {
     func isReactiveProp(component: String, prop: String) -> Bool
 }
 
 /// Reactive binding markers produced when a `$variable` is passed to a reactive prop
 /// (`{ __reactive: "assign", target, expr }` in the reference implementation).
 @available(iOS 17.0, macOS 14.0, *)
-public enum ReactiveBinding {
+enum ReactiveBinding {
     static let markerKey = "__reactive"
 
     static func marker(target: String, expression: ASTNode) -> OpenUIValue {
@@ -84,13 +84,13 @@ public enum ReactiveBinding {
     }
 
     /// Whether `value` is a reactive binding marker.
-    public static func isBinding(_ value: OpenUIValue?) -> Bool {
+    static func isBinding(_ value: OpenUIValue?) -> Bool {
         guard case .object(let object)? = value else { return false }
         return object[markerKey] == .string("assign")
     }
 
     /// The bound `$variable` name.
-    public static func target(of value: OpenUIValue?) -> String? {
+    static func target(of value: OpenUIValue?) -> String? {
         guard isBinding(value) else { return nil }
         return value?["target"]?.stringValue
     }
@@ -110,9 +110,9 @@ public enum ReactiveBinding {
 
 /// Evaluates AST nodes to runtime values with JavaScript semantics (port of `evaluator.ts`).
 @available(iOS 17.0, macOS 14.0, *)
-public enum Evaluator {
+enum Evaluator {
     /// Evaluates an expression. Returns `nil` for JavaScript `undefined`.
-    public static func evaluate(_ node: ASTNode, _ context: EvaluationContext, _ schema: ReactivePropResolver? = nil) -> OpenUIValue? {
+    static func evaluate(_ node: ASTNode, _ context: EvaluationContext, _ schema: ReactivePropResolver? = nil) -> OpenUIValue? {
         guard context.budget.spend(reportError: context.reportError) else { return nil }
         switch node {
         case .str(let value):
@@ -539,7 +539,7 @@ public enum Evaluator {
 
 /// Prop evaluation shared by the inline and tree paths (port of `evaluate-prop.ts` / `evaluate-tree.ts`).
 @available(iOS 17.0, macOS 14.0, *)
-public enum PropEvaluator {
+enum PropEvaluator {
     /// Evaluates `root`, or the component a runtime entry (`root = $t ? A : B`) picks, with the
     /// runtime errors evaluation reports (upstream `evaluateRoot`).
     static func evaluateRoot(_ result: ParseResult?, _ context: EvaluationContext, _ schema: ReactivePropResolver) -> (root: ElementNode?, errors: [OpenUIError]) {
@@ -567,7 +567,7 @@ public enum PropEvaluator {
     }
 
     /// Evaluates every dynamic prop of an element tree into concrete values.
-    public static func evaluateElementProps(_ element: ElementNode, _ context: EvaluationContext, _ schema: ReactivePropResolver) -> ElementNode {
+    static func evaluateElementProps(_ element: ElementNode, _ context: EvaluationContext, _ schema: ReactivePropResolver) -> ElementNode {
         if element.hasDynamicProps == false { return element }
         var evaluated = element
         var props = OpenUIObject()

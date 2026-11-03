@@ -12,19 +12,19 @@ import AppKit
 /// Renders Markdown with native SwiftUI views (headings, paragraphs, lists, task lists, quotes,
 /// fenced code, tables and rules; inline emphasis, code and links).
 @available(iOS 17.0, macOS 14.0, *)
-public struct MarkdownView: View {
+struct MarkdownView: View {
     let text: String
     let baseFont: Font?
     let foreground: Color?
     @Environment(\.openUITheme) private var theme
 
-    public init(_ text: String, font: Font? = nil, foreground: Color? = nil) {
+    init(_ text: String, font: Font? = nil, foreground: Color? = nil) {
         self.text = text
         self.baseFont = font
         self.foreground = foreground
     }
 
-    public var body: some View {
+    var body: some View {
         let blocks = MarkdownCache.blocks(for: text)
         VStack(alignment: .leading, spacing: theme.spacing.s + 2) {
             ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in
@@ -233,18 +233,18 @@ struct MarkdownTableView: View {
 
 /// A monospaced code block with an optional language label and copy button.
 @available(iOS 17.0, macOS 14.0, *)
-public struct CodeBlockView: View {
+struct CodeBlockView: View {
     let language: String?
     let code: String
     @Environment(\.openUITheme) private var theme
     @State private var copied = false
 
-    public init(language: String?, code: String) {
+    init(language: String?, code: String) {
         self.language = language
         self.code = code
     }
 
-    public var body: some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Text(language?.isEmpty == false ? language! : L10n.CodeBlock.languageFallback)
