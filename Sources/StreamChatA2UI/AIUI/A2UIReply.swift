@@ -43,8 +43,6 @@ final class A2UIReply: ObservableObject {
                 log.error("A reply's A2UI message isn't a JSON object")
                 continue
             }
-            // The fence names the version as 1.0, which a model may copy into the messages in
-            // another spelling.
             if let version = json[A2UIProtocol.versionKey] as? String, Self.versionSpellings.contains(version) {
                 json[A2UIProtocol.versionKey] = A2UIProtocol.version
             }
@@ -56,5 +54,7 @@ final class A2UIReply: ObservableObject {
         }
     }
 
-    private static let versionSpellings: Set<String> = ["1", "1.0.0", "v1"]
+    /// Other spellings of version 1.0, which the fence names and a model may copy into the
+    /// messages, or which agents prompted before the 1.0 release write.
+    static let versionSpellings: Set<String> = ["1", "1.0.0", "v1", "v1.0"]
 }

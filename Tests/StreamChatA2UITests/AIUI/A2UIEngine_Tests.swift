@@ -51,6 +51,32 @@ final class A2UIEngine_Tests: XCTestCase {
         }
     }
 
+    final class CityTool: AIClientTool {
+        let definition = AIClientToolDefinition(name: "find_city")
+        var result = AIClientToolResult.completed(["city": "Ohrid"])
+        private(set) var arguments: Data?
+
+        func run(_ call: AIToolCallPart) async -> AIClientToolResult {
+            arguments = call.arguments
+            return result
+        }
+    }
+
+    // The answer to a function the catalog doesn't define, once the host's tool has run.
+    private func agentFunctionValue(
+        _ name: String,
+        arguments: JsonMap,
+        in processor: A2UIMessageProcessor
+    ) async throws -> (any Sendable)? {
+        for _ in 0..<400 {
+            if let value = try processor.agentFunctionValue(for: name, catalogId: nil, arguments: arguments, surfaceId: "plan") {
+                return value
+            }
+            try await Task.sleep(nanoseconds: 5_000_000)
+        }
+        return nil
+    }
+
     func test_view_appliesTheRepliesMessages() throws {
         let view = engine.view(for: document([createSurface, components, data].joined(separator: "\n")), messageID: "m1")
 
@@ -120,10 +146,14 @@ final class A2UIEngine_Tests: XCTestCase {
     }
 
     func test_reply_acceptsTheVersionSpellingsOfTheFence() throws {
-        let spelled = #"{"version": "1", "createSurface": {"surfaceId": "a", "catalogId": "getstream.io:app-catalog"}}"#
-        _ = engine.view(for: document(spelled + "\n" + #"{"version": "1.0", "deleteSurface": "#), messageID: "m1")
+        let renderer = A2UIRenderer()
+        for (index, version) in ["1", "1.0.0", "v1", "v1.0"].enumerated() {
+            let spelled = #"{"version": "\#(version)", "createSurface": {"surfaceId": "a", "catalogId": "getstream.io:app-catalog"}}"#
+            _ = engine.view(for: document(spelled + "\n" + #"{"version": "1.0", "deleteSurface": "#), messageID: "m\(index)")
 
-        XCTAssertEqual(try XCTUnwrap(engine.replies["m1"]).surfaceIds, ["a"])
+            XCTAssertEqual(try XCTUnwrap(engine.replies["m\(index)"]).surfaceIds, ["a"], version)
+            XCTAssertTrue(renderer.supports(version: version), version)
+        }
     }
 
     func test_action_reachesTheHostWithItsButtonsText() async throws {
@@ -147,6 +177,59 @@ final class A2UIEngine_Tests: XCTestCase {
         XCTAssertEqual(action.payload["sourceComponentId"], .string("go"))
         XCTAssertEqual(action.payload["context"], .dictionary(["day": .number(2)]))
         XCTAssertEqual(reply.surfaceIds, ["plan"])
+    }
+
+    func test_action_carriesTheDataModelWhenTheSurfaceAsksForIt() async throws {
+        let sending = #"{"version": "1.0", "createSurface": {"surfaceId": "plan", "catalogId": "getstream.io:app-catalog", "sendDataModel": true}}"#
+        _ = engine.view(for: document([sending, components, data].joined(separator: "\n")), messageID: "m1")
+        _ = engine.view(for: document([createSurface, components, data].joined(separator: "\n")), messageID: "m2")
+
+        for messageID in ["m1", "m2"] {
+            engine.handle(.action(RendererAction(name: "book", surfaceId: "plan", sourceComponentId: "go")), messageID: messageID)
+        }
+        await waitForSentActions(2)
+
+        XCTAssertEqual(sent.first?.payload["dataModel"], .dictionary(["title": .string("Ohrid"), "day": .number(2)]))
+        XCTAssertNil(sent.last?.payload["dataModel"])
+    }
+
+    func test_aFunctionOutsideTheCatalog_runsAsOneOfTheHostsTools() async throws {
+        let tool = CityTool()
+        host = AIUIHost(tools: [tool]) { A2UIRenderer() } send: { _ in }
+        engine = A2UIEngine(renderer: A2UIRenderer(), host: host)
+        _ = engine.view(for: document(createSurface), messageID: "m1")
+        let processor = try XCTUnwrap(engine.replies["m1"]).processor
+
+        let value = try await agentFunctionValue("find_city", arguments: ["id": 7], in: processor)
+
+        XCTAssertEqual((value as? JsonMap)?["city"] as? String, "Ohrid")
+        let arguments = try XCTUnwrap(tool.arguments)
+        XCTAssertEqual(try JSONDecoder().decode([String: RawJSON].self, from: arguments), ["id": .number(7)])
+    }
+
+    func test_aFunctionNoToolAnswers_failsAtOnce() async throws {
+        _ = engine.view(for: document(createSurface), messageID: "m1")
+        let processor = try XCTUnwrap(engine.replies["m1"]).processor
+
+        do {
+            _ = try await agentFunctionValue("find_city", arguments: [:], in: processor)
+            XCTFail("No tool answers find_city")
+        } catch let A2UIFunctionError.unavailable(name, reason) {
+            XCTAssertEqual(name, "find_city")
+            XCTAssertTrue(reason.hasPrefix(RendererError.Code.executionError), reason)
+        }
+    }
+
+    func test_anAppComponentNamedLikeTheCatalogs_leavesTheCatalogsOwn() throws {
+        host = AIUIHost(components: [A2UIRenderer_Tests.CardNamedComponent(), A2UIRenderer_Tests.PlaceCard()]) {
+            A2UIRenderer()
+        } send: { _ in }
+        engine = A2UIEngine(renderer: A2UIRenderer(), host: host)
+        _ = engine.view(for: document(createSurface), messageID: "m1")
+        let catalog = try XCTUnwrap(engine.replies["m1"]?.processor.catalogs.catalog(A2UIRenderer.defaultCatalogId))
+
+        XCTAssertEqual(catalog.component("Card")?.description, BasicCatalog.catalog.component("Card")?.description)
+        XCTAssertNotNil(catalog.component("PlaceCard"))
     }
 
     func test_action_labelPrefersTheUserMessageThenTheButtonThenTheEventInWords() async throws {
