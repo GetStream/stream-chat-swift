@@ -5,25 +5,25 @@
 import StreamCore
 import SwiftUI
 
+// What sits above the turns in view. When it changes, they would be pushed down or up.
+struct AIConversationAbove: Hashable {
+    var firstTurnID: AnyHashable?
+    var loadsOlder: Bool
+}
+
 // The scrolling of an AIConversationView, which does not depend on the type of its messages:
 // it brings a message the person sent to the top, keeps what is in view in place as older
 // messages arrive above it, opens a conversation at its end, and offers a button back to the end.
-struct AIConversationScrollView: View {
-    // What sits above the turns in view. When it changes, they would be pushed down or up.
-    struct Above: Hashable {
-        var firstTurnID: AnyHashable?
-        var loadsOlder: Bool
-    }
-
+struct AIConversationScrollView<Content: View>: View {
     var turnIDs: [AnyHashable]
-    var above: Above
+    var above: AIConversationAbove
     var positions: AITurnPositions
     // Scrolls to a turn, by the id of its own type that the list knows it by.
     var scrollTo: (AnyHashable, UnitPoint, ScrollViewProxy) -> Void
     // The turns, or what shows while there are none, in a list that tall.
-    var content: (CGFloat) -> AnyView
+    var content: (CGFloat) -> Content
 
-    @State private var shownAbove: Above?
+    @State private var shownAbove: AIConversationAbove?
     @State private var lastTurnID: AnyHashable?
     @State private var isEndInView = true
 
