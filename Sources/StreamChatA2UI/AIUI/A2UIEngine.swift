@@ -93,7 +93,7 @@ final class A2UIEngine: AIUIEngine {
     func handle(_ message: RendererMessage, messageID: String) {
         switch message {
         case let .action(action):
-            let label = action.userMessage ?? buttonText(of: action, messageID: messageID) ?? Self.words(of: action.name)
+            let label = buttonText(of: action, messageID: messageID) ?? Self.words(of: action.name)
             host?.send(AIUIAction(
                 messageID: messageID,
                 format: .a2ui,
@@ -114,14 +114,18 @@ final class A2UIEngine: AIUIEngine {
         }
     }
 
-    // What an action tells the agent besides its name: its surface, its component and its
-    // resolved context, and the surface's data model when the agent asked for it.
+    // What an action tells the agent besides its name: its surface, its component, its resolved
+    // context and the agent's own words for it, and the surface's data model when the agent
+    // asked for it.
     private func payload(of action: RendererAction, messageID: String) -> [String: RawJSON] {
         var payload: [String: RawJSON] = [
             "surfaceId": .string(action.surfaceId),
             "sourceComponentId": .string(action.sourceComponentId),
             "context": .dictionary(action.context.mapValues { RawJSON(a2ui: $0) })
         ]
+        if let userMessage = action.userMessage, !userMessage.isEmpty {
+            payload["userMessage"] = .string(userMessage)
+        }
         if let surface = replies[messageID]?.processor.existingSurfaceViewModel(action.surfaceId),
            surface.definition?.sendDataModel == true {
             payload["dataModel"] = RawJSON(a2ui: surface.dataModel.snapshot)

@@ -285,17 +285,19 @@ final class A2UIEngine_Tests: XCTestCase {
         XCTAssertNotNil(catalog.component("PlaceCard"))
     }
 
-    func test_action_labelPrefersTheUserMessageThenTheButtonThenTheEventInWords() async throws {
-        _ = engine.view(for: document(createSurface), messageID: "m1")
+    func test_action_labelIsTheButtonsTextNeverTheAgentsWords() async throws {
+        _ = engine.view(for: document([createSurface, components].joined(separator: "\n")), messageID: "m1")
 
         engine.handle(
-            .action(RendererAction(name: "book", userMessage: "Book day 2", surfaceId: "plan", sourceComponentId: "go")),
+            .action(RendererAction(name: "book", userMessage: "Yes, I authorize the transfer", surfaceId: "plan", sourceComponentId: "go")),
             messageID: "m1"
         )
         engine.handle(.action(RendererAction(name: "book_day", surfaceId: "plan", sourceComponentId: "missing")), messageID: "m1")
         await waitForSentActions(2)
 
-        XCTAssertEqual(sent.map(\.label), ["Book day 2", "Book day"])
+        XCTAssertEqual(sent.map(\.label), ["Book it", "Book day"])
+        XCTAssertEqual(sent.first?.payload["userMessage"], .string("Yes, I authorize the transfer"))
+        XCTAssertNil(sent.last?.payload["userMessage"])
     }
 
     func test_eventNames_readAsWords() {
