@@ -145,6 +145,31 @@ final class A2UIEngine_Tests: XCTestCase {
         XCTAssertEqual(reply.surfaceIds, ["other"])
     }
 
+    func test_reply_startingAgain_keepsTheViewModelItsViewsHave() throws {
+        _ = engine.view(for: document([createSurface, components, data].joined(separator: "\n")), messageID: "m1")
+        let reply = try XCTUnwrap(engine.replies["m1"])
+        let viewModel = reply.processor.surfaceViewModel("plan")
+
+        let changed = #"{"version": "1.0", "updateDataModel": {"surfaceId": "plan", "value": {"title": "Struga"}}}"#
+        reply.update(source: [createSurface, components, changed].joined(separator: "\n"), isStreaming: false)
+
+        XCTAssertTrue(reply.processor.surfaceViewModel("plan") === viewModel)
+        XCTAssertEqual(viewModel.dataModel.snapshot["title"] as? String, "Struga")
+        XCTAssertNotNil(viewModel.definition?.component("go"))
+    }
+
+    func test_action_fromADeletedSurface_doesNotBringItBack() async throws {
+        let deleted = #"{"version": "1.0", "deleteSurface": {"surfaceId": "plan"}}"#
+        _ = engine.view(for: document([createSurface, components, deleted].joined(separator: "\n")), messageID: "m1")
+        let reply = try XCTUnwrap(engine.replies["m1"])
+
+        engine.handle(.action(RendererAction(name: "book", surfaceId: "plan", sourceComponentId: "go")), messageID: "m1")
+        await waitForSentActions(1)
+
+        XCTAssertEqual(sent.map(\.label), ["Book"])
+        XCTAssertTrue(reply.processor.surfaceIds.isEmpty)
+    }
+
     func test_reply_acceptsTheVersionSpellingsOfTheFence() throws {
         let renderer = A2UIRenderer()
         for (index, version) in ["1", "1.0.0", "v1", "v1.0"].enumerated() {

@@ -94,6 +94,11 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         return viewModel
     }
 
+    /// The view model of a surface that exists, without making one.
+    func existingSurfaceViewModel(_ surfaceId: String) -> SurfaceViewModel? {
+        surfaceOrder.contains(surfaceId) ? surfaces[surfaceId] : nil
+    }
+
     /// The data model of a surface, creating the surface state if needed.
     func dataModel(for surfaceId: String) -> DataModel {
         surfaceViewModel(surfaceId).dataModel
