@@ -12,8 +12,11 @@ import StreamCore
 /// without a renderer for the format:
 ///
 /// ```json
-/// "ai_ui": { "v": 1, "format": "openui", "status": "streaming", "content": "root = Card([title])" }
+/// "ai_ui": { "v": 1, "format": "a2ui", "version": "1.0", "status": "streaming", "content": [...] }
 /// ```
+///
+/// `v` is the version of the `ai_ui` field itself, the same for every format, and `version` the
+/// version of the format the content is written in, such as A2UI's `1.0`.
 ///
 /// ```swift
 /// var uiDocument: AIUIDocument? { AIUIDocument(customData: message.extraData) }
@@ -48,7 +51,8 @@ public struct AIUIDocument: Equatable, Sendable {
               let content = fields["content"], content != .nil else {
             return nil
         }
-        if let version = fields["v"]?.numberValue, version > Double(Self.supportedVersion) {
+        // A field newer than this SDK can lay its documents out differently.
+        if let fieldVersion = fields["v"]?.numberValue, fieldVersion > Double(Self.supportedVersion) {
             return nil
         }
         let version = fields["version"]?.stringValue

@@ -110,7 +110,7 @@ public extension AIConversationView {
     ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
     ///     an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
-    init<Item: AIMessage, Factory: AIConversationViewFactory, Renderers: AIUIRenderers>(
+    init<Item: AIMessage, Factory: AIConversationViewFactory, Renderers: AIUIRendererList>(
         messages: [Item],
         pendingMessage: AIPendingMessage? = nil,
         isThinking: Bool = false,
@@ -126,8 +126,9 @@ public extension AIConversationView {
             content: { tracker in
                 // The rows show only the replies on screen, so the engines take every reply's UI first.
                 ui?.receive(messages)
-                let entries = tracker.entries(for: messages, pending: pendingMessage)
-                return (entries, isThinking || tracker.isAwaitingReply(in: messages, pending: pendingMessage))
+                let entries = tracker.entries(for: messages, pending: pendingMessage) { ui?.canShow($0) ?? false }
+                let isAwaitingReply = tracker.isAwaitingReply(in: messages, pending: pendingMessage) { ui?.canShow($0) ?? false }
+                return (entries, isThinking || isAwaitingReply)
             },
             isSentByCurrentUser: \.isFromUser,
             loadOlderMessages: loadOlderMessages,
@@ -159,7 +160,7 @@ public extension AIConversationView {
     ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
     ///     an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
-    init<Item: AIMessage, Renderers: AIUIRenderers>(
+    init<Item: AIMessage, Renderers: AIUIRendererList>(
         messages: [Item],
         pendingMessage: AIPendingMessage? = nil,
         isThinking: Bool = false,

@@ -54,10 +54,11 @@ final class AIPendingMessageTracker {
     nonisolated init() { /* Nothing to set up. */ }
 
     // The rows of a conversation: its messages, apart from replies with nothing to show yet,
-    // and a message on its way until its copy arrives.
+    // and a message on its way until its copy arrives. A reply's UI shows when `canShowUI` says.
     func entries<Message: AIMessage>(
         for messages: [Message],
-        pending: AIPendingMessage?
+        pending: AIPendingMessage?,
+        canShowUI: (AIUIDocument) -> Bool = { _ in false }
     ) -> [AIConversationEntry<Message>] {
         var showsPending = pending != nil
         // A copy that arrives in the update that stops passing its pending message still
@@ -77,7 +78,7 @@ final class AIPendingMessageTracker {
             }
         }
         lastPending = pending
-        var entries = messages.filter { !$0.showsNothing }.map { message in
+        var entries = messages.filter { !$0.hasEmptyContent(canShowUI: canShowUI) }.map { message in
             let taken = copies[AnyHashable(message.id)]
             return AIConversationEntry(
                 id: taken.map { AnyHashable($0.id) } ?? AnyHashable(message.id),
@@ -118,8 +119,12 @@ final class AIPendingMessageTracker {
     // Whether the latest message is surely waiting for a reply that shows nothing yet: it is on
     // its way, it is the copy of the one on its way, or its reply is being written but shows
     // nothing. Call it after `entries`, which matches the copies.
-    func isAwaitingReply<Message: AIMessage>(in messages: [Message], pending: AIPendingMessage?) -> Bool {
-        if let last = messages.last, last.role != .user, last.isGenerating, last.showsNothing {
+    func isAwaitingReply<Message: AIMessage>(
+        in messages: [Message],
+        pending: AIPendingMessage?,
+        canShowUI: (AIUIDocument) -> Bool = { _ in false }
+    ) -> Bool {
+        if let last = messages.last, last.role != .user, last.isGenerating, last.hasEmptyContent(canShowUI: canShowUI) {
             return true
         }
         guard let pending else { return false }

@@ -13,6 +13,7 @@ final class AIUIHost_Tests: XCTestCase {
         weak var host: (any AIUIHosting)?
         var received: [(messageID: String, document: AIUIDocument)] = []
         var shown: [(messageID: String, document: AIUIDocument)] = []
+        var removed: [String] = []
 
         init(host: any AIUIHosting) {
             self.host = host
@@ -20,6 +21,10 @@ final class AIUIHost_Tests: XCTestCase {
 
         func receive(_ document: AIUIDocument, messageID: String) {
             received.append((messageID, document))
+        }
+
+        func remove(messageID: String) {
+            removed.append(messageID)
         }
 
         func view(for document: AIUIDocument, messageID: String) -> Text? {
@@ -80,6 +85,7 @@ final class AIUIHost_Tests: XCTestCase {
         var id: String
         var role: AIMessageRole = .assistant
         var text = ""
+        var isGenerating = false
         var uiDocument: AIUIDocument?
     }
 
@@ -213,6 +219,77 @@ final class AIUIHost_Tests: XCTestCase {
         let engine = try XCTUnwrap(renderer.engines.first)
         XCTAssertEqual(engine.received.map(\.messageID), replies.map(\.id), "rows only show the replies on screen")
         XCTAssertTrue(engine.shown.isEmpty)
+    }
+
+    func testEnginesHearWhenAReplyOrItsUIIsGone() throws {
+        let renderer = TestRenderer()
+        let host = AIUIHost { renderer } send: { _ in }
+        var replies = [
+            Reply(id: "a1", uiDocument: document("root = Card([a])")),
+            Reply(id: "a2", uiDocument: document("root = Card([b])")),
+            Reply(id: "a3", uiDocument: document("root = Card([c])"))
+        ]
+        host.receive(replies)
+        host.setState(.dictionary(["picked": .string("Ohrid")]), for: "a2")
+
+        replies[0].uiDocument = nil
+        replies.remove(at: 1)
+        host.receive(replies)
+        host.receive(replies)
+
+        let engine = try XCTUnwrap(renderer.engines.first)
+        XCTAssertEqual(engine.removed.sorted(), ["a1", "a2"], "a reply whose UI is gone, and a reply that is gone")
+        XCTAssertNil(host.state(for: "a2"), "what a gone reply's UI was left in goes too")
+
+        replies[0].uiDocument = document("root = Card([a])")
+        host.receive(replies)
+
+        XCTAssertEqual(engine.received.last?.messageID, "a1", "UI that comes back arrives again")
+    }
+
+    func testAReplyWhoseUINothingShowsWaitsBehindTheThinkingIndicator() {
+        let host = AIUIHost { TestRenderer() } send: { _ in }
+        let question = Reply(id: "q1", role: .user, text: "Plan a weekend in Ohrid")
+        let unread = Reply(id: "a1", isGenerating: true, uiDocument: document(format: "cards"))
+        let read = Reply(id: "a1", isGenerating: true, uiDocument: document())
+
+        let waiting = AIConversationView(messages: [question, unread], ui: host).content(AIPendingMessageTracker())
+        let showing = AIConversationView(messages: [question, read], ui: host).content(AIPendingMessageTracker())
+
+        XCTAssertEqual(waiting.messages.count, 1)
+        XCTAssertTrue(waiting.isThinking)
+        XCTAssertEqual(showing.messages.count, 2)
+        XCTAssertFalse(showing.isThinking)
+    }
+
+    func testAReplysViewIsMadeOnceForEachTimeItShows() throws {
+        let renderer = TestRenderer()
+        let host = AIUIHost { renderer } send: { _ in }
+
+        let view = AIUIView(host: host, document: document(), messageID: "m1")
+        _ = view.canShow
+        _ = view.body
+
+        XCTAssertEqual(try XCTUnwrap(renderer.engines.first).shown.count, 1)
+    }
+
+    func testLinksOpenWhereTheAppSays() throws {
+        var opened: [URL] = []
+        let host = AIUIHost { TestRenderer() } send: { _ in } open: { opened.append($0) }
+        let call = try XCTUnwrap(URL(string: "tel:+15550100"))
+
+        host.open(call)
+
+        XCTAssertEqual(opened, [call], "the app decides which links open")
+    }
+
+    func testOnlyWebAndEmailLinksOpenByDefault() throws {
+        for link in ["https://getstream.io", "HTTP://getstream.io", "mailto:a@b.co"] {
+            XCTAssertTrue(AIUILinks.isWebOrEmail(try XCTUnwrap(URL(string: link))), link)
+        }
+        for link in ["tel:+15550100", "sms:+15550100", "facetime:a@b.co", "otherapp://pay?to=x", "file:///etc/hosts"] {
+            XCTAssertFalse(AIUILinks.isWebOrEmail(try XCTUnwrap(URL(string: link))), link)
+        }
     }
 
     func testWhatThePersonDoesGoesToTheAgent() async {

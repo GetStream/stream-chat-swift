@@ -4,11 +4,12 @@
 
 import SwiftUI
 
-/// The renderers of a conversation's formats, put together so the views they show keep their
-/// types all the way into the conversation. ``AIUIHost`` puts its renderers together with
-/// ``AIUIRenderersBuilder``, and a single ``AIUIRenderer`` is a set of its own.
+/// The renderers of a conversation's formats, in the order they are asked, put together so the
+/// views they show keep their types all the way into the conversation. ``AIUIHost`` puts its
+/// renderers together with ``AIUIRendererListBuilder``, and a single ``AIUIRenderer`` is a list
+/// of its own.
 @MainActor
-public protocol AIUIRenderers {
+public protocol AIUIRendererList {
     /// The view of a document from one of them.
     associatedtype Content: View
 
@@ -20,7 +21,7 @@ public protocol AIUIRenderers {
     func view(for document: AIUIDocument, messageID: String, in context: AIUIRenderingContext) -> Content?
 }
 
-extension AIUIRenderers {
+extension AIUIRendererList {
     func reads(_ document: AIUIDocument) -> Bool {
         all.contains { $0.format == document.format && $0.supports(version: document.version) }
     }
@@ -31,13 +32,19 @@ extension AIUIRenderers {
         guard let position = all.firstIndex(where: { $0.reads(document) }) else { return }
         all[position].deliver(document, messageID: messageID, in: context.after(position))
     }
+
+    // Tells the engine that took a reply's last document that the reply, or its UI, is gone.
+    func remove(_ document: AIUIDocument, messageID: String, in context: AIUIRenderingContext) {
+        guard let position = all.firstIndex(where: { $0.reads(document) }) else { return }
+        all[position].forget(messageID: messageID, in: context.after(position))
+    }
 }
 
-/// Two sets of renderers, the first one asked first, which ``AIUIRenderersBuilder`` puts
+/// Two lists of renderers, the first one asked first, which ``AIUIRendererListBuilder`` puts
 /// together.
 @MainActor
-public struct AIUIRendererPair<First: AIUIRenderers, Second: AIUIRenderers>: AIUIRenderers {
-    /// The view of a document from either set.
+public struct AIUIRendererPair<First: AIUIRendererList, Second: AIUIRendererList>: AIUIRendererList {
+    /// The view of a document from either list.
     public enum Content: View {
         case first(First.Content)
         case second(Second.Content)
@@ -79,12 +86,12 @@ public struct AIUIRendererPair<First: AIUIRenderers, Second: AIUIRenderers>: AIU
 /// ```
 @MainActor
 @resultBuilder
-public enum AIUIRenderersBuilder {
-    public static func buildPartialBlock<Renderers: AIUIRenderers>(first: Renderers) -> Renderers {
+public enum AIUIRendererListBuilder {
+    public static func buildPartialBlock<Renderers: AIUIRendererList>(first: Renderers) -> Renderers {
         first
     }
 
-    public static func buildPartialBlock<Accumulated: AIUIRenderers, Next: AIUIRenderers>(
+    public static func buildPartialBlock<Accumulated: AIUIRendererList, Next: AIUIRendererList>(
         accumulated: Accumulated,
         next: Next
     ) -> AIUIRendererPair<Accumulated, Next> {
