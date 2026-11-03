@@ -126,8 +126,9 @@ public extension AIConversationView {
             content: { tracker in
                 // The rows show only the replies on screen, so the engines take every reply's UI first.
                 ui?.receive(messages)
-                let entries = tracker.entries(for: messages, pending: pendingMessage)
-                return (entries, isThinking || tracker.isAwaitingReply(in: messages, pending: pendingMessage))
+                let entries = tracker.entries(for: messages, pending: pendingMessage) { ui?.canShow($0) ?? false }
+                let isAwaitingReply = tracker.isAwaitingReply(in: messages, pending: pendingMessage) { ui?.canShow($0) ?? false }
+                return (entries, isThinking || isAwaitingReply)
             },
             isSentByCurrentUser: \.isFromUser,
             loadOlderMessages: loadOlderMessages,

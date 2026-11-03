@@ -92,8 +92,11 @@ final class AIUIDocument_Tests: XCTestCase {
             var uiDocument: AIUIDocument?
         }
 
+        let withUI = Reply(uiDocument: AIUIDocument(format: .openUI, isStreaming: true, content: .string("")))
+
         XCTAssertNil(Reply().uiDocument)
-        XCTAssertTrue(Reply().showsNothing)
-        XCTAssertFalse(Reply(uiDocument: AIUIDocument(format: .openUI, isStreaming: true, content: .string(""))).showsNothing)
+        XCTAssertTrue(Reply().hasEmptyContent { _ in true })
+        XCTAssertFalse(withUI.hasEmptyContent { _ in true }, "UI that shows is something to show")
+        XCTAssertTrue(withUI.hasEmptyContent { _ in false }, "UI nothing shows is not")
     }
 }

@@ -80,6 +80,7 @@ final class AIUIHost_Tests: XCTestCase {
         var id: String
         var role: AIMessageRole = .assistant
         var text = ""
+        var isGenerating = false
         var uiDocument: AIUIDocument?
     }
 
@@ -213,6 +214,21 @@ final class AIUIHost_Tests: XCTestCase {
         let engine = try XCTUnwrap(renderer.engines.first)
         XCTAssertEqual(engine.received.map(\.messageID), replies.map(\.id), "rows only show the replies on screen")
         XCTAssertTrue(engine.shown.isEmpty)
+    }
+
+    func testAReplyWhoseUINothingShowsWaitsBehindTheThinkingIndicator() {
+        let host = AIUIHost { TestRenderer() } send: { _ in }
+        let question = Reply(id: "q1", role: .user, text: "Plan a weekend in Ohrid")
+        let unread = Reply(id: "a1", isGenerating: true, uiDocument: document(format: "cards"))
+        let read = Reply(id: "a1", isGenerating: true, uiDocument: document())
+
+        let waiting = AIConversationView(messages: [question, unread], ui: host).content(AIPendingMessageTracker())
+        let showing = AIConversationView(messages: [question, read], ui: host).content(AIPendingMessageTracker())
+
+        XCTAssertEqual(waiting.messages.count, 1)
+        XCTAssertTrue(waiting.isThinking)
+        XCTAssertEqual(showing.messages.count, 2)
+        XCTAssertFalse(showing.isThinking)
     }
 
     func testWhatThePersonDoesGoesToTheAgent() async {
