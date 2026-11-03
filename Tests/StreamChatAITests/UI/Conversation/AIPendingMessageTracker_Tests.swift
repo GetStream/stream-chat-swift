@@ -13,7 +13,14 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
         var role: AIMessageRole
         var text = "Text"
         var isGenerating = false
+        var uiDocument: AIUIDocument?
     }
+
+    private struct ReadsAnyUI: AIUIDocumentReader {
+        func canShow(_ document: AIUIDocument) -> Bool { true }
+    }
+
+    private let writingUI = AIUIDocument(format: .openUI, isStreaming: true, content: .string("root = Card([title])"))
 
     private let tracker = AIPendingMessageTracker()
     private let photo = UIImage()
@@ -24,6 +31,31 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
             for: [
                 Message(id: "q1", role: .user),
                 Message(id: "a1", role: .assistant, text: "", isGenerating: true)
+            ],
+            pending: nil
+        )
+
+        XCTAssertEqual(entries.map(\.id), ["q1"])
+    }
+
+    func test_entries_keepAReplyThatShowsOnlyItsUISoFar() {
+        let entries = tracker.entries(
+            for: [
+                Message(id: "q1", role: .user),
+                Message(id: "a1", role: .assistant, text: "", isGenerating: true, uiDocument: writingUI)
+            ],
+            pending: nil,
+            ui: ReadsAnyUI()
+        )
+
+        XCTAssertEqual(entries.map(\.id), ["q1", "a1"])
+    }
+
+    func test_entries_leaveOutAReplyWhoseUINothingShows() {
+        let entries = tracker.entries(
+            for: [
+                Message(id: "q1", role: .user),
+                Message(id: "a1", role: .assistant, text: "", isGenerating: true, uiDocument: writingUI)
             ],
             pending: nil
         )
@@ -153,6 +185,24 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
         let messages = [Message(id: "q1", role: .user), Message(id: "a1", role: .assistant, text: "Sure", isGenerating: true)]
 
         XCTAssertFalse(tracker.isAwaitingReply(in: messages, pending: nil))
+    }
+
+    func test_isAwaitingReply_onceTheReplysUIShows_isFalse() {
+        let messages = [
+            Message(id: "q1", role: .user),
+            Message(id: "a1", role: .assistant, text: "", isGenerating: true, uiDocument: writingUI)
+        ]
+
+        XCTAssertFalse(tracker.isAwaitingReply(in: messages, pending: nil, ui: ReadsAnyUI()))
+    }
+
+    func test_isAwaitingReply_whileTheReplysUINothingShows_isTrue() {
+        let messages = [
+            Message(id: "q1", role: .user),
+            Message(id: "a1", role: .assistant, text: "", isGenerating: true, uiDocument: writingUI)
+        ]
+
+        XCTAssertTrue(tracker.isAwaitingReply(in: messages, pending: nil))
     }
 
     func test_isAwaitingReply_whenTheLatestMessageIsThePersonsOwn_isLeftToTheApp() {

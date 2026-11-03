@@ -132,7 +132,7 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
         let (messages, isThinking) = content(tracker)
         let loadOlder = loadOlderMessages()
         let turns = AIMessageTurn.turns(of: messages, isSentByCurrentUser: isSentByCurrentUser)
-        let above = AIConversationScrollView.Above(
+        let above = AIConversationAbove(
             firstTurnID: turns.first.map { AnyHashable($0.id) },
             loadsOlder: loadOlder != nil
         )
@@ -153,7 +153,7 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
                 proxy.scrollTo(turn.id, anchor: anchor)
             },
             content: { height in
-                AnyView(turnList(turns, isThinking: isThinking, loadOlder: loadOlder, height: height))
+                turnList(turns, isThinking: isThinking, loadOlder: loadOlder, height: height)
             }
         )
     }

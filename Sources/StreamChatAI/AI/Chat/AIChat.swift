@@ -351,7 +351,7 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
         // A reply stopped before it showed anything has nothing to show, and the conversation
         // would think it is still on its way.
         let hidden = (exchange?.replaced ?? []).union(
-            conversation.filter { stopped.contains(AnyHashable($0.id)) && $0.showsNothing }.map { AnyHashable($0.id) }
+            conversation.filter { stopped.contains(AnyHashable($0.id)) && $0.hasEmptyContent }.map { AnyHashable($0.id) }
         )
         messages = hidden.isEmpty ? conversation : conversation.filter { !hidden.contains(AnyHashable($0.id)) }
         if pendingMessage?.id != exchange?.pending?.id {
@@ -371,7 +371,7 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
             return .submitted
         }
         if let last = messages.last, last.role != .user, last.isGenerating, !stopped.contains(AnyHashable(last.id)) {
-            return last.showsNothing ? .submitted : .streaming
+            return last.hasEmptyContent ? .submitted : .streaming
         }
         // The agent is working on the person's latest message, whose reply isn't here yet.
         if let activity, activity.state != .error, messages.last.map({ $0.role == .user }) ?? true {

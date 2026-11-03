@@ -51,6 +51,6 @@ struct AIChatExchange<Message: AIMessage> {
             && request.message.map { AnyHashable($0.id) == id } == true
             && last.isGenerating
         guard isNew || isRewritten else { return false }
-        return !last.showsNothing || !last.isGenerating
+        return !last.hasEmptyContent || !last.isGenerating
     }
 }
