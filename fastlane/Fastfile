@@ -10,7 +10,7 @@ import 'Allurefile'
 
 xcode_version = ENV['XCODE_VERSION'] || '26.2'
 xcode_project = 'StreamChat.xcodeproj'
-sdk_names = ['StreamChat', 'StreamChatUI', 'StreamChatCommonUI', 'StreamChatAI', 'StreamChatA2UI']
+sdk_names = ['StreamChat', 'StreamChatUI', 'StreamChatCommonUI', 'StreamChatAI', 'StreamChatA2UI', 'StreamChatOpenUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
@@ -1104,19 +1104,22 @@ private_lane :frameworks_sizes do
   shared_core_size = linked_objects_size(linkmap: '../linkmaps/StreamChatAI-arm64-LinkMap.txt', objects: ['StreamCore.o', 'StreamCoreUI.o'])
   stream_chat_ai_size = File.size("#{frameworks_path}/StreamChatAI.framework/StreamChatAI") - shared_core_size
   stream_chat_a2ui_size = File.size("#{frameworks_path}/StreamChatA2UI.framework/StreamChatA2UI")
+  stream_chat_open_ui_size = File.size("#{frameworks_path}/StreamChatOpenUI.framework/StreamChatOpenUI")
 
   stream_chat_size_kb = stream_chat_size / 1024.0
   stream_chat_ui_size_kb = stream_chat_ui_size / 1024.0
   stream_chat_common_ui_size_kb = (stream_chat_common_ui_size + assets_thinned_size) / 1024.0
   stream_chat_ai_size_kb = stream_chat_ai_size / 1024.0
   stream_chat_a2ui_size_kb = stream_chat_a2ui_size / 1024.0
+  stream_chat_open_ui_size_kb = stream_chat_open_ui_size / 1024.0
 
   {
     StreamChat: stream_chat_size_kb.round(0),
     StreamChatUI: stream_chat_ui_size_kb.round(0),
     StreamChatCommonUI: stream_chat_common_ui_size_kb.round(0),
     StreamChatAI: stream_chat_ai_size_kb.round(0),
-    StreamChatA2UI: stream_chat_a2ui_size_kb.round(0)
+    StreamChatA2UI: stream_chat_a2ui_size_kb.round(0),
+    StreamChatOpenUI: stream_chat_open_ui_size_kb.round(0)
   }
 end
 
