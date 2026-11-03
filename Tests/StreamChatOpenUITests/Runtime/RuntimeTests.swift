@@ -22,6 +22,7 @@ func waitUntil(timeout: TimeInterval = 30, _ condition: @MainActor () -> Bool) a
 final class RecordingToolProvider: OpenUIToolProvider, @unchecked Sendable {
     private let lock = NSLock()
     private var _calls: [(String, OpenUIObject)] = []
+    private var _userInitiated: [Bool] = []
     let handler: @Sendable (String, OpenUIObject, Int) async throws -> OpenUIValue
     let minimumRefreshInterval: TimeInterval
 
@@ -36,9 +37,18 @@ final class RecordingToolProvider: OpenUIToolProvider, @unchecked Sendable {
         return _calls
     }
 
+    var userInitiated: [Bool] {
+        lock.withLock { _userInitiated }
+    }
+
     func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue {
         let count = record(name, arguments)
         return try await handler(name, arguments, count)
+    }
+
+    func callTool(_ name: String, arguments: OpenUIObject, userInitiated: Bool) async throws -> OpenUIValue {
+        lock.withLock { _userInitiated.append(userInitiated) }
+        return try await callTool(name, arguments: arguments)
     }
 
     private func record(_ name: String, _ arguments: OpenUIObject) -> Int {
@@ -136,6 +146,33 @@ struct QueryManagerTests {
         #expect(manager.snapshot.refetching == ["data"])
         #expect(await waitUntil { manager.result(for: "data") == ["rows": ["b"]] })
         #expect(provider.calls.count == 2)
+    }
+
+    @Test func argumentChangesFetchOnceThePersonPauses() async {
+        let provider = RecordingToolProvider { _, args, _ in ["rows": [args["q"] ?? "none"]] }
+        let manager = QueryManager(toolProvider: provider)
+        manager.evaluateQueries([node("data", args: ["q": ""], deps: ["$q": ""])])
+        #expect(await waitUntil { manager.result(for: "data") == ["rows": [""]] })
+
+        for typed in ["O", "Oh", "Ohr", "Ohri", "Ohrid"] {
+            manager.evaluateQueries([node("data", args: ["q": .string(typed)], deps: ["$q": .string(typed)])])
+        }
+
+        #expect(manager.isLoading("data"), "it shows as refetching while it waits")
+        #expect(await waitUntil { manager.result(for: "data") == ["rows": ["Ohrid"]] })
+        #expect(provider.calls.map { $0.1["q"] } == ["", "Ohrid"])
+    }
+
+    @Test func queriesRunToolsByThemselvesAndMutationsAsTaps() async {
+        let provider = RecordingToolProvider { _, _, _ in ["ok": true] }
+        let manager = QueryManager(toolProvider: provider)
+        manager.registerMutations([.init(statementId: "create", toolName: "create")])
+
+        manager.evaluateQueries([node("data")])
+        #expect(await waitUntil { provider.userInitiated.count == 1 })
+        _ = await manager.fireMutation("create", arguments: [:])
+
+        #expect(provider.userInitiated == [false, true])
     }
 
     @Test func togglingBackToCachedArgumentsWhileAFetchIsInFlightStopsLoading() async {
@@ -300,6 +337,25 @@ struct RuntimeTests {
         field.set("Linus")
         #expect(runtime.store.get("$name") == "Linus")
         #expect(texts(runtime).contains("Typed: Linus"))
+    }
+
+    @Test func aSecretFieldNeverGoesInItsVariable() {
+        let runtime = OpenUIRuntime(library: library)
+        runtime.update(response: """
+        root = Card([field, echo])
+        field = Input("pw", "Password", "password", null, $pw)
+        echo = TextContent("Typed: " + $pw)
+        """, isStreaming: false)
+        let binding = runtime.root?.props["children"]?.arrayValue?.first?.elementValue?.props["value"]
+
+        let field = runtime.stateField(name: "pw", binding: binding, formName: "login", componentType: "Input", isSecret: true)
+        field.set("hunter22")
+
+        #expect(!field.isReactive)
+        #expect(runtime.store.get("$pw") == nil || runtime.store.get("$pw") == .null)
+        #expect(!texts(runtime).contains("Typed: hunter22"))
+        #expect(runtime.fieldValue(formName: "login", name: "pw") == "hunter22")
+        #expect(runtime.store.snapshot.withoutSecrets["login"]?.objectValue?["pw"] == nil)
     }
 
     @Test func formFieldsAreStoredUnderTheFormName() {

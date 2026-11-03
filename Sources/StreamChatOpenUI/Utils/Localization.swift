@@ -7,6 +7,12 @@ import os
 
 @available(iOS 17.0, macOS 14.0, *)
 enum L10n {
+    enum Action {
+        static var untitled: String {
+            localized("action.untitled", comment: "The person's message when they tap a control that has no label.")
+        }
+    }
+
     enum Select {
         static var placeholder: String {
             localized("select.placeholder", comment: "Shown in a select field until an option is picked.")

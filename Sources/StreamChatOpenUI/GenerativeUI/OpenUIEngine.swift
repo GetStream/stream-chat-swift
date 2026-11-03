@@ -13,6 +13,7 @@ final class OpenUIEngine: AIUIEngine {
     private weak var host: (any AIUIHosting)?
     private let toolProvider: any OpenUIToolProvider
     private let mediaURL: @Sendable (URL) -> URL?
+    private let onError: (@MainActor (OpenUIError, _ messageID: String) -> Void)?
     private(set) var library: ComponentLibrary
     private(set) var runtimes: [String: OpenUIRuntime] = [:]
     private var messageIDs: [ObjectIdentifier: String] = [:]
@@ -21,11 +22,13 @@ final class OpenUIEngine: AIUIEngine {
         library: ComponentLibrary,
         host: any AIUIHosting,
         toolProvider: any OpenUIToolProvider,
-        mediaURL: @escaping @Sendable (URL) -> URL? = { $0 }
+        mediaURL: @escaping @Sendable (URL) -> URL? = { $0 },
+        onError: (@MainActor (OpenUIError, _ messageID: String) -> Void)? = nil
     ) {
         self.host = host
         self.toolProvider = toolProvider
         self.mediaURL = mediaURL
+        self.onError = onError
         self.library = library
         let components = OpenUIRenderer.placeableSchemas(of: host.components, in: library).map { placeable -> OpenUIComponentDefinition in
             let component: any AIUIComponent = placeable.component
@@ -53,13 +56,27 @@ final class OpenUIEngine: AIUIEngine {
         runtime.onAction = { [weak self] event in
             self?.handle(event, messageID: messageID)
         }
+        runtime.onError = { [weak self] errors in
+            self?.report(errors, messageID: messageID)
+        }
         runtime.onStateUpdate = { [weak self] state in
-            self?.host?.setState(.dictionary(state.rawJSON), for: messageID)
+            self?.host?.setState(.dictionary(state.withoutSecrets.rawJSON), for: messageID)
         }
         runtimes[messageID] = runtime
         messageIDs[ObjectIdentifier(runtime)] = messageID
         runtime.update(response: program, isStreaming: isStreaming)
         return runtime
+    }
+
+    // The problems with a reply's program, for the app, or for the log without its hook.
+    private func report(_ errors: [OpenUIError], messageID: String) {
+        for error in errors {
+            if let onError {
+                onError(error, messageID)
+            } else {
+                log.error("A reply's OpenUI has a problem: \(error.code) \(error.message)")
+            }
+        }
     }
 
     // The OpenUI component that shows one of the app's, with the app's view as it is.
@@ -95,6 +112,12 @@ final class OpenUIEngine: AIUIEngine {
             }
             return
         }
+        // A step of the library's own is for the device, not the agent, and a chat has nowhere
+        // to run it.
+        guard !library.customActions.contains(where: { $0.name == event.type }) else {
+            log.error("A reply's OpenUI ran the step \(event.type), which only an app's own OpenUI view runs")
+            return
+        }
         var payload: [String: RawJSON] = [:]
         var params = event.params
         if let context = event.context {
@@ -104,6 +127,11 @@ final class OpenUIEngine: AIUIEngine {
         if !params.isEmpty {
             payload["params"] = .dictionary(params.rawJSON)
         }
+        // The person's message is the control they tapped; the model's words for it go to the
+        // agent only.
+        if !event.humanFriendlyMessage.isEmpty, event.humanFriendlyMessage != event.label {
+            payload["message"] = .string(event.humanFriendlyMessage)
+        }
         // Only the values of the form the action belongs to go to the agent, as the person's next
         // message: outside a form, the action carries none, and a password never.
         if let form = event.formName {
@@ -112,7 +140,7 @@ final class OpenUIEngine: AIUIEngine {
                 payload["values"] = .dictionary(values.rawJSON)
             }
         }
-        let label = event.humanFriendlyMessage.isEmpty ? (event.context?.stringValue ?? event.type) : event.humanFriendlyMessage
+        let label = event.label.isEmpty ? L10n.Action.untitled : event.label
         host.send(AIUIAction(messageID: messageID, format: .openUI, name: event.type, label: label, payload: payload))
     }
 }

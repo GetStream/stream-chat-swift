@@ -12,8 +12,13 @@ struct HostToolProvider: OpenUIToolProvider {
     weak var host: (any AIUIHosting)?
 
     func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue {
+        try await callTool(name, arguments: arguments, userInitiated: false)
+    }
+
+    // A `Query` runs only a read-only tool; a `Mutation`, from a tap, runs any of the host's.
+    func callTool(_ name: String, arguments: OpenUIObject, userInitiated: Bool) async throws -> OpenUIValue {
         guard let host else { throw ConversationClosedError(toolName: name) }
-        return try await host.runTool(name, arguments: arguments.rawJSON).openUIValue
+        return try await host.runTool(name, arguments: arguments.rawJSON, userInitiated: userInitiated).openUIValue
     }
 }
 

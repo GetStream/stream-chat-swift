@@ -328,7 +328,9 @@ public final class OpenUIRuntime {
         componentType: String? = nil,
         isSecret: Bool = false
     ) -> StateField {
-        if let target = ReactiveBinding.target(of: binding) {
+        // A secret, such as a password, never goes in a `$variable`, where any expression could
+        // read it: it stays in the form's state, which leaves it out of what goes anywhere.
+        if !isSecret, let target = ReactiveBinding.target(of: binding) {
             let expression = ReactiveBinding.expression(of: binding)
             return StateField(name: name, value: store.get(target), isReactive: true) { [weak self] newValue in
                 guard let self else { return }
@@ -340,7 +342,8 @@ public final class OpenUIRuntime {
             }
         }
         let current = fieldValue(formName: formName, name: name)
-        let value = JS.isNullish(current) ? (binding ?? current) : current
+        let fallback = isSecret && ReactiveBinding.target(of: binding) != nil ? nil : binding
+        let value = JS.isNullish(current) ? (fallback ?? current) : current
         return StateField(name: name, value: value, isReactive: false) { [weak self] newValue in
             self?.setFieldValue(formName: formName, componentType: componentType, name: name, value: newValue, isSecret: isSecret)
         }
@@ -380,7 +383,14 @@ public final class OpenUIRuntime {
             var params = object["params"]?.objectValue ?? [:]
             if let url = object["url"], JS.isTruthy(url) { params["url"] = url }
             if let context = object["context"], JS.isTruthy(context) { params["context"] = context }
-            onAction?(ActionEvent(type: type, params: params, humanFriendlyMessage: label, formState: formPayload(formName), formName: formName))
+            onAction?(ActionEvent(
+                type: type,
+                params: params,
+                humanFriendlyMessage: label,
+                label: label,
+                formState: formPayload(formName),
+                formName: formName
+            ))
             return
         }
 
@@ -405,6 +415,7 @@ public final class OpenUIRuntime {
                         type: BuiltinActionType.continueConversation,
                         params: params,
                         humanFriendlyMessage: step["message"].map { JS.toString($0) } ?? "",
+                        label: label,
                         formState: formPayload(formName),
                         formName: formName
                     ))
@@ -443,6 +454,7 @@ public final class OpenUIRuntime {
         onAction?(ActionEvent(
             type: BuiltinActionType.continueConversation,
             humanFriendlyMessage: label,
+            label: label,
             formState: formPayload(formName),
             formName: formName
         ))

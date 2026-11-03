@@ -72,6 +72,7 @@ struct OpenUI1RuntimeTests {
         await click(runtime, "pick")
 
         #expect(events.value.map(\.humanFriendlyMessage) == ["Tell me more"])
+        #expect(events.value.map(\.label) == ["Ask"], "the event says which control the person tapped")
         #expect(runtime.store.get("$sel") == "b")
     }
 

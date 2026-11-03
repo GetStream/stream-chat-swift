@@ -19,44 +19,77 @@ import SwiftUI
 ///
 /// Each reply keeps its own runtime, so its forms and the state of its `$variables` survive
 /// scrolling. What the person does that is for the agent, such as a follow-up or a form's
-/// submit button, reaches the host as an `AIUIAction` named after OpenUI's action, with the
-/// form's values in its payload. Links open through the host.
+/// submit button, reaches the host as an `AIUIAction` named after OpenUI's action, labeled with
+/// the control they tapped, with the form's values in its payload. A `Query` runs one of the
+/// host's read-only tools as the reply shows; a `Mutation` runs any of them, when the person
+/// taps. Links open through the host.
 @available(iOS 17.0, macOS 14.0, *)
 @MainActor
 public final class OpenUIRenderer: AIUIRenderer {
     public let format: AIUIFormat = .openUI
     /// The library the agent writes with, before the app's components join it.
     public let library: ComponentLibrary
+    private let instructions: String?
     private let toolProvider: (any OpenUIToolProvider)?
     private let mediaURL: @Sendable (URL) -> URL?
+    private let onError: (@MainActor (OpenUIError, _ messageID: String) -> Void)?
 
     /// - Parameters:
     ///   - library: The library the agent writes with, the chat library by default.
+    ///   - instructions: What the agent's model is told before OpenUI's own instructions, such as
+    ///     which answers to write as UI and when to use the app's components.
     ///   - toolProvider: Runs the tools of `Query()` and `Mutation()`. By default they are the
     ///     host's tools, run on the device.
     ///   - mediaURL: The URL an image loads from, given the web link the model wrote, or `nil` to
     ///     not load it, such as to allow only your own image hosts. A link that holds something
     ///     the person typed in the reply never loads. By default every other web link does.
+    ///   - onError: Gets the problems with a reply's program once it is complete, such as a
+    ///     component it doesn't know or a tool that failed. A chat has no channel for them, so
+    ///     forward them to your backend if the agent should hear about them. They are logged by
+    ///     default.
     public init(
         library: ComponentLibrary = .openUIChat,
+        instructions: String? = nil,
         toolProvider: (any OpenUIToolProvider)? = nil,
-        mediaURL: @escaping @Sendable (URL) -> URL? = { $0 }
+        mediaURL: @escaping @Sendable (URL) -> URL? = { $0 },
+        onError: (@MainActor (OpenUIError, _ messageID: String) -> Void)? = nil
     ) {
         self.library = library
+        self.instructions = instructions
         self.toolProvider = toolProvider
         self.mediaURL = mediaURL
+        self.onError = onError
     }
 
     /// The fence the agent writes its program in, and the instructions its model needs to write
-    /// one with the app's components.
-    public func capabilities(components: [any AIUIComponent]) -> [String: RawJSON] {
+    /// one with the app's components and run the app's tools.
+    public func capabilities(components: [any AIUIComponent], tools: [AIClientToolDefinition]) -> [String: RawJSON] {
         let definitions = Self.placeableSchemas(of: components, in: library).map { OpenUIComponentDefinition($0.schema, renderer: nil) }
         let library = library.addingContent(definitions)
-        return ["fence": .string("openui-lang"), "instructions": .string(library.systemPrompt())]
+        var options = library.defaultPromptOptions
+        options.tools += tools.map { .spec(Self.spec(of: $0)) }
+        let prompt = [instructions, library.systemPrompt(options)].compactMap { $0?.isEmpty == false ? $0 : nil }
+        return ["fence": .string("openui-lang"), "instructions": .string(prompt.joined(separator: "\n\n"))]
     }
 
     public func makeEngine(host: any AIUIHosting) -> some AIUIEngine {
-        OpenUIEngine(library: library, host: host, toolProvider: toolProvider ?? HostToolProvider(host: host), mediaURL: mediaURL)
+        OpenUIEngine(
+            library: library,
+            host: host,
+            toolProvider: toolProvider ?? HostToolProvider(host: host),
+            mediaURL: mediaURL,
+            onError: onError
+        )
+    }
+
+    // One of the host's tools as the model's instructions list it, saying whether a `Query` can
+    // run it.
+    static func spec(of tool: AIClientToolDefinition) -> ToolSpec {
+        let use = tool.isReadOnly
+            ? "Read-only: use it in Query() or Mutation()."
+            : "It changes something: use it only in Mutation(), which runs when the person taps."
+        let description = [tool.description, use].compactMap { $0?.isEmpty == false ? $0 : nil }.joined(separator: " ")
+        return ToolSpec(name: tool.name, description: description, inputSchema: tool.inputSchema?.openUIValue ?? [:])
     }
 
     static func schema(of definition: AIUIComponentDefinition) throws -> ComponentSchema {

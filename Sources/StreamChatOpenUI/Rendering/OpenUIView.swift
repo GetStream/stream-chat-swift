@@ -136,8 +136,12 @@ final class ForwardingToolProvider: OpenUIToolProvider {
     }
 
     func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue {
+        try await callTool(name, arguments: arguments, userInitiated: false)
+    }
+
+    func callTool(_ name: String, arguments: OpenUIObject, userInitiated: Bool) async throws -> OpenUIValue {
         let provider = target.withLock { $0 }
-        return try await provider.callTool(name, arguments: arguments)
+        return try await provider.callTool(name, arguments: arguments, userInitiated: userInitiated)
     }
 }
 

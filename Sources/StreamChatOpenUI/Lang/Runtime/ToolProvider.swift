@@ -12,6 +12,10 @@ import Foundation
 public protocol OpenUIToolProvider: Sendable {
     func callTool(_ name: String, arguments: OpenUIObject) async throws -> OpenUIValue
 
+    /// Runs a tool, saying whether the person asked for it: a `Mutation` runs from a tap, while a
+    /// `Query` runs by itself as the UI shows. It runs `callTool(_:arguments:)` by default.
+    func callTool(_ name: String, arguments: OpenUIObject, userInitiated: Bool) async throws -> OpenUIValue
+
     /// The shortest time between two refreshes of a query, in seconds. The model writes a query's
     /// refresh interval, so a shorter one waits this long. Five seconds by default.
     var minimumRefreshInterval: TimeInterval { get }
@@ -20,6 +24,10 @@ public protocol OpenUIToolProvider: Sendable {
 @available(iOS 17.0, macOS 14.0, *)
 public extension OpenUIToolProvider {
     var minimumRefreshInterval: TimeInterval { 5 }
+
+    func callTool(_ name: String, arguments: OpenUIObject, userInitiated: Bool) async throws -> OpenUIValue {
+        try await callTool(name, arguments: arguments)
+    }
 }
 
 /// Thrown when a function-map provider has no handler for a tool.

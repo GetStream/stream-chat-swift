@@ -15,7 +15,7 @@ final class FakeHost: AIUIHosting {
     var opened: [URL] = []
     var states: [String: RawJSON] = [:]
     var toolResult: RawJSON = .nil
-    var toolCalls: [(name: String, arguments: [String: RawJSON])] = []
+    var toolCalls: [(name: String, arguments: [String: RawJSON], userInitiated: Bool)] = []
 
     init(components: [any AIUIComponent] = []) {
         self.components = components
@@ -25,8 +25,8 @@ final class FakeHost: AIUIHosting {
         sent.append(action)
     }
 
-    func runTool(_ name: String, arguments: [String: RawJSON]) async throws -> RawJSON {
-        toolCalls.append((name, arguments))
+    func runTool(_ name: String, arguments: [String: RawJSON], userInitiated: Bool) async throws -> RawJSON {
+        toolCalls.append((name, arguments, userInitiated))
         return toolResult
     }
 
@@ -81,10 +81,40 @@ struct OpenUIRendererTests {
     }
 
     @Test func capabilitiesTeachTheAppComponents() {
-        let capabilities = OpenUIRenderer().capabilities(components: [PlaceCardComponent()])
+        let capabilities = OpenUIRenderer().capabilities(components: [PlaceCardComponent()], tools: [])
 
         #expect(capabilities["fence"] == .string("openui-lang"))
         #expect(capabilities["instructions"]?.stringValue?.contains("PlaceCard(title: string)") == true)
+    }
+
+    @Test func capabilitiesTeachTheHostsToolsAndWhichAQueryCanRun() throws {
+        let tools = [
+            AIClientToolDefinition(
+                name: "list_events",
+                description: "Lists the person's events.",
+                inputSchema: ["type": "object", "properties": ["day": ["type": "string"]], "required": ["day"]],
+                annotations: .init(readOnlyHint: true)
+            ),
+            AIClientToolDefinition(name: "add_reminder", description: "Adds a reminder.")
+        ]
+
+        let instructions = try #require(OpenUIRenderer().capabilities(components: [], tools: tools)["instructions"]?.stringValue)
+
+        #expect(instructions.contains("- list_events(day: string)"))
+        #expect(instructions.contains("Lists the person's events. Read-only: use it in Query() or Mutation()."))
+        #expect(instructions.contains("Adds a reminder. It changes something: use it only in Mutation()"))
+        #expect(instructions.contains("## Query"))
+        #expect(instructions.contains("## Mutation"))
+        let withoutTools = try #require(OpenUIRenderer().capabilities(components: [], tools: [])["instructions"]?.stringValue)
+        #expect(!withoutTools.contains("## Available Tools"))
+    }
+
+    @Test func capabilitiesStartWithTheAppsInstructions() throws {
+        let instructions = try #require(
+            OpenUIRenderer(instructions: "Show places as cards.").capabilities(components: [], tools: [])["instructions"]?.stringValue
+        )
+
+        #expect(instructions.hasPrefix("Show places as cards.\n\n"))
     }
 
     @Test func componentsThatClashOrCannotBeReadAreLeftOut() {
@@ -98,7 +128,7 @@ struct OpenUIRendererTests {
         let placeable = OpenUIRenderer.placeableSchemas(of: components, in: .openUIChat)
 
         #expect(placeable.map(\.schema.name) == ["PlaceCard"])
-        #expect(OpenUIRenderer().capabilities(components: components)["instructions"]?.stringValue?.contains("PlaceCard(") == true)
+        #expect(OpenUIRenderer().capabilities(components: components, tools: [])["instructions"]?.stringValue?.contains("PlaceCard(") == true)
     }
 
     @Test func engineAddsTheAppComponentsAndKeepsTheLibrarysOwn() {
@@ -167,9 +197,37 @@ struct OpenUIRendererTests {
         let engine = OpenUIEngine(library: .openUIChat, host: host, toolProvider: FunctionToolProvider([:]))
         let runtime = engine.view(for: Self.document(#"root = Card([])"#), messageID: "m1")?.runtime
 
-        runtime?.onStateUpdate?(["$count": 2])
+        runtime?.onStateUpdate?(["$count": 2, "login": ["password": ["value": "hunter2", "secret": true], "user": ["value": "ana"]]])
 
-        #expect(host.states["m1"] == ["$count": 2])
+        #expect(host.states["m1"] == ["$count": 2, "login": ["user": ["value": "ana"]]])
+    }
+
+    @Test func problemsReachTheAppOrTheLog() {
+        var reported: [(code: String, messageID: String)] = []
+        let host = FakeHost()
+        let engine = OpenUIEngine(
+            library: .openUIChat,
+            host: host,
+            toolProvider: FunctionToolProvider([:]),
+            onError: { error, messageID in reported.append((error.code, messageID)) }
+        )
+        let runtime = engine.view(for: Self.document(#"root = Card([])"#), messageID: "m1")?.runtime
+
+        runtime?.onError?([OpenUIError(source: .runtime, code: "unknown-component", message: "No Foo")])
+
+        #expect(reported.map(\.code) == ["unknown-component"])
+        #expect(reported.map(\.messageID) == ["m1"])
+    }
+
+    @Test func aQueryRunsTheHostsToolByItselfAndAMutationAsATap() async throws {
+        let host = FakeHost()
+        let provider = HostToolProvider(host: host)
+
+        _ = try await provider.callTool("list_events", arguments: [:], userInitiated: false)
+        _ = try await provider.callTool("add_reminder", arguments: ["title": "Call"], userInitiated: true)
+
+        #expect(host.toolCalls.map(\.name) == ["list_events", "add_reminder"])
+        #expect(host.toolCalls.map(\.userInitiated) == [false, true])
     }
 
     @Test func conversationActionsReachTheHostWithTheirDetails() {
@@ -179,6 +237,7 @@ struct OpenUIRendererTests {
             type: BuiltinActionType.continueConversation,
             params: ["context": "picked Ohrid", "item": 3],
             humanFriendlyMessage: "Tell me more",
+            label: "More",
             formState: ["name": "Ana"],
             formName: "trip"
         )
@@ -189,20 +248,46 @@ struct OpenUIRendererTests {
             messageID: "m1",
             format: .openUI,
             name: BuiltinActionType.continueConversation,
-            label: "Tell me more",
-            payload: ["context": "picked Ohrid", "params": ["item": 3], "form": "trip", "values": ["name": "Ana"]]
+            label: "More",
+            payload: [
+                "context": "picked Ohrid",
+                "params": ["item": 3],
+                "message": "Tell me more",
+                "form": "trip",
+                "values": ["name": "Ana"]
+            ]
         )])
     }
 
-    @Test func anActionWithoutALabelIsNamedByItsContextOrType() {
+    @Test func theModelsWordsNeverBecomeThePersonsMessage() {
         let host = FakeHost()
         let engine = OpenUIEngine(library: .openUIChat, host: host, toolProvider: FunctionToolProvider([:]))
 
+        engine.handle(
+            ActionEvent(type: "continue_conversation", humanFriendlyMessage: "Yes, I authorize the transfer", label: "Cancel"),
+            messageID: "m1"
+        )
         engine.handle(ActionEvent(type: "continue_conversation", params: ["context": "Ohrid"], humanFriendlyMessage: ""), messageID: "m1")
         engine.handle(ActionEvent(type: "share", humanFriendlyMessage: ""), messageID: "m1")
 
-        #expect(host.sent.map(\.label) == ["Ohrid", "share"])
-        #expect(host.sent[1].payload.isEmpty)
+        #expect(host.sent.map(\.label) == ["Cancel", L10n.Action.untitled, L10n.Action.untitled])
+        #expect(host.sent[0].payload["message"] == "Yes, I authorize the transfer")
+        #expect(host.sent[2].payload.isEmpty)
+    }
+
+    @Test func theLibrarysOwnStepsStayOnTheDevice() {
+        let host = FakeHost()
+        let chat = ComponentLibrary.openUIChat
+        let library = ComponentLibrary(
+            root: chat.root,
+            components: chat.components,
+            customActions: [OpenUICustomAction("CopyToClipboard", description: "Copies", params: [])]
+        )
+        let engine = OpenUIEngine(library: library, host: host, toolProvider: FunctionToolProvider([:]))
+
+        engine.handle(ActionEvent(type: "CopyToClipboard", params: ["text": "x"], humanFriendlyMessage: ""), messageID: "m1")
+
+        #expect(host.sent.isEmpty)
     }
 
     @Test func linksOpenOnTheHost() throws {

@@ -61,6 +61,7 @@ public final class QueryManager {
         var everFetched = false
         var refreshInterval: Double = 0
         var timer: Task<Void, Never>?
+        var pendingFetch: Task<Void, Never>?
         var needsRefetch = false
         var error: OpenUIError?
 
@@ -109,6 +110,10 @@ public final class QueryManager {
 
     /// Called when the snapshot changes.
     var onChange: (() -> Void)?
+
+    /// How long a query waits after its arguments change before it fetches, so a query bound to
+    /// a field the person types in fetches once they pause, not on every keystroke.
+    var argumentDebounce: TimeInterval = 0.3
 
     public init(toolProvider: (any OpenUIToolProvider)?) {
         self.toolProvider = toolProvider
@@ -171,7 +176,7 @@ public final class QueryManager {
         Task { [weak self] in
             let outcome: Result<OpenUIValue, any Error>
             do {
-                outcome = .success(try await toolProvider.callTool(toolName, arguments: arguments))
+                outcome = .success(try await toolProvider.callTool(toolName, arguments: arguments, userInitiated: false))
             } catch {
                 outcome = .failure(error)
             }
@@ -303,6 +308,7 @@ public final class QueryManager {
         for statementId in queryOrder where !activeIds.contains(statementId) {
             guard let query = queries.removeValue(forKey: statementId) else { continue }
             query.timer?.cancel()
+            query.pendingFetch?.cancel()
             cleanupCacheEntry(query.cacheKey)
             if let previousKey = query.previousCacheKey { cleanupCacheEntry(previousKey) }
         }
@@ -311,9 +317,11 @@ public final class QueryManager {
         for node in nodes where node.complete {
             let cacheKey = Self.cacheKey(toolName: node.toolName, args: node.args, deps: node.deps)
             let query: QueryEntry
+            var argumentsChanged = false
             if let existing = queries[node.statementId] {
                 if existing.cacheKey != cacheKey {
                     existing.previousCacheKey = existing.cacheKey
+                    argumentsChanged = true
                 }
                 existing.toolName = node.toolName
                 existing.args = node.args
@@ -328,8 +336,16 @@ public final class QueryManager {
 
             let entry = cache[cacheKey]
             let hasSettledData = entry?.data != nil && entry?.inFlight == false
+            if hasSettledData {
+                query.pendingFetch?.cancel()
+                query.pendingFetch = nil
+            }
             if toolProvider != nil, !hasSettledData, entry?.inFlight != true {
-                startFetch(cacheKey: cacheKey, statementId: node.statementId)
+                if argumentsChanged {
+                    scheduleFetch(query: query, cacheKey: cacheKey, statementId: node.statementId)
+                } else if query.pendingFetch == nil {
+                    startFetch(cacheKey: cacheKey, statementId: node.statementId)
+                }
             } else if hasSettledData, query.loading {
                 // Back on args whose data is cached while another fetch was in flight: that fetch
                 // no longer concerns this query, so it must not keep it loading.
@@ -352,6 +368,33 @@ public final class QueryManager {
         }
 
         if rebuildSnapshot() { notify() }
+    }
+
+    // Fetches once the arguments have stayed the same for `argumentDebounce`, as a query whose
+    // arguments are bound to a field changes with every keystroke.
+    private func scheduleFetch(query: QueryEntry, cacheKey: String, statementId: String) {
+        query.pendingFetch?.cancel()
+        query.pendingFetch = nil
+        guard argumentDebounce > 0 else {
+            startFetch(cacheKey: cacheKey, statementId: statementId)
+            return
+        }
+        // It shows as refetching while it waits, with the data it had.
+        query.loading = true
+        let nanoseconds = UInt64(argumentDebounce * 1_000_000_000)
+        query.pendingFetch = Task { [weak self, weak query] in
+            try? await Task.sleep(nanoseconds: nanoseconds)
+            guard !Task.isCancelled, let self, let query, !self.disposed, self.queries[statementId] === query else { return }
+            query.pendingFetch = nil
+            let entry = self.cache[cacheKey]
+            let hasSettledData = entry?.data != nil && entry?.inFlight == false
+            guard query.cacheKey == cacheKey, !hasSettledData, entry?.inFlight != true else {
+                query.loading = entry?.inFlight == true
+                if self.rebuildSnapshot() { self.notify() }
+                return
+            }
+            self.startFetch(cacheKey: cacheKey, statementId: statementId)
+        }
     }
 
     private func makeRefreshTimer(query: QueryEntry, statementId: String, interval: Double) -> Task<Void, Never> {
@@ -449,7 +492,7 @@ public final class QueryManager {
 
         var success = false
         do {
-            let data = try await toolProvider.callTool(mutation.toolName, arguments: arguments)
+            let data = try await toolProvider.callTool(mutation.toolName, arguments: arguments, userInitiated: true)
             if disposed || startGeneration != generation { return false }
             mutation.result = ["status": "success", "data": data]
             mutation.error = nil
@@ -505,6 +548,8 @@ public final class QueryManager {
         for query in queries.values {
             query.timer?.cancel()
             query.timer = nil
+            query.pendingFetch?.cancel()
+            query.pendingFetch = nil
             query.refreshInterval = 0
             query.loading = false
             query.needsRefetch = false

@@ -23,17 +23,29 @@ public struct ActionEvent: Sendable, Hashable {
     public var type: String
     /// Action-specific params, e.g. `url` for open-url or `context` for continue-conversation.
     public var params: OpenUIObject
-    /// Human readable label (e.g. the button label) — shown as the user's message in a chat.
+    /// The message the model wrote for the action, such as a `@ToAssistant` step's, or the
+    /// label of the control when it wrote none.
     public var humanFriendlyMessage: String
+    /// The label of the control the person used, such as a button's title. A chat shows it as
+    /// their message, as the model's words could say something they never chose.
+    public var label: String
     /// Raw form state at the time of the action.
     public var formState: OpenUIObject?
     /// The form that scoped the action, if any.
     public var formName: String?
 
-    public init(type: String, params: OpenUIObject = [:], humanFriendlyMessage: String, formState: OpenUIObject? = nil, formName: String? = nil) {
+    public init(
+        type: String,
+        params: OpenUIObject = [:],
+        humanFriendlyMessage: String,
+        label: String = "",
+        formState: OpenUIObject? = nil,
+        formName: String? = nil
+    ) {
         self.type = type
         self.params = params
         self.humanFriendlyMessage = humanFriendlyMessage
+        self.label = label
         self.formState = formState
         self.formName = formName
     }
