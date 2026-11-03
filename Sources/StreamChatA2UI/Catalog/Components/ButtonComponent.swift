@@ -86,25 +86,27 @@ private struct A2UIButtonView: View {
 private struct A2UIButtonLabelStyle: ViewModifier {
     let variant: String
 
+    @Environment(\.a2uiTheme) private var theme
+
     func body(content: Content) -> some View {
         switch variant {
         case "primary":
             content
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
-                .foregroundColor(.white)
-                .background(Color.accentColor)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .foregroundColor(theme.onAccent)
+                .background(theme.accent)
+                .clipShape(RoundedRectangle(cornerRadius: theme.buttonCornerRadius, style: .continuous))
         case "borderless":
             content
-                .foregroundColor(.accentColor)
+                .foregroundColor(theme.accent)
                 .padding(.vertical, 4)
         default:
             content
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
-                .background(Color.gray.opacity(0.15))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .background(theme.subtleSurface)
+                .clipShape(RoundedRectangle(cornerRadius: theme.buttonCornerRadius, style: .continuous))
         }
     }
 }

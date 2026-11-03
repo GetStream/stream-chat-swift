@@ -33,10 +33,13 @@ struct A2UISurface<Placeholder: View>: View {
         self.viewModel = host.surfaceViewModel(surfaceId)
     }
 
+    @Environment(\.a2uiTheme) private var theme
+
     var body: some View {
         // `revision` is read so SwiftUI re-evaluates bindings and function
         // calls whenever the surface's data model changes.
         content(revision: viewModel.revision)
+            .foregroundColor(theme.text)
     }
 
     @ViewBuilder

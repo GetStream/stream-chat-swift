@@ -138,6 +138,8 @@ struct A2UIImageView: View {
     let variant: String
     var mediaURL: @Sendable (URL) -> URL? = RendererServices.default.mediaURL
 
+    @Environment(\.a2uiTheme) private var theme
+
     // An image without a description is decorative, unless the agent labels it explicitly.
     static func isDecorative(description: String?, label: DynamicValue) -> Bool {
         description == nil && label.isMissing
@@ -156,8 +158,7 @@ struct A2UIImageView: View {
 
     /// The layout footprint of the image, which never depends on the image itself.
     private var box: some View {
-        Color.gray
-            .opacity(0.12)
+        theme.subtleSurface
             .frame(width: layout.width, height: layout.height)
             .frame(maxWidth: layout.expandsHorizontally ? .infinity : nil)
     }
@@ -202,7 +203,7 @@ struct A2UIImageView: View {
     }
 
     private var shape: AnyShape2 {
-        variant == "avatar" ? AnyShape2(Circle()) : AnyShape2(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        variant == "avatar" ? AnyShape2(Circle()) : AnyShape2(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
     }
 }
 
@@ -278,6 +279,7 @@ private struct A2UIMediaPlayerView: View {
     let isAudioOnly: Bool
 
     @StateObject private var model = A2UIMediaPlayerModel()
+    @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         Group {
@@ -295,11 +297,11 @@ private struct A2UIMediaPlayerView: View {
         .overlay(alignment: .bottomLeading) {
             if let title, isAudioOnly {
                 Text(title)
-                    .font(.caption)
+                    .font(theme.caption)
                     .padding(6)
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
         .onAppear { model.load(url) }
         .onChange(of: url) { model.load($0) }
         .onDisappear { model.release() }
@@ -319,7 +321,7 @@ private struct A2UIMediaPlayerView: View {
                     Color.clear
                 }
             } else {
-                Rectangle().fill(Color.gray.opacity(0.15))
+                Rectangle().fill(theme.subtleSurface)
             }
             if url != nil {
                 Button {
@@ -327,14 +329,14 @@ private struct A2UIMediaPlayerView: View {
                 } label: {
                     Image(systemName: "play.circle.fill")
                         .font(.system(size: isAudioOnly ? 32 : 44))
-                        .foregroundColor(posterUrl == nil || isAudioOnly ? .secondary : .white)
+                        .foregroundColor(posterUrl == nil || isAudioOnly ? theme.accent : .white)
                         .shadow(radius: posterUrl == nil || isAudioOnly ? 0 : 4)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text("Play"))
             } else {
                 Image(systemName: isAudioOnly ? "speaker.wave.2" : "play.rectangle")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(theme.secondaryText)
             }
         }
         .frame(height: height)

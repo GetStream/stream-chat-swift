@@ -82,27 +82,7 @@ enum InputComponents {
             """
         ]
     ) { context in
-        let binding = context.boolBinding()
-        let failures = context.failingChecks
-
-        return AnyView(
-            VStack(alignment: .leading, spacing: 4) {
-                Button {
-                    binding.wrappedValue.toggle()
-                } label: {
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Image(systemName: binding.wrappedValue ? "checkmark.square.fill" : "square")
-                            .foregroundColor(binding.wrappedValue ? .accentColor : .secondary)
-                        Text(context.string("label", default: ""))
-                            .foregroundColor(.primary)
-                        Spacer(minLength: 0)
-                    }
-                }
-                .buttonStyle(.plain)
-                .accessibilityAddTraits(binding.wrappedValue ? [.isButton, .isSelected] : .isButton)
-                ValidationMessages(results: failures)
-            }
-        )
+        AnyView(A2UICheckBoxView(context: context))
     }
 
     /// A single or multi select option list.
@@ -247,8 +227,38 @@ enum InputComponents {
 // MARK: - Views
 
 /// Renders an A2UI `TextField`, including its validation state.
+private struct A2UICheckBoxView: View {
+    let context: ComponentRenderContext
+
+    @Environment(\.a2uiTheme) private var theme
+
+    var body: some View {
+        let binding = context.boolBinding()
+        let failures = context.failingChecks
+
+        VStack(alignment: .leading, spacing: 4) {
+            Button {
+                binding.wrappedValue.toggle()
+            } label: {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: binding.wrappedValue ? "checkmark.square.fill" : "square")
+                        .foregroundColor(binding.wrappedValue ? theme.accent : theme.secondaryText)
+                    Text(context.string("label", default: ""))
+                        .font(theme.body)
+                    Spacer(minLength: 0)
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(binding.wrappedValue ? [.isButton, .isSelected] : .isButton)
+            ValidationMessages(results: failures)
+        }
+    }
+}
+
 private struct A2UITextFieldView: View {
     let context: ComponentRenderContext
+
+    @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         let label = context.string("label", default: "")
@@ -261,16 +271,17 @@ private struct A2UITextFieldView: View {
         return VStack(alignment: .leading, spacing: 4) {
             if !label.isEmpty {
                 Text(label)
-                    .font(.subheadline.weight(.medium))
-                    .foregroundColor(hasError ? .red : .secondary)
+                    .font(theme.label)
+                    .foregroundColor(hasError ? theme.error : theme.secondaryText)
             }
             input(variant: variant, placeholder: placeholder.isEmpty ? label : placeholder, binding: binding)
+                .font(theme.body)
                 .padding(10)
-                .background(A2UIColor.inputBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .background(theme.subtleSurface)
+                .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .stroke(hasError ? Color.red : Color.clear, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous)
+                        .stroke(hasError ? theme.error : Color.clear, lineWidth: 1)
                 )
                 .accessibilityLabel(Text(label))
             ValidationMessages(results: failures)
@@ -302,6 +313,7 @@ private struct A2UIChoicePickerView: View {
     let context: ComponentRenderContext
 
     @State private var filter = ""
+    @Environment(\.a2uiTheme) private var theme
 
     private struct Option: Identifiable {
         let label: String
@@ -322,13 +334,14 @@ private struct A2UIChoicePickerView: View {
 
         return VStack(alignment: .leading, spacing: 6) {
             if !label.isEmpty {
-                Text(label).font(.subheadline.weight(.medium)).foregroundColor(.secondary)
+                Text(label).font(theme.label).foregroundColor(theme.secondaryText)
             }
             if isFilterable {
                 TextField("Search", text: $filter)
+                    .font(theme.body)
                     .padding(8)
-                    .background(A2UIColor.inputBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .background(theme.subtleSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
             }
             if usesChips {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 8)], alignment: .leading, spacing: 8) {
@@ -386,8 +399,8 @@ private struct A2UIChoicePickerView: View {
         } label: {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Image(systemName: symbol)
-                    .foregroundColor(selected ? .accentColor : .secondary)
-                Text(option.label).foregroundColor(.primary)
+                    .foregroundColor(selected ? theme.accent : theme.secondaryText)
+                Text(option.label).font(theme.body)
                 Spacer(minLength: 0)
             }
         }
@@ -401,12 +414,12 @@ private struct A2UIChoicePickerView: View {
             toggle(option, selection, isMultiSelect: isMultiSelect)
         } label: {
             Text(option.label)
-                .font(.subheadline)
+                .font(theme.label)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .frame(maxWidth: .infinity)
-                .background(selected ? Color.accentColor.opacity(0.18) : Color.gray.opacity(0.12))
-                .foregroundColor(selected ? .accentColor : .primary)
+                .background(selected ? theme.accent.opacity(0.18) : theme.subtleSurface)
+                .foregroundColor(selected ? theme.accent : theme.text)
                 .clipShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -417,6 +430,8 @@ private struct A2UIChoicePickerView: View {
 /// Renders an A2UI `Slider`, snapping to discrete steps when requested.
 struct A2UISliderView: View {
     let context: ComponentRenderContext
+
+    @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         let label = context.string("label", default: "")
@@ -431,12 +446,13 @@ struct A2UISliderView: View {
         return VStack(alignment: .leading, spacing: 4) {
             HStack {
                 if !label.isEmpty {
-                    Text(label).font(.subheadline.weight(.medium)).foregroundColor(.secondary)
+                    Text(label).font(theme.label).foregroundColor(theme.secondaryText)
                 }
                 Spacer(minLength: 0)
-                Text(Json.stringify(binding.wrappedValue)).font(.subheadline.monospacedDigit())
+                Text(Json.stringify(binding.wrappedValue)).font(theme.label.monospacedDigit())
             }
             slider(binding: binding, range: range, step: step)
+                .tint(theme.accent)
                 .accessibilityLabel(Text(label))
             ValidationMessages(results: failures)
         }
@@ -480,6 +496,8 @@ struct A2UISliderView: View {
 private struct A2UIDateTimeInputView: View {
     let context: ComponentRenderContext
 
+    @Environment(\.a2uiTheme) private var theme
+
     var body: some View {
         let label = context.string("label", default: "")
         let enableDate = Json.bool(context.component.property("enableDate")) ?? false
@@ -509,6 +527,8 @@ private struct A2UIDateTimeInputView: View {
 
         return VStack(alignment: .leading, spacing: 4) {
             picker(label: label, selection: selection, components: components)
+                .font(theme.body)
+                .tint(theme.accent)
             ValidationMessages(results: failures)
         }
         // What the picker shows is what the person submits.

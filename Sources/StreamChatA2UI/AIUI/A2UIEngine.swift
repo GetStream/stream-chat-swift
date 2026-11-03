@@ -31,7 +31,7 @@ final class A2UIEngine: AIUIEngine {
             reply.update(source: source, isStreaming: document.isStreaming)
         }
         guard !reply.surfaceIds.isEmpty else { return nil }
-        return A2UIReplyView(reply: reply, source: source, isStreaming: document.isStreaming)
+        return A2UIReplyView(reply: reply, source: source, isStreaming: document.isStreaming, theme: renderer.theme)
     }
 
     // A reply's surfaces start with its messages so far, before any view follows them.

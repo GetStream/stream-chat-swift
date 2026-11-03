@@ -38,12 +38,15 @@ public final class A2UIRenderer: AIUIRenderer {
     /// The id of the catalog with the app's components.
     public let catalogId: String
 
+    let theme: A2UITheme?
     let mediaURL: @Sendable (URL) -> URL?
     let onError: (@MainActor (A2UIError, _ messageID: String) -> Void)?
 
     /// - Parameters:
     ///   - catalog: The catalog the agent writes with, the basic catalog by default.
     ///   - catalogId: The id the agent names the catalog with the app's components by.
+    ///   - theme: The look of the replies' A2UI. By default it follows the conversation's
+    ///     `AIAppearance`, ``A2UITheme/init(appearance:)``.
     ///   - mediaURL: The URL an image, video or audio clip loads from, given the one the agent
     ///     wrote, or `nil` to not load it. By default only web links load, ``webURL(_:)``.
     ///   - onError: Gets the problems with a reply's A2UI, which A2UI reports to the agent, such
@@ -52,11 +55,13 @@ public final class A2UIRenderer: AIUIRenderer {
     public init(
         catalog: Catalog = BasicCatalog.catalog,
         catalogId: String = A2UIRenderer.defaultCatalogId,
+        theme: A2UITheme? = nil,
         mediaURL: @escaping @Sendable (URL) -> URL? = { A2UIRenderer.webURL($0) },
         onError: (@MainActor (A2UIError, _ messageID: String) -> Void)? = nil
     ) {
         self.catalog = catalog
         self.catalogId = catalogId
+        self.theme = theme
         self.mediaURL = mediaURL
         self.onError = onError
     }

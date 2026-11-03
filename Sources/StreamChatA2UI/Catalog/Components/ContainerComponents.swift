@@ -116,6 +116,7 @@ private struct A2UITabsView: View {
     let context: ComponentRenderContext
 
     @State private var selection: String?
+    @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         let selected = selection ?? tabs.first?.id
@@ -128,11 +129,12 @@ private struct A2UITabsView: View {
                             selection = tab.id
                         } label: {
                             Text(tab.title)
-                                .font(.subheadline.weight(selected == tab.id ? .semibold : .regular))
+                                .font(theme.label)
+                                .foregroundColor(selected == tab.id ? theme.accent : theme.secondaryText)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
                                 .background(
-                                    selected == tab.id ? Color.accentColor.opacity(0.15) : Color.clear
+                                    selected == tab.id ? theme.accent.opacity(0.15) : Color.clear
                                 )
                                 .clipShape(Capsule())
                         }

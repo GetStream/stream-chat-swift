@@ -13,6 +13,8 @@ struct A2UIMarkdownText: View {
     let text: String
     let isCaption: Bool
 
+    @Environment(\.a2uiTheme) private var theme
+
     var body: some View {
         let blocks = A2UIMarkdown.blocks(in: text)
         if blocks.count == 1, case let .paragraph(content) = blocks[0] {
@@ -20,7 +22,7 @@ struct A2UIMarkdownText: View {
         } else {
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in
-                    block.view(isCaption: isCaption)
+                    block.view(isCaption: isCaption, theme: theme)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -30,9 +32,9 @@ struct A2UIMarkdownText: View {
     @ViewBuilder
     private func styled(_ view: Text) -> some View {
         if isCaption {
-            view.font(.caption).foregroundColor(.secondary)
+            view.font(theme.caption).foregroundColor(theme.secondaryText)
         } else {
-            view.font(.body)
+            view.font(theme.body)
         }
     }
 }
@@ -49,43 +51,50 @@ enum A2UIMarkdown {
 
         /// Renders the block with the font matching its kind.
         @ViewBuilder
-        func view(isCaption: Bool) -> some View {
+        func view(isCaption: Bool, theme: A2UITheme) -> some View {
+            let font = isCaption ? theme.caption : theme.body
             switch self {
             case let .heading(level, text):
                 Text(A2UIMarkdown.inline(text))
-                    .font(A2UIMarkdown.headingFont(level: level))
+                    .font(theme.heading(level))
                     .frame(maxWidth: .infinity, alignment: .leading)
             case let .bullet(text):
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text("•")
                     Text(A2UIMarkdown.inline(text))
                 }
-                .font(isCaption ? .caption : .body)
+                .font(font)
                 .frame(maxWidth: .infinity, alignment: .leading)
             case let .ordered(number, text):
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text("\(number).")
                     Text(A2UIMarkdown.inline(text))
                 }
-                .font(isCaption ? .caption : .body)
+                .font(font)
                 .frame(maxWidth: .infinity, alignment: .leading)
             case let .quote(text):
                 Text(A2UIMarkdown.inline(text))
-                    .font(isCaption ? .caption : .body)
+                    .font(font)
                     .italic()
-                    .foregroundColor(.secondary)
+                    .foregroundColor(theme.secondaryText)
                     .padding(.leading, 8)
                     .overlay(alignment: .leading) {
                         Rectangle()
                             .frame(width: 2)
-                            .foregroundColor(.secondary.opacity(0.4))
+                            .foregroundColor(theme.border)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
             case let .paragraph(text):
-                Text(A2UIMarkdown.inline(text))
-                    .font(isCaption ? .caption : .body)
-                    .foregroundColor(isCaption ? .secondary : .primary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                if isCaption {
+                    Text(A2UIMarkdown.inline(text))
+                        .font(font)
+                        .foregroundColor(theme.secondaryText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    Text(A2UIMarkdown.inline(text))
+                        .font(font)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
         }
     }
@@ -157,18 +166,6 @@ enum A2UIMarkdown {
             attributed[run.range].link = nil
         }
         return attributed
-    }
-
-    /// The font used for a Markdown heading level.
-    static func headingFont(level: Int) -> Font {
-        switch level {
-        case 1: return .system(.largeTitle, design: .default).weight(.bold)
-        case 2: return .system(.title, design: .default).weight(.bold)
-        case 3: return .system(.title2, design: .default).weight(.semibold)
-        case 4: return .system(.title3, design: .default).weight(.semibold)
-        case 5: return .headline
-        default: return .subheadline.weight(.semibold)
-        }
     }
 
     private static func headingLevel(of line: String) -> Int? {

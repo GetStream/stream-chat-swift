@@ -236,3 +236,27 @@ private final class StubImageProtocol: URLProtocol {
         client?.urlProtocolDidFinishLoading(self)
     }
 }
+
+@Suite("Theme")
+struct ThemeTests {
+    @Test("Heading levels past the theme's last font use the last one")
+    func headings() {
+        let theme = A2UITheme(headings: [.title, .headline])
+
+        #expect(theme.heading(1) == .title)
+        #expect(theme.heading(2) == .headline)
+        #expect(theme.heading(6) == .headline)
+        #expect(theme.heading(0) == .title)
+        #expect(A2UITheme(headings: []).heading(1) == A2UITheme().body)
+    }
+
+    @Test("The default theme keeps the catalog's system look")
+    func defaults() {
+        let theme = A2UITheme()
+
+        #expect(theme.accent == .accentColor)
+        #expect(theme.body == .body)
+        #expect(theme.buttonCornerRadius == 10)
+        #expect(theme.controlCornerRadius == 8)
+    }
+}

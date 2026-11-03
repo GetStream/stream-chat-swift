@@ -170,6 +170,24 @@ final class A2UIEngine_Tests: XCTestCase {
         XCTAssertEqual(A2UIEngine.words(of: "go"), "Go")
     }
 
+    func test_theme_followsTheAppearanceUnlessTheRendererHasOne() throws {
+        let appearance = AIAppearance()
+        let theme = A2UITheme(appearance: appearance)
+
+        XCTAssertEqual(theme.accent, Color(appearance.tokens.colors.accentPrimary))
+        XCTAssertEqual(theme.surface, Color(appearance.tokens.colors.backgroundCoreSurfaceCard))
+        XCTAssertEqual(theme.body, appearance.tokens.fonts.body)
+        XCTAssertEqual(theme.buttonCornerRadius, appearance.tokens.layout.buttonRadiusMd)
+
+        let source = [createSurface, components].joined(separator: "\n")
+        XCTAssertNil(try XCTUnwrap(engine.view(for: document(source), messageID: "m1")).theme)
+
+        var orange = A2UITheme()
+        orange.accent = .orange
+        let themed = A2UIEngine(renderer: A2UIRenderer(theme: orange), host: host)
+        XCTAssertEqual(try XCTUnwrap(themed.view(for: document(source), messageID: "m1")).theme?.accent, .orange)
+    }
+
     func test_errors_reachTheApp() {
         var errors: [(error: A2UIError, messageID: String)] = []
         let renderer = A2UIRenderer(onError: { error, messageID in errors.append((error, messageID)) })

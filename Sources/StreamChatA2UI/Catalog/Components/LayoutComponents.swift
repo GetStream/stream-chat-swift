@@ -192,13 +192,7 @@ enum LayoutComponents {
             """
         ]
     ) { context in
-        AnyView(
-            context.childView(context.childId())
-                .padding(12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(A2UIColor.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: A2UILayout.cornerRadius, style: .continuous))
-        )
+        AnyView(A2UICardView(context: context))
     }
 
     /// A horizontal or vertical separator.
@@ -221,14 +215,37 @@ enum LayoutComponents {
             """
         ]
     ) { context in
-        if context.option("axis", default: "horizontal") == "vertical" {
-            return AnyView(
-                Rectangle()
-                    .fill(Color.secondary.opacity(0.3))
-                    .frame(width: 1)
-                    .frame(maxHeight: .infinity)
-            )
+        AnyView(A2UIDividerView(isVertical: context.option("axis", default: "horizontal") == "vertical"))
+    }
+}
+
+private struct A2UICardView: View {
+    let context: ComponentRenderContext
+
+    @Environment(\.a2uiTheme) private var theme
+
+    var body: some View {
+        context.childView(context.childId())
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(theme.surface)
+            .clipShape(RoundedRectangle(cornerRadius: theme.cornerRadius, style: .continuous))
+    }
+}
+
+private struct A2UIDividerView: View {
+    let isVertical: Bool
+
+    @Environment(\.a2uiTheme) private var theme
+
+    var body: some View {
+        if isVertical {
+            Rectangle()
+                .fill(theme.border)
+                .frame(width: 1)
+                .frame(maxHeight: .infinity)
+        } else {
+            Divider().overlay(theme.border)
         }
-        return AnyView(Divider())
     }
 }
