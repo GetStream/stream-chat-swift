@@ -8,6 +8,7 @@ This repo hosts Stream's iOS Chat SDK in Swift. It provides:
 - A shared UI module (**StreamChatCommonUI**) with appearance tokens, localization, and formatters used by both UIKit and SwiftUI SDKs
 - SwiftUI AI components (**StreamChatAI**) for AI chat experiences: streaming markdown messages, reasoning, tool calls, charts, and a prompt composer. It depends on StreamCore (`StreamCore` and `StreamCoreUI`) but not on the other modules
 - An [A2UI](https://a2ui.org) 1.0 renderer (**StreamChatA2UI**): the protocol's messages, data model, expressions and functions, the basic catalog in SwiftUI, the A2A transport, and `A2UIRenderer`, which shows a reply's A2UI in StreamChatAI's generated UI. It depends on StreamChatAI, and no other SDK target depends on it
+- An in-app log viewer (**StreamChatLogsUI**) for demo apps and debug builds, built on `StreamLogsUI` from `stream-logs-ui-swift`
 
 Agents should prioritize backwards compatibility, API stability, and high test coverage when changing code. Avoid doing any source-breaking changes without adding deprecations.
 
@@ -27,10 +28,11 @@ Agents should prioritize backwards compatibility, API stability, and high test c
 
 ### Dependencies
 
-- **StreamCore** from [`stream-core-swift`](https://github.com/GetStream/stream-core-swift.git) (exact 0.6.2)
+- **StreamCore** and **StreamCoreUI** from [`stream-core-swift`](https://github.com/GetStream/stream-core-swift.git) (version requirement in `Package.swift`)
 - **swift-docc-plugin** (exact 1.0.0) — for documentation generation
 - StreamChatAI (with its vendored MarkdownUI) requires iOS 15, above the package's iOS 13 / macOS 11 (kept on purpose for existing customers). Xcode 27+ builds every package target for at least iOS 15; Xcode 26 and older build StreamChatAI for iOS 13 and fail. So StreamChatAI is not part of `Integration/SPM`, whose CI lane runs on Xcode 26.2
 - StreamChatAI must not depend on the Model Context Protocol SDK (it adds a large dependency tree); `AIClientToolDefinition` reads and writes the same JSON as MCP's `Tool`, with schemas as StreamCore's `RawJSON`
+- **StreamLogsUI** from [`stream-logs-ui-swift`](https://github.com/GetStream/stream-logs-ui-swift.git) — used only by StreamChatLogsUI
 - **Vendored libraries** (do not edit directly):
   - `Sources/StreamChatUI/StreamSwiftyGif/` — vendored SwiftyGif
   - `Sources/StreamChatUI/StreamDifferenceKit/` — vendored DifferenceKit for collection diffing
@@ -113,6 +115,7 @@ Sources/
     Core/                  # Message processor, expression evaluator, surface rendering
     Facade/                # Conversation, prompt builder, chat-reply helpers
     Model/                 # Wire messages, components, dynamic values, data model
+  StreamChatLogsUI/        # In-app log viewer for demo apps and debug builds
 
 DemoApp/                   # Primary demo app (use to validate UI changes)
 DemoAppPush/               # Push notification extension for the demo
@@ -364,8 +367,9 @@ Compatibility & distribution
 - The default integration branch is `develop`. Feature branches are merged into `develop`.
 - Name branches with a type prefix and a short kebab-case description, e.g. `add/dynamic-search-debounce`, `fix/empty-search-results`, `docs/channel-search`.
 - Prefer prefixes that match the change type: `add/`, `fix/`, `docs/`, etc. Do **not** use personal name prefixes (e.g. `nuno/...`) or ticket IDs (e.g. `ios-1932`, `IOS-1932`) in branch names.
-- Update `CHANGELOG.md` under the `# Upcoming` section when making client-facing changes (follow the Keep a Changelog format with `### Added`, `### Fixed`, `### Changed` subsections).
+- Update `CHANGELOG.md` under the `# Upcoming` section when making client-facing changes (follow the Keep a Changelog format with the file's existing `### ✅ Added`, `### 🐞 Fixed`, `### 🔄 Changed` subsections).
 - The changelog has separate subsections for **StreamChat**, **StreamChatUI**, **StreamChatCommonUI**, **StreamChatAI**, and **StreamChatA2UI**.
+- After a release, `# Upcoming` holds only an empty `### 🔄 Changed` placeholder. When adding the first entry, remove that empty placeholder, unless the new entry belongs under `### 🔄 Changed`.
 - Only update `CHANGELOG.md` **after the PR has been opened**, so the entry can include the PR link (e.g. `[#1234](https://github.com/GetStream/stream-chat-swift/pull/1234)`). Push the changelog update as a follow-up commit on the same branch.
 - Keep changelog entries as short and high-level as possible. Describe the user-visible outcome in one line and do not explain implementation details, file names, or internal APIs.
 
