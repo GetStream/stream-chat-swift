@@ -58,6 +58,7 @@
 		84114A983073E3E10035A01F /* StreamCore in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A963073E3E10035A01F /* StreamCore */; };
 		84114A993073E3E10035A01F /* StreamCoreUI in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A973073E3E10035A01F /* StreamCoreUI */; };
 		84114AA13073E3E10035A01F /* StreamChatAI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84114A743073E3E10035A01F /* StreamChatAI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A20A06013073E3E10035A01F /* StreamChatA2UI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A20A01743073E3E10035A01F /* StreamChatA2UI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84748F892AC37F40007E3285 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		84748F8D2AC37F40007E3285 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		84790E9F2AC1D346003AFF1C /* DemoShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 84790E952AC1D346003AFF1C /* DemoShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -237,6 +238,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 84114A733073E3E10035A01F;
 			remoteInfo = StreamChatAI;
+		};
+		A20A06023073E3E10035A01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A20A01733073E3E10035A01F;
+			remoteInfo = StreamChatA2UI;
 		};
 		84748F8B2AC37F40007E3285 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -516,6 +524,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				84114AA13073E3E10035A01F /* StreamChatAI.framework in Embed Frameworks */,
+				A20A06013073E3E10035A01F /* StreamChatA2UI.framework in Embed Frameworks */,
 				AD4C2CA72EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */,
 				C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */,
 				C121EC5E2746AC8C00023E4C /* StreamChat.framework in Embed Frameworks */,
@@ -1591,6 +1600,7 @@
 				84790E9E2AC1D346003AFF1C /* PBXTargetDependency */,
 				AD4C2CA92EF1C1A4000E4FC1 /* PBXTargetDependency */,
 				84114AA33073E3E10035A01F /* PBXTargetDependency */,
+				A20A06033073E3E10035A01F /* PBXTargetDependency */,
 				4F1C0DED2F7E00AA00C0FFEE /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
@@ -2642,6 +2652,11 @@
 			isa = PBXTargetDependency;
 			target = 84114A733073E3E10035A01F /* StreamChatAI */;
 			targetProxy = 84114AA23073E3E10035A01F /* PBXContainerItemProxy */;
+		};
+		A20A06033073E3E10035A01F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A20A01733073E3E10035A01F /* StreamChatA2UI */;
+			targetProxy = A20A06023073E3E10035A01F /* PBXContainerItemProxy */;
 		};
 		84748F8C2AC37F40007E3285 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
