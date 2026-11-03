@@ -211,6 +211,18 @@ struct RobustnessTests {
         #expect(ProcessInfo.processInfo.systemUptime - started < 2)
     }
 
+    @Test func referencesUsedManyTimesStopMaterializingAtTheNodeBudget() {
+        let row = Array(repeating: "{a: 1}", count: 1000).joined(separator: ", ")
+        let rows = Array(repeating: "c", count: 5000).joined(separator: ", ")
+        let program = "root = Stack([])\nc = [\(row)]\nb = [\(rows)]\n$data = b"
+
+        let result = ComponentLibrary.openUI.parser.parse(program)
+
+        let materialized = valueCount(result.stateDeclarations["$data"] ?? .null)
+        #expect(materialized > 10000)
+        #expect(materialized <= Materializer.maxNodes)
+    }
+
     @Test func nestedEachLoopsStopAtTheEvaluationBudget() {
         let items = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
         let template = (0..<6).reduce(#"TextContent("x")"#) { inner, level in #"@Each(\#(items), "v\#(level)", \#(inner))"# }
@@ -323,5 +335,30 @@ private func elementCount(_ value: OpenUIValue) -> Int {
         return count
     case .object, .null, .bool, .number, .string, .expression:
         return 0
+    }
+}
+
+private func valueCount(_ value: OpenUIValue) -> Int {
+    switch value {
+    case .array(let items):
+        var count = 1
+        for item in items {
+            count += valueCount(item)
+        }
+        return count
+    case .object(let object):
+        var count = 1
+        for item in object.values {
+            count += valueCount(item)
+        }
+        return count
+    case .element(let element):
+        var count = 1
+        for item in element.props.values {
+            count += valueCount(item)
+        }
+        return count
+    case .null, .bool, .number, .string, .expression:
+        return 1
     }
 }

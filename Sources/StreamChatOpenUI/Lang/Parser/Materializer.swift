@@ -12,7 +12,10 @@ enum Materializer {
     // each level, so a chain of references deeper than any real program reads as null instead
     // of running out of stack.
     static let maxDepth = 256
-    static let maxExpansions = 10000
+    // How many nodes one pass materializes, counting a reference's nodes again each place it is
+    // used. Declarations that each use the previous one many times multiply that, so past the
+    // budget nodes materialize to null.
+    static let maxNodes = 100_000
 
     /// Whether a prop value contains anything that needs runtime evaluation.
     static func containsDynamicValue(_ value: OpenUIValue) -> Bool {
@@ -189,12 +192,6 @@ enum Materializer {
             return mode == .expression ? .expression(node) : .value(.expression(node))
         }
 
-        // A reference can be expanded once for each place it's used, so declarations that each
-        // use the previous one twice double the work: past a budget, they expand to nothing.
-        context.expansions += 1
-        guard context.expansions <= maxExpansions else {
-            return mode == .expression ? .expression(.placeholder(name)) : .value(.null)
-        }
         context.visited.insert(name)
         let previousStatementId = context.currentStatementId
         context.currentStatementId = name
@@ -240,7 +237,8 @@ enum Materializer {
     static func materializeExpression(_ node: ASTNode, _ context: MaterializeContext, scopedRefs: Set<String> = []) -> ASTNode {
         context.depth += 1
         defer { context.depth -= 1 }
-        guard context.depth <= maxDepth else { return .null }
+        context.nodes += 1
+        guard context.depth <= maxDepth, context.nodes <= maxNodes else { return .null }
         switch node {
         case .ref(let name):
             if scopedRefs.contains(name) { return node }
@@ -314,7 +312,8 @@ enum Materializer {
     static func materializeValue(_ node: ASTNode, _ context: MaterializeContext) -> OpenUIValue {
         context.depth += 1
         defer { context.depth -= 1 }
-        guard context.depth <= maxDepth else { return .null }
+        context.nodes += 1
+        guard context.depth <= maxDepth, context.nodes <= maxNodes else { return .null }
         switch node {
         case .ref(let name):
             switch resolveRef(name, context, mode: .value) {
