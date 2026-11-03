@@ -52,12 +52,18 @@ final class A2UIEngine_Tests: XCTestCase {
     }
 
     final class CityTool: AIClientTool {
-        let definition = AIClientToolDefinition(name: "find_city")
+        let definition: AIClientToolDefinition
         var result = AIClientToolResult.completed(["city": "Ohrid"])
         private(set) var arguments: Data?
+        private(set) var runs = 0
+
+        init(isReadOnly: Bool = true) {
+            definition = AIClientToolDefinition(name: "find_city", annotations: .init(readOnlyHint: isReadOnly))
+        }
 
         func run(_ call: AIToolCallPart) async -> AIClientToolResult {
             arguments = call.arguments
+            runs += 1
             return result
         }
     }
@@ -230,6 +236,28 @@ final class A2UIEngine_Tests: XCTestCase {
         XCTAssertEqual((value as? JsonMap)?["city"] as? String, "Ohrid")
         let arguments = try XCTUnwrap(tool.arguments)
         XCTAssertEqual(try JSONDecoder().decode([String: RawJSON].self, from: arguments), ["id": .number(7)])
+    }
+
+    func test_aToolThatIsNotReadOnly_runsOnlyFromThePersonsGesture() async throws {
+        let tool = CityTool(isReadOnly: false)
+        host = AIUIHost(tools: [tool]) { A2UIRenderer() } send: { _ in }
+        engine = A2UIEngine(renderer: A2UIRenderer(), host: host)
+        _ = engine.view(for: document(createSurface), messageID: "m1")
+        let processor = try XCTUnwrap(engine.replies["m1"]).processor
+
+        do {
+            _ = try await agentFunctionValue("find_city", arguments: [:], in: processor)
+            XCTFail("A surface that renders doesn't run a tool that can change something")
+        } catch A2UIFunctionError.unavailable {}
+        XCTAssertEqual(tool.runs, 0)
+
+        for _ in 0..<2 {
+            _ = try processor.agentFunctionValue(for: "find_city", catalogId: nil, arguments: [:], surfaceId: "plan", userActivated: true)
+        }
+        for _ in 0..<400 where tool.runs < 2 {
+            try await Task.sleep(nanoseconds: 5_000_000)
+        }
+        XCTAssertEqual(tool.runs, 2, "each tap runs it again")
     }
 
     func test_aFunctionNoToolAnswers_failsAtOnce() async throws {

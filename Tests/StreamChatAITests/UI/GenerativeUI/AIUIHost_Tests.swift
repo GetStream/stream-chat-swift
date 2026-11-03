@@ -47,8 +47,8 @@ final class AIUIHost_Tests: XCTestCase {
             version.map { $0.hasPrefix(versions) } ?? true
         }
 
-        func capabilities(components: [any AIUIComponent]) -> [String: RawJSON] {
-            ["components": .number(Double(components.count))]
+        func capabilities(components: [any AIUIComponent], tools: [AIClientToolDefinition]) -> [String: RawJSON] {
+            ["components": .number(Double(components.count)), "tools": .array(tools.map { .string($0.name) })]
         }
 
         func makeEngine(host: any AIUIHosting) -> TestEngine {
@@ -59,9 +59,13 @@ final class AIUIHost_Tests: XCTestCase {
     }
 
     final class Tool: AIClientTool {
-        let definition = AIClientToolDefinition(name: "list_events")
+        let definition: AIClientToolDefinition
         var result = AIClientToolResult.completed(["events": ["Dinner"]])
         var calls: [AIToolCallPart] = []
+
+        init(name: String = "list_events", isReadOnly: Bool = true) {
+            definition = AIClientToolDefinition(name: name, annotations: .init(readOnlyHint: isReadOnly))
+        }
 
         func run(_ call: AIToolCallPart) async -> AIClientToolResult {
             calls.append(call)
@@ -350,6 +354,22 @@ final class AIUIHost_Tests: XCTestCase {
         } catch {}
     }
 
+    func testAToolThatIsNotReadOnly_runsOnlyWhenThePersonAsks() async throws {
+        let tool = Tool(name: "add_reminder", isReadOnly: false)
+        let host = AIUIHost(tools: [tool]) { TestRenderer() } send: { _ in }
+
+        do {
+            _ = try await host.runTool("add_reminder", arguments: [:], userInitiated: false)
+            XCTFail("a tool that can change something doesn't run by itself")
+        } catch {
+            XCTAssertTrue(error.localizedDescription.contains("add_reminder"))
+        }
+        XCTAssertTrue(tool.calls.isEmpty)
+
+        _ = try await host.runTool("add_reminder", arguments: [:], userInitiated: true)
+        XCTAssertEqual(tool.calls.count, 1)
+    }
+
     func testAComponentShowsOnlyForArgumentsThatFitItsParameters() throws {
         let host = AIUIHost(components: [placeCard]) { TestRenderer() } send: { _ in }
         let component = try XCTUnwrap(host.component(named: "place_card"))
@@ -387,13 +407,19 @@ final class AIUIHost_Tests: XCTestCase {
         XCTAssertNil(host.state(for: "m1"))
     }
 
-    func testCapabilitiesListEachFormatAndTheAppsComponents() throws {
-        let host = AIUIHost(components: [placeCard]) { TestRenderer() } send: { _ in }
+    func testCapabilitiesListEachFormatWithTheAppsToolsAndTheAppsComponents() throws {
+        let host = AIUIHost(components: [placeCard], tools: [Tool(name: "list_events"), Tool(name: "add_reminder")]) {
+            TestRenderer()
+        } send: { _ in }
 
         let capabilities = host.capabilities
 
         XCTAssertEqual(capabilities["v"], .number(1))
-        XCTAssertEqual(capabilities["renderers"], .array([.dictionary(["format": .string("openui"), "components": .number(1)])]))
+        XCTAssertEqual(capabilities["renderers"], .array([.dictionary([
+            "format": .string("openui"),
+            "components": .number(1),
+            "tools": .array([.string("add_reminder"), .string("list_events")])
+        ])]))
         let component = try XCTUnwrap(capabilities["components"]?.arrayValue?.first?.dictionaryValue)
         XCTAssertEqual(component["name"], .string("place_card"))
         XCTAssertEqual(component["parameters"]?.dictionaryValue?["required"], .array([.string("title")]))

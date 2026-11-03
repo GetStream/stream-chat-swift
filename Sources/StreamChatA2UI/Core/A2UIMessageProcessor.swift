@@ -540,44 +540,51 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     ///
     /// The first evaluation returns `nil` and sends a `callAgentFunction`
     /// message; once the response arrives the surface is re-rendered and the
-    /// cached value is returned.
+    /// cached value is returned. A call a person's gesture starts is sent every
+    /// time, as each tap asks again.
     func agentFunctionValue(
         for name: String,
         catalogId: String?,
         arguments: [String: any Sendable],
-        surfaceId: String
+        surfaceId: String,
+        userActivated: Bool = false
     ) throws -> (any Sendable)? {
         let key = RemoteCallKey(
             surfaceId: surfaceId,
             name: name,
             catalogId: catalogId,
-            arguments: Json.canonicalString(arguments)
+            arguments: Json.canonicalString(arguments),
+            userActivated: userActivated
         )
-        switch remoteCalls[key] {
-        case let .resolved(value):
-            return value
-        case .pending:
-            return nil
-        case let .failed(failure):
-            throw A2UIFunctionError.unavailable(name, reason: "\(failure.code): \(failure.message)")
-        case nil:
-            callIdCounter += 1
-            let callId = "\(name)-\(callIdCounter)-\(UUID().uuidString.prefix(8))"
-            remoteCalls[key] = .pending(callId)
-            remoteCallIds[callId] = key
-            scheduleTimeout(for: callId)
-            a2uiLogger.debug("Routing function '\(name)' to the agent as call '\(callId)'.")
-            send(
-                .callAgentFunction(
-                    CallAgentFunctionMessage(
-                        surfaceId: surfaceId,
-                        functionCallId: callId,
-                        callFunction: FunctionCall(name: name, catalogId: catalogId, arguments: arguments)
-                    )
+        if !userActivated {
+            switch remoteCalls[key] {
+            case let .resolved(value):
+                return value
+            case .pending:
+                return nil
+            case let .failed(failure):
+                throw A2UIFunctionError.unavailable(name, reason: "\(failure.code): \(failure.message)")
+            case nil:
+                break
+            }
+        }
+        callIdCounter += 1
+        let callId = "\(name)-\(callIdCounter)-\(UUID().uuidString.prefix(8))"
+        remoteCalls[key] = .pending(callId)
+        remoteCallIds[callId] = key
+        scheduleTimeout(for: callId)
+        a2uiLogger.debug("Routing function '\(name)' to the agent as call '\(callId)'.")
+        send(
+            .callAgentFunction(
+                CallAgentFunctionMessage(
+                    surfaceId: surfaceId,
+                    functionCallId: callId,
+                    callFunction: FunctionCall(name: name, catalogId: catalogId, arguments: arguments),
+                    userActivated: userActivated
                 )
             )
-            return nil
-        }
+        )
+        return nil
     }
 
     // MARK: - Events
@@ -610,6 +617,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         let name: String
         let catalogId: String?
         let arguments: String
+        let userActivated: Bool
     }
 
     private enum RemoteCallState {

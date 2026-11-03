@@ -92,13 +92,14 @@ public final class A2UIRenderer: AIUIRenderer {
     }
 
     /// The fence the agent writes its UI in, the catalog's id, and the instructions its model
-    /// needs to write UI with the app's components.
-    public func capabilities(components: [any AIUIComponent]) -> [String: RawJSON] {
+    /// needs to write UI with the app's components and call the app's tools.
+    public func capabilities(components: [any AIUIComponent], tools: [AIClientToolDefinition]) -> [String: RawJSON] {
         let appComponents = definitions(of: components) { _ in { _ in AnyView(EmptyView()) } }
         let prompt = A2UIInstructions(
             catalog: catalogs(adding: appComponents)[0],
             fence: fence,
-            preamble: instructions
+            preamble: instructions,
+            tools: tools.map { Self.line(for: $0) }
         )
         return [
             "fence": .string(fence),
@@ -144,6 +145,28 @@ public final class A2UIRenderer: AIUIRenderer {
             }
             return definition
         }
+    }
+
+    // A tool as the agent's instructions list it: its name, whether it only reads, what it does,
+    // and the schema of its arguments.
+    static func line(for tool: AIClientToolDefinition) -> String {
+        var line = "- `\(tool.name)`"
+        if tool.isReadOnly {
+            line += " (read-only)"
+        }
+        if let description = tool.description, !description.isEmpty {
+            line += ": \(description)"
+        }
+        if let schema = tool.inputSchema, let text = Self.text(of: schema) {
+            line += " Arguments: `\(text)`"
+        }
+        return line
+    }
+
+    private static func text(of json: RawJSON) -> String? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        return (try? encoder.encode(json)).map { String(decoding: $0, as: UTF8.self) }
     }
 
     /// The A2UI component for one of the app's, described the same way on every platform.

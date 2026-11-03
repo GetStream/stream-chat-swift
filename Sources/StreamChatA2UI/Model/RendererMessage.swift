@@ -156,12 +156,17 @@ struct CallAgentFunctionMessage {
     /// The function to execute on the agent.
     let callFunction: FunctionCall
 
+    /// Whether a person's gesture started the call, such as a button's action, rather than the
+    /// surface while it renders. It stays on this device.
+    let userActivated: Bool
+
     /// Creates an agent function call.
     /// The agent must echo `functionCallId` in its response.
-    init(surfaceId: String, functionCallId: String, callFunction: FunctionCall) {
+    init(surfaceId: String, functionCallId: String, callFunction: FunctionCall, userActivated: Bool = false) {
         self.surfaceId = surfaceId
         self.functionCallId = functionCallId
         self.callFunction = callFunction
+        self.userActivated = userActivated
     }
 
     /// Parses an agent function call payload.
