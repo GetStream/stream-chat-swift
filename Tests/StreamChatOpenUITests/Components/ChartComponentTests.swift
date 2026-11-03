@@ -81,6 +81,28 @@ struct ChartComponentTests {
         #expect(ChartData.slices(labels: ["a", "b", "c"], values: [1e308, .number(.infinity), 2]).map(\.value) == [1e15, 2])
     }
 
+    @Test func anEmptyPaletteFallsBackToTheDefaultColors() {
+        var colors = OpenUITheme.Colors()
+        let defaults = colors.chartPalette
+        colors.chartPalette = []
+
+        #expect(colors.chartColor(0) == defaults[0])
+        #expect(colors.chartColor(-1) == defaults[defaults.count - 1])
+        #expect(RenderingTests.render(OpenUIView(runtime: Self.pieRuntime()).environment(\.openUITheme, Self.theme(palette: []))) != nil)
+    }
+
+    static func pieRuntime() -> OpenUIRuntime {
+        let runtime = OpenUIRuntime(library: .openUIChat)
+        runtime.update(response: #"root = Card([PieChart(["a", "b"], [1, 2]), BarChart(["a"], [Series("s", [1])])])"#, isStreaming: false)
+        return runtime
+    }
+
+    static func theme(palette: [Color]) -> OpenUITheme {
+        var theme = OpenUITheme()
+        theme.colors.chartPalette = palette
+        return theme
+    }
+
     @Test func chartsWithManyCategoriesRender() {
         let labels = (1...12).map { "\"C\($0)\"" }.joined(separator: ", ")
         let values = (1...12).map(String.init).joined(separator: ", ")
