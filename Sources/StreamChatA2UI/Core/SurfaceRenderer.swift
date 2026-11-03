@@ -7,7 +7,7 @@ import SwiftUI
 
 /// Builds SwiftUI views for the components of one surface.
 ///
-/// The renderer walks the adjacency list of a ``UiDefinition`` starting at the
+/// The renderer walks the adjacency list of a ``SurfaceDefinition`` starting at the
 /// `root` component, resolves each component against the surface catalogs, and
 /// applies the shared behaviour every component needs: composition validation,
 /// accessibility attributes and action dispatch.
@@ -21,7 +21,7 @@ final class SurfaceRenderer {
     static let maxExpandedComponents = 5000
 
     /// The component tree being rendered.
-    let definition: UiDefinition
+    let definition: SurfaceDefinition
 
     /// The catalogs used to resolve component types.
     let catalogs: CatalogRegistry
@@ -36,7 +36,7 @@ final class SurfaceRenderer {
     /// Creates a renderer for one surface definition.
     /// A new renderer is created whenever the definition changes.
     init(
-        definition: UiDefinition,
+        definition: SurfaceDefinition,
         catalogs: CatalogRegistry,
         evaluator: ExpressionEvaluator,
         onAction: @escaping (RendererAction) -> Void,

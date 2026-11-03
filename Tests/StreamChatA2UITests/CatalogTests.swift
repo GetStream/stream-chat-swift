@@ -314,7 +314,7 @@ struct CompositionValidatorTests {
 
     @Test("A parent from an earlier message is checked against a child arriving now")
     func earlierParent() {
-        let surface = UiDefinition(surfaceId: "s", catalogId: "c").merging([
+        let surface = SurfaceDefinition(surfaceId: "s", catalogId: "c").merging([
             Component(id: "root", type: "Text", properties: ["children": ["item"]]),
             Component(id: "item", type: "MenuItem")
         ])
@@ -335,7 +335,7 @@ struct CompositionValidatorTests {
     }
 
     private func compositionErrors(_ components: [Component]) -> [RendererError] {
-        let surface = UiDefinition(surfaceId: "s", catalogId: "c").merging(components)
+        let surface = SurfaceDefinition(surfaceId: "s", catalogId: "c").merging(components)
         return CompositionValidator.errors(in: surface, batch: components, catalogs: registry)
     }
 }

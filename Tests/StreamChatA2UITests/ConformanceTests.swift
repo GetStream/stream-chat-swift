@@ -38,7 +38,7 @@ private final class ConformanceHarness {
         processor.handle(result.messages)
     }
 
-    var definition: UiDefinition? {
+    var definition: SurfaceDefinition? {
         processor.surfaceViewModel(surfaceId).definition
     }
 

@@ -30,7 +30,7 @@ private func render(
 ) -> RenderResult {
     let result = RenderResult()
     let catalog = TestCatalog.make(recorder: result.recorder)
-    var definition = UiDefinition(surfaceId: "surface", catalogId: catalogId)
+    var definition = SurfaceDefinition(surfaceId: "surface", catalogId: catalogId)
     definition.merge(components)
 
     result.model = DataModel(data)

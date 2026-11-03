@@ -26,7 +26,7 @@ enum CompositionValidator {
     }
 
     // Only the root is checked against `Surface`: a component nothing holds has no parent yet.
-    static func errors(in surface: UiDefinition, batch: [Component], catalogs: CatalogRegistry) -> [RendererError] {
+    static func errors(in surface: SurfaceDefinition, batch: [Component], catalogs: CatalogRegistry) -> [RendererError] {
         var batchIndex: [String: Int] = [:]
         for (index, component) in batch.enumerated() where batchIndex[component.id] == nil {
             batchIndex[component.id] = index
