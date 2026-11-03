@@ -32,6 +32,32 @@ struct RobustnessTests {
         #expect(runtime.root?.typeName == "Stack")
     }
 
+    @Test func longOperatorChainsDoNotOverflowTheStack() {
+        let terms = 20000
+        let nested = (0..<200).reduce("1") { inner, _ in "(" + inner + String(repeating: " + 1", count: 200) + ")" }
+        let chains = [
+            Array(repeating: "1", count: terms).joined(separator: " + "),
+            "a" + String(repeating: ".b", count: terms),
+            "a" + String(repeating: "[0]", count: terms),
+            nested
+        ]
+
+        for chain in chains {
+            let result = ComponentLibrary.openUI.parser.parse("root = Stack([TextContent(\"x\")])\nv = \(chain)")
+
+            #expect(result.root?.typeName == "Stack")
+            #expect(treeHeight(ExpressionParser.parse(Lexer.tokenize(chain))) <= 2 * ExpressionParser.maxDepth)
+        }
+    }
+
+    @Test func shortOperatorChainsAreKept() {
+        let chain = Array(repeating: "1", count: 200).joined(separator: " + ")
+        let runtime = OpenUIRuntime(library: .openUI)
+        runtime.update(response: "root = Stack([TextContent(\"\" + (\(chain)))])", isStreaming: false)
+
+        #expect(runtime.root?.props["children"]?.arrayValue?.first?.elementValue?.props["text"] == "200")
+    }
+
     @Test func nestingWithinTheLimitsIsKept() {
         let program = "root = Stack([" + String(repeating: "Stack([", count: 50) + #"TextContent("deep")"# + String(repeating: "])", count: 50) + "])"
 
@@ -219,4 +245,25 @@ struct RobustnessTests {
         #expect(links == ["https://getstream.io", "mailto:a@b.co"])
         #expect(String(InlineMarkdown.attributed(text).characters) == "web call app mail")
     }
+}
+
+private func treeHeight(_ node: ASTNode) -> Int {
+    let children: [ASTNode]
+    switch node {
+    case .comp(_, let args, let mappedProps, _): children = args + (mappedProps ?? []).map(\.value)
+    case .arr(let elements): children = elements
+    case .obj(let entries): children = entries.map(\.value)
+    case .binary(_, let left, let right): children = [left, right]
+    case .unary(_, let operand): children = [operand]
+    case .ternary(let condition, let then, let otherwise): children = [condition, then, otherwise]
+    case .member(let object, _): children = [object]
+    case .index(let object, let index): children = [object, index]
+    case .assign(_, let value): children = [value]
+    case .str, .num, .bool, .null, .ref, .placeholder, .stateRef, .runtimeRef: children = []
+    }
+    var height = 0
+    for child in children {
+        height = max(height, treeHeight(child))
+    }
+    return 1 + height
 }
