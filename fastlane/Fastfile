@@ -10,7 +10,7 @@ import 'Allurefile'
 
 xcode_version = ENV['XCODE_VERSION'] || '26.2'
 xcode_project = 'StreamChat.xcodeproj'
-sdk_names = ['StreamChat', 'StreamChatUI', 'StreamChatCommonUI', 'StreamChatAI']
+sdk_names = ['StreamChat', 'StreamChatUI', 'StreamChatCommonUI', 'StreamChatAI', 'StreamChatA2UI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
@@ -743,6 +743,31 @@ lane :test_ai do |options|
   )
 end
 
+desc 'Runs A2UI tests in Debug config'
+lane :test_a2ui do |options|
+  next unless is_check_required(sources: @impact[:a2ui][:sources], force_check: @force_check, required_checks: @impact[:a2ui][:checks])
+
+  scheme = 'StreamChatA2UI'
+  update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
+
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: scheme,
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      result_bundle: true,
+      devices: options[:device],
+      xcodebuild_formatter: xcodebuild_formatter
+    },
+    retries: options[:cron] ? 3 : 2
+  )
+end
+
 private_lane :match_macos do
   %w[development appstore].each do |type|
     match(
@@ -903,6 +928,10 @@ lane :impact_analysis do
       sources: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', 'Package.swift'],
       checks: ['Test AI (Debug)', 'Build SDKs (Old Xcode)']
     },
+    a2ui: {
+      sources: ['Sources/StreamChatAI', 'Sources/StreamChatA2UI', 'Tests/StreamChatA2UITests', 'Package.swift'],
+      checks: ['Test A2UI (Debug)', 'Build SDKs (Old Xcode)']
+    },
     sample_apps: {
       sources: ['Sources', 'Examples', 'DemoApp', 'Package.swift'],
       checks: ['Build Demo App + Example Apps']
@@ -920,7 +949,7 @@ lane :impact_analysis do
       checks: ['Automated Code Review']
     },
     size: {
-      sources: ['Sources'],
+      sources: ['Sources', 'StreamChat.xcodeproj'],
       checks: ['Size Metrics']
     },
     xcmetrics: {
@@ -1045,17 +1074,20 @@ private_lane :frameworks_sizes do
   # StreamCore and StreamCoreUI are linked into the framework, but an app with StreamChat already has them
   shared_core_size = linked_objects_size(linkmap: '../linkmaps/StreamChatAI-arm64-LinkMap.txt', objects: ['StreamCore.o', 'StreamCoreUI.o'])
   stream_chat_ai_size = File.size("#{frameworks_path}/StreamChatAI.framework/StreamChatAI") - shared_core_size
+  stream_chat_a2ui_size = File.size("#{frameworks_path}/StreamChatA2UI.framework/StreamChatA2UI")
 
   stream_chat_size_kb = stream_chat_size / 1024.0
   stream_chat_ui_size_kb = stream_chat_ui_size / 1024.0
   stream_chat_common_ui_size_kb = (stream_chat_common_ui_size + assets_thinned_size) / 1024.0
   stream_chat_ai_size_kb = stream_chat_ai_size / 1024.0
+  stream_chat_a2ui_size_kb = stream_chat_a2ui_size / 1024.0
 
   {
     StreamChat: stream_chat_size_kb.round(0),
     StreamChatUI: stream_chat_ui_size_kb.round(0),
     StreamChatCommonUI: stream_chat_common_ui_size_kb.round(0),
-    StreamChatAI: stream_chat_ai_size_kb.round(0)
+    StreamChatAI: stream_chat_ai_size_kb.round(0),
+    StreamChatA2UI: stream_chat_a2ui_size_kb.round(0)
   }
 end
 
