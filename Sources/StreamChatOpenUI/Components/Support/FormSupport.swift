@@ -193,14 +193,30 @@ enum SliderValues {
         return lower...upper
     }
 
-    // A step SwiftUI's Slider takes: finite, positive and no larger than the range, which it
-    // otherwise stops on with "max stride must be positive".
-    static func step(_ step: Double?, discrete: Bool, in bounds: ClosedRange<Double>) -> Double? {
+    static let maxSteps = 1000.0
+
+    // The step values move by: the model's, or 1 for a discrete slider. It is finite, positive
+    // and no larger than the range, which SwiftUI's Slider otherwise stops on with "max stride
+    // must be positive".
+    static func requestedStep(_ step: Double?, discrete: Bool, in bounds: ClosedRange<Double>) -> Double? {
         let span = bounds.upperBound - bounds.lowerBound
         if let step, step.isFinite, step > 0 {
             return step <= span ? step : nil
         }
         return discrete && span >= 1 ? 1 : nil
+    }
+
+    // The step SwiftUI's Slider gets: none when the range holds more than `maxSteps` of them, as
+    // AppKit's tick marks crash on `max: 1e15` with a step of 1 and `step: 1e-8` hangs. Values
+    // still snap to the requested step.
+    static func step(_ step: Double?, discrete: Bool, in bounds: ClosedRange<Double>) -> Double? {
+        guard let requested = requestedStep(step, discrete: discrete, in: bounds) else { return nil }
+        return (bounds.upperBound - bounds.lowerBound) / requested <= maxSteps ? requested : nil
+    }
+
+    static func snapped(_ value: Double, to step: Double, in bounds: ClosedRange<Double>) -> Double {
+        let steps = ((value - bounds.lowerBound) / step).rounded()
+        return Swift.min(Swift.max(bounds.lowerBound + steps * step, bounds.lowerBound), bounds.upperBound)
     }
 
     static func values(_ value: OpenUIValue?, in bounds: ClosedRange<Double>) -> [Double] {

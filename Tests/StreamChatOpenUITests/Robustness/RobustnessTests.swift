@@ -153,6 +153,21 @@ struct RobustnessTests {
         #expect(SliderValues.bounds(minimum: 1e16, maximum: 0) == 1e15...(1e15 + 1))
     }
 
+    @Test func sliderStepsTooSmallForTheRangeAreLeftToSnapping() {
+        let bounds = SliderValues.bounds(minimum: 0, maximum: 100)
+
+        #expect(SliderValues.step(nil, discrete: true, in: SliderValues.bounds(minimum: 0, maximum: 1e15)) == nil)
+        #expect(SliderValues.step(1e-8, discrete: false, in: bounds) == nil)
+        #expect(SliderValues.requestedStep(1e-8, discrete: false, in: bounds) == 1e-8)
+        #expect(SliderValues.step(0.5, discrete: false, in: bounds) == 0.5)
+        #expect(SliderValues.step(nil, discrete: true, in: 0...1000) == 1)
+        #expect(SliderValues.step(nil, discrete: true, in: 0...5000) == nil)
+        #expect(SliderValues.requestedStep(nil, discrete: true, in: 0...5000) == 1)
+        #expect(SliderValues.snapped(2345.678, to: 1, in: 0...5000) == 2346)
+        #expect(SliderValues.snapped(4999.9, to: 7, in: 0...5000) == 4998)
+        #expect(SliderValues.snapped(-3, to: 7, in: 0...5000) == 0)
+    }
+
     @Test func aGridGapThatIsNegativeOrNotFiniteIsNoGap() {
         #expect(ResponsiveGridLayout(spacing: -150).spacing == 0)
         #expect(ResponsiveGridLayout(spacing: .infinity).spacing == 0)

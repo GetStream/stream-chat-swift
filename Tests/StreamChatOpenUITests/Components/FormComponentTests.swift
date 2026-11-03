@@ -84,6 +84,22 @@ struct FormComponentTests {
         #expect(SliderValues.setting([200], index: 1, to: 900) == [200])
     }
 
+    @Test func slidersWithTooManyStepsShowInAWindow() async {
+        let runtime = OpenUIRuntime(library: .openUIChat)
+        runtime.update(response: """
+        root = Card([form])
+        form = Form("filters", Buttons([Button("Apply")]), [wide, fine])
+        wide = FormControl("Wide", Slider("wide", "discrete", 0, 1e15))
+        fine = FormControl("Fine", Slider("fine", "continuous", 0, 100, 1e-8))
+        """, isStreaming: false)
+        let host = HostedView(OpenUIView(runtime: runtime))
+        defer { host.close() }
+
+        await host.settle()
+
+        #expect(runtime.root != nil)
+    }
+
     @Test func sliderStoresRoundedNumbers() {
         #expect(SliderValues.stored([200.12345, 799.9999]) == [200.123, 800])
         #expect(SliderValues.stored([5]) == [5])
