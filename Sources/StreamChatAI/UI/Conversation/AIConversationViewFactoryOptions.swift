@@ -13,7 +13,7 @@ public final class AIUserMessageViewOptions {
     public let text: String
     /// What they sent with it, such as images and files.
     public let attachments: [AIMessageAttachment]
-    /// Puts the message back in the composer to edit, when the conversation shows an ``AIChat``
+    /// Puts the message back in the composer to edit, when the conversation shows an ``AIConversation``
     /// and the person can edit it: it is their latest, and the agent isn't answering.
     public let onEdit: (@MainActor () -> Void)?
 
@@ -75,8 +75,8 @@ public final class AIReplyActionsViewOptions {
     /// Whether it is the latest reply in the conversation, such as the only one an app offers to
     /// regenerate.
     public let isLatestReply: Bool
-    /// What the conversation's ``AIChat`` offers to do with the reply: rate it, and regenerate
-    /// it while it is the latest. Nil when the conversation doesn't show a chat.
+    /// What the conversation's ``AIConversation`` offers to do with the reply: rate it, and regenerate
+    /// it while it is the latest. Nil when the conversation doesn't show one.
     public let actions: AIReplyActions?
 
     public init(message: any AIMessage, text: String, isLatestReply: Bool, actions: AIReplyActions? = nil) {

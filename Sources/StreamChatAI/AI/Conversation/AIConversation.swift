@@ -9,21 +9,21 @@ import StreamCore
 /// The state behind an AI conversation, and what the person does in it.
 ///
 /// It holds the conversation's messages, where the latest exchange with the agent is and why it
-/// failed, and it sends what the person asks through its ``AIChatTransport``. Give it to
+/// failed, and it sends what the person asks through its ``AIConversationTransport``. Give it to
 /// ``AIConversationView`` and ``AIComposerView``, which show it and act on it: sending, stopping,
 /// regenerating and rating replies, and editing the person's latest message.
 ///
 /// ```swift
-/// @StateObject private var chat = AIChat(transport: AgentTransport(channel: channel))
+/// @StateObject private var conversation = AIConversation(transport: AgentTransport(channel: channel))
 ///
 /// var body: some View {
-///     AIConversationView(chat: chat) {
-///         if chat.status == .error {
-///             Button("Try again") { chat.retry() }
+///     AIConversationView(conversation: conversation) {
+///         if conversation.status == .error {
+///             Button("Try again") { conversation.retry() }
 ///         }
 ///     }
 ///     .safeAreaInset(edge: .bottom) {
-///         AIComposerView(chat: chat)
+///         AIComposerView(conversation: conversation)
 ///     }
 /// }
 /// ```
@@ -32,13 +32,13 @@ import StreamCore
 /// a reply is written again, or a message the person edited is answered again, the messages it
 /// replaces are left out of ``messages`` until the new reply starts.
 @MainActor
-public final class AIChat<Message: AIMessage>: ObservableObject {
+public final class AIConversation<Message: AIMessage>: ObservableObject {
     /// The conversation as it shows, oldest message first.
     @Published public private(set) var messages: [Message] = []
     /// The message the person sent that is not in the conversation yet, until its reply starts.
     @Published public private(set) var pendingMessage: AIPendingMessage?
     /// Where the latest exchange with the agent is.
-    @Published public private(set) var status: AIChatStatus = .ready
+    @Published public private(set) var status: AIConversationStatus = .ready
     /// Why the latest request failed, or what the agent said when it couldn't answer, as an
     /// ``AIAgentError``. It stays until the next request.
     @Published public private(set) var error: (any Error)?
@@ -54,18 +54,18 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
     @Published public private(set) var ratings: [Message.ID: AIMessageRating] = [:]
 
     /// What the person is writing: ``AIComposerView`` shows it, and editing a message fills it.
-    public let composer: AIComposerViewModel
+    public let composerViewModel: AIComposerViewModel
     /// Who answers tool calls' questions and sign-ins on this device, which the conversation
     /// asks them.
     public let approver: AIToolApprover?
 
-    private let transport: Transport
+    private let transport: TransportCalls
     // The messages as the transport last told them, including those left out of `messages`.
     private var conversation: [Message] = []
     // The request made, until its reply starts.
-    private var exchange: AIChatExchange<Message>?
+    private var exchange: AIConversationExchange<Message>?
     // The request that failed, which `retry()` sends again.
-    private var failedRequest: AIChatRequest<Message>?
+    private var failedRequest: AIConversationRequest<Message>?
     // Counts the requests and stops, so the outcome of one that was overtaken is ignored.
     private var generation = 0
     // Replies stopped while they were written, which are finished whatever they say.
@@ -75,37 +75,37 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
     private var ignoresActivity = false
     private var isLoadingOlderMessages = false
 
-    // Lets the conversation view follow the chat, whichever view holds it.
+    // Lets the conversation view follow the conversation, whichever view holds it.
     lazy var changes = AIObservedChanges(objectWillChange)
 
-    // The transport's requirements, so the chat's type names only its messages.
-    private struct Transport {
-        let send: @MainActor (AIChatRequest<Message>) async throws -> Void
+    // The transport's requirements, so the conversation's type names only its messages.
+    private struct TransportCalls {
+        let send: @MainActor (AIConversationRequest<Message>) async throws -> Void
         let stop: @MainActor () async throws -> Void
         let loadOlderMessages: @MainActor () async throws -> Void
         let rate: @MainActor (Message, AIMessageRating?) async throws -> Void
     }
 
     /// - Parameters:
-    ///   - transport: How the chat reaches the agent and follows the conversation. The chat keeps
+    ///   - transport: How the conversation reaches the agent and follows the conversation. The conversation keeps
     ///     it, and connects to it straight away.
-    ///   - composer: What the person writes, such as one with your chat options. A new one by
+    ///   - composerViewModel: What the person writes, such as one with your chat options. A new one by
     ///     default.
     ///   - approver: Who answers tool calls' questions and sign-ins on this device.
-    public init<ChatTransport: AIChatTransport>(
-        transport: ChatTransport,
-        composer: AIComposerViewModel? = nil,
+    public init<Transport: AIConversationTransport>(
+        transport: Transport,
+        composerViewModel: AIComposerViewModel? = nil,
         approver: AIToolApprover? = nil
-    ) where ChatTransport.Message == Message {
-        self.transport = Transport(
+    ) where Transport.Message == Message {
+        self.transport = TransportCalls(
             send: { try await transport.send($0) },
             stop: { try await transport.stop() },
             loadOlderMessages: { try await transport.loadOlderMessages() },
             rate: { try await transport.rate($0, $1) }
         )
-        self.composer = composer ?? AIComposerViewModel()
+        self.composerViewModel = composerViewModel ?? AIComposerViewModel()
         self.approver = approver
-        transport.connect(AIChatFeed(chat: self))
+        transport.connect(AIConversationFeed(conversation: self))
     }
 
     // MARK: - What the person does
@@ -121,7 +121,7 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
         let edited = editingMessage
         editingMessage = nil
         start(
-            AIChatRequest(
+            AIConversationRequest(
                 kind: edited == nil ? .message : .edit,
                 text: text,
                 attachments: attachments,
@@ -163,7 +163,7 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
     public func regenerate(_ reply: Message) {
         guard let index = index(of: reply), conversation[index].role != .user else { return }
         let prompt = conversation[..<index].last { $0.role == .user }
-        start(AIChatRequest(kind: .regenerate, text: prompt?.text ?? "", message: conversation[index]))
+        start(AIConversationRequest(kind: .regenerate, text: prompt?.text ?? "", message: conversation[index]))
     }
 
     /// Puts a message of the person's in the composer to edit. The next message they send
@@ -171,15 +171,15 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
     public func edit(_ message: Message) {
         guard message.role == .user else { return }
         editingMessage = message
-        composer.text = message.text
-        composer.isTextFieldFocused = true
+        composerViewModel.text = message.text
+        composerViewModel.isTextFieldFocused = true
     }
 
     /// Stops editing a message, and empties the composer.
     public func cancelEditing() {
         guard editingMessage != nil else { return }
         editingMessage = nil
-        composer.text = ""
+        composerViewModel.text = ""
     }
 
     /// Tries again after ``error``: sends the request that failed again, or, when the agent
@@ -190,7 +190,7 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
             start(request)
         } else if error is AIAgentError, let last = conversation.last {
             if last.role == .user {
-                start(AIChatRequest(kind: .regenerate, text: last.text))
+                start(AIConversationRequest(kind: .regenerate, text: last.text))
             } else {
                 regenerate(last)
             }
@@ -302,7 +302,7 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
 
     // MARK: - Private
 
-    private func start(_ request: AIChatRequest<Message>) {
+    private func start(_ request: AIConversationRequest<Message>) {
         generation += 1
         let id = generation
         error = nil
@@ -310,7 +310,7 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
         activity = nil
         ignoresActivity = false
         stopped = []
-        exchange = AIChatExchange(id: id, request: request, conversation: conversation)
+        exchange = AIConversationExchange(id: id, request: request, conversation: conversation)
         refresh()
         let send = transport.send
         Task { [weak self] in
@@ -322,7 +322,7 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
         }
     }
 
-    private func requestFailed(_ id: Int, request: AIChatRequest<Message>, error: any Error) {
+    private func requestFailed(_ id: Int, request: AIConversationRequest<Message>, error: any Error) {
         guard id == generation else { return }
         exchange = nil
         if !(error is CancellationError) {
@@ -361,12 +361,12 @@ public final class AIChat<Message: AIMessage>: ObservableObject {
         if self.status != status {
             self.status = status
         }
-        if composer.isGenerating != status.isAnswering {
-            composer.isGenerating = status.isAnswering
+        if composerViewModel.isGenerating != status.isAnswering {
+            composerViewModel.isGenerating = status.isAnswering
         }
     }
 
-    private var currentStatus: AIChatStatus {
+    private var currentStatus: AIConversationStatus {
         if exchange != nil {
             return .submitted
         }

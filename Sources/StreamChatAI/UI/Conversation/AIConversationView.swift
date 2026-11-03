@@ -34,11 +34,11 @@ import SwiftUI
 /// )
 /// ```
 ///
-/// Or give it an ``AIChat``, which holds the conversation and acts on what the person does, and
-/// it follows the chat as it changes:
+/// Or give it an ``AIConversation``, which holds the conversation and acts on what the person does, and
+/// it follows the conversation as it changes:
 ///
 /// ```swift
-/// AIConversationView(chat: chat)
+/// AIConversationView(conversation: conversation)
 /// ```
 ///
 /// Or show messages of any kind your own way:
@@ -68,7 +68,7 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
     @State private var positions = AITurnPositions()
     @State private var clock = AIThinkingClock()
     @State private var tracker = AIPendingMessageTracker()
-    // The object the rows come from, such as an AIChat, whose changes show at once.
+    // The object the rows come from, such as an AIConversation, whose changes show at once.
     @ObservedObject private var changes: AIObservedChanges
 
     @Injected(\.aiAppearance.tokens.layout) private var layout

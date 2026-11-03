@@ -17,6 +17,6 @@ public struct AIAgentError: LocalizedError, Hashable, Sendable {
         if let message, !message.isEmpty {
             return message
         }
-        return L10n.Chat.agentError
+        return L10n.Conversation.agentError
     }
 }

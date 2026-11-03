@@ -4,9 +4,9 @@
 
 import Foundation
 
-/// Where an ``AIChat``'s latest exchange with the agent is. It is an open set: compare against
+/// Where an ``AIConversation``'s latest exchange with the agent is. It is an open set: compare against
 /// the statuses you know.
-public struct AIChatStatus: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
+public struct AIConversationStatus: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
     public let rawValue: String
 
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -14,14 +14,14 @@ public struct AIChatStatus: RawRepresentable, Hashable, Sendable, ExpressibleByS
     public var description: String { rawValue }
 
     /// Nothing is on its way: the agent answered, or the person stopped it.
-    public static let ready: AIChatStatus = "ready"
+    public static let ready: AIConversationStatus = "ready"
     /// The person's request is on its way, or the agent is working on it and its reply shows
     /// nothing yet.
-    public static let submitted: AIChatStatus = "submitted"
+    public static let submitted: AIConversationStatus = "submitted"
     /// The agent is writing its reply.
-    public static let streaming: AIChatStatus = "streaming"
+    public static let streaming: AIConversationStatus = "streaming"
     /// The latest request failed, or the agent said it couldn't answer.
-    public static let error: AIChatStatus = "error"
+    public static let error: AIConversationStatus = "error"
 
     /// Whether the agent is answering: the request is submitted, or its reply streaming.
     public var isAnswering: Bool {

@@ -33,11 +33,9 @@ enum L10n {
         static var scrollToLatest: String {
             localized("conversation.button.scroll_to_latest", comment: "Accessibility label of the button that scrolls to the end of the conversation.")
         }
-    }
 
-    enum Chat {
         static var agentError: String {
-            localized("chat.error.agent", comment: "Shown when the agent said it couldn't answer, without saying why.")
+            localized("conversation.error.agent", comment: "Shown when the agent said it couldn't answer, without saying why.")
         }
     }
 

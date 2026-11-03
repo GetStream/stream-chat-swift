@@ -4,10 +4,10 @@
 
 import Foundation
 
-/// What the person asks of the agent, which an ``AIChat`` hands to its ``AIChatTransport``.
-public struct AIChatRequest<Message: AIMessage> {
+/// What the person asks of the agent, which an ``AIConversation`` hands to its ``AIConversationTransport``.
+public struct AIConversationRequest<Message: AIMessage> {
     /// What the person asks for.
-    public typealias Kind = AIChatRequestKind
+    public typealias Kind = AIConversationRequestKind
 
     /// What the person asks for.
     public var kind: Kind
@@ -40,9 +40,9 @@ public struct AIChatRequest<Message: AIMessage> {
     }
 }
 
-/// What the person asks for in an ``AIChatRequest``. It is an open set: compare against the
+/// What the person asks for in an ``AIConversationRequest``. It is an open set: compare against the
 /// kinds you know, and treat the rest as a new message.
-public struct AIChatRequestKind: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
+public struct AIConversationRequestKind: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
     public let rawValue: String
 
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -50,12 +50,12 @@ public struct AIChatRequestKind: RawRepresentable, Hashable, Sendable, Expressib
     public var description: String { rawValue }
 
     /// A new message from the person.
-    public static let message: AIChatRequestKind = "message"
+    public static let message: AIConversationRequestKind = "message"
     /// A new reply in place of the request's `message`, which is a reply, and of those after
     /// it. Without `message`, a reply to the latest message, which has none, such as after the
     /// agent couldn't answer it.
-    public static let regenerate: AIChatRequestKind = "regenerate"
+    public static let regenerate: AIConversationRequestKind = "regenerate"
     /// The person changed the request's `message`, one of theirs, to say its `text`: it is
     /// answered again, in place of the replies after it.
-    public static let edit: AIChatRequestKind = "edit"
+    public static let edit: AIConversationRequestKind = "edit"
 }

@@ -87,7 +87,7 @@ Sources/
   StreamChatAI/            # SwiftUI AI components (depends only on StreamCore)
     AI/                    # Non-UI code: what agents send, and how the device answers
       Charts/              # Chart specs parsed from code blocks (Chart.js, ECharts, Vega-Lite, …)
-      Chat/                # AIChat: a conversation's state, and the transport that reaches its agent
+      Conversation/        # AIConversation: a conversation's state, and the transport that reaches its agent
       LocalModel/          # On-device model fallback
       MessageParts/        # A reply's ai_reasoning / ai_tool_call steps
       ToolCalls/           # Client tools: definitions, registration, runner, results, approvals

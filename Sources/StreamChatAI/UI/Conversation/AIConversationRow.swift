@@ -12,8 +12,8 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
     let entry: AIConversationEntry<Message>
     let factory: Factory
     let approver: AIToolApprover?
-    // The chat the conversation shows, which offers what the person can do with the message.
-    let chat: AIChat<Message>?
+    // The conversation the conversation shows, which offers what the person can do with the message.
+    let conversation: AIConversation<Message>?
     let generated: Generated?
 
     // Whether the reply's answer is still being written out, which its actions wait for so they
@@ -31,7 +31,7 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
                         message: message,
                         text: message.text,
                         attachments: entry.sentAttachments.isEmpty ? message.attachments : entry.sentAttachments,
-                        onEdit: chat?.editAction(for: message)
+                        onEdit: conversation?.editAction(for: message)
                     )
                 )
             } else {
@@ -56,7 +56,7 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
                                 message: message,
                                 text: message.text,
                                 isLatestReply: entry.isLatestReply,
-                                actions: chat?.replyActions(for: message, isLatestReply: entry.isLatestReply)
+                                actions: conversation?.replyActions(for: message, isLatestReply: entry.isLatestReply)
                             )
                         )
                         .transition(.opacity)

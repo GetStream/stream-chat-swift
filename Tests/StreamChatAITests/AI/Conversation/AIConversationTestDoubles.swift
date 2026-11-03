@@ -23,12 +23,12 @@ struct ChatMessage: AIMessage, Equatable {
 
 struct TransportError: Error, Equatable {}
 
-// Records what the chat asks of it, and lets a test say what the conversation holds and
+// Records what the conversation asks of it, and lets a test say what the conversation holds and
 // when each request finishes.
 @MainActor
-final class ChatTransport: AIChatTransport {
-    private(set) var feed: AIChatFeed<ChatMessage>?
-    private(set) var requests: [AIChatRequest<ChatMessage>] = []
+final class ConversationTransport: AIConversationTransport {
+    private(set) var feed: AIConversationFeed<ChatMessage>?
+    private(set) var requests: [AIConversationRequest<ChatMessage>] = []
     private(set) var stops = 0
     private(set) var loads = 0
     private(set) var ratings: [(id: String, rating: AIMessageRating?)] = []
@@ -48,16 +48,16 @@ final class ChatTransport: AIChatTransport {
         initialMessages = messages
     }
 
-    var lastRequest: AIChatRequest<ChatMessage>? {
+    var lastRequest: AIConversationRequest<ChatMessage>? {
         requests.last
     }
 
-    func connect(_ feed: AIChatFeed<ChatMessage>) {
+    func connect(_ feed: AIConversationFeed<ChatMessage>) {
         self.feed = feed
         feed.update(messages: initialMessages)
     }
 
-    func send(_ request: AIChatRequest<ChatMessage>) async throws {
+    func send(_ request: AIConversationRequest<ChatMessage>) async throws {
         requests.append(request)
         if holdsSends {
             try await withCheckedThrowingContinuation { heldSends.append($0) }
@@ -116,13 +116,13 @@ final class ChatTransport: AIChatTransport {
 // A transport that only holds the conversation, which relies on what the protocol does by
 // default.
 @MainActor
-final class MinimalTransport: AIChatTransport {
-    func connect(_ feed: AIChatFeed<ChatMessage>) { /* Nothing to follow. */ }
-    func send(_ request: AIChatRequest<ChatMessage>) async throws { /* Nowhere to send. */ }
+final class MinimalTransport: AIConversationTransport {
+    func connect(_ feed: AIConversationFeed<ChatMessage>) { /* Nothing to follow. */ }
+    func send(_ request: AIConversationRequest<ChatMessage>) async throws { /* Nowhere to send. */ }
     func stop() async throws { /* Nothing to stop. */ }
 }
 
-// Lets the tasks the chat starts run.
+// Lets the tasks the conversation starts run.
 @MainActor
 func settle() async {
     for _ in 0..<20 {

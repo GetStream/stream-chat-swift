@@ -30,7 +30,7 @@ public struct AIUIConversationEntryView<
     }
 
     public var body: some View {
-        AIConversationRow(entry: entry, factory: factory, approver: approver, chat: nil, generated: generated)
+        AIConversationRow(entry: entry, factory: factory, approver: approver, conversation: nil, generated: generated)
     }
 
     // The UI the agent generated for the reply, when one of the host's renderers shows it.

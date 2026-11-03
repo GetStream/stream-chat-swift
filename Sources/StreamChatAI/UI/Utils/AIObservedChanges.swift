@@ -5,7 +5,7 @@
 import Combine
 
 // Lets a view follow an object it reads from without naming the object's type, such as the
-// AIChat an AIConversationView shows.
+// AIConversation an AIConversationView shows.
 final class AIObservedChanges: ObservableObject {
     // Follows nothing, for a view that is given what it shows.
     @MainActor static let none = AIObservedChanges(ObservableObjectPublisher())

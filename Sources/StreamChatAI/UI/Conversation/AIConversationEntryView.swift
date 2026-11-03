@@ -12,21 +12,21 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
     let entry: AIConversationEntry<Message>
     let factory: Factory
     let approver: AIToolApprover?
-    // The chat the conversation shows, which offers what the person can do with the message.
-    let chat: AIChat<Message>?
+    // The conversation the conversation shows, which offers what the person can do with the message.
+    let conversation: AIConversation<Message>?
     // Compared rather than the row, whose message and factory belong to the main actor.
     nonisolated let shown: AIConversationEntrySnapshot
 
-    init(entry: AIConversationEntry<Message>, factory: Factory, approver: AIToolApprover?, chat: AIChat<Message>?) {
+    init(entry: AIConversationEntry<Message>, factory: Factory, approver: AIToolApprover?, conversation: AIConversation<Message>?) {
         self.entry = entry
         self.factory = factory
         self.approver = approver
-        self.chat = chat
-        shown = AIConversationEntrySnapshot(entry: entry, approver: approver, chat: chat)
+        self.conversation = conversation
+        shown = AIConversationEntrySnapshot(entry: entry, approver: approver, conversation: conversation)
     }
 
     public var body: some View {
-        AIConversationRow<Message, Factory, Never>(entry: entry, factory: factory, approver: approver, chat: chat, generated: nil)
+        AIConversationRow<Message, Factory, Never>(entry: entry, factory: factory, approver: approver, conversation: conversation, generated: nil)
     }
 
     // SwiftUI compares rows of the same message, so what they show is all that can differ.
@@ -36,7 +36,7 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
 }
 
 // What a row shows, including each reasoning step's whole thinking, which can grow while the
-// message stays the same, and what its chat offers to do with it.
+// message stays the same, and what its conversation offers to do with it.
 final class AIConversationEntrySnapshot: Equatable, Sendable {
     let isPending: Bool
     let role: AIMessageRole
@@ -49,7 +49,7 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
     let isLatestReply: Bool
     let uiDocument: AIUIDocument?
     let host: ObjectIdentifier?
-    let hasChat: Bool
+    let hasConversation: Bool
     let rating: AIMessageRating?
     let offersRegenerate: Bool
     let offersEdit: Bool
@@ -59,16 +59,16 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
         entry: AIConversationEntry<Message>,
         approver: AIToolApprover?,
         host: AnyObject? = nil,
-        chat: AIChat<Message>? = nil
+        conversation: AIConversation<Message>? = nil
     ) {
         self.approver = approver.map { [$0.userID, $0.clientID, $0.authorizer?.callbackScheme ?? ""] } ?? []
         isLatestReply = entry.isLatestReply
         self.host = host.map(ObjectIdentifier.init)
-        hasChat = chat != nil
-        if let chat, let message = entry.message {
-            rating = message.role == .user ? nil : chat.ratings[message.id]
-            offersRegenerate = message.role != .user && chat.offersRegenerate(isLatestReply: entry.isLatestReply)
-            offersEdit = chat.offersEdit(message)
+        hasConversation = conversation != nil
+        if let conversation, let message = entry.message {
+            rating = message.role == .user ? nil : conversation.ratings[message.id]
+            offersRegenerate = message.role != .user && conversation.offersRegenerate(isLatestReply: entry.isLatestReply)
+            offersEdit = conversation.offersEdit(message)
         } else {
             rating = nil
             offersRegenerate = false
@@ -107,7 +107,7 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
             && lhs.isLatestReply == rhs.isLatestReply
             && lhs.uiDocument == rhs.uiDocument
             && lhs.host == rhs.host
-            && lhs.hasChat == rhs.hasChat
+            && lhs.hasConversation == rhs.hasConversation
             && lhs.rating == rhs.rating
             && lhs.offersRegenerate == rhs.offersRegenerate
             && lhs.offersEdit == rhs.offersEdit

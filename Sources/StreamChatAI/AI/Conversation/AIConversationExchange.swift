@@ -5,10 +5,10 @@
 import Foundation
 
 // A request the person made, from when they make it until its reply starts.
-struct AIChatExchange<Message: AIMessage> {
+struct AIConversationExchange<Message: AIMessage> {
     // Tells it apart from the requests before and after it.
     let id: Int
-    let request: AIChatRequest<Message>
+    let request: AIConversationRequest<Message>
     // The messages there were when it was made, none of which is its reply.
     let known: Set<AnyHashable>
     // The messages it replaces, which the conversation leaves out until its reply starts: the
@@ -17,7 +17,7 @@ struct AIChatExchange<Message: AIMessage> {
     // The person's message on its way, shown until its reply starts.
     let pending: AIPendingMessage?
 
-    init(id: Int, request: AIChatRequest<Message>, conversation: [Message]) {
+    init(id: Int, request: AIConversationRequest<Message>, conversation: [Message]) {
         self.id = id
         self.request = request
         known = Set(conversation.map { AnyHashable($0.id) })

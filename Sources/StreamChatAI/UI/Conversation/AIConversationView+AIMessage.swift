@@ -43,7 +43,7 @@ public extension AIConversationView {
             isSentByCurrentUser: \.isFromUser,
             loadOlderMessages: { loadOlderMessages },
             messageContent: { entry in
-                AIConversationEntryView(entry: entry, factory: viewFactory, approver: approver, chat: nil).equatable()
+                AIConversationEntryView(entry: entry, factory: viewFactory, approver: approver, conversation: nil).equatable()
             },
             footer: { footer },
             emptyContent: { emptyContent },

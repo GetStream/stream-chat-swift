@@ -156,7 +156,7 @@ final class AIConversationEntryView_Tests: XCTestCase {
             entry: AIConversationEntry(id: AnyHashable(message.id), message: message, sentAttachments: []),
             factory: .shared,
             approver: approver,
-            chat: nil
+            conversation: nil
         )
     }
 

@@ -5,14 +5,14 @@
 @testable import StreamChatAI
 import XCTest
 
-final class AIChatExchange_Tests: XCTestCase {
+final class AIConversationExchange_Tests: XCTestCase {
     private let conversation: [ChatMessage] = [.user("u1"), .reply("a1"), .user("u2"), .reply("a2")]
 
     func test_aMessage_isOnItsWayAndReplacesNothing() {
         let photo = URL(fileURLWithPath: "/tmp/alfama.jpg")
-        let exchange = AIChatExchange(
+        let exchange = AIConversationExchange(
             id: 1,
-            request: AIChatRequest<ChatMessage>(kind: .message, text: "Hi", attachments: [photo], messageID: "m1"),
+            request: AIConversationRequest<ChatMessage>(kind: .message, text: "Hi", attachments: [photo], messageID: "m1"),
             conversation: conversation
         )
 
@@ -24,9 +24,9 @@ final class AIChatExchange_Tests: XCTestCase {
     }
 
     func test_aKindOfItsOwn_isOnItsWayLikeAMessage() {
-        let exchange = AIChatExchange(
+        let exchange = AIConversationExchange(
             id: 1,
-            request: AIChatRequest<ChatMessage>(kind: "ui_action", text: "Picked Alfama", message: .reply("a2")),
+            request: AIConversationRequest<ChatMessage>(kind: "ui_action", text: "Picked Alfama", message: .reply("a2")),
             conversation: conversation
         )
 
@@ -35,9 +35,9 @@ final class AIChatExchange_Tests: XCTestCase {
     }
 
     func test_regenerating_replacesTheReplyAndThoseAfterIt() {
-        let exchange = AIChatExchange(
+        let exchange = AIConversationExchange(
             id: 1,
-            request: AIChatRequest<ChatMessage>(kind: .regenerate, text: "", message: .reply("a1")),
+            request: AIConversationRequest<ChatMessage>(kind: .regenerate, text: "", message: .reply("a1")),
             conversation: conversation
         )
 
@@ -46,9 +46,9 @@ final class AIChatExchange_Tests: XCTestCase {
     }
 
     func test_regenerating_aReplyNotInTheConversation_replacesNothing() {
-        let exchange = AIChatExchange(
+        let exchange = AIConversationExchange(
             id: 1,
-            request: AIChatRequest<ChatMessage>(kind: .regenerate, text: "", message: .reply("gone")),
+            request: AIConversationRequest<ChatMessage>(kind: .regenerate, text: "", message: .reply("gone")),
             conversation: conversation
         )
 
@@ -56,9 +56,9 @@ final class AIChatExchange_Tests: XCTestCase {
     }
 
     func test_editing_replacesTheMessageAndThoseAfterIt() {
-        let exchange = AIChatExchange(
+        let exchange = AIConversationExchange(
             id: 1,
-            request: AIChatRequest<ChatMessage>(kind: .edit, text: "Porto for two", message: .user("u2")),
+            request: AIConversationRequest<ChatMessage>(kind: .edit, text: "Porto for two", message: .user("u2")),
             conversation: conversation
         )
 
@@ -79,9 +79,9 @@ final class AIChatExchange_Tests: XCTestCase {
     }
 
     func test_theReplyStarts_whenTheOneWrittenAgainIsRewritten() {
-        let exchange = AIChatExchange(
+        let exchange = AIConversationExchange(
             id: 1,
-            request: AIChatRequest<ChatMessage>(kind: .regenerate, text: "", message: .reply("a2")),
+            request: AIConversationRequest<ChatMessage>(kind: .regenerate, text: "", message: .reply("a2")),
             conversation: conversation
         )
         let rewriting = Array(conversation.dropLast())
@@ -93,9 +93,9 @@ final class AIChatExchange_Tests: XCTestCase {
 
     func test_anOldReplyStillBeingWritten_isNotTheNewOne() {
         let writing: [ChatMessage] = [.user("u1"), .reply("a1", "Day one", generating: true)]
-        let exchange = AIChatExchange(
+        let exchange = AIConversationExchange(
             id: 1,
-            request: AIChatRequest<ChatMessage>(kind: .message, text: "Make it three days"),
+            request: AIConversationRequest<ChatMessage>(kind: .message, text: "Make it three days"),
             conversation: writing
         )
 
@@ -103,15 +103,15 @@ final class AIChatExchange_Tests: XCTestCase {
     }
 
     func test_requestKinds() {
-        XCTAssertEqual(AIChatRequestKind.message.rawValue, "message")
-        XCTAssertEqual(AIChatRequestKind.regenerate.rawValue, "regenerate")
-        XCTAssertEqual(AIChatRequestKind.edit.description, "edit")
-        XCTAssertEqual(AIChatRequest<ChatMessage>.Kind(rawValue: "edit"), .edit)
+        XCTAssertEqual(AIConversationRequestKind.message.rawValue, "message")
+        XCTAssertEqual(AIConversationRequestKind.regenerate.rawValue, "regenerate")
+        XCTAssertEqual(AIConversationRequestKind.edit.description, "edit")
+        XCTAssertEqual(AIConversationRequest<ChatMessage>.Kind(rawValue: "edit"), .edit)
     }
 
     func test_request_hasAMessageIDOfItsOwnByDefault() {
-        let first = AIChatRequest<ChatMessage>(kind: .message, text: "Hi")
-        let second = AIChatRequest<ChatMessage>(kind: .message, text: "Hi")
+        let first = AIConversationRequest<ChatMessage>(kind: .message, text: "Hi")
+        let second = AIConversationRequest<ChatMessage>(kind: .message, text: "Hi")
 
         XCTAssertFalse(first.messageID.isEmpty)
         XCTAssertNotEqual(first.messageID, second.messageID)
@@ -120,7 +120,7 @@ final class AIChatExchange_Tests: XCTestCase {
         XCTAssertNil(first.message)
     }
 
-    private func message() -> AIChatExchange<ChatMessage> {
-        AIChatExchange(id: 1, request: AIChatRequest(kind: .message, text: "Hi"), conversation: conversation)
+    private func message() -> AIConversationExchange<ChatMessage> {
+        AIConversationExchange(id: 1, request: AIConversationRequest(kind: .message, text: "Hi"), conversation: conversation)
     }
 }
