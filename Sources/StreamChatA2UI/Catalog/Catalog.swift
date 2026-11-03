@@ -13,6 +13,10 @@ public typealias ComponentViewBuilder = @MainActor @Sendable (ComponentRenderCon
 ///
 /// A definition carries both halves of a catalog entry: the JSON Schema the
 /// agent is told to generate against, and the SwiftUI builder that renders it.
+///
+/// Add your app's own components as StreamChatAI `AIUIComponent`s, which every renderer can
+/// place. Use a definition to change one of the basic catalog's components, by passing
+/// `A2UIRenderer` a catalog made with `BasicCatalog.catalog.adding(components:)`.
 public struct ComponentDefinition: Sendable {
     /// The component type name, used as the `component` discriminator.
     public let name: String
