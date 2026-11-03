@@ -110,7 +110,7 @@ public extension AIConversationView {
     ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
     ///     an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
-    init<Item: AIMessage, Factory: AIConversationViewFactory, Renderers: AIUIRenderers>(
+    init<Item: AIMessage, Factory: AIConversationViewFactory, Renderers: AIUIRendererList>(
         messages: [Item],
         pendingMessage: AIPendingMessage? = nil,
         isThinking: Bool = false,
@@ -159,7 +159,7 @@ public extension AIConversationView {
     ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
     ///     an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
-    init<Item: AIMessage, Renderers: AIUIRenderers>(
+    init<Item: AIMessage, Renderers: AIUIRendererList>(
         messages: [Item],
         pendingMessage: AIPendingMessage? = nil,
         isThinking: Bool = false,

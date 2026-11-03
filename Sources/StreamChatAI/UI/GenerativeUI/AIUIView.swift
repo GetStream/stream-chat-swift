@@ -11,7 +11,7 @@ import SwiftUI
 /// ``AIConversationView`` shows it in place of a reply's text when it is given the host. Showing a
 /// reply yourself, show it after ``AIAssistantMessageView`` given no text when ``canShow``, and
 /// the reply's text otherwise.
-public struct AIUIView<Renderers: AIUIRenderers>: View {
+public struct AIUIView<Renderers: AIUIRendererList>: View {
     let host: AIUIHost<Renderers>
     let document: AIUIDocument
     let messageID: String

@@ -12,7 +12,7 @@ import SwiftUI
 /// engine makes is the one the conversation shows, with its type, so SwiftUI updates it as it
 /// does any other view.
 @MainActor
-public protocol AIUIRenderer: AIUIRenderers where Content == Engine.Content {
+public protocol AIUIRenderer: AIUIRendererList where Content == Engine.Content {
     /// What shows the documents of one conversation.
     associatedtype Engine: AIUIEngine
 

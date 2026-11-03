@@ -52,7 +52,7 @@ public extension AIUIHosting {
 /// AIConversationView(messages: messages, ui: ui)
 /// ```
 @MainActor
-public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableObject {
+public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, ObservableObject {
     /// The renderers of the formats it reads, the first one listed asked first.
     public let renderers: Renderers
     public let components: [any AIUIComponent]
@@ -72,7 +72,7 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
     public init(
         components: [any AIUIComponent] = [],
         tools: [any AIClientTool] = [],
-        @AIUIRenderersBuilder renderers: () -> Renderers,
+        @AIUIRendererListBuilder renderers: () -> Renderers,
         send: @escaping @MainActor (AIUIAction) async throws -> Void
     ) {
         self.renderers = renderers()

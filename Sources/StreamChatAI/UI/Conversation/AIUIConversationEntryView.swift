@@ -12,7 +12,7 @@ import SwiftUI
 public struct AIUIConversationEntryView<
     Message: AIMessage,
     Factory: AIConversationViewFactory,
-    Renderers: AIUIRenderers
+    Renderers: AIUIRendererList
 >: View, Equatable {
     let entry: AIConversationEntry<Message>
     let factory: Factory
