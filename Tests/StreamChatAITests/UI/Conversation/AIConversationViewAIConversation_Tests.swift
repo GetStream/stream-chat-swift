@@ -17,9 +17,39 @@ final class AIConversationViewAIConversation_Tests: XCTestCase {
         }
     }
 
+    // Notes each time the list makes it.
+    private struct Made: View {
+        init(_ name: String, in made: Recorder) {
+            made.names.append(name)
+        }
+
+        var body: some View {
+            EmptyView()
+        }
+    }
+
+    private final class Recorder {
+        var names: [String] = []
+    }
+
+    private final class RecordingFactory: AIConversationViewFactory {
+        var edits: [String: Bool] = [:]
+        var actions: [String: AIReplyActions] = [:]
+
+        func makeUserMessageView(options: AIUserMessageViewOptions) -> some View {
+            edits[options.message.map { String(describing: $0.id) } ?? "pending"] = options.onEdit != nil
+            return EmptyView()
+        }
+
+        func makeReplyActionsView(options: AIReplyActionsViewOptions) -> some View {
+            actions[String(describing: options.message.id)] = options.actions
+            return EmptyView()
+        }
+    }
+
     // MARK: - The conversation
 
-    func test_conversation_readsTheChatAsItShows() {
+    func test_conversation_readsTheConversationAsItShows() {
         let transport = ConversationTransport(messages: [.user("u1"), .reply("a1")])
         let conversation = AIConversation(transport: transport)
         let view = AIConversationView(conversation: conversation)
@@ -48,6 +78,35 @@ final class AIConversationViewAIConversation_Tests: XCTestCase {
         XCTAssertTrue(shown.isThinking, "no message is on its way, but a reply is")
     }
 
+    func test_conversation_doesntShowTheAgentThinkingOnceItIsStopped() {
+        let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1"), .reply("a1")]))
+        let view = AIConversationView(conversation: conversation)
+        let tracker = AIPendingMessageTracker()
+        conversation.send("Porto?")
+        XCTAssertTrue(view.content(tracker).isThinking)
+
+        conversation.stop()
+        let shown = view.content(tracker)
+
+        XCTAssertFalse(shown.isThinking)
+        XCTAssertEqual(shown.messages.count, 3, "the person's message stays")
+    }
+
+    func test_emptyConversation_showsItsFooterUnderTheEmptyContent() throws {
+        guard #available(iOS 16, *) else { throw XCTSkip("The list renders with ImageRenderer") }
+        let made = Recorder()
+        let view = AIConversationView(
+            conversation: AIConversation(transport: ConversationTransport()),
+            footer: { Made("footer", in: made) },
+            emptyContent: { Made("empty", in: made) }
+        )
+
+        render(view)
+
+        XCTAssertTrue(made.names.contains("empty"))
+        XCTAssertTrue(made.names.contains("footer"), "such as the error of a first message that failed")
+    }
+
     func test_conversation_loadsOlderMessagesWhileThereAreAny() async {
         let transport = ConversationTransport(messages: [.user("u1"), .reply("a1")])
         let conversation = AIConversation(transport: transport)
@@ -61,7 +120,7 @@ final class AIConversationViewAIConversation_Tests: XCTestCase {
         XCTAssertEqual(transport.loads, 1)
     }
 
-    func test_conversation_makesItsFooterAndEmptyContentAsTheChatChanges() async {
+    func test_conversation_makesItsFooterAndEmptyContentAsTheConversationChanges() async {
         let transport = ConversationTransport()
         transport.sendError = TransportError()
         let conversation = AIConversation(transport: transport)
@@ -80,13 +139,32 @@ final class AIConversationViewAIConversation_Tests: XCTestCase {
         XCTAssertEqual(view.emptyContent().text, "Hello")
     }
 
-    func test_conversation_rowsOfferTheChatsActions() {
+    func test_conversation_rowsOfferTheConversationsActions() {
         let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1"), .reply("a1")]))
         let view = AIConversationView(conversation: conversation)
         let entries = view.content(AIPendingMessageTracker()).messages
 
         XCTAssertTrue(view.messageContent(entries[0]).content.conversation === conversation)
         XCTAssertEqual(view.messageContent(entries[0]).content.approver?.userID, conversation.approver?.userID)
+    }
+
+    func test_rows_handTheConversationsActionsToTheFactory() throws {
+        guard #available(iOS 16, *) else { throw XCTSkip("Rows render with ImageRenderer") }
+        let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1"), .reply("a1"), .user("u2"), .reply("a2")]))
+        let factory = RecordingFactory()
+        let view = AIConversationView(conversation: conversation, viewFactory: factory)
+        let entries = view.content(AIPendingMessageTracker()).messages
+
+        for entry in entries {
+            render(AIConversationEntryView(entry: entry, factory: factory, approver: nil, conversation: conversation))
+        }
+
+        XCTAssertEqual(factory.edits, ["u1": false, "u2": true], "the person edits their latest message")
+        XCTAssertNil(factory.actions["a1"]?.onRegenerate, "only the latest reply is written again")
+        XCTAssertNotNil(factory.actions["a2"]?.onRegenerate)
+        factory.actions["a1"]?.onRate?(.positive)
+
+        XCTAssertEqual(conversation.ratings["a1"], .positive)
     }
 
     func test_conversation_withAFactoryOfItsOwn() {
@@ -98,7 +176,7 @@ final class AIConversationViewAIConversation_Tests: XCTestCase {
         XCTAssertEqual(view.messageContent(entries[1]).content.approver?.userID, "u_1")
     }
 
-    func test_chat_tellsTheConversationWhenItChanges() {
+    func test_conversation_tellsItsViewWhenItChanges() {
         let transport = ConversationTransport()
         let conversation = AIConversation(transport: transport)
         var changes = 0
@@ -158,16 +236,22 @@ final class AIConversationViewAIConversation_Tests: XCTestCase {
         XCTAssertNil(row(.user("u1"), conversation: conversation).shown.rating)
     }
 
-    func test_row_changesWithAChat() {
+    func test_row_changesWithItsConversation() {
         let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1"), .reply("a1")]))
 
         XCTAssertNotEqual(row(.reply("a1"), latest: true, conversation: nil), row(.reply("a1"), latest: true, conversation: conversation))
+        let another = AIConversation(transport: ConversationTransport(messages: [.user("u1"), .reply("a1")]))
+        XCTAssertNotEqual(
+            row(.reply("a1"), latest: true, conversation: conversation),
+            row(.reply("a1"), latest: true, conversation: another),
+            "its actions would act on the conversation it was made with"
+        )
         XCTAssertFalse(row(.reply("a1"), latest: true, conversation: nil).shown.offersRegenerate)
     }
 
     // MARK: - Composer
 
-    func test_composer_sendsToTheChatAndStopsIt() async {
+    func test_composer_sendsToTheConversationAndStopsIt() async {
         let transport = ConversationTransport(messages: [.user("u1"), .reply("a1", "Day one", generating: true)])
         let conversation = AIConversation(transport: transport)
         let composer = AIComposerView(conversation: conversation)
@@ -179,6 +263,36 @@ final class AIConversationViewAIConversation_Tests: XCTestCase {
 
         XCTAssertEqual(transport.stops, 1)
         XCTAssertEqual(transport.lastRequest?.text, "Make it three days")
+    }
+
+    func test_composer_followsTheConversationItIsGiven() {
+        let first = AIConversation(transport: ConversationTransport())
+        let second = AIConversation(transport: ConversationTransport())
+
+        XCTAssertTrue(AIComposerView(conversation: first).followedViewModel === first.composerViewModel)
+        XCTAssertTrue(AIComposerView(conversation: second).followedViewModel === second.composerViewModel, "not the first one's draft")
+        XCTAssertNil(AIComposerView(viewModel: first.composerViewModel) { _ in }.followedViewModel, "a view model given on its own is kept")
+    }
+
+    func test_composer_cancelsEditing() {
+        let viewModel = AIComposerViewModel()
+        viewModel.text = "Plan Porto"
+        viewModel.isEditing = true
+
+        viewModel.cancelEditing()
+
+        XCTAssertFalse(viewModel.isEditing)
+        XCTAssertEqual(viewModel.text, "")
+
+        viewModel.text = "Half a thought"
+        viewModel.cancelEditing()
+
+        XCTAssertEqual(viewModel.text, "Half a thought", "it wasn't editing")
+    }
+
+    @available(iOS 16, *)
+    private func render(_ view: some View) {
+        _ = ImageRenderer(content: view.frame(width: 320, height: 480)).uiImage
     }
 
     private func row(

@@ -4,7 +4,8 @@
 
 import Foundation
 
-/// The agent said it couldn't answer, such as with an ``AIAgentActivity`` in the error state.
+/// The agent couldn't answer: it said so, such as with an ``AIAgentActivity`` in the error state,
+/// or its reply didn't start in time.
 public struct AIAgentError: LocalizedError, Hashable, Sendable {
     /// What the agent said about it, if anything.
     public let message: String?

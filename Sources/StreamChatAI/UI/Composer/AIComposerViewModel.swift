@@ -27,6 +27,9 @@ public class AIComposerViewModel: ObservableObject {
     /// Whether the agent is answering. While it is, the composer shows a stop button in place
     /// of the send button.
     @Published public var isGenerating: Bool
+    /// Whether the person is editing a message they sent. The composer says so above the text
+    /// field, with a button that cancels it.
+    @Published public var isEditing = false
     @Published public var chatOptions: [ChatOption]
 
     public init(
@@ -49,6 +52,13 @@ public class AIComposerViewModel: ObservableObject {
         self.chatOptions = chatOptions
     }
     
+    /// Stops editing a message, and empties the composer.
+    public func cancelEditing() {
+        guard isEditing else { return }
+        isEditing = false
+        text = ""
+    }
+
     public func removeAttachment(_ url: URL) {
         if let assetEntry = selectedAssetURLs.first(where: { $0.value == url }) {
             selectedAssetURLs.removeValue(forKey: assetEntry.key)

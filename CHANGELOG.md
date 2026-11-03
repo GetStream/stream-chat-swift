@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `AIComposerView` is available on iOS 15, with a single-line text field and no "All photos" button there [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🎭 New Localizations
 - Add `composer.photos_failed.*` keys [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
-- Add `conversation.error.agent` key [#4375](https://github.com/GetStream/stream-chat-swift/pull/4375)
+- Add `conversation.error.agent`, `composer.editing` and `composer.button.cancel_editing` keys [#4375](https://github.com/GetStream/stream-chat-swift/pull/4375)
 
 # [5.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.15.0)
 _October 22, 2026_

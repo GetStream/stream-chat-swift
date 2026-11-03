@@ -35,22 +35,22 @@ import StreamCore
 public final class AIConversation<Message: AIMessage>: ObservableObject {
     /// The conversation as it shows, oldest message first.
     @Published public private(set) var messages: [Message] = []
-    /// The message the person sent that is not in the conversation yet, until its reply starts.
+    /// The message the person sent last that is not in the conversation yet. It stays until its
+    /// reply starts, and after it was stopped or failed, while ``retry()`` can send it again.
     @Published public private(set) var pendingMessage: AIPendingMessage?
     /// Where the latest exchange with the agent is.
     @Published public private(set) var status: AIConversationStatus = .ready
-    /// Why the latest request failed, or what the agent said when it couldn't answer, as an
-    /// ``AIAgentError``. It stays until the next request.
+    /// Why the latest request failed, or, as an ``AIAgentError``, what the agent said when it
+    /// couldn't answer or that it didn't answer in time. It stays until the next request, or
+    /// until a reply starts after all.
     @Published public private(set) var error: (any Error)?
     /// What the agent says it is doing besides what its reply shows, such as checking sources.
     @Published public private(set) var activity: AIAgentActivity?
     /// Whether the conversation has messages before the first one, which
     /// ``loadOlderMessages()`` loads.
     @Published public private(set) var hasOlderMessages = false
-    /// The person's message they are editing in the composer. The next message they send
-    /// replaces it.
-    @Published public private(set) var editingMessage: Message?
-    /// How the person rated replies, by the reply's id.
+    /// How the person rated replies, by the reply's id: the rating they gave on this device, or
+    /// else the reply's own ``AIMessage/rating``.
     @Published public private(set) var ratings: [Message.ID: AIMessageRating] = [:]
 
     /// What the person is writing: ``AIComposerView`` shows it, and editing a message fills it.
@@ -58,14 +58,21 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     /// Who answers tool calls' questions and sign-ins on this device, which the conversation
     /// asks them.
     public let approver: AIToolApprover?
+    /// What the conversation's views offer the person to do with its messages.
+    public let actions: AIConversationActions
+
+    /// The person's message they are editing in the composer, which the next message they send
+    /// replaces. The composer shows that they are editing it, with a button that cancels it.
+    public var editingMessage: Message? {
+        composerViewModel.isEditing ? edited : nil
+    }
 
     private let transport: TransportCalls
+    private let replyTimeout: TimeInterval?
     // The messages as the transport last told them, including those left out of `messages`.
-    private var conversation: [Message] = []
-    // The request made, until its reply starts.
+    private var received: [Message] = []
+    // The latest request, until its reply starts or another request takes its place.
     private var exchange: AIConversationExchange<Message>?
-    // The request that failed, which `retry()` sends again.
-    private var failedRequest: AIConversationRequest<Message>?
     // Counts the requests and stops, so the outcome of one that was overtaken is ignored.
     private var generation = 0
     // Replies stopped while they were written, which are finished whatever they say.
@@ -73,6 +80,13 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     // Whether what the agent says it is doing is ignored, after it was stopped, until it stops
     // saying anything.
     private var ignoresActivity = false
+    // The latest stop, which the next request waits for: the agent would stop that one too.
+    private var stopping: Task<Void, Never>?
+    // Ends the wait for the latest request's reply once it takes too long.
+    private var replyTimer: Task<Void, Never>?
+    private var edited: Message?
+    private var ratingChanges: [Message.ID: RatingChange] = [:]
+    private var ratingAttempts = 0
     private var isLoadingOlderMessages = false
 
     // Lets the conversation view follow the conversation, whichever view holds it.
@@ -86,16 +100,34 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         let rate: @MainActor (Message, AIMessageRating?) async throws -> Void
     }
 
+    // A rating the person gave a reply on this device, shown in place of the reply's own.
+    private struct RatingChange {
+        var shown: AIMessageRating?
+        // What the transport has, which the rating goes back to when it can't take a new one.
+        var sent: AIMessageRating?
+        // Tells the latest rating of the reply apart from those before it.
+        var attempt = 0
+        // Sends the latest rating, after those before it.
+        var sending: Task<Void, Never>?
+    }
+
     /// - Parameters:
-    ///   - transport: How the conversation reaches the agent and follows the conversation. The conversation keeps
-    ///     it, and connects to it straight away.
-    ///   - composerViewModel: What the person writes, such as one with your chat options. A new one by
-    ///     default.
+    ///   - transport: How the conversation reaches the agent and learns what it holds. The
+    ///     conversation keeps it, and connects to it straight away.
+    ///   - composerViewModel: What the person writes, such as one with your chat options. A new
+    ///     one by default.
     ///   - approver: Who answers tool calls' questions and sign-ins on this device.
+    ///   - actions: What the conversation's views offer: editing the person's latest message,
+    ///     regenerating the latest reply and rating replies. All of them by default.
+    ///   - replyTimeout: How many seconds the conversation waits for a reply to start once the
+    ///     agent has the request, or since the agent last said what it is doing, before it shows
+    ///     an ``AIAgentError``. Nil waits as long as it takes.
     public init<Transport: AIConversationTransport>(
         transport: Transport,
         composerViewModel: AIComposerViewModel? = nil,
-        approver: AIToolApprover? = nil
+        approver: AIToolApprover? = nil,
+        actions: AIConversationActions = .all,
+        replyTimeout: TimeInterval? = 60
     ) where Transport.Message == Message {
         self.transport = TransportCalls(
             send: { try await transport.send($0) },
@@ -105,6 +137,8 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         )
         self.composerViewModel = composerViewModel ?? AIComposerViewModel()
         self.approver = approver
+        self.actions = actions
+        self.replyTimeout = replyTimeout
         transport.connect(AIConversationFeed(conversation: self))
     }
 
@@ -118,15 +152,16 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     ///   - chatOption: The option they picked in the composer.
     public func send(_ text: String, attachments: [URL] = [], chatOption: ChatOption? = nil) {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !attachments.isEmpty else { return }
-        let edited = editingMessage
-        editingMessage = nil
+        let editing = editingMessage
+        edited = nil
+        composerViewModel.isEditing = false
         start(
             AIConversationRequest(
-                kind: edited == nil ? .message : .edit,
+                kind: editing == nil ? .message : .edit,
                 text: text,
                 attachments: attachments,
                 chatOption: chatOption,
-                message: edited
+                message: editing
             )
         )
     }
@@ -136,21 +171,25 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         send(message.text, attachments: message.attachments, chatOption: message.chatOption)
     }
 
-    /// Stops the reply the agent is writing. What it wrote so far stays.
+    /// Stops the reply the agent is writing. What it wrote so far stays. When the reply hasn't
+    /// started yet, the person's message stays, and a reply that still arrives is finished
+    /// whatever it says.
     public func stop() {
         guard status.isAnswering else { return }
         generation += 1
         let id = generation
-        exchange = nil
         activity = nil
         ignoresActivity = true
-        let writing = conversation.last.flatMap { $0.role != .user && $0.isGenerating ? AnyHashable($0.id) : nil }
+        if exchange?.state == .waiting {
+            exchange?.state = .stopped
+        }
+        let writing = writingReply
         if let writing {
             stopped.insert(writing)
         }
         refresh()
         let stop = transport.stop
-        Task { [weak self] in
+        stopping = Task { [weak self] in
             do {
                 try await stop()
             } catch {
@@ -161,65 +200,61 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
 
     /// Asks the agent for a new reply in place of `reply`, and of those after it.
     public func regenerate(_ reply: Message) {
-        guard let index = index(of: reply), conversation[index].role != .user else { return }
-        let prompt = conversation[..<index].last { $0.role == .user }
-        start(AIConversationRequest(kind: .regenerate, text: prompt?.text ?? "", message: conversation[index]))
+        guard let index = index(of: reply), received[index].role != .user else { return }
+        start(regenerateRequest(at: index))
     }
 
     /// Puts a message of the person's in the composer to edit. The next message they send
     /// replaces it.
     public func edit(_ message: Message) {
         guard message.role == .user else { return }
-        editingMessage = message
+        edited = message
         composerViewModel.text = message.text
+        composerViewModel.isEditing = true
         composerViewModel.isTextFieldFocused = true
     }
 
     /// Stops editing a message, and empties the composer.
     public func cancelEditing() {
         guard editingMessage != nil else { return }
-        editingMessage = nil
-        composerViewModel.text = ""
+        edited = nil
+        composerViewModel.cancelEditing()
     }
 
-    /// Tries again after ``error``: sends the request that failed again, or, when the agent
-    /// couldn't answer, asks it for its reply again.
+    /// Tries again after ``error``: sends the request that failed again, with the same message
+    /// id, or asks the agent again for the reply it couldn't write.
     public func retry() {
-        if var request = failedRequest {
-            request.messageID = UUID().uuidString
-            start(request)
-        } else if error is AIAgentError, let last = conversation.last {
-            if last.role == .user {
-                start(AIConversationRequest(kind: .regenerate, text: last.text))
-            } else {
-                regenerate(last)
-            }
-        }
+        guard let exchange, exchange.hasFailed else { return }
+        start(exchange.retryRequest(in: received))
     }
 
-    /// Forgets ``error``.
+    /// Forgets ``error``, and the request that failed.
     public func clearError() {
         error = nil
-        failedRequest = nil
+        if exchange?.hasFailed == true {
+            exchange = nil
+        }
         refresh()
     }
 
-    /// Rates a reply, or takes the rating back with nil. The rating goes back to what it was if
-    /// the transport can't send it.
+    /// Rates a reply, or takes the rating back with nil. Ratings reach the transport in the
+    /// order the person gives them, and the reply's rating goes back to the one the transport
+    /// has if it can't take the new one.
     public func rate(_ reply: Message, _ rating: AIMessageRating?) {
-        let previous = ratings[reply.id]
-        guard previous != rating else { return }
-        ratings[reply.id] = rating
-        let rate = transport.rate
-        Task { [weak self] in
-            do {
-                try await rate(reply, rating)
-            } catch {
-                log.error("Couldn't send the rating of a reply", error: error)
-                guard let self, self.ratings[reply.id] == rating else { return }
-                self.ratings[reply.id] = previous
-            }
+        let current = ratings[reply.id]
+        guard current != rating else { return }
+        ratingAttempts += 1
+        let attempt = ratingAttempts
+        var change = ratingChanges[reply.id] ?? RatingChange(shown: current, sent: current)
+        let earlier = change.sending
+        change.shown = rating
+        change.attempt = attempt
+        change.sending = Task { [weak self] in
+            await earlier?.value
+            await self?.sendRating(rating, of: reply, attempt: attempt)
         }
+        ratingChanges[reply.id] = change
+        refresh()
     }
 
     /// Loads the messages before the first one, while there are any.
@@ -237,9 +272,9 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     // MARK: - What the transport says
 
     func receive(messages: [Message]) {
-        conversation = messages
-        if let exchange, exchange.hasReplyStarted(in: messages) {
-            self.exchange = nil
+        received = messages
+        if let exchange, let reply = exchange.reply(in: messages) {
+            receive(reply, to: exchange)
         }
         refresh()
     }
@@ -259,12 +294,9 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         guard !ignoresActivity else { return }
         self.activity = activity
         if activity.state == .error {
-            generation += 1
-            exchange = nil
-            if let last = conversation.last, last.role != .user, last.isGenerating {
-                stopped.insert(AnyHashable(last.id))
-            }
-            error = AIAgentError(message: activity.text)
+            agentCouldNotAnswer(AIAgentError(message: activity.text))
+        } else if let exchange, exchange.state == .waiting {
+            waitForReply(to: exchange.id)
         }
         refresh()
     }
@@ -278,15 +310,15 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         if offersRegenerate(isLatestReply: isLatestReply) {
             onRegenerate = { [weak self] in self?.regenerate(reply) }
         }
-        return AIReplyActions(
-            rating: ratings[reply.id],
-            onRegenerate: onRegenerate,
-            onRate: { [weak self] rating in self?.rate(reply, rating) }
-        )
+        var onRate: (@MainActor (AIMessageRating?) -> Void)?
+        if actions.contains(.rate) {
+            onRate = { [weak self] rating in self?.rate(reply, rating) }
+        }
+        return AIReplyActions(rating: ratings[reply.id], onRegenerate: onRegenerate, onRate: onRate)
     }
 
     func offersRegenerate(isLatestReply: Bool) -> Bool {
-        isLatestReply && !status.isAnswering
+        actions.contains(.regenerate) && isLatestReply && !status.isAnswering
     }
 
     // Edits a message of the person's, when it is their latest and the agent isn't answering.
@@ -296,7 +328,7 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     }
 
     func offersEdit(_ message: Message) -> Bool {
-        guard message.role == .user, !status.isAnswering else { return false }
+        guard actions.contains(.edit), message.role == .user, !status.isAnswering else { return false }
         return messages.last { $0.role == .user }.map { AnyHashable($0.id) == AnyHashable(message.id) } ?? false
     }
 
@@ -306,56 +338,166 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         generation += 1
         let id = generation
         error = nil
-        failedRequest = nil
         activity = nil
         ignoresActivity = false
         stopped = []
-        exchange = AIConversationExchange(id: id, request: request, conversation: conversation)
+        exchange = AIConversationExchange(id: id, request: request, conversation: received)
         refresh()
         let send = transport.send
+        let previousStop = stopping
         Task { [weak self] in
+            // The agent would stop a request that reaches it before the stop made before it.
+            await previousStop?.value
             do {
                 try await send(request)
+                self?.requestSent(id)
             } catch {
-                self?.requestFailed(id, request: request, error: error)
+                self?.requestFailed(id, error: error)
             }
         }
     }
 
-    private func requestFailed(_ id: Int, request: AIConversationRequest<Message>, error: any Error) {
-        guard id == generation else { return }
-        exchange = nil
-        if !(error is CancellationError) {
+    // The reply to the latest request arrived: once it shows something, or as soon as it
+    // arrives after the person stopped the request.
+    private func receive(_ reply: Message, to exchange: AIConversationExchange<Message>) {
+        let id = AnyHashable(reply.id)
+        if exchange.state == .stopped {
+            if reply.isGenerating {
+                stopped.insert(id)
+            }
+            self.exchange = nil
+        } else if !reply.hasEmptyContent || !reply.isGenerating {
+            self.exchange = nil
+            if exchange.hasFailed {
+                // The agent answered after all.
+                error = nil
+                stopped.remove(id)
+            }
+        }
+    }
+
+    private func requestSent(_ id: Int) {
+        guard let exchange, exchange.id == id, exchange.state == .waiting else { return }
+        waitForReply(to: id)
+    }
+
+    private func requestFailed(_ id: Int, error: any Error) {
+        // Its reply started, so the agent had it, another request took its place, or it
+        // already failed.
+        guard let exchange, exchange.id == id, !exchange.hasFailed else { return }
+        if error is CancellationError {
+            self.exchange = nil
+        } else {
+            self.exchange?.state = .failed
             self.error = error
-            failedRequest = request
         }
         refresh()
     }
 
+    // The agent goes on answering, and the composer offers to stop it again.
     private func stopFailed(_ id: Int, writing: AnyHashable?, error: any Error) {
         guard id == generation, !(error is CancellationError) else { return }
+        log.error("Couldn't stop the agent", error: error)
         if let writing {
             stopped.remove(writing)
         }
+        if let exchange, exchange.state == .stopped {
+            self.exchange?.state = .waiting
+            waitForReply(to: exchange.id)
+        }
         ignoresActivity = false
-        self.error = error
         refresh()
     }
 
+    // The agent couldn't answer the latest request, or the latest message: what it was writing
+    // is finished, and `retry()` asks it again.
+    private func agentCouldNotAnswer(_ error: AIAgentError) {
+        if let writing = writingReply {
+            stopped.insert(writing)
+        }
+        if exchange == nil, let request = answerAgainRequest {
+            generation += 1
+            exchange = AIConversationExchange(id: generation, request: request, conversation: received)
+        }
+        exchange?.state = .unanswered
+        self.error = error
+    }
+
+    private func waitForReply(to id: Int) {
+        replyTimer?.cancel()
+        guard let replyTimeout else { return }
+        let nanoseconds = UInt64(max(replyTimeout, 0) * 1_000_000_000)
+        replyTimer = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: nanoseconds)
+            guard !Task.isCancelled else { return }
+            self?.replyTimedOut(id)
+        }
+    }
+
+    private func replyTimedOut(_ id: Int) {
+        guard let exchange, exchange.id == id, exchange.state == .waiting else { return }
+        agentCouldNotAnswer(AIAgentError())
+        refresh()
+    }
+
+    // Sends the latest rating of a reply. Those it replaced while one was on its way aren't.
+    private func sendRating(_ rating: AIMessageRating?, of reply: Message, attempt: Int) async {
+        guard ratingChanges[reply.id]?.attempt == attempt else { return }
+        do {
+            try await transport.rate(reply, rating)
+            ratingChanges[reply.id]?.sent = rating
+        } catch {
+            log.error("Couldn't send the rating of a reply", error: error)
+            guard let change = ratingChanges[reply.id], change.attempt == attempt else { return }
+            ratingChanges[reply.id]?.shown = change.sent
+            refresh()
+        }
+    }
+
+    // Asks for a new reply in place of the one at `index`, to the person's message before it.
+    private func regenerateRequest(at index: Int) -> AIConversationRequest<Message> {
+        let prompt = received[..<index].last { $0.role == .user }
+        return AIConversationRequest(kind: .regenerate, text: prompt?.text ?? "", message: received[index])
+    }
+
+    // Asks again for the latest message's reply: the reply written again, or one to the
+    // person's message, which has none.
+    private var answerAgainRequest: AIConversationRequest<Message>? {
+        guard let last = received.indices.last else { return nil }
+        guard received[last].role == .user else { return regenerateRequest(at: last) }
+        return AIConversationRequest(kind: .regenerate, text: received[last].text)
+    }
+
+    // The latest reply, while the agent writes it.
+    private var writingReply: AnyHashable? {
+        guard let last = received.last, last.role != .user, last.isGenerating else { return nil }
+        return AnyHashable(last.id)
+    }
+
     private func index(of message: Message) -> Int? {
-        conversation.firstIndex { AnyHashable($0.id) == AnyHashable(message.id) }
+        received.firstIndex { AnyHashable($0.id) == AnyHashable(message.id) }
     }
 
     // Works out what the conversation shows and where it is, after anything changes.
     private func refresh() {
-        // A reply stopped before it showed anything has nothing to show, and the conversation
-        // would think it is still on its way.
-        let hidden = (exchange?.replaced ?? []).union(
-            conversation.filter { stopped.contains(AnyHashable($0.id)) && $0.hasEmptyContent }.map { AnyHashable($0.id) }
-        )
-        messages = hidden.isEmpty ? conversation : conversation.filter { !hidden.contains(AnyHashable($0.id)) }
-        if pendingMessage?.id != exchange?.pending?.id {
-            pendingMessage = exchange?.pending
+        let replaced = exchange?.state == .waiting ? exchange?.replaced : nil
+        if replaced == nil && stopped.isEmpty {
+            messages = received
+        } else {
+            messages = received.filter { message in
+                let id = AnyHashable(message.id)
+                // A reply stopped before it showed anything has nothing to show, and the
+                // conversation would think it is still on its way.
+                return replaced?[id] == nil && !(stopped.contains(id) && message.hasEmptyContent)
+            }
+        }
+        let pending = exchange?.shownPending
+        if pendingMessage?.id != pending?.id {
+            pendingMessage = pending
+        }
+        let ratings = currentRatings
+        if self.ratings != ratings {
+            self.ratings = ratings
         }
         let status = currentStatus
         if self.status != status {
@@ -366,8 +508,19 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         }
     }
 
+    private var currentRatings: [Message.ID: AIMessageRating] {
+        var ratings: [Message.ID: AIMessageRating] = [:]
+        for message in received where message.role != .user {
+            ratings[message.id] = message.rating
+        }
+        for (id, change) in ratingChanges {
+            ratings[id] = change.shown
+        }
+        return ratings
+    }
+
     private var currentStatus: AIConversationStatus {
-        if exchange != nil {
+        if exchange?.state == .waiting {
             return .submitted
         }
         if let last = messages.last, last.role != .user, last.isGenerating, !stopped.contains(AnyHashable(last.id)) {

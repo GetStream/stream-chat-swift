@@ -21,6 +21,14 @@ enum L10n {
         static var photosFailedMessage: String {
             localized("composer.photos_failed.message", comment: "Message of the alert shown when photos picked from the library couldn't be loaded.")
         }
+
+        static var editing: String {
+            localized("composer.editing", comment: "Shown above the composer's text field while the person edits a message they sent.")
+        }
+
+        static var cancelEditing: String {
+            localized("composer.button.cancel_editing", comment: "Accessibility label of the button that stops editing a message.")
+        }
     }
     
     enum StreamingMessage {
@@ -35,7 +43,7 @@ enum L10n {
         }
 
         static var agentError: String {
-            localized("conversation.error.agent", comment: "Shown when the agent said it couldn't answer, without saying why.")
+            localized("conversation.error.agent", comment: "Shown when the agent couldn't answer, or didn't in time, without saying why.")
         }
     }
 

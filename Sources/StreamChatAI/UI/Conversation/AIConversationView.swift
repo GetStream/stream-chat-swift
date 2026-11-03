@@ -34,8 +34,8 @@ import SwiftUI
 /// )
 /// ```
 ///
-/// Or give it an ``AIConversation``, which holds the conversation and acts on what the person does, and
-/// it follows the conversation as it changes:
+/// Or give it an ``AIConversation``, which holds the conversation and acts on what the person
+/// does, and it follows the conversation as it changes:
 ///
 /// ```swift
 /// AIConversationView(conversation: conversation)
@@ -85,8 +85,8 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
     ///     as the person scrolls to its start. It shows a spinner meanwhile, and what is on
     ///     screen stays in place as they arrive. Pass nil once there are none left.
     ///   - messageContent: The view of a message.
-    ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
-    ///     an error with a way to retry.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as what the agent is doing, or an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     public init(
         messages: [Message],
@@ -166,8 +166,13 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
         height: CGFloat
     ) -> some View {
         if turns.isEmpty {
-            emptyContent()
-                .frame(maxWidth: .infinity, minHeight: height)
+            // The footer can say why a first message isn't there, such as an error to retry.
+            VStack(spacing: layout.spacingMd) {
+                emptyContent()
+                footer()
+            }
+            .padding(.horizontal, layout.spacingMd)
+            .frame(maxWidth: .infinity, minHeight: height)
         } else {
             turnStack(turns, isThinking: isThinking, loadOlder: loadOlder, height: height)
         }
@@ -183,15 +188,7 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
     ) -> some View {
         LazyVStack(spacing: layout.spacingXs) {
             if let loadOlderMessages {
-                // Loads once the spinner has stayed in view a moment, rather than for the frame a
-                // list that opens at its end can show its start, and again whenever the first
-                // turn changes while it is in view.
-                OlderMessagesLoadingView()
-                    .task(id: turns.first?.id) {
-                        try? await Task.sleep(nanoseconds: 300_000_000)
-                        guard !Task.isCancelled else { return }
-                        await loadOlderMessages()
-                    }
+                OlderMessagesLoadingView(firstTurnID: turns.first.map { AnyHashable($0.id) }, load: loadOlderMessages)
             }
             ForEach(turns) { turn in
                 let isLatest = turn.id == turns.last?.id

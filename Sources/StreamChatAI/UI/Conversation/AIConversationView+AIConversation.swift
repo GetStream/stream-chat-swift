@@ -8,14 +8,15 @@ public extension AIConversationView {
     /// Shows an ``AIConversation`` with the views of `viewFactory`, and follows it as it changes.
     ///
     /// The person's latest message offers to edit it, and each finished reply to rate it, the
-    /// latest also to regenerate it. The factory's default views show these, and views of your
-    /// own find them in their options.
+    /// latest also to regenerate it, as the conversation's ``AIConversation/actions`` allow. The
+    /// factory's default views show these, and views of your own find them in their options.
     ///
     /// - Parameters:
     ///   - conversation: The conversation, and what the person does in it.
     ///   - viewFactory: The views of the messages, and the actions under each finished reply.
-    ///   - footer: A view under the latest turn's messages, such as the conversation's error with a way
-    ///     to retry. It is made again each time the conversation changes.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as the conversation's error with a way to retry. It is made again
+    ///     each time the conversation changes.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     init<Item: AIMessage, Factory: AIConversationViewFactory>(
         conversation: AIConversation<Item>,
@@ -26,16 +27,21 @@ public extension AIConversationView {
         let loadOlderMessages: @MainActor () async -> Void = { await conversation.loadOlderMessages() }
         self.init(
             content: { tracker in
-                let messages = conversation.messages
-                let pending = conversation.pendingMessage
-                let entries = tracker.entries(for: messages, pending: pending)
-                let isThinking = conversation.status == .submitted || tracker.isAwaitingReply(in: messages, pending: pending)
-                return (entries, isThinking)
+                // The conversation knows when its agent is thinking, including after a stop or a
+                // failure that leaves the person's message on its way.
+                let entries = tracker.entries(for: conversation.messages, pending: conversation.pendingMessage)
+                return (entries, conversation.status == .submitted)
             },
             isSentByCurrentUser: \.isFromUser,
             loadOlderMessages: { conversation.hasOlderMessages ? loadOlderMessages : nil },
             messageContent: { (entry: AIConversationEntry<Item>) in
-                AIConversationEntryView(entry: entry, factory: viewFactory, approver: conversation.approver, conversation: conversation).equatable()
+                AIConversationEntryView(
+                    entry: entry,
+                    factory: viewFactory,
+                    approver: conversation.approver,
+                    conversation: conversation
+                )
+                .equatable()
             },
             footer: footer,
             emptyContent: emptyContent,
@@ -48,8 +54,9 @@ public extension AIConversationView {
     ///
     /// - Parameters:
     ///   - conversation: The conversation, and what the person does in it.
-    ///   - footer: A view under the latest turn's messages, such as the conversation's error with a way
-    ///     to retry. It is made again each time the conversation changes.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as the conversation's error with a way to retry. It is made again
+    ///     each time the conversation changes.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     init<Item: AIMessage>(
         conversation: AIConversation<Item>,

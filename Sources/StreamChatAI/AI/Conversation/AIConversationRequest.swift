@@ -4,7 +4,8 @@
 
 import Foundation
 
-/// What the person asks of the agent, which an ``AIConversation`` hands to its ``AIConversationTransport``.
+/// What the person asks of the agent, which an ``AIConversation`` hands to its
+/// ``AIConversationTransport``.
 public struct AIConversationRequest<Message: AIMessage> {
     /// What the person asks for.
     public typealias Kind = AIConversationRequestKind
@@ -20,7 +21,7 @@ public struct AIConversationRequest<Message: AIMessage> {
     /// The message it is about: the reply to write again, or the person's message they edited.
     public var message: Message?
     /// An id for the person's message. A transport that creates the message with it lets the
-    /// conversation find its copy by it.
+    /// conversation find its copy by it. A retry of the request keeps it.
     public var messageID: String
 
     public init(

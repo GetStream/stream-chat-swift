@@ -20,8 +20,8 @@ public extension AIConversationView {
     ///     as the person scrolls to its start. It shows a spinner meanwhile, and what is on
     ///     screen stays in place as they arrive. Pass nil once there are none left.
     ///   - viewFactory: The views of the messages, and the actions under each finished reply.
-    ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
-    ///     an error with a way to retry.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as what the agent is doing, or an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     init<Item: AIMessage, Factory: AIConversationViewFactory>(
         messages: [Item],
@@ -65,8 +65,8 @@ public extension AIConversationView {
     ///   - loadOlderMessages: Loads the messages before the first one, which the list asks for
     ///     as the person scrolls to its start. It shows a spinner meanwhile, and what is on
     ///     screen stays in place as they arrive. Pass nil once there are none left.
-    ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
-    ///     an error with a way to retry.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as what the agent is doing, or an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     init<Item: AIMessage>(
         messages: [Item],
@@ -110,8 +110,8 @@ public extension AIConversationView {
     ///     as the person scrolls to its start. It shows a spinner meanwhile, and what is on
     ///     screen stays in place as they arrive. Pass nil once there are none left.
     ///   - viewFactory: The views of the messages, and the actions under each finished reply.
-    ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
-    ///     an error with a way to retry.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as what the agent is doing, or an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     init<Item: AIMessage, Factory: AIConversationViewFactory, Renderers: AIUIRendererList>(
         messages: [Item],
@@ -162,8 +162,8 @@ public extension AIConversationView {
     ///   - loadOlderMessages: Loads the messages before the first one, which the list asks for
     ///     as the person scrolls to its start. It shows a spinner meanwhile, and what is on
     ///     screen stays in place as they arrive. Pass nil once there are none left.
-    ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
-    ///     an error with a way to retry.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as what the agent is doing, or an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     init<Item: AIMessage, Renderers: AIUIRendererList>(
         messages: [Item],

@@ -4,8 +4,8 @@
 
 import Foundation
 
-/// Where an ``AIConversation``'s latest exchange with the agent is. It is an open set: compare against
-/// the statuses you know.
+/// Where an ``AIConversation``'s latest exchange with the agent is. It is an open set: compare
+/// against the statuses you know.
 public struct AIConversationStatus: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
     public let rawValue: String
 
@@ -20,7 +20,8 @@ public struct AIConversationStatus: RawRepresentable, Hashable, Sendable, Expres
     public static let submitted: AIConversationStatus = "submitted"
     /// The agent is writing its reply.
     public static let streaming: AIConversationStatus = "streaming"
-    /// The latest request failed, or the agent said it couldn't answer.
+    /// The latest request failed, or the agent couldn't answer it. ``AIConversation/retry()``
+    /// tries again.
     public static let error: AIConversationStatus = "error"
 
     /// Whether the agent is answering: the request is submitted, or its reply streaming.

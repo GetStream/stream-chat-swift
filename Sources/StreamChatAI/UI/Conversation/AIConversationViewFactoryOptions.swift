@@ -13,8 +13,9 @@ public final class AIUserMessageViewOptions {
     public let text: String
     /// What they sent with it, such as images and files.
     public let attachments: [AIMessageAttachment]
-    /// Puts the message back in the composer to edit, when the conversation shows an ``AIConversation``
-    /// and the person can edit it: it is their latest, and the agent isn't answering.
+    /// Puts the message back in the composer to edit, when the list shows an ``AIConversation``
+    /// that offers editing and the person can edit it: it is their latest, and the agent isn't
+    /// answering.
     public let onEdit: (@MainActor () -> Void)?
 
     public init(
@@ -70,13 +71,15 @@ public final class AIAssistantMessageViewOptions {
 public final class AIReplyActionsViewOptions {
     /// The reply, which is one of the app's own messages: cast it to act on it.
     public let message: any AIMessage
-    /// The reply's text, in Markdown, which a reply that shows generated UI may not have.
+    /// The reply's text, in Markdown, which a reply that answers with generated UI or attachments
+    /// may not have.
     public let text: String
     /// Whether it is the latest reply in the conversation, such as the only one an app offers to
     /// regenerate.
     public let isLatestReply: Bool
-    /// What the conversation's ``AIConversation`` offers to do with the reply: rate it, and regenerate
-    /// it while it is the latest. Nil when the conversation doesn't show one.
+    /// What the list's ``AIConversation`` offers to do with the reply, as its
+    /// ``AIConversation/actions`` allow: rate it, and regenerate it while it is the latest. Nil when
+    /// the list doesn't show an ``AIConversation``.
     public let actions: AIReplyActions?
 
     public init(message: any AIMessage, text: String, isLatestReply: Bool, actions: AIReplyActions? = nil) {

@@ -11,6 +11,7 @@ struct ChatMessage: AIMessage, Equatable {
     var text: String
     var isGenerating = false
     var attachments: [AIMessageAttachment] = []
+    var rating: AIMessageRating?
 
     static func user(_ id: String, _ text: String = "Plan a weekend in Lisbon") -> ChatMessage {
         ChatMessage(id: id, role: .user, text: text)
@@ -38,11 +39,15 @@ final class ConversationTransport: AIConversationTransport {
     var stopError: (any Error)?
     var loadError: (any Error)?
     var failsRating: (AIMessageRating?) -> Bool = { _ in false }
-    // Holds each send and load until the test finishes it.
+    // Holds each send, stop, load and rating until the test finishes it.
     var holdsSends = false
+    var holdsStops = false
     var holdsLoads = false
+    var holdsRatings = false
     private var heldSends: [CheckedContinuation<Void, any Error>] = []
+    private var heldStops: [CheckedContinuation<Void, any Error>] = []
     private var heldLoads: [CheckedContinuation<Void, Never>] = []
+    private var heldRatings: [CheckedContinuation<Void, any Error>] = []
 
     init(messages: [ChatMessage] = []) {
         initialMessages = messages
@@ -69,6 +74,9 @@ final class ConversationTransport: AIConversationTransport {
 
     func stop() async throws {
         stops += 1
+        if holdsStops {
+            try await withCheckedThrowingContinuation { heldStops.append($0) }
+        }
         if let stopError {
             throw stopError
         }
@@ -86,6 +94,9 @@ final class ConversationTransport: AIConversationTransport {
 
     func rate(_ reply: ChatMessage, _ rating: AIMessageRating?) async throws {
         ratings.append((reply.id, rating))
+        if holdsRatings {
+            try await withCheckedThrowingContinuation { heldRatings.append($0) }
+        }
         if failsRating(rating) {
             throw TransportError()
         }
@@ -96,6 +107,18 @@ final class ConversationTransport: AIConversationTransport {
             heldSends[index].resume(throwing: error)
         } else {
             heldSends[index].resume()
+        }
+    }
+
+    func finishStop(_ index: Int) {
+        heldStops[index].resume()
+    }
+
+    func finishRating(_ index: Int, throwing error: (any Error)? = nil) {
+        if let error {
+            heldRatings[index].resume(throwing: error)
+        } else {
+            heldRatings[index].resume()
         }
     }
 
@@ -127,6 +150,19 @@ final class MinimalTransport: AIConversationTransport {
 func settle() async {
     for _ in 0..<20 {
         await Task.yield()
+    }
+}
+
+// Waits for what the conversation does in its own time, such as once its reply timeout ends.
+@MainActor
+func waitUntil(timeout: TimeInterval = 2, _ condition: () -> Bool) async throws {
+    let deadline = Date().addingTimeInterval(timeout)
+    while !condition() {
+        guard Date() < deadline else {
+            XCTFail("The condition wasn't met in time")
+            return
+        }
+        try await Task.sleep(nanoseconds: 10_000_000)
     }
 }
 

@@ -4,8 +4,8 @@
 
 import Foundation
 
-/// How an ``AIConversation`` reaches the agent and follows the conversation: it sends what the person
-/// asks, stops the agent, and tells the conversation what the conversation holds as it changes.
+/// How an ``AIConversation`` reaches the agent and learns what it holds: it sends what the
+/// person asks, stops the agent, and tells the conversation its messages as they change.
 ///
 /// With Stream Chat, the conversation is a channel: the transport follows its messages and AI
 /// indicator events, and sends each request through the channel or your agent's own API.
@@ -34,12 +34,24 @@ public protocol AIConversationTransport<Message> {
     associatedtype Message: AIMessage
 
     /// Starts telling `feed` what the conversation holds: its messages each time they change,
-    /// whether there are older ones to load, and what the agent says it is doing. The conversation
-    /// calls it once, as it is made.
+    /// whether there are older ones to load, and what the agent says it is doing. The
+    /// conversation calls it once, as it is made.
     func connect(_ feed: AIConversationFeed<Message>)
 
     /// Sends what the person asks. Return once the agent has the request: its reply arrives
-    /// through the feed. A thrown error shows as the conversation's error, and the person can retry.
+    /// through the feed. A thrown error shows as the conversation's error, and the person can
+    /// retry, which sends the same request again with the same
+    /// ``AIConversationRequest/messageID``: if the first attempt reached your backend, or you
+    /// keep a copy of the failed message, use the id so the message isn't added twice.
+    ///
+    /// The conversation leaves out the messages a ``AIConversationRequestKind/regenerate`` or an
+    /// ``AIConversationRequestKind/edit`` replaces only until the new reply starts. From then on
+    /// it shows the messages as the feed has them, so update the conversation before the new reply
+    /// arrives:
+    /// - For a regenerate, remove the request's `message` and the messages after it, or write
+    ///   the new reply in place of `message`, under its id.
+    /// - For an edit, change the person's `message` to say the request's `text`, under its id, and
+    ///   remove the messages after it.
     func send(_ request: AIConversationRequest<Message>) async throws
 
     /// Stops the reply the agent is writing. What it wrote so far stays.
@@ -51,6 +63,7 @@ public protocol AIConversationTransport<Message> {
 
     /// Tells your backend how the person rated a reply, or that they took their rating back
     /// with nil. Does nothing by default: the conversation keeps the ratings on this device.
+    /// Ratings your backend has show through each message's ``AIMessage/rating``.
     func rate(_ reply: Message, _ rating: AIMessageRating?) async throws
 }
 
@@ -62,8 +75,8 @@ public extension AIConversationTransport {
 
 /// Where an ``AIConversationTransport`` tells its ``AIConversation`` what the conversation holds.
 ///
-/// It holds the conversation weakly, so keep it for as long as the transport follows the conversation:
-/// once the conversation is released, its updates go nowhere.
+/// It holds the conversation weakly, so keep it for as long as the transport follows what the
+/// conversation holds: once the conversation is released, its updates go nowhere.
 @MainActor
 public struct AIConversationFeed<Message: AIMessage> {
     private weak var conversation: AIConversation<Message>?
@@ -72,7 +85,7 @@ public struct AIConversationFeed<Message: AIMessage> {
         self.conversation = conversation
     }
 
-    /// Whether the conversation it updates is still there. Stop following the conversation once it
+    /// Whether the conversation it updates is still there. Stop following what it holds once it
     /// isn't.
     public var isConnected: Bool {
         conversation != nil

@@ -8,8 +8,8 @@ import SwiftUI
 ///
 /// Each has a default, so override only the ones you want to change. Under a finished reply
 /// there is nothing by default: offer the person what your app does with replies there, such as
-/// copying, rating or regenerating them. A conversation that shows an ``AIConversation`` offers them
-/// with ``AIReplyActionsView`` by default.
+/// copying, rating or regenerating them. A list that shows an ``AIConversation`` offers them with
+/// ``AIReplyActionsView`` by default.
 ///
 /// ```swift
 /// final class MyFactory: AIConversationViewFactory {
@@ -44,7 +44,7 @@ public protocol AIConversationViewFactory {
     /// The view type returned by ``makeReplyActionsView(options:)``.
     associatedtype ReplyActionsViewType: View
     /// Returns what the person can do with a finished reply, shown under it once its answer is
-    /// written out. Empty by default, or, in a conversation that shows an ``AIConversation``,
+    /// written out. Empty by default, or, in a list that shows an ``AIConversation``,
     /// ``AIReplyActionsView`` with the conversation's actions from the options.
     ///
     /// A reply's row is not made again while it shows the same, so read what changes, such as

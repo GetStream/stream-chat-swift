@@ -9,7 +9,8 @@ import SwiftUI
 ///
 /// Contains a multi-line `TextField` (a single line before iOS 16), an inline
 /// ``SpeechToTextButton``, a send button, and a stop-generating button. It also shows
-/// attachment thumbnails and the active chat-option chip when those are present on the view model.
+/// attachment thumbnails and the active chat-option chip when those are present on the view model,
+/// and, while ``AIComposerViewModel/isEditing``, that the person is editing a message.
 ///
 /// `AIComposerInputView` observes ``AIComposerViewModel/isTextFieldFocused`` and keeps
 /// the keyboard in sync: set `isTextFieldFocused = true` to programmatically focus
@@ -49,6 +50,14 @@ public struct AIComposerInputView<TrailingView: View>: View {
     
     public var body: some View {
         VStack(spacing: layout.spacingMd) {
+            if viewModel.isEditing {
+                EditingMessageChip {
+                    withAnimation {
+                        viewModel.cancelEditing()
+                    }
+                }
+            }
+
             if !viewModel.attachments.isEmpty {
                 SelectedAttachmentsRow(viewModel: viewModel)
             }

@@ -12,7 +12,7 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
     let entry: AIConversationEntry<Message>
     let factory: Factory
     let approver: AIToolApprover?
-    // The conversation the conversation shows, which offers what the person can do with the message.
+    // The conversation the list shows, which offers what the person can do with the message.
     let conversation: AIConversation<Message>?
     // Compared rather than the row, whose message and factory belong to the main actor.
     nonisolated let shown: AIConversationEntrySnapshot
@@ -26,7 +26,13 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
     }
 
     public var body: some View {
-        AIConversationRow<Message, Factory, Never>(entry: entry, factory: factory, approver: approver, conversation: conversation, generated: nil)
+        AIConversationRow<Message, Factory, Never>(
+            entry: entry,
+            factory: factory,
+            approver: approver,
+            conversation: conversation,
+            generated: nil
+        )
     }
 
     // SwiftUI compares rows of the same message, so what they show is all that can differ.
@@ -49,7 +55,7 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
     let isLatestReply: Bool
     let uiDocument: AIUIDocument?
     let host: ObjectIdentifier?
-    let hasConversation: Bool
+    let conversation: ObjectIdentifier?
     let rating: AIMessageRating?
     let offersRegenerate: Bool
     let offersEdit: Bool
@@ -64,7 +70,7 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
         self.approver = approver.map { [$0.userID, $0.clientID, $0.authorizer?.callbackScheme ?? ""] } ?? []
         isLatestReply = entry.isLatestReply
         self.host = host.map(ObjectIdentifier.init)
-        hasConversation = conversation != nil
+        self.conversation = conversation.map(ObjectIdentifier.init)
         if let conversation, let message = entry.message {
             rating = message.role == .user ? nil : conversation.ratings[message.id]
             offersRegenerate = message.role != .user && conversation.offersRegenerate(isLatestReply: entry.isLatestReply)
@@ -107,7 +113,7 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
             && lhs.isLatestReply == rhs.isLatestReply
             && lhs.uiDocument == rhs.uiDocument
             && lhs.host == rhs.host
-            && lhs.hasConversation == rhs.hasConversation
+            && lhs.conversation == rhs.conversation
             && lhs.rating == rhs.rating
             && lhs.offersRegenerate == rhs.offersRegenerate
             && lhs.offersEdit == rhs.offersEdit
