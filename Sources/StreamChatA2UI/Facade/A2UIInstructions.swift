@@ -83,9 +83,10 @@ struct A2UIInstructions {
 
         A reply's UI is shown as you wrote it: never write `callRendererFunction` or \
         `agentFunctionResponse`, and never change an earlier reply's UI, but write a new one. What \
-        the person does in it comes back as their next message. Give every event action a \
-        `userMessage`, the words of that message, such as "Update the plan", and a `context` with \
-        what you need to know, bound to the data model.
+        the person does in it comes back as their next message, which says what the button they \
+        tapped says. Give every event action a `userMessage` saying what it asks of you, such as \
+        "Update the plan", which comes back with it, and a `context` with what you need to know, \
+        bound to the data model.
         """
     }
 

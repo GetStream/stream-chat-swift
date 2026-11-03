@@ -18,10 +18,11 @@ import SwiftUI
 /// ```
 ///
 /// Each reply keeps its own surfaces, so what the person enters in them survives scrolling. A
-/// button's event reaches the host as an ``AIUIAction`` named after it, with the person's words,
-/// its `userMessage`, as the label, and its surface, its component and its resolved `context` in
-/// the payload, with the surface's data model too when the agent asks for it with
-/// `sendDataModel`. A function the catalog doesn't define runs as one of the host's tools, and
+/// button's event reaches the host as an ``AIUIAction`` named after it, labeled with the button's
+/// text, and with its surface, its component, its resolved `context` and the agent's
+/// `userMessage` in the payload, with the surface's data model too when the agent asks for it
+/// with `sendDataModel`. The label is never the agent's words, which could say something the
+/// person didn't choose. A function the catalog doesn't define runs as one of the host's tools, and
 /// links open through the host.
 ///
 /// An app component named like one of the catalog's, such as `card` for `Card`, would replace
