@@ -159,7 +159,7 @@ public final class A2UIRenderer: AIUIRenderer {
     }
 
     // The renderer's own messages go to StreamCore's logger, with the rest of the SDK's.
-    private static func forwardToStreamCore(_ level: A2UILogLevel, _ message: String) {
+    private nonisolated static func forwardToStreamCore(_ level: A2UILogLevel, _ message: String) {
         switch level {
         case .debug: log.debug(message)
         case .info: log.info(message)
