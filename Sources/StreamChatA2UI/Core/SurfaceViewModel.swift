@@ -24,7 +24,7 @@ final class SurfaceViewModel: ObservableObject {
     let dataModel: DataModel
 
     /// The current component tree, or `nil` before the surface was created.
-    @Published private(set) var definition: UiDefinition?
+    @Published private(set) var definition: SurfaceDefinition?
 
     /// A counter bumped whenever the surface's data changes.
     ///
@@ -49,7 +49,7 @@ final class SurfaceViewModel: ObservableObject {
 
     /// Installs the definition created by a `createSurface` message.
     /// Replaces any previous definition for this surface.
-    func create(definition: UiDefinition, dataModel initialData: JsonMap?) {
+    func create(definition: SurfaceDefinition, dataModel initialData: JsonMap?) {
         if let initialData {
             dataModel.replaceAll(with: initialData)
         }

@@ -9,7 +9,7 @@ import Foundation
 /// A definition is created by a `createSurface` message and then refined by any
 /// number of `updateComponents` messages. Components are stored by id so that
 /// out-of-order and partial updates can be applied while streaming.
-struct UiDefinition: Equatable {
+struct SurfaceDefinition: Equatable {
     /// The id of the surface this definition belongs to.
     let surfaceId: String
 
@@ -68,7 +68,7 @@ struct UiDefinition: Equatable {
 
     /// Returns a copy with additional components merged in.
     /// Use this to keep definitions immutable in observable state.
-    func merging(_ newComponents: [Component]) -> UiDefinition {
+    func merging(_ newComponents: [Component]) -> SurfaceDefinition {
         var copy = self
         copy.merge(newComponents)
         return copy
@@ -94,7 +94,7 @@ struct UiDefinition: Equatable {
     }
 
     /// Compares two definitions by surface metadata and components.
-    static func == (lhs: UiDefinition, rhs: UiDefinition) -> Bool {
+    static func == (lhs: SurfaceDefinition, rhs: SurfaceDefinition) -> Bool {
         lhs.surfaceId == rhs.surfaceId
             && lhs.catalogId == rhs.catalogId
             && lhs.sendDataModel == rhs.sendDataModel

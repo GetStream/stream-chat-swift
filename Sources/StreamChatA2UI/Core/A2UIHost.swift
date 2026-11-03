@@ -17,11 +17,11 @@ struct SurfaceAdded: A2UIUpdate {
     let surfaceId: String
 
     /// The definition the surface was created with.
-    let definition: UiDefinition
+    let definition: SurfaceDefinition
 
     /// Creates a surface-added update.
     /// The definition may still be incomplete while streaming.
-    init(surfaceId: String, definition: UiDefinition) {
+    init(surfaceId: String, definition: SurfaceDefinition) {
         self.surfaceId = surfaceId
         self.definition = definition
     }
@@ -33,10 +33,10 @@ struct SurfaceUpdated: A2UIUpdate {
     let surfaceId: String
 
     /// The definition after the change.
-    let definition: UiDefinition
+    let definition: SurfaceDefinition
 
     /// Creates a surface-updated update.
-    init(surfaceId: String, definition: UiDefinition) {
+    init(surfaceId: String, definition: SurfaceDefinition) {
         self.surfaceId = surfaceId
         self.definition = definition
     }
@@ -86,7 +86,7 @@ extension A2UIHost {
     ///
     /// The renderer is cheap and stateless, so views create one per render pass
     /// with the current definition.
-    func makeRenderer(for definition: UiDefinition) -> SurfaceRenderer {
+    func makeRenderer(for definition: SurfaceDefinition) -> SurfaceRenderer {
         let evaluator = ExpressionEvaluator(
             catalogs: catalogs,
             surfaceId: definition.surfaceId,

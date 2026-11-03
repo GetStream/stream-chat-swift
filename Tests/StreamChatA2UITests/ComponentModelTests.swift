@@ -197,10 +197,10 @@ struct DynamicValueTests {
 
 @MainActor
 @Suite("Surface definitions")
-struct UiDefinitionTests {
+struct SurfaceDefinitionTests {
     @Test("A surface renders once its root component arrives")
     func renderable() {
-        var definition = UiDefinition(surfaceId: "main", catalogId: basicCatalogId)
+        var definition = SurfaceDefinition(surfaceId: "main", catalogId: basicCatalogId)
         #expect(!definition.isRenderable)
 
         definition.merge([Component(id: "other", type: "Text")])
@@ -213,7 +213,7 @@ struct UiDefinitionTests {
 
     @Test("Merging replaces components with the same id")
     func merging() {
-        var definition = UiDefinition(surfaceId: "main")
+        var definition = SurfaceDefinition(surfaceId: "main")
         definition.merge([Component(id: "root", type: "Text", properties: ["text": "one"])])
         definition = definition.merging([Component(id: "root", type: "Text", properties: ["text": "two"])])
 
@@ -223,7 +223,7 @@ struct UiDefinitionTests {
 
     @Test("The context description includes the component tree")
     func contextDescription() {
-        var definition = UiDefinition(surfaceId: "main", sendDataModel: true)
+        var definition = SurfaceDefinition(surfaceId: "main", sendDataModel: true)
         definition.merge([Component(id: "root", type: "Text", properties: ["text": "Hi"])])
         let description = definition.asContextDescriptionText()
 

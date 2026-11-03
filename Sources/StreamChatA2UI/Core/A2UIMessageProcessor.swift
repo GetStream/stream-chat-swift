@@ -122,12 +122,6 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         }
     }
 
-    /// Releases all surface state.
-    /// Call when the processor is no longer needed.
-    func dispose() {
-        clearSurfaces(emitUpdates: false)
-    }
-
     // MARK: - Message handling
 
     /// Applies an A2UI message to renderer state.
@@ -198,7 +192,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         }
 
         let viewModel = surfaceViewModel(message.surfaceId)
-        var definition = UiDefinition(
+        var definition = SurfaceDefinition(
             surfaceId: message.surfaceId,
             catalogId: message.catalogId,
             sendDataModel: message.sendDataModel,

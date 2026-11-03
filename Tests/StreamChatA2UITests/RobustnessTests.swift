@@ -163,7 +163,7 @@ struct RobustnessTests {
 
     // A renderer over the test catalog, which records the errors it reports.
     private func makeRenderer(_ components: [Component]) -> (renderer: SurfaceRenderer, model: DataModel, errors: ErrorLog, context: (String) -> ComponentRenderContext) {
-        var definition = UiDefinition(surfaceId: "surface", catalogId: TestCatalog.catalogId)
+        var definition = SurfaceDefinition(surfaceId: "surface", catalogId: TestCatalog.catalogId)
         definition.merge(components)
         let (evaluator, model) = makeEvaluator()
         let errors = ErrorLog()
