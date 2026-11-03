@@ -16,6 +16,10 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
         var uiDocument: AIUIDocument?
     }
 
+    private struct ReadsAnyUI: AIUIDocumentReader {
+        func canShow(_ document: AIUIDocument) -> Bool { true }
+    }
+
     private let writingUI = AIUIDocument(format: .openUI, isStreaming: true, content: .string("root = Card([title])"))
 
     private let tracker = AIPendingMessageTracker()
@@ -41,7 +45,7 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
                 Message(id: "a1", role: .assistant, text: "", isGenerating: true, uiDocument: writingUI)
             ],
             pending: nil,
-            canShowUI: { _ in true }
+            ui: ReadsAnyUI()
         )
 
         XCTAssertEqual(entries.map(\.id), ["q1", "a1"])
@@ -189,7 +193,7 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
             Message(id: "a1", role: .assistant, text: "", isGenerating: true, uiDocument: writingUI)
         ]
 
-        XCTAssertFalse(tracker.isAwaitingReply(in: messages, pending: nil, canShowUI: { _ in true }))
+        XCTAssertFalse(tracker.isAwaitingReply(in: messages, pending: nil, ui: ReadsAnyUI()))
     }
 
     func test_isAwaitingReply_whileTheReplysUINothingShows_isTrue() {
