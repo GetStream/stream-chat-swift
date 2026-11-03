@@ -148,6 +148,26 @@ struct AgentReportingTests {
 @MainActor
 @Suite("Surface lifecycle")
 struct SurfaceLifecycleTests {
+    @Test("A surface deleted or cleared and then created again shows in the view model its views hold")
+    func recreatedSurfaceKeepsItsViewModel() {
+        let harness = ProcessorHarness()
+        harness.createSurface("main")
+        let viewModel = harness.processor.surfaceViewModel("main")
+
+        harness.processor.handle(.deleteSurface(DeleteSurfaceMessage(surfaceId: "main")))
+        #expect(viewModel.definition == nil)
+        harness.createSurface("main")
+        #expect(harness.processor.surfaceViewModel("main") === viewModel)
+        #expect(viewModel.definition != nil)
+
+        harness.processor.clearSurfaces()
+        #expect(viewModel.definition == nil)
+        #expect(harness.processor.surfaceIds.isEmpty)
+        harness.createSurface("main")
+        #expect(harness.processor.surfaceViewModel("main") === viewModel)
+        #expect(harness.processor.surfaceIds == ["main"])
+    }
+
     @Test("Creating a surface that exists is an integrity error and keeps the original")
     func duplicateSurface() {
         let harness = ProcessorHarness()

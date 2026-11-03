@@ -11,7 +11,7 @@ import StreamChatAI
 final class A2UIReply: ObservableObject {
     let processor: A2UIMessageProcessor
     @Published private(set) var surfaceIds: [String] = []
-    private(set) var isStreaming = false
+    @Published private(set) var isStreaming = false
     private var applied: [String] = []
     private var messages: AnyCancellable?
 
@@ -25,7 +25,14 @@ final class A2UIReply: ObservableObject {
     /// Applies the messages of `source` not applied yet. Messages that changed, rather than
     /// grew, start the surfaces again.
     func update(source: String, isStreaming: Bool) {
-        self.isStreaming = isStreaming
+        if self.isStreaming != isStreaming {
+            self.isStreaming = isStreaming
+            // The app's components read it while their surface renders, which nothing else
+            // changes when only the reply's status does.
+            for surfaceId in processor.surfaceIds {
+                processor.surfaceViewModel(surfaceId).touch()
+            }
+        }
         let messages = A2UIStream.messages(in: source)
         if !messages.starts(with: applied) {
             processor.clearSurfaces(emitUpdates: false)

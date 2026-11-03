@@ -25,6 +25,12 @@ final class A2UIEngine: AIUIEngine {
     func view(for document: AIUIDocument, messageID: String) -> A2UIReplyView? {
         guard let source = Self.source(of: document) else { return nil }
         let reply = replies[messageID] ?? makeReply(messageID: messageID, source: source, isStreaming: document.isStreaming)
+        // A reply with no surfaces of its own has no view following it, so it is brought up to
+        // date here, and shows its text until a surface arrives.
+        if reply.surfaceIds.isEmpty {
+            reply.update(source: source, isStreaming: document.isStreaming)
+        }
+        guard !reply.surfaceIds.isEmpty else { return nil }
         return A2UIReplyView(reply: reply, source: source, isStreaming: document.isStreaming)
     }
 
@@ -33,7 +39,7 @@ final class A2UIEngine: AIUIEngine {
         let components = (host?.components ?? []).compactMap { component in
             try? definition(of: component, messageID: messageID)
         }
-        let services = RendererServices(openUrl: { [weak host] url in host?.open(url) })
+        let services = RendererServices(openUrl: { [weak host] url in host?.open(url) }, mediaURL: renderer.mediaURL)
         let processor = A2UIMessageProcessor(
             catalogs: renderer.catalogs(adding: components, entrances: true),
             defaultCatalogId: renderer.catalogId,
@@ -87,14 +93,18 @@ final class A2UIEngine: AIUIEngine {
     func handle(_ message: RendererMessage, messageID: String) {
         switch message {
         case let .action(action):
-            let label = action.userMessage ?? buttonText(of: action, messageID: messageID) ?? action.name
+            let label = action.userMessage ?? buttonText(of: action, messageID: messageID) ?? Self.words(of: action.name)
             host?.send(AIUIAction(messageID: messageID, format: .a2ui, name: action.name, label: label, payload: [
                 "surfaceId": .string(action.surfaceId),
                 "sourceComponentId": .string(action.sourceComponentId),
                 "context": .dictionary(action.context.mapValues { RawJSON(a2ui: $0) })
             ]))
         case let .error(error):
-            log.error("A reply's A2UI can't show: \(error.code) \(error.message)")
+            if let onError = renderer.onError {
+                onError(A2UIError(error), messageID)
+            } else {
+                log.error("A reply's A2UI can't show: \(error.code) \(error.message)")
+            }
         case let .callAgentFunction(call):
             log.error("A reply's A2UI calls \(call.callFunction.name), which a chat can't answer")
         case .rendererFunctionResponse:
@@ -111,6 +121,26 @@ final class A2UIEngine: AIUIEngine {
               !text.isEmpty
         else { return nil }
         return text
+    }
+
+    // An event name as words, such as "Submit form" for `submit_form` or `submitForm`, for a
+    // button whose action has no words of its own.
+    static func words(of name: String) -> String {
+        var words: [String] = []
+        var word = ""
+        for character in name {
+            let separates = character == "_" || character == "-" || character == " "
+            let startsWord = character.isUppercase && word.last?.isLowercase == true
+            if separates || startsWord {
+                if !word.isEmpty { words.append(word) }
+                word = separates ? "" : String(character)
+            } else {
+                word.append(character)
+            }
+        }
+        if !word.isEmpty { words.append(word) }
+        let sentence = words.joined(separator: " ").lowercased()
+        return sentence.prefix(1).uppercased() + sentence.dropFirst()
     }
 
     // The messages of a document as text: as the agent wrote them, or written out when a backend

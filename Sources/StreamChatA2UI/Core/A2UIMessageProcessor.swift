@@ -86,10 +86,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     /// Returns the observable state of a surface, creating it if needed.
     /// Views may bind to a surface before the agent creates it.
     public func surfaceViewModel(_ surfaceId: String) -> SurfaceViewModel {
-        if let existing = surfaces[surfaceId] {
-            return existing
-        }
-        let viewModel = SurfaceViewModel(surfaceId: surfaceId)
+        let viewModel = surfaces[surfaceId] ?? SurfaceViewModel(surfaceId: surfaceId)
         surfaces[surfaceId] = viewModel
         if !surfaceOrder.contains(surfaceId) {
             surfaceOrder.append(surfaceId)
@@ -106,7 +103,10 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     /// Emits removal updates unless `emitUpdates` is `false`.
     public func clearSurfaces(emitUpdates: Bool = true) {
         let ids = surfaceOrder
-        surfaces.removeAll()
+        // Views keep the view model they were made with, so it is reset rather than replaced.
+        for viewModel in surfaces.values {
+            viewModel.reset()
+        }
         surfaceOrder.removeAll()
         remoteCalls.removeAll()
         remoteCallIds.removeAll()
@@ -437,7 +437,9 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     }
 
     private func deleteSurface(_ message: DeleteSurfaceMessage) {
-        guard let viewModel = surfaces.removeValue(forKey: message.surfaceId) else { return }
+        // Views keep the view model they were made with, so a surface created again with the same
+        // id shows in it.
+        guard let viewModel = surfaces[message.surfaceId], viewModel.definition != nil else { return }
         viewModel.reset()
         surfaceOrder.removeAll { $0 == message.surfaceId }
         let staleCalls = remoteCalls.keys.filter { $0.surfaceId == message.surfaceId }
