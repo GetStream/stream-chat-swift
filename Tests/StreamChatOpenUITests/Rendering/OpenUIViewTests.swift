@@ -45,6 +45,26 @@ struct OpenUIViewTests {
         #expect(replaced.count > 0)
     }
 
+    @Test func aReplacedViewCanWrapTheLibrarysOwn() throws {
+        let replaced = RenderCount()
+        let original = RenderCount()
+        let base = ComponentLibrary.openUIChat.replacingRenderer(for: "TextContent") { _ in
+            original.count += 1
+            return AnyView(Text("Original"))
+        }
+        let library = base.replacingView(of: .textContent) { context in
+            replaced.count += 1
+            return context.defaultView.padding()
+        }
+        let runtime = OwnedRuntime().runtime(library: library, toolProvider: nil, initialState: nil, onAction: nil, response: Self.program, isStreaming: false)
+        _ = try #require(RenderingTests.render(runtime))
+
+        #expect(replaced.count > 0)
+        #expect(original.count > 0, "the default view is the library's own")
+        #expect(library.component(named: "TextContent")?.schema == ComponentLibrary.openUIChat.component(named: "TextContent")?.schema)
+        #expect(library.replacingView(of: "Missing") { _ in Text("x") }.componentNames == library.componentNames)
+    }
+
     @Test func ownedRuntimeIsRemadeForAnotherLibrary() {
         let owned = OwnedRuntime()
         let chat = owned.runtime(library: .openUIChat, toolProvider: nil, initialState: nil, onAction: nil, response: Self.program, isStreaming: false)

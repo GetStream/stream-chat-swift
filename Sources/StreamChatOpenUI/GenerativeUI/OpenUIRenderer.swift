@@ -30,6 +30,7 @@ public final class OpenUIRenderer: AIUIRenderer {
     /// The library the agent writes with, before the app's components join it.
     public let library: ComponentLibrary
     private let instructions: String?
+    let theme: OpenUITheme?
     private let toolProvider: (any OpenUIToolProvider)?
     private let mediaURL: @Sendable (URL) -> URL?
     private let onError: (@MainActor (OpenUIError, _ messageID: String) -> Void)?
@@ -38,11 +39,14 @@ public final class OpenUIRenderer: AIUIRenderer {
     ///   - library: The library the agent writes with, the chat library by default.
     ///   - instructions: What the agent's model is told before OpenUI's own instructions, such as
     ///     which answers to write as UI and when to use the app's components.
+    ///   - theme: The look of the replies' OpenUI. By default it follows the conversation's
+    ///     `AIAppearance`, ``OpenUITheme/init(appearance:)``.
     ///   - toolProvider: Runs the tools of `Query()` and `Mutation()`. By default they are the
     ///     host's tools, run on the device.
     ///   - mediaURL: The URL an image loads from, given the web link the model wrote, or `nil` to
-    ///     not load it, such as to allow only your own image hosts. A link that holds something
-    ///     the person typed in the reply never loads. By default every other web link does.
+    ///     not load it, such as to allow only your own image hosts. It gets only links the model
+    ///     wrote out or a tool returned, so one built from what the person typed never loads. By
+    ///     default each of those loads.
     ///   - onError: Gets the problems with a reply's program once it is complete, such as a
     ///     component it doesn't know or a tool that failed. A chat has no channel for them, so
     ///     forward them to your backend if the agent should hear about them. They are logged by
@@ -50,12 +54,14 @@ public final class OpenUIRenderer: AIUIRenderer {
     public init(
         library: ComponentLibrary = .openUIChat,
         instructions: String? = nil,
+        theme: OpenUITheme? = nil,
         toolProvider: (any OpenUIToolProvider)? = nil,
         mediaURL: @escaping @Sendable (URL) -> URL? = { $0 },
         onError: (@MainActor (OpenUIError, _ messageID: String) -> Void)? = nil
     ) {
         self.library = library
         self.instructions = instructions
+        self.theme = theme
         self.toolProvider = toolProvider
         self.mediaURL = mediaURL
         self.onError = onError
@@ -78,6 +84,7 @@ public final class OpenUIRenderer: AIUIRenderer {
             host: host,
             toolProvider: toolProvider ?? HostToolProvider(host: host),
             mediaURL: mediaURL,
+            theme: theme,
             onError: onError
         )
     }

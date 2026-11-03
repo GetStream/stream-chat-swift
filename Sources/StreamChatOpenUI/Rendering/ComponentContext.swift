@@ -91,10 +91,23 @@ public struct ComponentProps: Sendable {
 public struct ComponentContext {
     public let element: ElementNode
     public let runtime: OpenUIRuntime
+    // The library's own view of the component, when an app replaced it.
+    var defaultRenderer: ComponentRenderer?
 
     public init(element: ElementNode, runtime: OpenUIRuntime) {
         self.element = element
         self.runtime = runtime
+    }
+
+    /// The library's own view of the component, to wrap or restyle in a view that replaces it.
+    /// It keeps the component's validation and actions.
+    public var defaultView: some View {
+        defaultRenderer.map { $0(self) }
+    }
+
+    /// The view of a prop that holds components, such as a card's `children`.
+    public func view(of prop: String) -> some View {
+        render(prop: prop)
     }
 
     public var props: ComponentProps { ComponentProps(element.props) }

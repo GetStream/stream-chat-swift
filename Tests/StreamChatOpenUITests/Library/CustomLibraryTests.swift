@@ -42,9 +42,9 @@ struct CustomLibraryTests {
         #expect(prompt.contains("Trips(items: TripCard[]) — A list of trips"))
     }
 
-    @Test func replacingARendererKeepsTheSchemaAndPrompt() {
-        let library = ComponentLibrary.openUIChat.replacingRenderer(for: "Callout") { context in
-            AnyView(Label(context.props.text("title") ?? "", systemImage: "info.circle"))
+    @Test func replacingAViewKeepsTheSchemaAndPrompt() {
+        let library = ComponentLibrary.openUIChat.replacingView(of: .callout) { context in
+            Label(context.props.text("title") ?? "", systemImage: "info.circle")
         }
         #expect(library.component(named: "Callout")?.schema == ComponentLibrary.openUIChat.component(named: "Callout")?.schema)
         #expect(library.systemPrompt() == ComponentLibrary.openUIChat.systemPrompt())

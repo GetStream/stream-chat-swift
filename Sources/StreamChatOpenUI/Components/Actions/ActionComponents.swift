@@ -75,12 +75,13 @@ struct ButtonComponentView: View {
             tap(label: label, variant: variant)
         } label: {
             Text(label)
-                .font(size == "large" ? .body.weight(.semibold) : theme.fonts.bodySmall.weight(.semibold))
+                .font(size == "large" ? theme.fonts.body.weight(.semibold) : theme.fonts.bodySmall.weight(.semibold))
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: variant == "tertiary" ? nil : .infinity)
         }
         .modifier(OpenUIButtonStyle(variant: variant))
+        .tint(destructive ? theme.colors.danger : theme.colors.accent)
         .controlSize(Self.controlSize(size))
         .disabled(context.isStreaming)
     }
@@ -159,6 +160,7 @@ struct ButtonsView: View {
 struct IconButtonView: View {
     let context: ComponentContext
     @Environment(\.openUIFormName) private var formName
+    @Environment(\.openUITheme) private var theme
     @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 20
 
     var body: some View {
@@ -172,6 +174,7 @@ struct IconButtonView: View {
                 .frame(width: iconSize, height: iconSize)
         }
         .modifier(OpenUIButtonStyle(variant: variant))
+        .tint(theme.colors.accent)
         .buttonBorderShape(props.string("shape") == "circle" ? .circle : .roundedRectangle)
         .controlSize(ButtonComponentView.controlSize(props.string("size") ?? "medium"))
         .disabled(context.isStreaming)
@@ -197,7 +200,7 @@ struct FollowUpBlockView: View {
                 } label: {
                     HStack(spacing: theme.spacing.s) {
                         Image(systemName: "arrow.turn.down.right")
-                            .font(.footnote.weight(.semibold))
+                            .font(theme.fonts.bodySmall.weight(.semibold))
                             .foregroundStyle(theme.colors.accent)
                             .accessibilityHidden(true)
                         Text(text)
@@ -246,7 +249,7 @@ struct ListBlockView: View {
                             .clipShape(RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
                     } else {
                         Text("\(index + 1)")
-                            .font(.caption.weight(.semibold))
+                            .font(theme.fonts.caption.weight(.semibold))
                             .monospacedDigit()
                             .foregroundStyle(theme.colors.accent)
                             .frame(width: (small ? 20 : 24) * scale, height: (small ? 20 : 24) * scale)
@@ -258,7 +261,7 @@ struct ListBlockView: View {
                             .foregroundStyle(theme.colors.textPrimary)
                         if let subtitle = props.text("subtitle") {
                             Text(InlineMarkdown.cached(subtitle))
-                                .font(small ? .caption2 : theme.fonts.caption)
+                                .font(theme.fonts.caption)
                                 .foregroundStyle(theme.colors.textSecondary)
                         }
                     }
@@ -270,7 +273,7 @@ struct ListBlockView: View {
                                 Text(actionLabel).font(theme.fonts.caption.weight(.medium))
                             }
                             Image(systemName: "chevron.forward")
-                                .font(.caption.weight(.semibold))
+                                .font(theme.fonts.caption.weight(.semibold))
                                 .accessibilityHidden(true)
                         }
                         .foregroundStyle(theme.colors.textSecondary)

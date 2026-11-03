@@ -159,8 +159,33 @@ public struct ComponentLibrary: Sendable {
         )
     }
 
+    /// Returns a library in which `view` shows the component named `name`, which keeps its props,
+    /// such as to restyle the chat library's buttons. The view's context has the component's
+    /// props, and the library's own view of it, ``ComponentContext/defaultView``, to wrap or
+    /// restyle. It is the same library when it has no such component.
+    ///
+    /// ```swift
+    /// let library = ComponentLibrary.openUIChat.replacingView(of: .button) { context in
+    ///     context.defaultView.tint(.orange)
+    /// }
+    /// OpenUIRenderer(library: library)
+    /// ```
+    public func replacingView<Content: View>(
+        of name: OpenUIComponentName,
+        with view: @escaping @MainActor @Sendable (ComponentContext) -> Content
+    ) -> ComponentLibrary {
+        guard let original = components.first(where: { $0.name == name.rawValue }), let renderer = original.renderer else {
+            return self
+        }
+        return replacingRenderer(for: name.rawValue) { context in
+            var context = context
+            context.defaultRenderer = renderer
+            return AnyView(view(context))
+        }
+    }
+
     /// Returns a library where the renderer of `name` is replaced (the schema is kept).
-    public func replacingRenderer(for name: String, with renderer: @escaping ComponentRenderer) -> ComponentLibrary {
+    func replacingRenderer(for name: String, with renderer: @escaping ComponentRenderer) -> ComponentLibrary {
         let updated = components.map { definition -> OpenUIComponentDefinition in
             guard definition.name == name else { return definition }
             return OpenUIComponentDefinition(definition.schema, renderer: renderer)

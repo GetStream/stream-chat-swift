@@ -109,6 +109,23 @@ struct OpenUIRendererTests {
         #expect(!withoutTools.contains("## Available Tools"))
     }
 
+    @Test func theThemeFollowsTheAppearanceUnlessTheRendererHasOne() {
+        let appearance = AIAppearance()
+        let theme = OpenUITheme(appearance: appearance)
+
+        #expect(theme.colors.accent == Color(appearance.tokens.colors.accentPrimary))
+        #expect(theme.colors.surface == Color(appearance.tokens.colors.backgroundCoreSurfaceCard))
+        #expect(theme.fonts.body == appearance.tokens.fonts.body)
+        #expect(theme.radius.large == appearance.tokens.layout.radiusXl)
+
+        var orange = OpenUITheme()
+        orange.colors.accent = .orange
+        let themed = OpenUIEngine(library: .openUIChat, host: FakeHost(), toolProvider: FunctionToolProvider([:]), theme: orange)
+        let plain = OpenUIEngine(library: .openUIChat, host: FakeHost(), toolProvider: FunctionToolProvider([:]))
+        #expect(themed.view(for: Self.document("root = Card([])"), messageID: "m1")?.theme?.colors.accent == .orange)
+        #expect(plain.view(for: Self.document("root = Card([])"), messageID: "m1")?.theme == nil)
+    }
+
     @Test func capabilitiesStartWithTheAppsInstructions() throws {
         let instructions = try #require(
             OpenUIRenderer(instructions: "Show places as cards.").capabilities(components: [], tools: [])["instructions"]?.stringValue

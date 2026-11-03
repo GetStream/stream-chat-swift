@@ -13,6 +13,7 @@ final class OpenUIEngine: AIUIEngine {
     private weak var host: (any AIUIHosting)?
     private let toolProvider: any OpenUIToolProvider
     private let mediaURL: @Sendable (URL) -> URL?
+    private let theme: OpenUITheme?
     private let onError: (@MainActor (OpenUIError, _ messageID: String) -> Void)?
     private(set) var library: ComponentLibrary
     private(set) var runtimes: [String: OpenUIRuntime] = [:]
@@ -23,11 +24,13 @@ final class OpenUIEngine: AIUIEngine {
         host: any AIUIHosting,
         toolProvider: any OpenUIToolProvider,
         mediaURL: @escaping @Sendable (URL) -> URL? = { $0 },
+        theme: OpenUITheme? = nil,
         onError: (@MainActor (OpenUIError, _ messageID: String) -> Void)? = nil
     ) {
         self.host = host
         self.toolProvider = toolProvider
         self.mediaURL = mediaURL
+        self.theme = theme
         self.onError = onError
         self.library = library
         let components = OpenUIRenderer.placeableSchemas(of: host.components, in: library).map { placeable -> OpenUIComponentDefinition in
@@ -46,7 +49,7 @@ final class OpenUIEngine: AIUIEngine {
     func view(for document: AIUIDocument, messageID: String) -> OpenUIMessageView? {
         guard let program = document.text else { return nil }
         let runtime = runtimes[messageID] ?? makeRuntime(messageID: messageID, program: program, isStreaming: document.isStreaming)
-        return OpenUIMessageView(runtime: runtime, program: program, isStreaming: document.isStreaming, mediaURL: mediaURL)
+        return OpenUIMessageView(runtime: runtime, program: program, isStreaming: document.isStreaming, mediaURL: mediaURL, theme: theme)
     }
 
     // A reply's runtime starts with its program, before any view follows it.
