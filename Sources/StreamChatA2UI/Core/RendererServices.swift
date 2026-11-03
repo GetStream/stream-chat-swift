@@ -15,31 +15,38 @@ import AppKit
 /// and side effecting functions such as `openUrl` deterministic in tests, and
 /// lets an app override behaviour (for example to open links in an in-app
 /// browser).
-public struct RendererServices: Sendable {
+struct RendererServices: Sendable {
     /// Opens a URL outside of the surface, subject to user activation.
-    public var openUrl: @MainActor @Sendable (URL) -> Void
+    var openUrl: @MainActor @Sendable (URL) -> Void
 
     /// Returns the current time, used by date formatting functions.
-    public var now: @Sendable () -> Date
+    var now: @Sendable () -> Date
 
     /// The locale used for number, currency and date formatting.
-    public var locale: Locale
+    var locale: Locale
 
     /// The time zone used for date formatting.
-    public var timeZone: TimeZone
+    var timeZone: TimeZone
 
     /// Announces a change to assistive technologies, for components whose `accessibility.live` is set.
-    public var announce: @MainActor @Sendable (String, AccessibilityAttributes.Live) -> Void
+    var announce: @MainActor @Sendable (String, AccessibilityAttributes.Live) -> Void
+
+    /// The URL an image, video or audio clip loads from, given the one the agent wrote, or `nil`
+    /// to not load it.
+    var mediaURL: @Sendable (URL) -> URL?
 
     /// Creates a services container.
     /// Override any member to change renderer behaviour or make it testable.
-    public init(
+    init(
         openUrl: @escaping @MainActor @Sendable (URL) -> Void = { RendererServices.openUrlWithSystem($0) },
         now: @escaping @Sendable () -> Date = { Date() },
         locale: Locale = .current,
         timeZone: TimeZone = .current,
         announce: @escaping @MainActor @Sendable (String, AccessibilityAttributes.Live) -> Void = {
             RendererServices.announceWithSystem($0, live: $1)
+        },
+        mediaURL: @escaping @Sendable (URL) -> URL? = { url in
+            ["http", "https"].contains(url.scheme?.lowercased() ?? "") ? url : nil
         }
     ) {
         self.openUrl = openUrl
@@ -47,15 +54,16 @@ public struct RendererServices: Sendable {
         self.locale = locale
         self.timeZone = timeZone
         self.announce = announce
+        self.mediaURL = mediaURL
     }
 
     /// The default services, wired to the current platform.
-    public static let `default` = RendererServices()
+    static let `default` = RendererServices()
 
     /// Opens a URL with the platform's default handler.
     /// Used as the default implementation of ``openUrl``.
     @MainActor
-    public static func openUrlWithSystem(_ url: URL) {
+    static func openUrlWithSystem(_ url: URL) {
         #if canImport(UIKit) && !os(watchOS)
         UIApplication.shared.open(url)
         #elseif canImport(AppKit)
@@ -68,7 +76,7 @@ public struct RendererServices: Sendable {
     /// Posts an announcement with the platform's accessibility API.
     /// A `polite` announcement waits for current speech; an `assertive` one interrupts it.
     @MainActor
-    public static func announceWithSystem(_ text: String, live: AccessibilityAttributes.Live) {
+    static func announceWithSystem(_ text: String, live: AccessibilityAttributes.Live) {
         guard live != .off, !text.isEmpty else { return }
         #if canImport(UIKit) && !os(watchOS)
         let announcement = NSAttributedString(

@@ -9,14 +9,14 @@ import Foundation
 /// Logical functions accept booleans as well as ``ValidationResult`` payloads,
 /// so validation functions can be combined directly, as shown by the
 /// specification's button validation example.
-public enum LogicFunctions {
+enum LogicFunctions {
     /// All logical functions, in catalog order.
-    public static var all: [FunctionDefinition] {
+    static var all: [FunctionDefinition] {
         [and, or, not]
     }
 
     /// Returns `true` when every value is truthy.
-    public static let and = FunctionDefinition(
+    static let and = FunctionDefinition(
         name: "and",
         description: "Performs a logical AND operation on a list of boolean values.",
         arguments: JsonSchema.object(
@@ -36,7 +36,7 @@ public enum LogicFunctions {
     }
 
     /// Returns `true` when at least one value is truthy.
-    public static let or = FunctionDefinition(
+    static let or = FunctionDefinition(
         name: "or",
         description: "Performs a logical OR operation on a list of boolean values.",
         arguments: JsonSchema.object(
@@ -56,7 +56,7 @@ public enum LogicFunctions {
     }
 
     /// Returns the negation of a value.
-    public static let not = FunctionDefinition(
+    static let not = FunctionDefinition(
         name: "not",
         description: "Performs a logical NOT operation on a boolean value.",
         arguments: JsonSchema.object(
@@ -85,7 +85,7 @@ public enum LogicFunctions {
     ///
     /// Validation results are truthy when they are valid, which lets `and`,
     /// `or` and `not` compose validation functions.
-    public static func truthy(_ value: (any Sendable)?) -> Bool {
+    static func truthy(_ value: (any Sendable)?) -> Bool {
         guard let value = Json.normalized(value) else { return false }
         if let map = value as? JsonMap, let isValid = Json.bool(map["valid"]) {
             return isValid

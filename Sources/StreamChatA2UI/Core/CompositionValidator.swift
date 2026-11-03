@@ -11,10 +11,10 @@ import Foundation
 /// reports `UNALLOWED_PARENT` or `UNALLOWED_CHILD` to the agent, pointing at
 /// the component, or the child slot, of the message that broke the rule. The
 /// renderer doesn't render a component placed where it isn't allowed.
-public enum CompositionValidator {
+enum CompositionValidator {
     /// Whether `child` may be placed inside `parent`.
     /// Pass `nil` for the surface root, whose parent is the reserved `Surface` container.
-    public static func allows(_ child: ComponentDefinition, in parent: ComponentDefinition?) -> Bool {
+    static func allows(_ child: ComponentDefinition, in parent: ComponentDefinition?) -> Bool {
         let parentType = parent?.name ?? A2UIProtocol.surfaceComponentType
         if let allowedParents = child.allowedParents, !allowedParents.contains(parentType) {
             return false

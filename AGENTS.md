@@ -7,7 +7,7 @@ This repo hosts Stream's iOS Chat SDK in Swift. It provides:
 - A UIKit-based UI SDK (**StreamChatUI**) that provides ready-made chat screens and components
 - A shared UI module (**StreamChatCommonUI**) with appearance tokens, localization, and formatters used by both UIKit and SwiftUI SDKs
 - SwiftUI AI components (**StreamChatAI**) for AI chat experiences: streaming markdown messages, reasoning, tool calls, charts, and a prompt composer. It depends on StreamCore (`StreamCore` and `StreamCoreUI`) but not on the other modules
-- An [A2UI](https://a2ui.org) 1.0 renderer (**StreamChatA2UI**): the protocol's messages, data model, expressions and functions, the basic catalog in SwiftUI, the A2A transport, and `A2UIRenderer`, which shows a reply's A2UI in StreamChatAI's generated UI. It depends on StreamChatAI, and no other SDK target depends on it
+- An [A2UI](https://a2ui.org) 1.0 renderer (**StreamChatA2UI**): the protocol's messages, data model, expressions and functions, the basic catalog in SwiftUI, and `A2UIRenderer`, which shows a reply's A2UI in StreamChatAI's generated UI. It depends on StreamChatAI, and no other SDK target depends on it
 - An [OpenUI](https://github.com/thesysdev/openui) Lang renderer (**StreamChatOpenUI**): parser, streaming parser, evaluator, reactive state, `Query`/`Mutation` tools, the chat and standard component libraries in SwiftUI, the system prompt generator, and `OpenUIRenderer`, which shows a reply's OpenUI in StreamChatAI's generated UI. It depends on StreamChatAI, and no other SDK target depends on it. Requires iOS 17 / macOS 14, so every declaration carries `@available(iOS 17.0, macOS 14.0, *)`
 - An in-app log viewer (**StreamChatLogsUI**) for demo apps and debug builds, built on `StreamLogsUI` from `stream-logs-ui-swift`
 
@@ -110,11 +110,10 @@ Sources/
     StreamNetworkImage/    # Vendored — do not edit
   StreamChatAICMark/       # Vendored cmark-gfm C target for StreamChatAI — do not edit
   StreamChatA2UI/          # A2UI 1.0 renderer
-    A2A/                   # A2A transport binding and the content generator
     AIUI/                  # A2UIRenderer: A2UI replies in StreamChatAI's generated UI
     Catalog/               # Catalogs, the basic catalog's components and functions
     Core/                  # Message processor, expression evaluator, surface rendering
-    Facade/                # Conversation, prompt builder, chat-reply helpers
+    Facade/                # Agent instructions, prompt builder, reading a reply's messages
     Model/                 # Wire messages, components, dynamic values, data model
   StreamChatOpenUI/        # OpenUI Lang renderer
     Lang/                  # Parser, streaming parser, evaluator, runtime, store, queries, message envelope

@@ -11,7 +11,7 @@ import Foundation
 /// `callAgentFunction` message and renders a pending state until the agent
 /// answers.
 @MainActor
-public protocol RemoteFunctionRouter: AnyObject {
+protocol RemoteFunctionRouter: AnyObject {
     /// Returns the agent's answer for a call, dispatching it when needed.
     ///
     /// Implementations return `nil` while the call is in flight, the resolved
@@ -36,28 +36,29 @@ public protocol RemoteFunctionRouter: AnyObject {
 /// immediately, while agent-routed functions return `nil` until their result
 /// arrives.
 @MainActor
-public final class ExpressionEvaluator {
+final class ExpressionEvaluator {
     /// The catalogs available for function resolution.
-    public let catalogs: CatalogRegistry
+    let catalogs: CatalogRegistry
 
     /// The surface this evaluator belongs to.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// The default catalog id of the surface.
-    public let surfaceCatalogId: String?
+    let surfaceCatalogId: String?
 
     /// Host capabilities passed to function implementations.
-    public let services: RendererServices
+    let services: RendererServices
 
     /// Receives calls that cannot be resolved locally.
-    public weak var remoteRouter: RemoteFunctionRouter?
+    weak var remoteRouter: RemoteFunctionRouter?
 
     private var failureCount = 0
     private var userActivationDepth = 0
+    private var interpolationDepth = 0
 
     /// Creates an evaluator for one surface.
     /// Pass the surface's default catalog id so unqualified calls resolve.
-    public init(
+    init(
         catalogs: CatalogRegistry,
         surfaceId: String,
         surfaceCatalogId: String?,
@@ -75,7 +76,7 @@ public final class ExpressionEvaluator {
 
     /// Evaluates a dynamic value in the given scope.
     /// Returns `nil` for missing properties and unresolved values.
-    public func evaluate(_ value: DynamicValue, in context: DataContext) -> (any Sendable)? {
+    func evaluate(_ value: DynamicValue, in context: DataContext) -> (any Sendable)? {
         switch value {
         case .missing:
             return nil
@@ -90,7 +91,7 @@ public final class ExpressionEvaluator {
 
     /// Evaluates a raw wire value in the given scope.
     /// Nested arrays and objects are resolved recursively.
-    public func evaluateRaw(_ raw: (any Sendable)?, in context: DataContext) -> (any Sendable)? {
+    func evaluateRaw(_ raw: (any Sendable)?, in context: DataContext) -> (any Sendable)? {
         guard let raw = Json.normalized(raw) else { return nil }
 
         if let map = raw as? JsonMap {
@@ -113,22 +114,22 @@ public final class ExpressionEvaluator {
 
     /// Evaluates a dynamic value and coerces it to a string.
     /// Coercion follows the A2UI type conversion rules.
-    public func string(_ value: DynamicValue, in context: DataContext) -> String? {
+    func string(_ value: DynamicValue, in context: DataContext) -> String? {
         Json.string(evaluate(value, in: context))
     }
 
     /// Evaluates a dynamic value and coerces it to a number.
-    public func double(_ value: DynamicValue, in context: DataContext) -> Double? {
+    func double(_ value: DynamicValue, in context: DataContext) -> Double? {
         Json.double(evaluate(value, in: context))
     }
 
     /// Evaluates a dynamic value and coerces it to a boolean.
-    public func bool(_ value: DynamicValue, in context: DataContext) -> Bool? {
+    func bool(_ value: DynamicValue, in context: DataContext) -> Bool? {
         Json.bool(evaluate(value, in: context))
     }
 
     /// Evaluates a dynamic value and coerces it to a list of strings.
-    public func stringArray(_ value: DynamicValue, in context: DataContext) -> [String]? {
+    func stringArray(_ value: DynamicValue, in context: DataContext) -> [String]? {
         Json.stringArray(evaluate(value, in: context))
     }
 
@@ -136,7 +137,7 @@ public final class ExpressionEvaluator {
 
     /// Evaluates a function call in the given scope.
     /// Arguments are resolved before the function runs.
-    public func invoke(_ call: FunctionCall, in context: DataContext) -> (any Sendable)? {
+    func invoke(_ call: FunctionCall, in context: DataContext) -> (any Sendable)? {
         let arguments = resolveArguments(call.arguments, in: context)
         return invoke(
             name: call.name,
@@ -150,7 +151,7 @@ public final class ExpressionEvaluator {
     ///
     /// System functions are handled first, then the surface catalogs, and
     /// finally the agent through ``RemoteFunctionRouter``.
-    public func invoke(
+    func invoke(
         name: String,
         catalogId: String?,
         resolvedArguments: [String: any Sendable],
@@ -216,7 +217,7 @@ public final class ExpressionEvaluator {
     ///
     /// Functions that require user activation, such as `openUrl`, only run
     /// inside this scope. Component actions are performed in it.
-    public func withUserActivation<Result>(_ body: () throws -> Result) rethrows -> Result {
+    func withUserActivation<Result>(_ body: () throws -> Result) rethrows -> Result {
         userActivationDepth += 1
         defer { userActivationDepth -= 1 }
         return try body()
@@ -224,7 +225,7 @@ public final class ExpressionEvaluator {
 
     /// Executes a function definition, reporting failures to the agent.
     /// Returns `nil` when the implementation throws.
-    public func execute(
+    func execute(
         _ definition: FunctionDefinition,
         arguments: [String: any Sendable],
         in context: DataContext
@@ -250,7 +251,7 @@ public final class ExpressionEvaluator {
     ///
     /// Used for agent-initiated calls, which must answer with an error rather
     /// than run with a missing argument. A binding to a missing value resolves to `null`.
-    public func resolveArgumentsThrowing(
+    func resolveArgumentsThrowing(
         _ arguments: JsonMap,
         for function: String,
         in context: DataContext
@@ -276,7 +277,7 @@ public final class ExpressionEvaluator {
 
     /// Resolves the raw arguments of a call in the given scope.
     /// Nested bindings and calls are evaluated depth first.
-    public func resolveArguments(_ arguments: JsonMap, in context: DataContext) -> [String: any Sendable] {
+    func resolveArguments(_ arguments: JsonMap, in context: DataContext) -> [String: any Sendable] {
         var resolved: [String: any Sendable] = [:]
         for (key, value) in arguments {
             if let evaluated = evaluateRaw(value, in: context) {
@@ -290,7 +291,16 @@ public final class ExpressionEvaluator {
 
     /// Interpolates a `formatString` template in the given scope.
     /// Unresolved expressions become empty strings; a template that doesn't parse throws.
-    public func interpolate(_ template: String, in context: DataContext) throws -> String {
+    func interpolate(_ template: String, in context: DataContext) throws -> String {
+        // A template can come from the data model and format itself, through formatString.
+        guard interpolationDepth < A2UIProtocol.maxFunctionCallDepth else {
+            throw A2UIExpressionError(
+                "formatString templates nest more than \(A2UIProtocol.maxFunctionCallDepth) levels deep, "
+                    + "such as a template in the data model that formats itself."
+            )
+        }
+        interpolationDepth += 1
+        defer { interpolationDepth -= 1 }
         var output = ""
         for segment in try A2UIExpressionParser.parseTemplate(template) {
             switch segment {
@@ -305,7 +315,7 @@ public final class ExpressionEvaluator {
 
     /// Evaluates a parsed template expression.
     /// Calls are dispatched through the regular function resolution path.
-    public func evaluate(_ expression: A2UIExpression, in context: DataContext) -> (any Sendable)? {
+    func evaluate(_ expression: A2UIExpression, in context: DataContext) -> (any Sendable)? {
         switch expression {
         case let .literal(value):
             return Json.normalized(value)
@@ -332,7 +342,7 @@ public final class ExpressionEvaluator {
     /// disabled while data is arriving.
     ///
     /// The check's `message` is the fallback for a result that has none.
-    public func failingChecks(_ checks: [CheckRule], in context: DataContext) -> [ValidationResult] {
+    func failingChecks(_ checks: [CheckRule], in context: DataContext) -> [ValidationResult] {
         checks.compactMap { rule in
             let failuresBefore = failureCount
             let value = evaluate(rule.condition, in: context)

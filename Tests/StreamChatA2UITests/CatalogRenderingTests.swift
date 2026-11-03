@@ -194,27 +194,39 @@ struct CatalogRenderingTests {
         #expect(!A2UIImageView.isDecorative(description: "A logo", label: .missing))
     }
 
-    @Test("A media player keeps one player per URL, and the poster shows until it plays")
+    @Test("A clip loads only once it plays, and lets go of its player when its URL changes or it leaves")
     func mediaPlayer() throws {
         let model = A2UIMediaPlayerModel()
         let first = try #require(URL(string: "https://example.com/a.mp4"))
         model.load(first)
-        let player = try #require(model.player)
+        #expect(model.player == nil, "nothing loads before the person plays it")
 
+        model.play()
+        let player = try #require(model.player)
         model.load(first)
         #expect(model.player === player)
 
         model.load(URL(string: "https://example.com/b.mp4"))
-        #expect(model.player !== player)
+        #expect(model.player == nil)
+        model.play()
         #expect((model.player?.currentItem?.asset as? AVURLAsset)?.url.lastPathComponent == "b.mp4")
 
-        #expect(!model.hasStarted)
-        model.play()
-        #expect(model.hasStarted)
-
-        model.load(URL(string: "asset-name"))
+        model.release()
         #expect(model.player == nil)
-        #expect(!model.hasStarted)
+        #expect(model.url?.lastPathComponent == "b.mp4", "it plays again from the same URL")
+    }
+
+    @Test("Media loads only from web links by default")
+    func mediaURLs() throws {
+        let services = RendererServices()
+        for link in ["https://example.com/a.png", "HTTP://example.com/a.png"] {
+            let url = try #require(URL(string: link))
+            #expect(services.mediaURL(url) != nil, "\(link)")
+        }
+        for link in ["file:///etc/hosts", "data:image/png;base64,AAAA", "otherapp://image", "ftp://example.com/a.png"] {
+            let url = try #require(URL(string: link))
+            #expect(services.mediaURL(url) == nil, "\(link)")
+        }
     }
 
     private func host(_ view: some View) throws -> UIWindow {

@@ -17,10 +17,10 @@ public typealias JsonArray = [any Sendable]
 /// A2UI payloads arrive as untyped JSON, so the renderer needs a single place
 /// that defines how values are coerced. The coercion rules implemented here
 /// follow the "Type conversion" section of the A2UI v1.0 specification.
-public enum Json {
+enum Json {
     /// Returns the value with JSON `null` normalized to `nil`.
     /// Use this before storing or comparing decoded values.
-    public static func normalized(_ value: (any Sendable)?) -> (any Sendable)? {
+    static func normalized(_ value: (any Sendable)?) -> (any Sendable)? {
         guard let value, !(value is NSNull) else { return nil }
         return value
     }
@@ -29,7 +29,7 @@ public enum Json {
     /// Both `nil` and `NSNull` are treated as null.
     /// Whether objects and arrays in a value nest deeper than `limit`.
     /// Stops at the limit, so a hostile value can't exhaust the stack.
-    public static func exceedsDepth(_ value: (any Sendable)?, limit: Int) -> Bool {
+    static func exceedsDepth(_ value: (any Sendable)?, limit: Int) -> Bool {
         let children: [(any Sendable)?]
         if let map = map(value) {
             children = Array(map.values)
@@ -42,7 +42,7 @@ public enum Json {
         return children.contains { exceedsDepth($0, limit: limit - 1) }
     }
 
-    public static func isNull(_ value: (any Sendable)?) -> Bool {
+    static func isNull(_ value: (any Sendable)?) -> Bool {
         normalized(value) == nil
     }
 
@@ -51,7 +51,7 @@ public enum Json {
     /// Numbers and booleans use their standard representation, `null` becomes an
     /// empty string, and objects and arrays are stringified as JSON so that all
     /// renderers agree on the result.
-    public static func stringify(_ value: (any Sendable)?) -> String {
+    static func stringify(_ value: (any Sendable)?) -> String {
         guard let value = normalized(value) else { return "" }
         switch value {
         case let string as String:
@@ -71,7 +71,7 @@ public enum Json {
 
     /// Reads a string value, coercing non-string JSON values.
     /// Returns `nil` only when the value is missing or null.
-    public static func string(_ value: (any Sendable)?) -> String? {
+    static func string(_ value: (any Sendable)?) -> String? {
         guard let value = normalized(value) else { return nil }
         if let string = value as? String { return string }
         return stringify(value)
@@ -80,7 +80,7 @@ public enum Json {
     /// Reads a numeric value from a JSON payload.
     /// Numeric strings are parsed so that text input can drive numeric bindings.
     /// Infinity and NaN are rejected, because JSON cannot carry them.
-    public static func double(_ value: (any Sendable)?) -> Double? {
+    static func double(_ value: (any Sendable)?) -> Double? {
         guard let value = normalized(value) else { return nil }
         let double: Double?
         if let number = value as? NSNumber {
@@ -96,14 +96,14 @@ public enum Json {
 
     /// Reads an integer value from a JSON payload.
     /// Fractional numbers are truncated towards zero; values outside `Int`'s range are rejected.
-    public static func int(_ value: (any Sendable)?) -> Int? {
+    static func int(_ value: (any Sendable)?) -> Int? {
         guard let double = double(value) else { return nil }
         return Int(exactly: double.rounded(.towardZero))
     }
 
     /// Reads a boolean value from a JSON payload.
     /// Numbers are truthy when non-zero and `"true"`/`"false"` strings are parsed.
-    public static func bool(_ value: (any Sendable)?) -> Bool? {
+    static func bool(_ value: (any Sendable)?) -> Bool? {
         guard let value = normalized(value) else { return nil }
         if let bool = value as? Bool { return bool }
         if let number = value as? NSNumber { return number.doubleValue != 0 }
@@ -119,26 +119,26 @@ public enum Json {
 
     /// Reads an array value from a JSON payload.
     /// Returns `nil` when the value is not an array.
-    public static func array(_ value: (any Sendable)?) -> JsonArray? {
+    static func array(_ value: (any Sendable)?) -> JsonArray? {
         normalized(value) as? JsonArray
     }
 
     /// Reads an object value from a JSON payload.
     /// Returns `nil` when the value is not an object.
-    public static func map(_ value: (any Sendable)?) -> JsonMap? {
+    static func map(_ value: (any Sendable)?) -> JsonMap? {
         normalized(value) as? JsonMap
     }
 
     /// Reads an array of strings, coercing individual elements.
     /// Elements that cannot be coerced are dropped.
-    public static func stringArray(_ value: (any Sendable)?) -> [String]? {
+    static func stringArray(_ value: (any Sendable)?) -> [String]? {
         guard let array = array(value) else { return nil }
         return array.compactMap { string($0) }
     }
 
     /// Compares two JSON values for structural equality.
     /// `nil` and `NSNull` are considered equal.
-    public static func isEqual(_ lhs: (any Sendable)?, _ rhs: (any Sendable)?) -> Bool {
+    static func isEqual(_ lhs: (any Sendable)?, _ rhs: (any Sendable)?) -> Bool {
         let left = normalized(lhs)
         let right = normalized(rhs)
         if left == nil && right == nil { return true }
@@ -148,7 +148,7 @@ public enum Json {
 
     /// Encodes a JSON value to UTF-8 data.
     /// Returns `nil` when the value is not JSON serializable.
-    public static func encode(_ value: any Sendable, pretty: Bool = false) -> Data? {
+    static func encode(_ value: any Sendable, pretty: Bool = false) -> Data? {
         // `JSONSerialization` raises an Objective-C exception, which `try` cannot
         // catch, for values it cannot encode such as NaN. Wrapping the value in an
         // array lets `isValidJSONObject` check top-level scalars too.
@@ -161,7 +161,7 @@ public enum Json {
 
     /// Encodes a JSON value to a UTF-8 string.
     /// Returns `nil` when the value is not JSON serializable.
-    public static func encodeToString(_ value: any Sendable, pretty: Bool = false) -> String? {
+    static func encodeToString(_ value: any Sendable, pretty: Bool = false) -> String? {
         guard let data = encode(value, pretty: pretty) else { return nil }
         return String(data: data, encoding: .utf8)
     }
@@ -170,7 +170,7 @@ public enum Json {
     ///
     /// `JSONSerialization` does not guarantee key order, so anything that keys
     /// a cache by an encoded payload must sort the keys first.
-    public static func canonicalString(_ value: any Sendable) -> String {
+    static func canonicalString(_ value: any Sendable) -> String {
         guard JSONSerialization.isValidJSONObject([value]),
               let data = try? JSONSerialization.data(withJSONObject: value, options: [.sortedKeys, .fragmentsAllowed]) else {
             return String(describing: value)
@@ -180,14 +180,14 @@ public enum Json {
 
     /// Decodes a JSON string into a loosely typed value.
     /// Returns `nil` when the string is not valid JSON.
-    public static func decode(_ string: String) -> (any Sendable)? {
+    static func decode(_ string: String) -> (any Sendable)? {
         guard let data = string.data(using: .utf8) else { return nil }
         return decode(data)
     }
 
     /// Decodes JSON data into a loosely typed value.
     /// Returns `nil` when the data is not valid JSON.
-    public static func decode(_ data: Data) -> (any Sendable)? {
+    static func decode(_ data: Data) -> (any Sendable)? {
         guard let object = try? JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed]) else {
             return nil
         }
@@ -196,13 +196,13 @@ public enum Json {
 
     /// Decodes a JSON string into an object.
     /// Returns `nil` when the string is not a JSON object.
-    public static func decodeMap(_ string: String) -> JsonMap? {
+    static func decodeMap(_ string: String) -> JsonMap? {
         decode(string) as? JsonMap
     }
 
     /// Decodes JSON data into an object.
     /// Returns `nil` when the data is not a JSON object.
-    public static func decodeMap(_ data: Data) -> JsonMap? {
+    static func decodeMap(_ data: Data) -> JsonMap? {
         decode(data) as? JsonMap
     }
 

@@ -9,7 +9,7 @@ import Foundation
 /// The A2UI `formatString` function interpolates data model paths and renderer
 /// side function calls into a string. This type is the parsed form of one such
 /// expression, ready to be evaluated by ``ExpressionEvaluator``.
-public enum A2UIExpression: Equatable {
+enum A2UIExpression: Equatable {
     /// A data model path, absolute or relative to the current scope.
     case path(DataPath)
 
@@ -20,7 +20,7 @@ public enum A2UIExpression: Equatable {
     case literal(any Sendable)
 
     /// Compares two expressions structurally.
-    public static func == (lhs: A2UIExpression, rhs: A2UIExpression) -> Bool {
+    static func == (lhs: A2UIExpression, rhs: A2UIExpression) -> Bool {
         switch (lhs, rhs) {
         case let (.path(left), .path(right)):
             return left == right
@@ -36,7 +36,7 @@ public enum A2UIExpression: Equatable {
 }
 
 /// One piece of a parsed `formatString` template.
-public enum A2UITemplateSegment: Equatable {
+enum A2UITemplateSegment: Equatable {
     /// Literal text copied verbatim into the output.
     case text(String)
 
@@ -45,17 +45,17 @@ public enum A2UITemplateSegment: Equatable {
 }
 
 /// A `formatString` template that does not parse.
-public struct A2UIExpressionError: Error, Equatable, CustomStringConvertible {
+struct A2UIExpressionError: Error, Equatable, CustomStringConvertible {
     /// What is wrong with the template.
-    public let message: String
+    let message: String
 
     /// Creates an error with a message for the agent.
-    public init(_ message: String) {
+    init(_ message: String) {
         self.message = message
     }
 
     /// A human-readable description of the failure.
-    public var description: String {
+    var description: String {
         message
     }
 }
@@ -69,24 +69,24 @@ public struct A2UIExpressionError: Error, Equatable, CustomStringConvertible {
 ///   Arguments are named; values are quoted strings, numbers, `true`, `false`,
 ///   `null`, paths, calls or nested `${...}` expressions.
 /// * A literal `${` is written as `\${`.
-public enum A2UIExpressionParser {
+enum A2UIExpressionParser {
     /// The deepest nesting of interpolations and calls an expression may use.
-    public static let maxNestingDepth = 100
+    static let maxNestingDepth = 100
 
     /// The longest template the parser accepts.
-    public static let maxTemplateLength = 10000
+    static let maxTemplateLength = 10000
 
     /// The most literal and expression parts a template may have.
-    public static let maxTemplateParts = 1000
+    static let maxTemplateParts = 1000
 
     /// Splits a template into literal text and expression segments.
-    public static func parseTemplate(_ template: String) throws -> [A2UITemplateSegment] {
+    static func parseTemplate(_ template: String) throws -> [A2UITemplateSegment] {
         try parseTemplate(template, depth: 0)
     }
 
     /// Parses a single expression, without the surrounding `${}`.
     /// Returns `nil` for an empty expression.
-    public static func parseExpression(_ source: String) throws -> A2UIExpression? {
+    static func parseExpression(_ source: String) throws -> A2UIExpression? {
         try parseExpression(source, depth: 1)
     }
 

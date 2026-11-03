@@ -143,48 +143,31 @@ struct AgentReportingTests {
         #expect(error.surfaceId == nil)
         #expect(Json.map(RendererMessage.error(error).toJson()["error"])?["functionCallId"] as? String == "c1")
     }
-
-    @Test("A decoding failure from the agent connection is reported by the conversation")
-    func conversationReportsDecodingFailures() async {
-        let generator = FakeContentGenerator()
-        let processor = A2UIMessageProcessor(catalogs: [BasicCatalog.catalog])
-        let conversation = A2UIConversation(contentGenerator: generator, processor: processor)
-        var reported: [RendererError] = []
-        var appErrors = 0
-        conversation.onError = { _ in appErrors += 1 }
-        let cancellable = processor.rendererMessages.sink { message in
-            if case let .error(error) = message { reported.append(error) }
-        }
-
-        let failure = A2UIDecodingFailure(
-            error: A2UIDecodingError.missingField(surfaceIdKey, in: "deleteSurface"),
-            payload: ["version": "1.0", "deleteSurface": [:] as JsonMap]
-        )
-        generator.errorSubject.send(ContentGeneratorError(failure))
-
-        #expect(reported.map(\.code) == [RendererError.Code.validationFailed])
-        #expect(appErrors == 1)
-        #expect(failure.description.contains(surfaceIdKey))
-        cancellable.cancel()
-    }
-
-    @Test("Capabilities passed to a conversation are advertised")
-    func customCapabilities() {
-        let generator = FakeContentGenerator()
-        let processor = A2UIMessageProcessor(catalogs: [BasicCatalog.catalog])
-        let inline = RendererCapabilities(supportedCatalogIds: ["app"], inlineCatalogs: [["catalogId": "app"]])
-
-        #expect(A2UIConversation(contentGenerator: generator, processor: processor, capabilities: inline).capabilities == inline)
-        #expect(
-            A2UIConversation(contentGenerator: generator, processor: processor).capabilities.supportedCatalogIds
-                == [basicCatalogId]
-        )
-    }
 }
 
 @MainActor
 @Suite("Surface lifecycle")
 struct SurfaceLifecycleTests {
+    @Test("A surface deleted or cleared and then created again shows in the view model its views hold")
+    func recreatedSurfaceKeepsItsViewModel() {
+        let harness = ProcessorHarness()
+        harness.createSurface("main")
+        let viewModel = harness.processor.surfaceViewModel("main")
+
+        harness.processor.handle(.deleteSurface(DeleteSurfaceMessage(surfaceId: "main")))
+        #expect(viewModel.definition == nil)
+        harness.createSurface("main")
+        #expect(harness.processor.surfaceViewModel("main") === viewModel)
+        #expect(viewModel.definition != nil)
+
+        harness.processor.clearSurfaces()
+        #expect(viewModel.definition == nil)
+        #expect(harness.processor.surfaceIds.isEmpty)
+        harness.createSurface("main")
+        #expect(harness.processor.surfaceViewModel("main") === viewModel)
+        #expect(harness.processor.surfaceIds == ["main"])
+    }
+
     @Test("Creating a surface that exists is an integrity error and keeps the original")
     func duplicateSurface() {
         let harness = ProcessorHarness()

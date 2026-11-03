@@ -9,14 +9,14 @@ import Foundation
 /// Use this when an agent drives a model directly instead of relying on an
 /// A2UI SDK: the prompt describes the message envelope, embeds the catalogs the
 /// renderer supports, and states the rules that keep generated trees valid.
-public enum A2UIPromptBuilder {
+enum A2UIPromptBuilder {
     /// Builds a system prompt for the given catalogs.
     ///
     /// - Parameters:
     ///   - catalogs: The catalogs the renderer supports.
     ///   - includeCatalogSchemas: Whether to embed the full catalog documents.
     ///     Turn this off when the model already has them.
-    public static func systemPrompt(catalogs: [Catalog], includeCatalogSchemas: Bool = true) -> String {
+    static func systemPrompt(catalogs: [Catalog], includeCatalogSchemas: Bool = true) -> String {
         var sections = [protocolOverview]
 
         let instructions = catalogs.compactMap { catalog -> String? in
@@ -43,12 +43,12 @@ public enum A2UIPromptBuilder {
 
     /// Serializes a catalog as an A2UI v1.0 catalog definition document.
     /// Embed this in a prompt or send it as an inline catalog.
-    public static func catalogDocument(_ catalog: Catalog) -> String {
+    static func catalogDocument(_ catalog: Catalog) -> String {
         Json.encodeToString(catalog.toJsonSchema(), pretty: true) ?? "{}"
     }
 
     /// A description of the A2UI v1.0 message envelope and its rules.
-    public static let protocolOverview = """
+    static let protocolOverview = """
     # Generating user interfaces with A2UI v1.0
 
     You render user interfaces by emitting A2UI messages. Every message is a JSON object with a \

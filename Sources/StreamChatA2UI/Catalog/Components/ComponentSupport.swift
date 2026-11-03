@@ -9,9 +9,6 @@ enum A2UILayout {
     /// The spacing used between children of layout containers.
     static let spacing: CGFloat = 8
 
-    /// The corner radius used by cards and inputs.
-    static let cornerRadius: CGFloat = 12
-
     /// Maps an A2UI cross-axis alignment onto a SwiftUI horizontal alignment.
     static func horizontalAlignment(_ align: String) -> HorizontalAlignment {
         switch align {
@@ -97,6 +94,8 @@ struct WeightedChild: View {
 struct ValidationMessages: View {
     let results: [ValidationResult]
 
+    @Environment(\.a2uiTheme) private var theme
+
     var body: some View {
         if results.isEmpty {
             EmptyView()
@@ -105,7 +104,7 @@ struct ValidationMessages: View {
                 ForEach(Array(results.enumerated()), id: \.offset) { _, result in
                     if let message = result.message ?? result.code {
                         Text(message)
-                            .font(.caption)
+                            .font(theme.caption)
                             .foregroundColor(color(for: result.severity))
                     }
                 }
@@ -116,28 +115,9 @@ struct ValidationMessages: View {
 
     private func color(for severity: ValidationResult.Severity) -> Color {
         switch severity {
-        case .error: return .red
-        case .warning: return .orange
-        case .info: return .secondary
+        case .error: return theme.error
+        case .warning: return theme.warning
+        case .info: return theme.secondaryText
         }
-    }
-}
-
-/// A background color that works on every Apple platform.
-enum A2UIColor {
-    /// The fill used behind cards.
-    static var cardBackground: Color {
-        #if canImport(UIKit) && !os(watchOS)
-        return Color(UIColor.secondarySystemBackground)
-        #elseif canImport(AppKit)
-        return Color(NSColor.controlBackgroundColor)
-        #else
-        return Color.gray.opacity(0.12)
-        #endif
-    }
-
-    /// The fill used behind text inputs.
-    static var inputBackground: Color {
-        Color.gray.opacity(0.12)
     }
 }

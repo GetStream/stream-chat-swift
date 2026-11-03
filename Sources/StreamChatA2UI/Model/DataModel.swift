@@ -13,14 +13,14 @@ import Foundation
 /// Instances are not thread-safe. The renderer always mutates them from the
 /// main actor, which is also where SwiftUI reads them.
 @MainActor
-public final class DataModel {
+final class DataModel {
     /// A change to the data model, reported to observers.
-    public struct Change {
+    struct Change {
         /// The absolute path that was written.
-        public let path: DataPath
+        let path: DataPath
 
         /// The value written at `path`, or `nil` when the value was removed.
-        public let value: (any Sendable)?
+        let value: (any Sendable)?
     }
 
     private var storage: JsonMap
@@ -28,20 +28,20 @@ public final class DataModel {
 
     /// Creates a data model with an optional initial value.
     /// Pass the `dataModel` payload of a `createSurface` message here.
-    public init(_ initialValue: JsonMap = [:]) {
+    init(_ initialValue: JsonMap = [:]) {
         self.storage = initialValue
     }
 
     /// The current contents of the data model.
     /// Use this when synchronizing state back to the agent.
-    public var snapshot: JsonMap {
+    var snapshot: JsonMap {
         storage
     }
 
     /// Registers an observer that is notified after every write.
     /// Call the returned closure to stop observing.
     @discardableResult
-    public func observe(_ observer: @escaping (Change) -> Void) -> () -> Void {
+    func observe(_ observer: @escaping (Change) -> Void) -> () -> Void {
         let token = UUID()
         observers[token] = observer
         return { [weak self] in
@@ -51,13 +51,13 @@ public final class DataModel {
 
     /// Reads the value at an absolute path.
     /// Returns `nil` when the path does not exist.
-    public func value(at path: DataPath) -> (any Sendable)? {
+    func value(at path: DataPath) -> (any Sendable)? {
         Json.normalized(Self.read(storage, segments: path.segments))
     }
 
     /// Reads and coerces the value at an absolute path.
     /// Coercion follows the A2UI type conversion rules.
-    public func string(at path: DataPath) -> String? { Json.string(value(at: path)) }
+    func string(at path: DataPath) -> String? { Json.string(value(at: path)) }
 
     /// Writes a value at an absolute path, creating intermediate containers.
     ///
@@ -65,7 +65,7 @@ public final class DataModel {
     /// upsert semantics defined by the specification. Writing to the root path
     /// replaces the whole data model. A write the data model cannot apply is
     /// logged and ignored; use ``set(_:at:)`` to handle the failure.
-    public func update(at path: DataPath, value: (any Sendable)?) {
+    func update(at path: DataPath, value: (any Sendable)?) {
         do {
             try set(value, at: path)
         } catch {
@@ -82,7 +82,7 @@ public final class DataModel {
     /// - Throws: ``DataModelError`` when the path descends through a value that
     ///   is not a container, or uses an invalid array index. The data model is
     ///   left unchanged.
-    public func set(_ value: (any Sendable)?, at path: DataPath) throws {
+    func set(_ value: (any Sendable)?, at path: DataPath) throws {
         let newValue = Json.normalized(value)
 
         guard !path.segments.isEmpty else {
@@ -94,17 +94,21 @@ public final class DataModel {
             return
         }
 
+        guard path.segments.count <= A2UIProtocol.maxNestingDepth else {
+            throw DataModelError.pathTooDeep(path)
+        }
         if newValue == nil, Self.read(storage, segments: path.segments) == nil {
             return
         }
-        let updated = try Self.writing(newValue, into: storage, segments: path.segments[...], path: path)
+        var padding = Self.maxArrayIndex
+        let updated = try Self.writing(newValue, into: storage, segments: path.segments[...], path: path, padding: &padding)
         storage = updated as? JsonMap ?? storage
         notify(Change(path: path, value: newValue))
     }
 
     /// Replaces the entire data model.
     /// Equivalent to writing to the root path.
-    public func replaceAll(with value: JsonMap) {
+    func replaceAll(with value: JsonMap) {
         update(at: .root, value: value)
     }
 
@@ -116,24 +120,28 @@ public final class DataModel {
 
     // MARK: - Traversal
 
-    private static func read(_ current: (any Sendable)?, segments: [String]) -> (any Sendable)? {
-        guard let segment = segments.first else { return current }
-        let remaining = Array(segments.dropFirst())
-
-        if let map = current as? JsonMap {
-            return read(map[segment], segments: remaining)
+    private static func read(_ root: (any Sendable)?, segments: [String]) -> (any Sendable)? {
+        var current = root
+        for segment in segments {
+            if let map = current as? JsonMap {
+                current = map[segment]
+            } else if let list = current as? JsonArray, let index = arrayIndex(segment), index < list.count {
+                current = list[index]
+            } else {
+                return nil
+            }
         }
-        if let list = current as? JsonArray, let index = arrayIndex(segment), index < list.count {
-            return read(list[index], segments: remaining)
-        }
-        return nil
+        return current
     }
 
+    // `padding` is how many nulls the write may still add to fill gaps in arrays, across all of
+    // its levels, so one write can't allocate an array of arrays of nulls.
     private static func writing(
         _ value: (any Sendable)?,
         into current: (any Sendable)?,
         segments: ArraySlice<String>,
-        path: DataPath
+        path: DataPath,
+        padding: inout Int
     ) throws -> any Sendable {
         guard let segment = segments.first else { return value ?? NSNull() }
         let remaining = segments.dropFirst()
@@ -143,7 +151,7 @@ public final class DataModel {
                 map.removeValue(forKey: segment)
             } else {
                 let child = map[segment].flatMap { Json.normalized($0) } ?? emptyContainer(forNextSegment: remaining.first)
-                map[segment] = try writing(value, into: child, segments: remaining, path: path)
+                map[segment] = try writing(value, into: child, segments: remaining, path: path, padding: &padding)
             }
             return map
         }
@@ -157,16 +165,17 @@ public final class DataModel {
             } else {
                 throw DataModelError.invalidArrayIndex(segment, path: path)
             }
-            guard index <= Self.maxArrayIndex else {
+            guard index <= Self.maxArrayIndex, index - list.count <= padding else {
                 throw DataModelError.invalidArrayIndex(segment, path: path)
             }
+            padding -= max(index - list.count, 0)
             if remaining.isEmpty, value == nil {
                 if index < list.count { list[index] = NSNull() }
                 return list
             }
             let existing = index < list.count ? Json.normalized(list[index]) : nil
             let child = existing ?? emptyContainer(forNextSegment: remaining.first)
-            let written = try writing(value, into: child, segments: remaining, path: path)
+            let written = try writing(value, into: child, segments: remaining, path: path, padding: &padding)
             // Writing past the end pads the gap with nulls.
             while list.count < index {
                 list.append(NSNull())
@@ -199,7 +208,7 @@ public final class DataModel {
 }
 
 /// A data model write that could not be applied.
-public enum DataModelError: Error, Equatable, CustomStringConvertible {
+enum DataModelError: Error, Equatable, CustomStringConvertible {
     /// The path descends through a value that is neither an object nor an array.
     case notAContainer(DataPath)
 
@@ -209,8 +218,11 @@ public enum DataModelError: Error, Equatable, CustomStringConvertible {
     /// The root of the data model was set to something other than an object.
     case invalidRoot
 
+    /// The path has more segments than the data model nests.
+    case pathTooDeep(DataPath)
+
     /// A human-readable description of the failure.
-    public var description: String {
+    var description: String {
         switch self {
         case let .notAContainer(path):
             return "Cannot set path '\(path)' because it descends through a value that is not an object or an array."
@@ -218,6 +230,8 @@ public enum DataModelError: Error, Equatable, CustomStringConvertible {
             return "Cannot set path '\(path)': '\(segment)' is a non-numeric segment or out of bounds for an array."
         case .invalidRoot:
             return "The data model root must be an object."
+        case let .pathTooDeep(path):
+            return "Cannot set path '\(path)': it is deeper than \(A2UIProtocol.maxNestingDepth) levels."
         }
     }
 }

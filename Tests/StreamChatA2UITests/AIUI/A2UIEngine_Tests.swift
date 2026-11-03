@@ -149,17 +149,64 @@ final class A2UIEngine_Tests: XCTestCase {
         XCTAssertEqual(reply.surfaceIds, ["plan"])
     }
 
-    func test_action_labelPrefersTheUserMessageThenTheName() async throws {
+    func test_action_labelPrefersTheUserMessageThenTheButtonThenTheEventInWords() async throws {
         _ = engine.view(for: document(createSurface), messageID: "m1")
 
         engine.handle(
             .action(RendererAction(name: "book", userMessage: "Book day 2", surfaceId: "plan", sourceComponentId: "go")),
             messageID: "m1"
         )
-        engine.handle(.action(RendererAction(name: "book", surfaceId: "plan", sourceComponentId: "missing")), messageID: "m1")
+        engine.handle(.action(RendererAction(name: "book_day", surfaceId: "plan", sourceComponentId: "missing")), messageID: "m1")
         await waitForSentActions(2)
 
-        XCTAssertEqual(sent.map(\.label), ["Book day 2", "book"])
+        XCTAssertEqual(sent.map(\.label), ["Book day 2", "Book day"])
+    }
+
+    func test_eventNames_readAsWords() {
+        XCTAssertEqual(A2UIEngine.words(of: "submit_form"), "Submit form")
+        XCTAssertEqual(A2UIEngine.words(of: "bookHotel"), "Book hotel")
+        XCTAssertEqual(A2UIEngine.words(of: "open-map"), "Open map")
+        XCTAssertEqual(A2UIEngine.words(of: "shareURL"), "Share url")
+        XCTAssertEqual(A2UIEngine.words(of: "go"), "Go")
+    }
+
+    func test_theme_followsTheAppearanceUnlessTheRendererHasOne() throws {
+        let appearance = AIAppearance()
+        let theme = A2UITheme(appearance: appearance)
+
+        XCTAssertEqual(theme.accent, Color(appearance.tokens.colors.accentPrimary))
+        XCTAssertEqual(theme.surface, Color(appearance.tokens.colors.backgroundCoreSurfaceCard))
+        XCTAssertEqual(theme.body, appearance.tokens.fonts.body)
+        XCTAssertEqual(theme.buttonCornerRadius, appearance.tokens.layout.buttonRadiusMd)
+
+        let source = [createSurface, components].joined(separator: "\n")
+        XCTAssertNil(try XCTUnwrap(engine.view(for: document(source), messageID: "m1")).theme)
+
+        var orange = A2UITheme()
+        orange.accent = .orange
+        let themed = A2UIEngine(renderer: A2UIRenderer(theme: orange), host: host)
+        XCTAssertEqual(try XCTUnwrap(themed.view(for: document(source), messageID: "m1")).theme?.accent, .orange)
+    }
+
+    func test_errors_reachTheApp() {
+        var errors: [(error: A2UIError, messageID: String)] = []
+        let renderer = A2UIRenderer(onError: { error, messageID in errors.append((error, messageID)) })
+        let engine = A2UIEngine(renderer: renderer, host: host)
+
+        engine.handle(.error(RendererError(code: "X", message: "m", surfaceId: "s", path: "/p")), messageID: "m1")
+
+        XCTAssertEqual(errors.map(\.messageID), ["m1"])
+        XCTAssertEqual(errors.first?.error.code, "X")
+        XCTAssertEqual(errors.first?.error.surfaceId, "s")
+        XCTAssertEqual(errors.first?.error.path, "/p")
+    }
+
+    func test_aReplyWithNoSurfacesOfItsOwn_showsItsText() {
+        let updateOnly = #"{"version": "1.0", "updateDataModel": {"surfaceId": "elsewhere", "value": {"a": 1}}}"#
+
+        XCTAssertNil(engine.view(for: document(updateOnly), messageID: "m2"))
+        XCTAssertNil(engine.view(for: document("", isStreaming: true), messageID: "m1"), "nothing to show yet")
+        XCTAssertNotNil(engine.view(for: document(createSurface, isStreaming: true), messageID: "m1"), "its surface arrived")
     }
 
     func test_otherRendererMessages_areNotSent() async {

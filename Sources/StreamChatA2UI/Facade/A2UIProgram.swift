@@ -9,9 +9,9 @@ import Foundation
 ///
 /// An agent's instructions show it A2UI to write, which should render as it is: a broken example
 /// teaches the model to write broken UI.
-public enum A2UIProgram {
+enum A2UIProgram {
     /// The problems of the messages in `text`, or none when they render as written.
-    public static func problems(in text: String, catalog: Catalog) -> [String] {
+    static func problems(in text: String, catalog: Catalog) -> [String] {
         var problems: [String] = []
         var surfaces: [String: [String: Component]] = [:]
         var order: [String] = []

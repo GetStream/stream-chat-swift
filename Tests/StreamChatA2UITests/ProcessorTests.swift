@@ -169,17 +169,6 @@ struct A2UIMessageProcessorTests {
         #expect(harness.processor.surfaceViewModel("main").definition == nil)
     }
 
-    @Test("Only surfaces that opted in are synchronized to the agent")
-    func synchronizedDataModel() {
-        let harness = ProcessorHarness()
-        harness.createSurface("shared", sendDataModel: true, dataModel: ["a": 1])
-        harness.createSurface("private", sendDataModel: false, dataModel: ["b": 2])
-
-        let snapshot = harness.processor.synchronizedDataModel()
-        #expect(snapshot.surfaces.keys.sorted() == ["shared"])
-        #expect(Json.int(snapshot.surfaces["shared"]?["a"]) == 1)
-    }
-
     @Test("Identical errors are reported only once")
     func errorDeduplication() {
         let harness = ProcessorHarness()

@@ -10,7 +10,7 @@ import Foundation
 /// `DynamicBoolean`, `DynamicStringList` or `DynamicValue` accept one of three
 /// shapes: a literal, a data binding (`{"@path": "/a/b"}`) or a function call
 /// (`{"@call": "formatString", "args": {...}}`).
-public enum DynamicValue: Equatable, Sendable {
+enum DynamicValue: Equatable, Sendable {
     /// A literal JSON value.
     case literal(any Sendable)
 
@@ -28,7 +28,7 @@ public enum DynamicValue: Equatable, Sendable {
     /// Objects are bindings or calls only when they carry `@path` or `@call`.
     /// Other objects are literals, with `@@`-escaped keys unescaped. Objects
     /// that misuse the reserved `@` prefix are treated as missing.
-    public init(_ raw: (any Sendable)?) {
+    init(_ raw: (any Sendable)?) {
         guard let raw = Json.normalized(raw) else {
             self = .missing
             return
@@ -163,26 +163,26 @@ public enum DynamicValue: Equatable, Sendable {
     }
 
     /// Whether the property was absent on the wire.
-    public var isMissing: Bool {
+    var isMissing: Bool {
         if case .missing = self { return true }
         return false
     }
 
     /// The binding path, when this value is a data binding.
-    public var bindingPath: DataPath? {
+    var bindingPath: DataPath? {
         if case let .binding(path) = self { return path }
         return nil
     }
 
     /// The literal value, when this value is a literal.
-    public var literalValue: (any Sendable)? {
+    var literalValue: (any Sendable)? {
         if case let .literal(value) = self { return value }
         return nil
     }
 
     /// The wire representation of this value.
     /// Round-trips a decoded property back to JSON.
-    public var rawValue: (any Sendable)? {
+    var rawValue: (any Sendable)? {
         switch self {
         case let .literal(value): return value
         case let .binding(path): return [A2UIProtocol.pathKey: path.description]
@@ -193,7 +193,7 @@ public enum DynamicValue: Equatable, Sendable {
 
     /// Compares two dynamic values structurally.
     /// Literals are compared as JSON.
-    public static func == (lhs: DynamicValue, rhs: DynamicValue) -> Bool {
+    static func == (lhs: DynamicValue, rhs: DynamicValue) -> Bool {
         switch (lhs, rhs) {
         case (.missing, .missing):
             return true
@@ -214,19 +214,19 @@ public enum DynamicValue: Equatable, Sendable {
 /// Functions are resolved against the catalog identified by `catalogId`, or the
 /// surface default catalog when the call does not declare one. Names starting
 /// with `@` are universal system functions.
-public struct FunctionCall: Equatable, Sendable {
+struct FunctionCall: Equatable, Sendable {
     /// The name of the function to call.
-    public let name: String
+    let name: String
 
     /// The catalog that defines the function, when explicitly declared.
-    public let catalogId: String?
+    let catalogId: String?
 
     /// The raw, unevaluated arguments of the call.
-    public let arguments: JsonMap
+    let arguments: JsonMap
 
     /// Creates a function call.
     /// Arguments stay unevaluated so that nested bindings resolve lazily.
-    public init(name: String, catalogId: String? = nil, arguments: JsonMap = [:]) {
+    init(name: String, catalogId: String? = nil, arguments: JsonMap = [:]) {
         self.name = name
         self.catalogId = catalogId
         self.arguments = arguments
@@ -234,7 +234,7 @@ public struct FunctionCall: Equatable, Sendable {
 
     /// Parses a function call from a JSON object.
     /// Returns `nil` when the object does not carry an `@call` property.
-    public init?(_ json: JsonMap) {
+    init?(_ json: JsonMap) {
         guard let name = json[A2UIProtocol.callKey] as? String, !name.isEmpty else { return nil }
         self.name = name
         self.catalogId = json["catalogId"] as? String
@@ -242,12 +242,12 @@ public struct FunctionCall: Equatable, Sendable {
     }
 
     /// Whether this is a universal system function such as `@index`.
-    public var isSystemFunction: Bool {
+    var isSystemFunction: Bool {
         name.hasPrefix(A2UIProtocol.systemFunctionPrefix)
     }
 
     /// The wire representation of the call.
-    public var rawValue: JsonMap {
+    var rawValue: JsonMap {
         var json: JsonMap = [A2UIProtocol.callKey: name]
         if let catalogId { json["catalogId"] = catalogId }
         if !arguments.isEmpty { json["args"] = arguments }
@@ -255,7 +255,7 @@ public struct FunctionCall: Equatable, Sendable {
     }
 
     /// Compares two calls by name, catalog and arguments.
-    public static func == (lhs: FunctionCall, rhs: FunctionCall) -> Bool {
+    static func == (lhs: FunctionCall, rhs: FunctionCall) -> Bool {
         lhs.name == rhs.name
             && lhs.catalogId == rhs.catalogId
             && Json.isEqual(lhs.arguments, rhs.arguments)
@@ -266,7 +266,7 @@ public struct FunctionCall: Equatable, Sendable {
 ///
 /// A2UI containers either list their children explicitly or declare a template
 /// that is instantiated once per item of a bound collection.
-public enum ChildList: Equatable, Sendable {
+enum ChildList: Equatable, Sendable {
     /// A static list of component ids.
     case ids([String])
 
@@ -278,7 +278,7 @@ public enum ChildList: Equatable, Sendable {
 
     /// Parses a child list from a raw property value.
     /// Accepts both the array and template object forms.
-    public init(_ raw: (any Sendable)?) {
+    init(_ raw: (any Sendable)?) {
         guard let raw = Json.normalized(raw) else {
             self = .none
             return
@@ -297,7 +297,7 @@ public enum ChildList: Equatable, Sendable {
     }
 
     /// The statically declared child ids, if any.
-    public var staticIds: [String] {
+    var staticIds: [String] {
         if case let .ids(ids) = self { return ids }
         return []
     }
@@ -307,7 +307,7 @@ public enum ChildList: Equatable, Sendable {
 ///
 /// An action either dispatches a named event to the agent or executes a
 /// function locally on the renderer.
-public enum ActionDefinition: Equatable, Sendable {
+enum ActionDefinition: Equatable, Sendable {
     /// Dispatches an event to the agent.
     case event(EventAction)
 
@@ -316,7 +316,7 @@ public enum ActionDefinition: Equatable, Sendable {
 
     /// Parses an action from a raw property value.
     /// Returns `nil` when neither `event` nor `functionCall` is present.
-    public init?(_ raw: (any Sendable)?) {
+    init?(_ raw: (any Sendable)?) {
         guard let map = Json.map(raw) else { return nil }
         if let event = Json.map(map["event"]), let action = EventAction(event) {
             self = .event(action)
@@ -331,19 +331,19 @@ public enum ActionDefinition: Equatable, Sendable {
 }
 
 /// An agent-bound event dispatched by a component.
-public struct EventAction: Equatable, Sendable {
+struct EventAction: Equatable, Sendable {
     /// The event name reported to the agent.
-    public let name: String
+    let name: String
 
     /// An optional human-readable description of what the user did.
-    public let userMessage: DynamicValue
+    let userMessage: DynamicValue
 
     /// Context values sent with the event, keyed by name.
-    public let context: [String: DynamicValue]
+    let context: [String: DynamicValue]
 
     /// Creates an event action.
     /// Context values may be literals, bindings or function calls.
-    public init(name: String, userMessage: DynamicValue = .missing, context: [String: DynamicValue] = [:]) {
+    init(name: String, userMessage: DynamicValue = .missing, context: [String: DynamicValue] = [:]) {
         self.name = name
         self.userMessage = userMessage
         self.context = context
@@ -351,7 +351,7 @@ public struct EventAction: Equatable, Sendable {
 
     /// Parses an event action from a JSON object.
     /// Returns `nil` when the required `name` is missing.
-    public init?(_ json: JsonMap) {
+    init?(_ json: JsonMap) {
         guard let name = json["name"] as? String else { return nil }
         self.name = name
         self.userMessage = DynamicValue(json["userMessage"])
@@ -360,23 +360,23 @@ public struct EventAction: Equatable, Sendable {
 }
 
 /// A single renderer-side validation rule.
-public struct CheckRule: Equatable, Sendable {
+struct CheckRule: Equatable, Sendable {
     /// A binding or function call evaluating to a ``ValidationResult``.
-    public let condition: DynamicValue
+    let condition: DynamicValue
 
     /// A fallback message shown when the condition fails without one.
-    public let message: String?
+    let message: String?
 
     /// Creates a check rule.
     /// The condition is evaluated whenever the component renders.
-    public init(condition: DynamicValue, message: String? = nil) {
+    init(condition: DynamicValue, message: String? = nil) {
         self.condition = condition
         self.message = message
     }
 
     /// Parses a check rule from a JSON object.
     /// Returns `nil` when the condition is missing.
-    public init?(_ json: JsonMap) {
+    init?(_ json: JsonMap) {
         let condition = DynamicValue(json["condition"])
         guard !condition.isMissing else { return nil }
         self.condition = condition
@@ -385,7 +385,7 @@ public struct CheckRule: Equatable, Sendable {
 
     /// Parses a list of check rules from a raw property value.
     /// Invalid entries are skipped.
-    public static func list(_ raw: (any Sendable)?) -> [CheckRule] {
+    static func list(_ raw: (any Sendable)?) -> [CheckRule] {
         (Json.array(raw) ?? []).compactMap { entry in
             guard let map = Json.map(entry) else { return nil }
             return CheckRule(map)
@@ -394,29 +394,29 @@ public struct CheckRule: Equatable, Sendable {
 }
 
 /// The outcome of a renderer-side validation rule.
-public struct ValidationResult: Equatable, Sendable {
+struct ValidationResult: Equatable, Sendable {
     /// How serious a failed check is.
-    public enum Severity: String, Sendable {
+    enum Severity: String, Sendable {
         case error
         case warning
         case info
     }
 
     /// Whether the check passed.
-    public let isValid: Bool
+    let isValid: Bool
 
     /// An optional machine-readable failure code.
-    public let code: String?
+    let code: String?
 
     /// An optional human-readable message.
-    public let message: String?
+    let message: String?
 
     /// How serious the failure is.
-    public let severity: Severity
+    let severity: Severity
 
     /// Creates a validation result.
     /// Failures should carry a message so the UI can explain them.
-    public init(isValid: Bool, code: String? = nil, message: String? = nil, severity: Severity = .error) {
+    init(isValid: Bool, code: String? = nil, message: String? = nil, severity: Severity = .error) {
         self.isValid = isValid
         self.code = code
         self.message = message
@@ -424,11 +424,11 @@ public struct ValidationResult: Equatable, Sendable {
     }
 
     /// A passing result.
-    public static let valid = ValidationResult(isValid: true)
+    static let valid = ValidationResult(isValid: true)
 
     /// Creates a failing result with a message.
     /// Use this from validation function implementations.
-    public static func invalid(_ message: String, code: String? = nil) -> ValidationResult {
+    static func invalid(_ message: String, code: String? = nil) -> ValidationResult {
         ValidationResult(isValid: false, code: code, message: message)
     }
 
@@ -438,7 +438,7 @@ public struct ValidationResult: Equatable, Sendable {
     /// `and` can be used directly as check conditions, and `nil` (a pending or
     /// unresolved value) is treated as passing so progressive rendering does
     /// not block the user.
-    public init(coercing value: (any Sendable)?) {
+    init(coercing value: (any Sendable)?) {
         guard let value = Json.normalized(value) else {
             self = .valid
             return
@@ -456,7 +456,7 @@ public struct ValidationResult: Equatable, Sendable {
     }
 
     /// The wire representation of the result.
-    public var rawValue: JsonMap {
+    var rawValue: JsonMap {
         var json: JsonMap = ["valid": isValid]
         if let code { json["code"] = code }
         if let message { json["message"] = message }
@@ -469,29 +469,29 @@ public struct ValidationResult: Equatable, Sendable {
 ///
 /// These values are mapped onto the platform accessibility APIs and override
 /// the semantics inferred from the component's visible content.
-public struct AccessibilityAttributes: Equatable, Sendable {
+struct AccessibilityAttributes: Equatable, Sendable {
     /// How dynamic updates should be announced.
-    public enum Live: String, Sendable {
+    enum Live: String, Sendable {
         case off
         case polite
         case assertive
     }
 
     /// A short label describing the element's purpose.
-    public let label: DynamicValue
+    let label: DynamicValue
 
     /// Additional instructions or result information.
-    public let description: DynamicValue
+    let description: DynamicValue
 
     /// How updates to this element are announced.
-    public let live: Live
+    let live: Live
 
     /// Whether the element is hidden from assistive technologies.
-    public let hidden: DynamicValue
+    let hidden: DynamicValue
 
     /// Creates accessibility attributes.
     /// All values are optional and may be data bound.
-    public init(
+    init(
         label: DynamicValue = .missing,
         description: DynamicValue = .missing,
         live: Live = .off,
@@ -505,7 +505,7 @@ public struct AccessibilityAttributes: Equatable, Sendable {
 
     /// Parses accessibility attributes from a JSON object.
     /// Returns `nil` when no attributes are present.
-    public init?(_ raw: (any Sendable)?) {
+    init?(_ raw: (any Sendable)?) {
         guard let json = Json.map(raw), !json.isEmpty else { return nil }
         self.init(
             label: DynamicValue(json["label"]),
@@ -516,7 +516,7 @@ public struct AccessibilityAttributes: Equatable, Sendable {
     }
 
     /// The wire representation of the attributes.
-    public var rawValue: JsonMap {
+    var rawValue: JsonMap {
         var json: JsonMap = [:]
         if let label = label.rawValue { json["label"] = label }
         if let description = description.rawValue { json["description"] = description }

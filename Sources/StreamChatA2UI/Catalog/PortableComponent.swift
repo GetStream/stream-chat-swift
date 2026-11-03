@@ -15,10 +15,10 @@ import Foundation
 ///                   "required": ["title"] },
 ///   "events": [{ "name": "ask_about", "description": "Tapping it asks about the place." }] }
 /// ```
-public enum PortableComponent {
+enum PortableComponent {
     /// The A2UI type of a portable component, named as the basic catalog names its own:
     /// `place_card` is `PlaceCard`.
-    public static func typeName(_ name: String) -> String {
+    static func typeName(_ name: String) -> String {
         name.split(whereSeparator: { $0 == "_" || $0 == "-" || $0 == " " })
             .map { $0.prefix(1).uppercased() + $0.dropFirst() }
             .joined()
@@ -29,7 +29,7 @@ public enum PortableComponent {
     /// Its parameters are its properties, each described in its own schema. What its events do
     /// joins its description: the component reports them itself, rather than through an A2UI
     /// `action` the agent writes.
-    public static func definition(_ portable: JsonMap, builder: @escaping ComponentViewBuilder) throws -> ComponentDefinition {
+    static func definition(_ portable: JsonMap, builder: @escaping ComponentViewBuilder) throws -> ComponentDefinition {
         guard let name = portable["name"] as? String, !name.isEmpty else {
             throw PortableComponentError(message: "A component definition needs a name")
         }
@@ -72,12 +72,12 @@ public enum PortableComponent {
 }
 
 /// A portable component definition A2UI can't read.
-public struct PortableComponentError: Error, LocalizedError, Sendable {
-    public let message: String
+struct PortableComponentError: Error, LocalizedError, Sendable {
+    let message: String
 
-    public init(message: String) {
+    init(message: String) {
         self.message = message
     }
 
-    public var errorDescription: String? { message }
+    var errorDescription: String? { message }
 }

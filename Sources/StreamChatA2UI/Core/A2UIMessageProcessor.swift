@@ -16,15 +16,15 @@ import Foundation
 /// All members must be used from the main thread; the transport delivers
 /// messages there.
 @MainActor
-public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
+final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     /// The catalogs this renderer supports.
-    public let catalogs: CatalogRegistry
+    let catalogs: CatalogRegistry
 
     /// Host capabilities passed to components and functions.
-    public let services: RendererServices
+    let services: RendererServices
 
     /// How long a function call routed to the agent may stay unanswered.
-    public let agentFunctionTimeout: TimeInterval
+    let agentFunctionTimeout: TimeInterval
 
     private var surfaces: [String: SurfaceViewModel] = [:]
     private var surfaceOrder: [String] = []
@@ -40,7 +40,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     /// Pass `defaultCatalogId` to keep rendering surfaces from agents that
     /// omit `catalogId`; without it, such surfaces fail to resolve, as the
     /// specification requires.
-    public init(
+    init(
         catalogs: [Catalog],
         defaultCatalogId: String? = nil,
         services: RendererServices = .default,
@@ -54,7 +54,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     // MARK: - Streams
 
     /// A stream of surface lifecycle changes.
-    public var surfaceUpdates: AnyPublisher<A2UIUpdate, Never> {
+    var surfaceUpdates: AnyPublisher<A2UIUpdate, Never> {
         surfaceUpdatesSubject.eraseToAnyPublisher()
     }
 
@@ -62,12 +62,12 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     ///
     /// Includes user actions, renderer function responses, renderer-initiated
     /// agent function calls and renderer errors.
-    public var rendererMessages: AnyPublisher<RendererMessage, Never> {
+    var rendererMessages: AnyPublisher<RendererMessage, Never> {
         rendererMessagesSubject.eraseToAnyPublisher()
     }
 
     /// A stream of user actions, for hosts that only care about interactions.
-    public var actions: AnyPublisher<RendererAction, Never> {
+    var actions: AnyPublisher<RendererAction, Never> {
         rendererMessagesSubject
             .compactMap { message in
                 guard case let .action(action) = message else { return nil }
@@ -79,17 +79,14 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     // MARK: - Surfaces
 
     /// The ids of all live surfaces, in creation order.
-    public var surfaceIds: [String] {
+    var surfaceIds: [String] {
         surfaceOrder.filter { surfaces[$0]?.definition != nil }
     }
 
     /// Returns the observable state of a surface, creating it if needed.
     /// Views may bind to a surface before the agent creates it.
-    public func surfaceViewModel(_ surfaceId: String) -> SurfaceViewModel {
-        if let existing = surfaces[surfaceId] {
-            return existing
-        }
-        let viewModel = SurfaceViewModel(surfaceId: surfaceId)
+    func surfaceViewModel(_ surfaceId: String) -> SurfaceViewModel {
+        let viewModel = surfaces[surfaceId] ?? SurfaceViewModel(surfaceId: surfaceId)
         surfaces[surfaceId] = viewModel
         if !surfaceOrder.contains(surfaceId) {
             surfaceOrder.append(surfaceId)
@@ -98,28 +95,18 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     }
 
     /// The data model of a surface, creating the surface state if needed.
-    public func dataModel(for surfaceId: String) -> DataModel {
+    func dataModel(for surfaceId: String) -> DataModel {
         surfaceViewModel(surfaceId).dataModel
-    }
-
-    /// A snapshot of the data models of all surfaces that opted into syncing.
-    ///
-    /// Attached to outgoing agent messages for surfaces created with
-    /// `sendDataModel: true`.
-    public func synchronizedDataModel() -> RendererDataModel {
-        var payload: [String: JsonMap] = [:]
-        for (surfaceId, viewModel) in surfaces {
-            guard let definition = viewModel.definition, definition.sendDataModel else { continue }
-            payload[surfaceId] = viewModel.dataModel.snapshot
-        }
-        return RendererDataModel(surfaces: payload)
     }
 
     /// Removes every surface and its data.
     /// Emits removal updates unless `emitUpdates` is `false`.
-    public func clearSurfaces(emitUpdates: Bool = true) {
+    func clearSurfaces(emitUpdates: Bool = true) {
         let ids = surfaceOrder
-        surfaces.removeAll()
+        // Views keep the view model they were made with, so it is reset rather than replaced.
+        for viewModel in surfaces.values {
+            viewModel.reset()
+        }
         surfaceOrder.removeAll()
         remoteCalls.removeAll()
         remoteCallIds.removeAll()
@@ -132,7 +119,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
 
     /// Releases all surface state.
     /// Call when the processor is no longer needed.
-    public func dispose() {
+    func dispose() {
         clearSurfaces(emitUpdates: false)
     }
 
@@ -142,7 +129,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     ///
     /// Messages targeting an unknown surface are reported to the agent instead
     /// of being silently dropped, which is what lets an agent recover.
-    public func handle(_ message: A2UIMessage) {
+    func handle(_ message: A2UIMessage) {
         switch message {
         case let .createSurface(message):
             createSurface(message)
@@ -163,7 +150,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     ///
     /// A failing message does not stop the rest of the list, matching the A2A
     /// binding's processing rules.
-    public func handle(_ messages: [A2UIMessage]) {
+    func handle(_ messages: [A2UIMessage]) {
         for message in messages {
             handle(message)
         }
@@ -174,7 +161,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     /// A message that fails to decode is reported to the agent, so the agent
     /// can correct it: a malformed `callRendererFunction` is answered with an
     /// `INVALID_FUNCTION_CALL` error, anything else with `VALIDATION_FAILED`.
-    public func handle(json: JsonMap) {
+    func handle(json: JsonMap) {
         do {
             handle(try A2UIMessageDecoder.decode(json))
         } catch {
@@ -450,7 +437,9 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     }
 
     private func deleteSurface(_ message: DeleteSurfaceMessage) {
-        guard let viewModel = surfaces.removeValue(forKey: message.surfaceId) else { return }
+        // Views keep the view model they were made with, so a surface created again with the same
+        // id shows in it.
+        guard let viewModel = surfaces[message.surfaceId], viewModel.definition != nil else { return }
         viewModel.reset()
         surfaceOrder.removeAll { $0 == message.surfaceId }
         let staleCalls = remoteCalls.keys.filter { $0.surfaceId == message.surfaceId }
@@ -553,7 +542,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     /// The first evaluation returns `nil` and sends a `callAgentFunction`
     /// message; once the response arrives the surface is re-rendered and the
     /// cached value is returned.
-    public func agentFunctionValue(
+    func agentFunctionValue(
         for name: String,
         catalogId: String?,
         arguments: [String: any Sendable],
@@ -595,7 +584,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     // MARK: - Events
 
     /// Forwards a user action to the agent.
-    public func handle(_ action: RendererAction) {
+    func handle(_ action: RendererAction) {
         send(.action(action))
     }
 
@@ -603,7 +592,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     ///
     /// Rendering runs on every state change, so identical errors are collapsed
     /// to keep the agent's context clean.
-    public func report(_ error: RendererError) {
+    func report(_ error: RendererError) {
         let key = [error.code, error.message, error.surfaceId ?? "", error.path ?? ""].joined(separator: "|")
         guard reportedErrors.insert(key).inserted else { return }
         send(.error(error))
@@ -611,7 +600,7 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
 
     /// Emits a message for delivery to the agent.
     /// Exposed so hosts can inject synthetic events in tests.
-    public func send(_ message: RendererMessage) {
+    func send(_ message: RendererMessage) {
         rendererMessagesSubject.send(message)
     }
 

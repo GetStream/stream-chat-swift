@@ -5,7 +5,7 @@
 import Foundation
 
 /// A renderer-to-agent message, as defined by `renderer_to_agent.json`.
-public enum RendererMessage: Equatable {
+enum RendererMessage: Equatable {
     /// Reports a user interaction with a component.
     case action(RendererAction)
 
@@ -19,7 +19,7 @@ public enum RendererMessage: Equatable {
     case error(RendererError)
 
     /// The serialized wire representation, including the protocol version.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         var json: JsonMap = [A2UIProtocol.versionKey: A2UIProtocol.version]
         switch self {
         case let .action(action): json["action"] = action.toJson()
@@ -32,7 +32,7 @@ public enum RendererMessage: Equatable {
 
     /// Decodes a renderer-to-agent message.
     /// Agents use this to interpret events coming back from a renderer.
-    public static func fromJson(_ json: JsonMap) throws -> RendererMessage {
+    static func fromJson(_ json: JsonMap) throws -> RendererMessage {
         if let version = json[A2UIProtocol.versionKey] as? String, version != A2UIProtocol.version {
             throw A2UIDecodingError.unsupportedVersion(version)
         }
@@ -52,43 +52,43 @@ public enum RendererMessage: Equatable {
     }
 
     /// Whether a JSON object looks like an A2UI renderer-to-agent message.
-    public static func isMessage(_ json: JsonMap) -> Bool {
+    static func isMessage(_ json: JsonMap) -> Bool {
         let keys: Set<String> = ["action", "callAgentFunction", "rendererFunctionResponse", "error"]
         return !keys.isDisjoint(with: json.keys)
     }
 
     /// Compares two messages by their wire representation.
-    public static func == (lhs: RendererMessage, rhs: RendererMessage) -> Bool {
+    static func == (lhs: RendererMessage, rhs: RendererMessage) -> Bool {
         Json.isEqual(lhs.toJson(), rhs.toJson())
     }
 }
 
 /// A user interaction reported to the agent.
-public struct RendererAction {
+struct RendererAction {
     /// The action name taken from the component's `action.event.name`.
-    public let name: String
+    let name: String
 
     /// A human-readable description of what the user did.
-    public let userMessage: String?
+    let userMessage: String?
 
     /// The surface the interaction happened on.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// The component that triggered the interaction.
-    public let sourceComponentId: String
+    let sourceComponentId: String
 
     /// When the interaction happened.
-    public let timestamp: Date
+    let timestamp: Date
 
     /// The resolved context values declared by the action.
-    public let context: JsonMap
+    let context: JsonMap
 
     /// Client-side extension metadata sent with the action.
-    public let metadata: JsonMap?
+    let metadata: JsonMap?
 
     /// Creates a user action payload.
     /// Context values must already be resolved against the data model.
-    public init(
+    init(
         name: String,
         userMessage: String? = nil,
         surfaceId: String,
@@ -108,7 +108,7 @@ public struct RendererAction {
 
     /// Parses a user action payload.
     /// Throws when a required field is missing.
-    public static func fromJson(_ json: JsonMap) throws -> RendererAction {
+    static func fromJson(_ json: JsonMap) throws -> RendererAction {
         guard let name = json["name"] as? String else {
             throw A2UIDecodingError.missingField("name", in: "action")
         }
@@ -131,7 +131,7 @@ public struct RendererAction {
     }
 
     /// The serialized wire representation of the action.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         var json: JsonMap = [
             "name": name,
             surfaceIdKey: surfaceId,
@@ -146,19 +146,19 @@ public struct RendererAction {
 }
 
 /// A renderer-initiated agent function call.
-public struct CallAgentFunctionMessage {
+struct CallAgentFunctionMessage {
     /// The surface the call originated from.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// The id correlating this call with its response.
-    public let functionCallId: String
+    let functionCallId: String
 
     /// The function to execute on the agent.
-    public let callFunction: FunctionCall
+    let callFunction: FunctionCall
 
     /// Creates an agent function call.
     /// The agent must echo `functionCallId` in its response.
-    public init(surfaceId: String, functionCallId: String, callFunction: FunctionCall) {
+    init(surfaceId: String, functionCallId: String, callFunction: FunctionCall) {
         self.surfaceId = surfaceId
         self.functionCallId = functionCallId
         self.callFunction = callFunction
@@ -166,7 +166,7 @@ public struct CallAgentFunctionMessage {
 
     /// Parses an agent function call payload.
     /// Throws when a required field is missing.
-    public static func fromJson(_ json: JsonMap) throws -> CallAgentFunctionMessage {
+    static func fromJson(_ json: JsonMap) throws -> CallAgentFunctionMessage {
         guard let surfaceId = json[surfaceIdKey] as? String else {
             throw A2UIDecodingError.missingField(surfaceIdKey, in: "callAgentFunction")
         }
@@ -180,7 +180,7 @@ public struct CallAgentFunctionMessage {
     }
 
     /// The serialized wire representation of the call.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         [
             surfaceIdKey: surfaceId,
             "functionCallId": functionCallId,
@@ -190,66 +190,66 @@ public struct CallAgentFunctionMessage {
 }
 
 /// A renderer-side error reported to the agent.
-public struct RendererError {
+struct RendererError {
     /// Well-known error codes defined by the specification.
-    public enum Code {
+    enum Code {
         /// A message failed schema validation.
-        public static let validationFailed = "VALIDATION_FAILED"
+        static let validationFailed = "VALIDATION_FAILED"
 
         /// A component was placed under a parent that does not allow it.
-        public static let unallowedParent = "UNALLOWED_PARENT"
+        static let unallowedParent = "UNALLOWED_PARENT"
 
         /// A container received a child type it does not allow.
-        public static let unallowedChild = "UNALLOWED_CHILD"
+        static let unallowedChild = "UNALLOWED_CHILD"
 
         /// A function call was rejected, for example because of its call boundary.
-        public static let invalidFunctionCall = "INVALID_FUNCTION_CALL"
+        static let invalidFunctionCall = "INVALID_FUNCTION_CALL"
 
         /// A function was not registered with the agent.
-        public static let unknownFunction = "UNKNOWN_FUNCTION"
+        static let unknownFunction = "UNKNOWN_FUNCTION"
 
         /// A function threw while executing.
-        public static let executionError = "EXECUTION_ERROR"
+        static let executionError = "EXECUTION_ERROR"
 
         /// A binding or check referenced a function it may not run, such as one
         /// that requires a user gesture.
-        public static let expressionError = "EXPRESSION_ERROR"
+        static let expressionError = "EXPRESSION_ERROR"
 
         /// A message referenced a catalog the renderer does not support.
-        public static let catalogNotFound = "CATALOG_NOT_FOUND"
+        static let catalogNotFound = "CATALOG_NOT_FOUND"
 
         /// A message conflicts with the renderer's state, for example by
         /// targeting a surface that does not exist.
-        public static let integrityError = "INTEGRITY_ERROR"
+        static let integrityError = "INTEGRITY_ERROR"
 
         /// A data model write could not be applied.
-        public static let dataError = "DATA_ERROR"
+        static let dataError = "DATA_ERROR"
 
         /// The component tree nests deeper than the renderer supports.
-        public static let recursionLimitExceeded = "RECURSION_LIMIT_EXCEEDED"
+        static let recursionLimitExceeded = "RECURSION_LIMIT_EXCEEDED"
 
         /// A function call routed to the agent got no answer in time.
-        public static let timeout = "TIMEOUT"
+        static let timeout = "TIMEOUT"
     }
 
     /// The machine-readable error code.
-    public let code: String
+    let code: String
 
     /// A short description of what went wrong.
-    public let message: String
+    let message: String
 
     /// The surface the error occurred on, mutually exclusive with `functionCallId`.
-    public let surfaceId: String?
+    let surfaceId: String?
 
     /// The JSON pointer to the field that failed validation.
-    public let path: String?
+    let path: String?
 
     /// The function call that failed, mutually exclusive with `surfaceId`.
-    public let functionCallId: String?
+    let functionCallId: String?
 
     /// Creates a renderer error.
     /// Provide either a surface id or a function call id, not both.
-    public init(
+    init(
         code: String,
         message: String,
         surfaceId: String? = nil,
@@ -265,7 +265,7 @@ public struct RendererError {
 
     /// Parses a renderer error payload.
     /// Throws when a required field is missing.
-    public static func fromJson(_ json: JsonMap) throws -> RendererError {
+    static func fromJson(_ json: JsonMap) throws -> RendererError {
         guard let code = json["code"] as? String else {
             throw A2UIDecodingError.missingField("code", in: "error")
         }
@@ -282,7 +282,7 @@ public struct RendererError {
     }
 
     /// The serialized wire representation of the error.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         var json: JsonMap = ["code": code, "message": message]
         if let surfaceId { json[surfaceIdKey] = surfaceId }
         if let path { json["path"] = path }
@@ -292,16 +292,16 @@ public struct RendererError {
 }
 
 /// ISO 8601 timestamp formatting shared by renderer-to-agent messages.
-public enum A2UITimestamp {
+enum A2UITimestamp {
     /// Formats a date as an ISO 8601 string.
     /// Used for the `timestamp` field of action messages.
-    public static func string(from date: Date) -> String {
+    static func string(from date: Date) -> String {
         formatter(fractionalSeconds: false).string(from: date)
     }
 
     /// Parses an ISO 8601 string, with and without fractional seconds.
     /// Returns `nil` when the string is not a valid timestamp.
-    public static func date(from string: String) -> Date? {
+    static func date(from string: String) -> Date? {
         formatter(fractionalSeconds: false).date(from: string)
             ?? formatter(fractionalSeconds: true).date(from: string)
     }

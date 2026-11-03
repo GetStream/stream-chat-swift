@@ -12,18 +12,22 @@ import SwiftUI
 /// applies the shared behaviour every component needs: composition validation,
 /// accessibility attributes and action dispatch.
 @MainActor
-public final class SurfaceRenderer {
-    /// The maximum nesting depth, which stops cyclic component references.
-    public static let defaultMaxDepth = A2UIProtocol.maxNestingDepth
+final class SurfaceRenderer {
+    /// The maximum nesting depth.
+    static let defaultMaxDepth = A2UIProtocol.maxNestingDepth
+
+    // The most components a surface may expand to, counting a component once for each place it
+    // shows, so a component listed as a child several times on each level can't build millions.
+    static let maxExpandedComponents = 5000
 
     /// The component tree being rendered.
-    public let definition: UiDefinition
+    let definition: UiDefinition
 
     /// The catalogs used to resolve component types.
-    public let catalogs: CatalogRegistry
+    let catalogs: CatalogRegistry
 
     /// The evaluator used for properties, functions and checks.
-    public let evaluator: ExpressionEvaluator
+    let evaluator: ExpressionEvaluator
 
     private let onAction: (RendererAction) -> Void
     private let onError: (RendererError) -> Void
@@ -31,7 +35,7 @@ public final class SurfaceRenderer {
 
     /// Creates a renderer for one surface definition.
     /// A new renderer is created whenever the definition changes.
-    public init(
+    init(
         definition: UiDefinition,
         catalogs: CatalogRegistry,
         evaluator: ExpressionEvaluator,
@@ -49,22 +53,56 @@ public final class SurfaceRenderer {
 
     /// Looks up a component of the surface by id.
     /// Used by containers to read child metadata such as layout weight.
-    public func component(_ id: String) -> Component? {
+    func component(_ id: String) -> Component? {
         definition.component(id)
     }
 
     /// Builds the view for the surface's `root` component.
     /// Returns an empty view while the root has not arrived yet.
-    public func rootView(dataContext: DataContext) -> AnyView {
+    func rootView(dataContext: DataContext) -> AnyView {
         guard definition.root != nil else {
+            return AnyView(EmptyView())
+        }
+        guard expandedSize(limit: Self.maxExpandedComponents) <= Self.maxExpandedComponents else {
+            report(RendererError(
+                code: RendererError.Code.recursionLimitExceeded,
+                message: "Surface '\(definition.surfaceId)' expands to more than \(Self.maxExpandedComponents) components. "
+                    + "A component listed as a child more than once multiplies the components under it.",
+                surfaceId: definition.surfaceId
+            ))
             return AnyView(EmptyView())
         }
         return view(
             componentId: A2UIProtocol.rootComponentId,
             dataContext: dataContext,
             parent: nil,
-            depth: 0
+            ancestors: []
         )
+    }
+
+    // How many components the tree from the root expands to, up to `limit + 1`. A child that is
+    // one of its own ancestors counts nothing, as it doesn't show.
+    func expandedSize(limit: Int) -> Int {
+        var sizes: [String: Int] = [:]
+        var visiting: Set<String> = []
+        func size(of componentId: String, depth: Int) -> Int {
+            if let known = sizes[componentId] { return known }
+            guard depth < maxDepth, !visiting.contains(componentId), let component = definition.component(componentId) else {
+                return 0
+            }
+            visiting.insert(componentId)
+            defer { visiting.remove(componentId) }
+            let children = catalogs.resolveCatalog(entityCatalogId: component.catalogId, surfaceCatalogId: definition.catalogId)?
+                .component(component.type)?
+                .childReferences(of: component) ?? []
+            var total = 1
+            for child in children where total <= limit {
+                total = min(total + size(of: child.id, depth: depth + 1), limit + 1)
+            }
+            sizes[componentId] = total
+            return total
+        }
+        return size(of: A2UIProtocol.rootComponentId, depth: 0)
     }
 
     /// Builds the view for one component of the surface.
@@ -72,17 +110,26 @@ public final class SurfaceRenderer {
     /// Unknown ids and unknown component types render as empty views so that a
     /// partially streamed tree still displays, matching the progressive
     /// rendering behaviour required by the specification.
-    public func view(
+    func view(
         componentId: String,
         dataContext: DataContext,
         parent: ComponentDefinition?,
-        depth: Int
+        ancestors: [String]
     ) -> AnyView {
+        if let first = ancestors.firstIndex(of: componentId) {
+            report(RendererError(
+                code: RendererError.Code.recursionLimitExceeded,
+                message: "Component '\(componentId)' contains itself: "
+                    + (ancestors[first...] + [componentId]).joined(separator: " > ") + ".",
+                surfaceId: definition.surfaceId
+            ))
+            return AnyView(EmptyView())
+        }
+        let depth = ancestors.count
         guard depth < maxDepth else {
             let error = RendererError(
                 code: RendererError.Code.recursionLimitExceeded,
-                message: "Component nesting exceeded \(maxDepth) levels at '\(componentId)'. "
-                    + "The component tree probably contains a cycle.",
+                message: "Component nesting exceeded \(maxDepth) levels at '\(componentId)'.",
                 surfaceId: definition.surfaceId
             )
             a2uiLogger.severe(error.message)
@@ -127,7 +174,7 @@ public final class SurfaceRenderer {
             dataContext: dataContext,
             evaluator: evaluator,
             renderer: self,
-            depth: depth
+            ancestors: ancestors + [componentId]
         )
 
         if let hidden = evaluator.bool(component.accessibility?.hidden ?? .missing, in: dataContext), hidden {
@@ -159,7 +206,7 @@ public final class SurfaceRenderer {
     /// Event actions are resolved against the data model and handed to the
     /// host, while function actions are evaluated locally or routed to the
     /// agent by the evaluator.
-    public func perform(_ action: ActionDefinition, componentId: String, dataContext: DataContext) {
+    func perform(_ action: ActionDefinition, componentId: String, dataContext: DataContext) {
         switch action {
         case let .event(event):
             var context: JsonMap = [:]
@@ -184,7 +231,8 @@ public final class SurfaceRenderer {
 
     /// Reports a renderer-side error for this surface.
     /// Components use this for failures they detect while rendering.
-    public func report(_ error: RendererError) {
+    func report(_ error: RendererError) {
+        a2uiLogger.severe(error.message)
         onError(error)
     }
 }

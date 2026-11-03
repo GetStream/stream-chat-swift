@@ -10,21 +10,21 @@ import Foundation
 /// data model. Paths without a leading slash are relative and resolve against
 /// the current evaluation scope, which is how A2UI list templates address the
 /// item they were instantiated for.
-public struct DataPath: Hashable, CustomStringConvertible, Sendable {
+struct DataPath: Hashable, CustomStringConvertible, Sendable {
     /// The unescaped path segments, in order.
-    public let segments: [String]
+    let segments: [String]
 
     /// Whether the path resolves from the data model root.
-    public let isAbsolute: Bool
+    let isAbsolute: Bool
 
     /// The path pointing at the whole data model.
-    public static let root = DataPath(segments: [], isAbsolute: true)
+    static let root = DataPath(segments: [], isAbsolute: true)
 
     private static let separator: Character = "/"
 
     /// Parses a JSON Pointer string into a path.
     /// A leading `/` marks the path as absolute; `~0` and `~1` escapes are decoded.
-    public init(_ path: String) {
+    init(_ path: String) {
         let isAbsolute = path.hasPrefix(String(Self.separator))
         let segments = path
             .split(separator: Self.separator, omittingEmptySubsequences: true)
@@ -35,30 +35,30 @@ public struct DataPath: Hashable, CustomStringConvertible, Sendable {
 
     /// Creates a path from already-parsed segments.
     /// Use this when composing paths programmatically.
-    public init(segments: [String], isAbsolute: Bool) {
+    init(segments: [String], isAbsolute: Bool) {
         self.segments = segments
         self.isAbsolute = isAbsolute
     }
 
     /// The last segment of the path, or an empty string for the root.
-    public var basename: String {
+    var basename: String {
         segments.last ?? ""
     }
 
     /// The path with its last segment removed.
     /// The root path is returned unchanged.
-    public var dirname: DataPath {
+    var dirname: DataPath {
         guard !segments.isEmpty else { return self }
         return DataPath(segments: Array(segments.dropLast()), isAbsolute: isAbsolute)
     }
 
     /// Whether this path addresses the whole data model.
-    public var isRoot: Bool {
+    var isRoot: Bool {
         isAbsolute && segments.isEmpty
     }
 
     /// Whether a path's escapes are valid JSON Pointer escapes: every `~` is followed by `0` or `1`.
-    public static func isValidSyntax(_ path: String) -> Bool {
+    static func isValidSyntax(_ path: String) -> Bool {
         var characters = path.makeIterator()
         while let character = characters.next() {
             if character == "~" {
@@ -70,7 +70,7 @@ public struct DataPath: Hashable, CustomStringConvertible, Sendable {
 
     /// Appends another path to this one.
     /// Absolute paths replace this path instead of extending it.
-    public func appending(_ other: DataPath) -> DataPath {
+    func appending(_ other: DataPath) -> DataPath {
         if other.isAbsolute { return other }
         // `.` is the current scope, so `.` and `./name` resolve inside it.
         return DataPath(segments: segments + other.segments.filter { $0 != "." }, isAbsolute: isAbsolute)
@@ -78,13 +78,13 @@ public struct DataPath: Hashable, CustomStringConvertible, Sendable {
 
     /// Appends a single segment to this path.
     /// Use this when descending into list indices or object keys.
-    public func appending(segment: String) -> DataPath {
+    func appending(segment: String) -> DataPath {
         DataPath(segments: segments + [segment], isAbsolute: isAbsolute)
     }
 
     /// Whether this path is equal to, or nested inside, another path.
     /// Used to decide whether a data model change affects a subscription.
-    public func isDescendant(of other: DataPath) -> Bool {
+    func isDescendant(of other: DataPath) -> Bool {
         guard other.segments.count <= segments.count else { return false }
         for (index, segment) in other.segments.enumerated() where segments[index] != segment {
             return false
@@ -93,7 +93,7 @@ public struct DataPath: Hashable, CustomStringConvertible, Sendable {
     }
 
     /// The JSON Pointer string representation of the path.
-    public var description: String {
+    var description: String {
         let path = segments.map { Self.escape($0) }.joined(separator: String(Self.separator))
         return isAbsolute ? "\(Self.separator)\(path)" : path
     }

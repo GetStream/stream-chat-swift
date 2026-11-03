@@ -5,9 +5,9 @@
 import SwiftUI
 
 /// The layout components of the A2UI basic catalog.
-public enum LayoutComponents {
+enum LayoutComponents {
     /// All layout components, in catalog order.
-    public static var all: [ComponentDefinition] {
+    static var all: [ComponentDefinition] {
         [row, column, list, card, divider]
     }
 
@@ -17,7 +17,7 @@ public enum LayoutComponents {
     private static let alignValues = ["start", "center", "end", "stretch"]
 
     /// Arranges its children horizontally.
-    public static let row = ComponentDefinition(
+    static let row = ComponentDefinition(
         name: "Row",
         description: "A layout component that arranges its children horizontally. "
             + "To create a grid layout, nest Columns within this Row.",
@@ -62,7 +62,7 @@ public enum LayoutComponents {
     }
 
     /// Arranges its children vertically.
-    public static let column = ComponentDefinition(
+    static let column = ComponentDefinition(
         name: "Column",
         description: "A layout component that arranges its children vertically. "
             + "To create a grid layout, nest Rows within this Column.",
@@ -112,7 +112,7 @@ public enum LayoutComponents {
     /// is normally embedded in a scrollable host, and nesting scroll views
     /// collapses the layout. Horizontal lists scroll, because that direction is
     /// safe inside a vertical scroll view.
-    public static let list = ComponentDefinition(
+    static let list = ComponentDefinition(
         name: "List",
         description: "A list of components. Vertical lists grow with their content; horizontal lists scroll.",
         properties: [
@@ -171,7 +171,7 @@ public enum LayoutComponents {
     }
 
     /// A single child wrapped in card styling.
-    public static let card = ComponentDefinition(
+    static let card = ComponentDefinition(
         name: "Card",
         description: "A container with card-like styling.",
         properties: [
@@ -192,17 +192,11 @@ public enum LayoutComponents {
             """
         ]
     ) { context in
-        AnyView(
-            context.childView(context.childId())
-                .padding(12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(A2UIColor.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: A2UILayout.cornerRadius, style: .continuous))
-        )
+        AnyView(A2UICardView(context: context))
     }
 
     /// A horizontal or vertical separator.
-    public static let divider = ComponentDefinition(
+    static let divider = ComponentDefinition(
         name: "Divider",
         description: "A horizontal or vertical dividing line.",
         properties: [
@@ -221,14 +215,37 @@ public enum LayoutComponents {
             """
         ]
     ) { context in
-        if context.option("axis", default: "horizontal") == "vertical" {
-            return AnyView(
-                Rectangle()
-                    .fill(Color.secondary.opacity(0.3))
-                    .frame(width: 1)
-                    .frame(maxHeight: .infinity)
-            )
+        AnyView(A2UIDividerView(isVertical: context.option("axis", default: "horizontal") == "vertical"))
+    }
+}
+
+private struct A2UICardView: View {
+    let context: ComponentRenderContext
+
+    @Environment(\.a2uiTheme) private var theme
+
+    var body: some View {
+        context.childView(context.childId())
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(theme.surface)
+            .clipShape(RoundedRectangle(cornerRadius: theme.cornerRadius, style: .continuous))
+    }
+}
+
+private struct A2UIDividerView: View {
+    let isVertical: Bool
+
+    @Environment(\.a2uiTheme) private var theme
+
+    var body: some View {
+        if isVertical {
+            Rectangle()
+                .fill(theme.border)
+                .frame(width: 1)
+                .frame(maxHeight: .infinity)
+        } else {
+            Divider().overlay(theme.border)
         }
-        return AnyView(Divider())
     }
 }

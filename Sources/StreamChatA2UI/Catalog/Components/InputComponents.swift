@@ -10,9 +10,9 @@ import SwiftUI
 /// they read their value from the bound path and write back immediately as the
 /// user interacts, without contacting the agent. The updated state reaches the
 /// agent when an action is dispatched.
-public enum InputComponents {
+enum InputComponents {
     /// All input components, in catalog order.
-    public static var all: [ComponentDefinition] {
+    static var all: [ComponentDefinition] {
         [textField, checkBox, choicePicker, slider, dateTimeInput]
     }
 
@@ -22,7 +22,7 @@ public enum InputComponents {
     )
 
     /// A single or multi line text input.
-    public static let textField = ComponentDefinition(
+    static let textField = ComponentDefinition(
         name: "TextField",
         description: "A field for user text input.",
         properties: [
@@ -57,7 +57,7 @@ public enum InputComponents {
     }
 
     /// A labelled boolean input.
-    public static let checkBox = ComponentDefinition(
+    static let checkBox = ComponentDefinition(
         name: "CheckBox",
         description: "A checkbox with a label and a boolean value.",
         properties: [
@@ -82,31 +82,11 @@ public enum InputComponents {
             """
         ]
     ) { context in
-        let binding = context.boolBinding()
-        let failures = context.failingChecks
-
-        return AnyView(
-            VStack(alignment: .leading, spacing: 4) {
-                Button {
-                    binding.wrappedValue.toggle()
-                } label: {
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Image(systemName: binding.wrappedValue ? "checkmark.square.fill" : "square")
-                            .foregroundColor(binding.wrappedValue ? .accentColor : .secondary)
-                        Text(context.string("label", default: ""))
-                            .foregroundColor(.primary)
-                        Spacer(minLength: 0)
-                    }
-                }
-                .buttonStyle(.plain)
-                .accessibilityAddTraits(binding.wrappedValue ? [.isButton, .isSelected] : .isButton)
-                ValidationMessages(results: failures)
-            }
-        )
+        AnyView(A2UICheckBoxView(context: context))
     }
 
     /// A single or multi select option list.
-    public static let choicePicker = ComponentDefinition(
+    static let choicePicker = ComponentDefinition(
         name: "ChoicePicker",
         description: "A component that allows selecting one or more options from a list.",
         properties: [
@@ -166,7 +146,7 @@ public enum InputComponents {
     }
 
     /// A numeric slider with an optional discrete step count.
-    public static let slider = ComponentDefinition(
+    static let slider = ComponentDefinition(
         name: "Slider",
         description: "A slider for selecting a numeric value within a range.",
         properties: [
@@ -202,7 +182,7 @@ public enum InputComponents {
     }
 
     /// A date and/or time input.
-    public static let dateTimeInput = ComponentDefinition(
+    static let dateTimeInput = ComponentDefinition(
         name: "DateTimeInput",
         description: "An input for date and/or time.",
         properties: [
@@ -247,8 +227,38 @@ public enum InputComponents {
 // MARK: - Views
 
 /// Renders an A2UI `TextField`, including its validation state.
+private struct A2UICheckBoxView: View {
+    let context: ComponentRenderContext
+
+    @Environment(\.a2uiTheme) private var theme
+
+    var body: some View {
+        let binding = context.boolBinding()
+        let failures = context.failingChecks
+
+        VStack(alignment: .leading, spacing: 4) {
+            Button {
+                binding.wrappedValue.toggle()
+            } label: {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: binding.wrappedValue ? "checkmark.square.fill" : "square")
+                        .foregroundColor(binding.wrappedValue ? theme.accent : theme.secondaryText)
+                    Text(context.string("label", default: ""))
+                        .font(theme.body)
+                    Spacer(minLength: 0)
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(binding.wrappedValue ? [.isButton, .isSelected] : .isButton)
+            ValidationMessages(results: failures)
+        }
+    }
+}
+
 private struct A2UITextFieldView: View {
     let context: ComponentRenderContext
+
+    @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         let label = context.string("label", default: "")
@@ -261,16 +271,17 @@ private struct A2UITextFieldView: View {
         return VStack(alignment: .leading, spacing: 4) {
             if !label.isEmpty {
                 Text(label)
-                    .font(.subheadline.weight(.medium))
-                    .foregroundColor(hasError ? .red : .secondary)
+                    .font(theme.label)
+                    .foregroundColor(hasError ? theme.error : theme.secondaryText)
             }
             input(variant: variant, placeholder: placeholder.isEmpty ? label : placeholder, binding: binding)
+                .font(theme.body)
                 .padding(10)
-                .background(A2UIColor.inputBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .background(theme.subtleSurface)
+                .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .stroke(hasError ? Color.red : Color.clear, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous)
+                        .stroke(hasError ? theme.error : Color.clear, lineWidth: 1)
                 )
                 .accessibilityLabel(Text(label))
             ValidationMessages(results: failures)
@@ -302,6 +313,7 @@ private struct A2UIChoicePickerView: View {
     let context: ComponentRenderContext
 
     @State private var filter = ""
+    @Environment(\.a2uiTheme) private var theme
 
     private struct Option: Identifiable {
         let label: String
@@ -322,13 +334,14 @@ private struct A2UIChoicePickerView: View {
 
         return VStack(alignment: .leading, spacing: 6) {
             if !label.isEmpty {
-                Text(label).font(.subheadline.weight(.medium)).foregroundColor(.secondary)
+                Text(label).font(theme.label).foregroundColor(theme.secondaryText)
             }
             if isFilterable {
                 TextField("Search", text: $filter)
+                    .font(theme.body)
                     .padding(8)
-                    .background(A2UIColor.inputBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .background(theme.subtleSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
             }
             if usesChips {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 8)], alignment: .leading, spacing: 8) {
@@ -386,8 +399,8 @@ private struct A2UIChoicePickerView: View {
         } label: {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Image(systemName: symbol)
-                    .foregroundColor(selected ? .accentColor : .secondary)
-                Text(option.label).foregroundColor(.primary)
+                    .foregroundColor(selected ? theme.accent : theme.secondaryText)
+                Text(option.label).font(theme.body)
                 Spacer(minLength: 0)
             }
         }
@@ -401,12 +414,12 @@ private struct A2UIChoicePickerView: View {
             toggle(option, selection, isMultiSelect: isMultiSelect)
         } label: {
             Text(option.label)
-                .font(.subheadline)
+                .font(theme.label)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .frame(maxWidth: .infinity)
-                .background(selected ? Color.accentColor.opacity(0.18) : Color.gray.opacity(0.12))
-                .foregroundColor(selected ? .accentColor : .primary)
+                .background(selected ? theme.accent.opacity(0.18) : theme.subtleSurface)
+                .foregroundColor(selected ? theme.accent : theme.text)
                 .clipShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -415,44 +428,75 @@ private struct A2UIChoicePickerView: View {
 }
 
 /// Renders an A2UI `Slider`, snapping to discrete steps when requested.
-private struct A2UISliderView: View {
+struct A2UISliderView: View {
     let context: ComponentRenderContext
+
+    @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         let label = context.string("label", default: "")
-        let minimum = Json.double(context.component.property("min")) ?? 0
-        let maximum = max(Json.double(context.component.property("max")) ?? 1, minimum + 0.000_1)
-        let steps = Json.int(context.component.property("steps"))
-        let binding = context.doubleBinding(default: minimum)
+        let range = Self.range(
+            minimum: Json.double(context.component.property("min")),
+            maximum: Json.double(context.component.property("max"))
+        )
+        let step = Self.step(in: range, steps: Json.int(context.component.property("steps")))
+        let binding = context.doubleBinding(default: range.lowerBound)
         let failures = context.failingChecks
 
         return VStack(alignment: .leading, spacing: 4) {
             HStack {
                 if !label.isEmpty {
-                    Text(label).font(.subheadline.weight(.medium)).foregroundColor(.secondary)
+                    Text(label).font(theme.label).foregroundColor(theme.secondaryText)
                 }
                 Spacer(minLength: 0)
-                Text(Json.stringify(binding.wrappedValue)).font(.subheadline.monospacedDigit())
+                Text(Json.stringify(binding.wrappedValue)).font(theme.label.monospacedDigit())
             }
-            slider(binding: binding, minimum: minimum, maximum: maximum, steps: steps)
+            slider(binding: binding, range: range, step: step)
+                .tint(theme.accent)
                 .accessibilityLabel(Text(label))
             ValidationMessages(results: failures)
+        }
+        // What the slider shows is what the person submits.
+        .onAppear {
+            if context.double("value") == nil {
+                context.write(range.lowerBound, to: "value")
+            }
         }
     }
 
     @ViewBuilder
-    private func slider(binding: Binding<Double>, minimum: Double, maximum: Double, steps: Int?) -> some View {
-        if let steps, steps > 0 {
-            Slider(value: binding, in: minimum...maximum, step: (maximum - minimum) / Double(steps))
+    private func slider(binding: Binding<Double>, range: ClosedRange<Double>, step: Double?) -> some View {
+        if let step {
+            Slider(value: binding, in: range, step: step)
         } else {
-            Slider(value: binding, in: minimum...maximum)
+            Slider(value: binding, in: range)
         }
+    }
+
+    // The agent writes the bounds, so they can be anything: SwiftUI's Slider needs finite bounds
+    // whose difference is representable, and a positive step.
+    static func range(minimum: Double?, maximum: Double?) -> ClosedRange<Double> {
+        let limit = 1e15
+        func bounded(_ value: Double?) -> Double? {
+            value.flatMap { $0.isFinite ? min(max($0, -limit), limit) : nil }
+        }
+        let lower = bounded(minimum) ?? 0
+        let upper = bounded(maximum).flatMap { $0 > lower ? $0 : nil } ?? lower + 1
+        return lower...upper
+    }
+
+    static func step(in range: ClosedRange<Double>, steps: Int?) -> Double? {
+        guard let steps, steps > 0 else { return nil }
+        let step = (range.upperBound - range.lowerBound) / Double(steps)
+        return step.isFinite && step > 0 ? step : nil
     }
 }
 
 /// Renders an A2UI `DateTimeInput` and writes ISO 8601 values back.
 private struct A2UIDateTimeInputView: View {
     let context: ComponentRenderContext
+
+    @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         let label = context.string("label", default: "")
@@ -483,8 +527,24 @@ private struct A2UIDateTimeInputView: View {
 
         return VStack(alignment: .leading, spacing: 4) {
             picker(label: label, selection: selection, components: components)
+                .font(theme.body)
+                .tint(theme.accent)
             ValidationMessages(results: failures)
         }
+        // What the picker shows is what the person submits.
+        .onAppear {
+            if (context.string("value") ?? "").isEmpty {
+                selection.wrappedValue = shown(selection.wrappedValue)
+            }
+        }
+    }
+
+    // A date within the picker's bounds, as the picker shows it.
+    private func shown(_ date: Date) -> Date {
+        let range = self.range
+        if let lower = range.lower, date < lower { return lower }
+        if let upper = range.upper, date > upper { return upper }
+        return date
     }
 
     @ViewBuilder
