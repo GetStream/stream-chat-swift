@@ -64,6 +64,22 @@ public enum MarkdownParser {
         return count
     }
 
+    // Drops `columns` of indentation, counting a tab as 4 like `leadingSpaces`, and never more
+    // than the leading spaces and tabs.
+    private static func dedent(_ line: String, by columns: Int) -> String {
+        var remaining = columns
+        var start = line.startIndex
+        while remaining > 0, start < line.endIndex {
+            switch line[start] {
+            case " ": remaining -= 1
+            case "\t": remaining -= 4
+            default: return String(line[start...])
+            }
+            start = line.index(after: start)
+        }
+        return String(repeating: " ", count: max(0, -remaining)) + line[start...]
+    }
+
     private static func isBlank(_ line: String) -> Bool {
         line.allSatisfy { $0 == " " || $0 == "\t" }
     }
@@ -172,7 +188,7 @@ public enum MarkdownParser {
             if !isBlank(rawLine) && leadingSpaces(rawLine) < indent && indent > 0 {
                 break
             }
-            let line = indent > 0 ? String(rawLine.dropFirst(min(indent, leadingSpaces(rawLine)))) : rawLine
+            let line = dedent(rawLine, by: indent)
 
             if isBlank(line) {
                 flushParagraph()
@@ -191,7 +207,7 @@ public enum MarkdownParser {
                 index += 1
                 var codeLines: [String] = []
                 while index < lines.count {
-                    let codeLine = indent > 0 ? String(lines[index].dropFirst(min(indent, leadingSpaces(lines[index])))) : lines[index]
+                    let codeLine = dedent(lines[index], by: indent)
                     if codeLine.trimmingCharacters(in: .whitespaces).hasPrefix(marker) {
                         index += 1
                         break
@@ -218,19 +234,24 @@ public enum MarkdownParser {
             }
 
             if depth < maxDepth, line.trimmingCharacters(in: .whitespaces).hasPrefix(">") {
-                flushParagraph()
+                var end = index
                 var quoted: [String] = []
-                while index < lines.count {
-                    let quoteLine = lines[index].trimmingCharacters(in: .whitespaces)
+                while end < lines.count {
+                    let quoteLine = lines[end].trimmingCharacters(in: .whitespaces)
                     guard quoteLine.hasPrefix(">") else { break }
                     var content = String(quoteLine.dropFirst())
                     if content.hasPrefix(" ") { content.removeFirst() }
                     quoted.append(content)
-                    index += 1
+                    end += 1
                 }
-                var quoteIndex = 0
-                blocks.append(.quote(parseBlocks(quoted, &quoteIndex, indent: 0, depth: depth + 1)))
-                continue
+                // A line that takes no quote lines reads as text below, so every pass moves on.
+                if !quoted.isEmpty {
+                    flushParagraph()
+                    index = end
+                    var quoteIndex = 0
+                    blocks.append(.quote(parseBlocks(quoted, &quoteIndex, indent: 0, depth: depth + 1)))
+                    continue
+                }
             }
 
             if line.contains("|"), index + 1 < lines.count, let alignments = tableAlignments(lines[index + 1]) {
@@ -257,7 +278,7 @@ public enum MarkdownParser {
                 let ordered = first.ordered
                 while index < lines.count {
                     if indent > 0 && leadingSpaces(lines[index]) < indent { break }
-                    let current = indent > 0 ? String(lines[index].dropFirst(min(indent, leadingSpaces(lines[index])))) : lines[index]
+                    let current = dedent(lines[index], by: indent)
                     guard let item = listItem(current), item.ordered == ordered, leadingSpaces(current) < first.indent else { break }
                     index += 1
                     var text = item.content

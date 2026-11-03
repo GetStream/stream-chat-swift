@@ -181,6 +181,22 @@ struct RobustnessTests {
         #expect(!current.isEmpty, "what is deeper reads as text")
     }
 
+    @Test func tabIndentedTextUnderAListItemDoesNotLoopForever() {
+        let compare = MarkdownList.Item(text: "Compare", checked: nil, children: [.paragraph("x >= y")])
+
+        #expect(MarkdownParser.parse("1. Compare\n\tx >= y") == [.list(MarkdownList(ordered: true, start: 1, items: [compare]))])
+    }
+
+    @Test func tabIndentedBlocksUnderAListItemKeepTheirMarkers() {
+        let blocks = MarkdownParser.parse("- a\n\t> quoted\n\t- b")
+
+        let item = MarkdownList.Item(text: "a", checked: nil, children: [
+            .quote([.paragraph("quoted")]),
+            .list(MarkdownList(ordered: false, start: 0, items: [MarkdownList.Item(text: "b", checked: nil, children: [])]))
+        ])
+        #expect(blocks == [.list(MarkdownList(ordered: false, start: 0, items: [item]))])
+    }
+
     @Test func referencesThatDoubleOnEachLevelStopExpanding() {
         var lines = [#"a0 = TextContent("x")"#]
         for level in 1...22 {
