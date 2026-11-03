@@ -35,6 +35,21 @@ struct BasicCatalogTests {
         #expect(BasicCatalog.catalog.catalogId == BasicCatalog.catalogId)
     }
 
+    @Test("Replacing a component's view keeps its properties and the other components")
+    func replacingView() throws {
+        let catalog = BasicCatalog.catalog.replacingView(of: "Card") { _ in AnyView(EmptyView()) }
+        let card = try #require(catalog.component("Card"))
+        let basicCard = try #require(BasicCatalog.catalog.component("Card"))
+
+        #expect(card.requiredProperties == basicCard.requiredProperties)
+        #expect(card.propertySchema.keys.sorted() == basicCard.propertySchema.keys.sorted())
+        #expect(catalog.components.keys.sorted() == BasicCatalog.catalog.components.keys.sorted())
+        #expect(catalog.catalogId == BasicCatalog.catalogId)
+
+        let unchanged = BasicCatalog.catalog.replacingView(of: "Missing") { _ in AnyView(EmptyView()) }
+        #expect(unchanged.components.keys.sorted() == BasicCatalog.catalog.components.keys.sorted())
+    }
+
     @Test("The reserved Surface component type is not defined")
     func reservedComponentName() {
         #expect(BasicCatalog.catalog.component(A2UIProtocol.surfaceComponentType) == nil)

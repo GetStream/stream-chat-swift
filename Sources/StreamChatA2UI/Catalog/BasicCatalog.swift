@@ -7,14 +7,14 @@ import Foundation
 /// The A2UI v1.0 basic catalog, implemented in SwiftUI.
 ///
 /// The basic catalog is the baseline set of components and functions every A2UI
-/// renderer is expected to support. Apps normally start here and then extend or
-/// replace it with their own design system:
+/// renderer is expected to support. `A2UIRenderer` writes with it by default. To change how
+/// one of its components looks, replace that component's view:
 ///
 /// ```swift
-/// let catalog = BasicCatalog.catalog.adding(
-///     components: [MyBrandHeader.definition],
-///     catalogId: "mycompany.com:app-catalog"
-/// )
+/// let catalog = BasicCatalog.catalog.replacingView(of: "Card") { context in
+///     AnyView(BrandCard { context.childView(context.childId()) })
+/// }
+/// A2UIRenderer(catalog: catalog)
 /// ```
 public enum BasicCatalog {
     /// The catalog id agents use to target the basic catalog.
@@ -61,7 +61,7 @@ public enum BasicCatalog {
     always referenced by id; components are never nested inline.
     """
 
-    /// The basic catalog, ready to be passed to ``A2UIMessageProcessor``.
+    /// The basic catalog.
     public static var catalog: Catalog {
         Catalog(
             catalogId: catalogId,

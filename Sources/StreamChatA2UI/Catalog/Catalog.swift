@@ -15,8 +15,8 @@ public typealias ComponentViewBuilder = @MainActor @Sendable (ComponentRenderCon
 /// agent is told to generate against, and the SwiftUI builder that renders it.
 ///
 /// Add your app's own components as StreamChatAI `AIUIComponent`s, which every renderer can
-/// place. Use a definition to change one of the basic catalog's components, by passing
-/// `A2UIRenderer` a catalog made with `BasicCatalog.catalog.adding(components:)`.
+/// place. To change how one of the basic catalog's components looks, replace its view with
+/// ``Catalog/replacingView(of:with:)``.
 public struct ComponentDefinition: Sendable {
     /// The component type name, used as the `component` discriminator.
     public let name: String
@@ -48,7 +48,7 @@ public struct ComponentDefinition: Sendable {
 
     /// Creates a component definition.
     /// The `component` discriminator is added to the schema automatically.
-    public init(
+    init(
         name: String,
         description: String? = nil,
         properties: [String: JsonMap] = [:],
@@ -85,6 +85,20 @@ public struct ComponentDefinition: Sendable {
 }
 
 extension ComponentDefinition {
+    // The same component, shown by `builder`.
+    func replacingView(with builder: @escaping ComponentViewBuilder) -> ComponentDefinition {
+        ComponentDefinition(
+            name: name,
+            description: description,
+            properties: propertySchema,
+            required: requiredProperties,
+            allowedParents: allowedParents,
+            allowedChildren: allowedChildren,
+            examples: examples,
+            builder: builder
+        )
+    }
+
     // The ids a component holds, with the JSON pointer to each from the component, found from the
     // catalog's schema: a ComponentId, a ChildList, or either one in an array or object, such as
     // each of a Tabs' tabs.
@@ -291,9 +305,8 @@ public struct Catalog: Sendable {
         functions[name]
     }
 
-    /// Returns a copy with `components` added, or replacing the ones of the same name, such as
-    /// to restyle one of the basic catalog's components.
-    public func adding(
+    /// Returns a copy with `components` added, or replacing the ones of the same name.
+    func adding(
         components newComponents: [ComponentDefinition],
         catalogId: String? = nil,
         instructions: String? = nil
@@ -315,6 +328,20 @@ public struct Catalog: Sendable {
             components: Array(components.values) + newComponents,
             functions: Array(functions.values) + newFunctions
         )
+    }
+
+    /// Returns a copy in which `builder` shows the component named `name`, which keeps its
+    /// properties, such as to restyle one of the basic catalog's components. The copy is the same
+    /// when the catalog has no such component.
+    ///
+    /// ```swift
+    /// let catalog = BasicCatalog.catalog.replacingView(of: "Card") { context in
+    ///     AnyView(BrandCard { context.childView(context.childId()) })
+    /// }
+    /// ```
+    public func replacingView(of name: String, with builder: @escaping ComponentViewBuilder) -> Catalog {
+        guard let component = component(name) else { return self }
+        return adding(components: [component.replacingView(with: builder)])
     }
 
     /// Returns a copy without the named components.

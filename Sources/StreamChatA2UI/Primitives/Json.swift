@@ -6,11 +6,11 @@ import Foundation
 
 /// Dictionary alias for JSON objects.
 /// Uses `String: any Sendable` to represent loosely typed JSON values.
-public typealias JsonMap = [String: any Sendable]
+typealias JsonMap = [String: any Sendable]
 
 /// Array alias for JSON arrays.
 /// Elements are loosely typed JSON values.
-public typealias JsonArray = [any Sendable]
+typealias JsonArray = [any Sendable]
 
 /// Helpers for reading, coercing, and encoding loosely typed JSON values.
 ///

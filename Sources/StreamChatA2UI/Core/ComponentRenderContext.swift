@@ -146,7 +146,7 @@ public struct ComponentRenderContext {
     }
 
     /// Evaluates a property and returns its raw value.
-    public func value(_ key: String) -> (any Sendable)? {
+    func value(_ key: String) -> (any Sendable)? {
         evaluator.evaluate(dynamic(key), in: dataContext)
     }
 
@@ -298,7 +298,7 @@ public struct ComponentRenderContext {
 
     /// Writes a value to a bound property.
     /// Does nothing when the property is not a data binding.
-    public func write(_ value: (any Sendable)?, to key: String) {
+    func write(_ value: (any Sendable)?, to key: String) {
         guard let path = dynamic(key).bindingPath else {
             a2uiLogger.warning(
                 "Component '\(component.id)' cannot write '\(key)' because it is not bound to a data model path."
