@@ -82,7 +82,7 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     private var ignoresActivity = false
     // The latest stop, which the next request waits for: the agent would stop that one too.
     private var stopping: Task<Void, Never>?
-    // Ends the wait for the latest request's reply once it takes too long.
+    // Ends the wait for the latest request's reply when the agent says nothing for too long.
     private var replyTimer: Task<Void, Never>?
     private var edited: Message?
     private var ratingChanges: [Message.ID: RatingChange] = [:]
@@ -119,15 +119,16 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     ///   - approver: Who answers tool calls' questions and sign-ins on this device.
     ///   - actions: What the conversation's views offer: editing the person's latest message,
     ///     regenerating the latest reply and rating replies. All of them by default.
-    ///   - replyTimeout: How many seconds the conversation waits for a reply to start once the
-    ///     agent has the request, or since the agent last said what it is doing, before it shows
-    ///     an ``AIAgentError``. Nil waits as long as it takes.
+    ///   - replyTimeout: How many seconds the conversation waits, once the agent has the request,
+    ///     for the agent to start its reply or say what it is doing, before it shows an
+    ///     ``AIAgentError``. While the agent says it is working, such as thinking, it waits as long
+    ///     as that takes. Five minutes by default; nil or `.infinity` waits as long as it takes.
     public init<Transport: AIConversationTransport>(
         transport: Transport,
         composerViewModel: AIComposerViewModel? = nil,
         approver: AIToolApprover? = nil,
         actions: AIConversationActions = .all,
-        replyTimeout: TimeInterval? = 60
+        replyTimeout: TimeInterval? = 300
     ) where Transport.Message == Message {
         self.transport = TransportCalls(
             send: { try await transport.send($0) },
@@ -288,6 +289,10 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         guard let activity else {
             ignoresActivity = false
             self.activity = nil
+            // The agent stopped saying it is working without starting its reply.
+            if let exchange, exchange.state == .waiting {
+                waitForReply(to: exchange.id)
+            }
             refresh()
             return
         }
@@ -295,8 +300,9 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         self.activity = activity
         if activity.state == .error {
             agentCouldNotAnswer(AIAgentError(message: activity.text))
-        } else if let exchange, exchange.state == .waiting {
-            waitForReply(to: exchange.id)
+        } else {
+            // The agent is working on it, however long it thinks.
+            replyTimer?.cancel()
         }
         refresh()
     }
@@ -377,7 +383,8 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     }
 
     private func requestSent(_ id: Int) {
-        guard let exchange, exchange.id == id, exchange.state == .waiting else { return }
+        // The agent may already say it is working on it.
+        guard let exchange, exchange.id == id, exchange.state == .waiting, activity == nil else { return }
         waitForReply(to: id)
     }
 
@@ -425,8 +432,9 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
 
     private func waitForReply(to id: Int) {
         replyTimer?.cancel()
-        guard let replyTimeout else { return }
-        let nanoseconds = UInt64(max(replyTimeout, 0) * 1_000_000_000)
+        guard let replyTimeout, replyTimeout.isFinite else { return }
+        // Within what a UInt64 of nanoseconds holds, about 584 years.
+        let nanoseconds = UInt64(min(max(replyTimeout, 0), 1_000_000_000) * 1_000_000_000)
         replyTimer = Task { [weak self] in
             try? await Task.sleep(nanoseconds: nanoseconds)
             guard !Task.isCancelled else { return }

@@ -342,28 +342,48 @@ final class AIConversation_Tests: XCTestCase {
         XCTAssertEqual(conversation.status, .streaming)
     }
 
-    func test_send_waitsForTheReplyWhileTheAgentSaysWhatItIsDoing() async throws {
+    func test_send_waitsForTheReplyWhileTheAgentSaysItIsWorking() async throws {
         let transport = ConversationTransport(messages: [.user("u1"), .reply("a1")])
-        let conversation = AIConversation(transport: transport, replyTimeout: 1)
+        let conversation = AIConversation(transport: transport, replyTimeout: 0.1)
         conversation.send("Hi")
         await settle()
 
-        for _ in 0..<3 {
-            try await Task.sleep(nanoseconds: 400_000_000)
-            transport.update(AIAgentActivity(state: .thinking))
-        }
+        transport.update(AIAgentActivity(state: .thinking))
+        try await Task.sleep(nanoseconds: 400_000_000)
+
+        XCTAssertEqual(conversation.status, .submitted, "however long it thinks")
+        XCTAssertNil(conversation.error)
+
+        transport.update(nil)
+        try await waitUntil { conversation.status == .error }
+
+        XCTAssertEqual(conversation.error as? AIAgentError, AIAgentError(), "it stopped saying it was working, without answering")
+    }
+
+    func test_send_whenTheAgentSaysItIsWorkingBeforeTheTransportReturns_waitsForTheReply() async throws {
+        let transport = ConversationTransport(messages: [.user("u1"), .reply("a1")])
+        transport.holdsSends = true
+        let conversation = AIConversation(transport: transport, replyTimeout: 0.1)
+        conversation.send("Hi")
+        await settle()
+
+        transport.update(AIAgentActivity(state: .thinking))
+        transport.finishSend(0)
+        await settle()
+        try await Task.sleep(nanoseconds: 400_000_000)
 
         XCTAssertEqual(conversation.status, .submitted)
-        XCTAssertNil(conversation.error)
     }
 
     func test_send_withoutATimeout_waitsAsLongAsItTakes() async throws {
-        let conversation = AIConversation(transport: ConversationTransport(), replyTimeout: nil)
+        for timeout in [nil, .infinity, 1e30] as [TimeInterval?] {
+            let conversation = AIConversation(transport: ConversationTransport(), replyTimeout: timeout)
 
-        conversation.send("Hi")
-        try await Task.sleep(nanoseconds: 100_000_000)
+            conversation.send("Hi")
+            try await Task.sleep(nanoseconds: 100_000_000)
 
-        XCTAssertEqual(conversation.status, .submitted)
+            XCTAssertEqual(conversation.status, .submitted)
+        }
     }
 
     func test_send_forgetsThePreviousError() async {
