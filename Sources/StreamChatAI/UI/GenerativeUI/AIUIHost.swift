@@ -110,14 +110,14 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
             name: name,
             status: .awaitingClient,
             executor: .client,
-            arguments: try JSONEncoder().encode(arguments)
+            arguments: try JSONEncoder.streamCore.encode(arguments)
         )
         let result = await tool.run(call)
         if let failure = result.failure {
             throw AIUIToolError(message: failure)
         }
         guard let output = result.output else { return .nil }
-        return try JSONDecoder().decode(RawJSON.self, from: output)
+        return try JSONDecoder.streamCore.decode(RawJSON.self, from: output)
     }
 
     public func open(_ url: URL) {
@@ -157,7 +157,7 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
         }
         let definitions = components.compactMap { component -> RawJSON? in
             do {
-                return try JSONDecoder().decode(RawJSON.self, from: JSONEncoder().encode(component.definition))
+                return try JSONDecoder.streamCore.decode(RawJSON.self, from: JSONEncoder.streamCore.encode(component.definition))
             } catch {
                 log.error("Couldn't describe the component \(component.name) to the agent", error: error)
                 return nil
