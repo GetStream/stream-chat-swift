@@ -8,9 +8,10 @@ import Testing
 
 /// Polls `condition` on the main actor until it holds or the timeout elapses.
 @MainActor
+// Polls every 10 ms, up to `timeout` worth of polls. It counts polls rather than time, so tests
+// running in parallel that keep the main actor busy don't make it give up early.
 func waitUntil(timeout: TimeInterval = 30, _ condition: @MainActor () -> Bool) async -> Bool {
-    let deadline = Date().addingTimeInterval(timeout)
-    while Date() < deadline {
+    for _ in 0..<Int(timeout * 100) {
         if condition() { return true }
         try? await Task.sleep(nanoseconds: 10_000_000)
     }
@@ -199,7 +200,7 @@ struct QueryManagerTests {
     }
 
     @Test func refreshIntervalWaitsAtLeastTheToolProvidersMinimum() async {
-        let provider = RecordingToolProvider(minimumRefreshInterval: 1) { _, _, count in ["n": .number(Double(count))] }
+        let provider = RecordingToolProvider(minimumRefreshInterval: 3600) { _, _, count in ["n": .number(Double(count))] }
         let manager = QueryManager(toolProvider: provider)
         manager.evaluateQueries([node("health", refresh: 0.001)])
         #expect(await waitUntil { provider.calls.count == 1 })

@@ -133,11 +133,11 @@ struct OpenUIRendererTests {
     }
 
     @Test func aReplyThatLeavesTheConversationStopsItsRuntime() async {
-        let tools = RecordingToolProvider(minimumRefreshInterval: 0.01) { _, _, count in ["n": .number(Double(count))] }
+        let tools = RecordingToolProvider { _, _, count in ["n": .number(Double(count))] }
         let engine = OpenUIEngine(library: .openUIChat, host: FakeHost(), toolProvider: tools)
         let program = """
         root = Card([TextContent("Health")])
-        health = Query("health", {}, {n: 0}, 0.01)
+        health = Query("health", {}, {n: 0}, 0.05)
         """
         _ = engine.view(for: Self.document(program), messageID: "m1")
         _ = engine.view(for: Self.document(program), messageID: "m2")
