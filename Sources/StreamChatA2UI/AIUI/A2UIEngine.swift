@@ -122,7 +122,7 @@ final class A2UIEngine: AIUIEngine {
             "sourceComponentId": .string(action.sourceComponentId),
             "context": .dictionary(action.context.mapValues { RawJSON(a2ui: $0) })
         ]
-        if let surface = replies[messageID]?.processor.surfaceViewModel(action.surfaceId),
+        if let surface = replies[messageID]?.processor.existingSurfaceViewModel(action.surfaceId),
            surface.definition?.sendDataModel == true {
             payload["dataModel"] = RawJSON(a2ui: surface.dataModel.snapshot)
         }
@@ -154,7 +154,7 @@ final class A2UIEngine: AIUIEngine {
     // What the button the person tapped says, when its action has no words of its own.
     private func buttonText(of action: RendererAction, messageID: String) -> String? {
         guard let processor = replies[messageID]?.processor,
-              let definition = processor.surfaceViewModel(action.surfaceId).definition,
+              let definition = processor.existingSurfaceViewModel(action.surfaceId)?.definition,
               let childId = definition.component(action.sourceComponentId)?.property("child") as? String,
               let text = definition.component(childId)?.property("text") as? String,
               !text.isEmpty
