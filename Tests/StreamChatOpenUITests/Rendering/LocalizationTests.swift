@@ -6,7 +6,8 @@ import Foundation
 @testable import StreamChatOpenUI
 import Testing
 
-@Suite("Localization")
+// Two tests set the shared provider, so they must not overlap.
+@Suite("Localization", .serialized)
 struct LocalizationTests {
     @Test func textsComeFromTheModuleStrings() {
         #expect(L10n.Select.placeholder == "Select...")

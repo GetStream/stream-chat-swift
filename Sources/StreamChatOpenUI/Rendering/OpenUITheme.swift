@@ -48,7 +48,9 @@ public struct OpenUITheme: Sendable {
         public var info: Color = Color(red: 0.16, green: 0.45, blue: 0.91)
         public var neutral: Color = .secondary
         /// Categorical chart colors.
-        public var chartPalette: [Color] = [
+        public var chartPalette: [Color] = Self.defaultChartPalette
+
+        static let defaultChartPalette = [
             Color(red: 0.25, green: 0.47, blue: 0.96),
             Color(red: 0.11, green: 0.71, blue: 0.62),
             Color(red: 0.98, green: 0.62, blue: 0.16),
@@ -73,7 +75,8 @@ public struct OpenUITheme: Sendable {
         }
 
         public func chartColor(_ index: Int) -> Color {
-            chartPalette[((index % chartPalette.count) + chartPalette.count) % chartPalette.count]
+            let palette = chartPalette.isEmpty ? Self.defaultChartPalette : chartPalette
+            return palette[((index % palette.count) + palette.count) % palette.count]
         }
     }
 

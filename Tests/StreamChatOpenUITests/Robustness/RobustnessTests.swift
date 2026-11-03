@@ -32,6 +32,32 @@ struct RobustnessTests {
         #expect(runtime.root?.typeName == "Stack")
     }
 
+    @Test func longOperatorChainsDoNotOverflowTheStack() {
+        let terms = 20000
+        let nested = (0..<200).reduce("1") { inner, _ in "(" + inner + String(repeating: " + 1", count: 200) + ")" }
+        let chains = [
+            Array(repeating: "1", count: terms).joined(separator: " + "),
+            "a" + String(repeating: ".b", count: terms),
+            "a" + String(repeating: "[0]", count: terms),
+            nested
+        ]
+
+        for chain in chains {
+            let result = ComponentLibrary.openUI.parser.parse("root = Stack([TextContent(\"x\")])\nv = \(chain)")
+
+            #expect(result.root?.typeName == "Stack")
+            #expect(treeHeight(ExpressionParser.parse(Lexer.tokenize(chain))) <= 2 * ExpressionParser.maxDepth)
+        }
+    }
+
+    @Test func shortOperatorChainsAreKept() {
+        let chain = Array(repeating: "1", count: 200).joined(separator: " + ")
+        let runtime = OpenUIRuntime(library: .openUI)
+        runtime.update(response: "root = Stack([TextContent(\"\" + (\(chain)))])", isStreaming: false)
+
+        #expect(runtime.root?.props["children"]?.arrayValue?.first?.elementValue?.props["text"] == "200")
+    }
+
     @Test func nestingWithinTheLimitsIsKept() {
         let program = "root = Stack([" + String(repeating: "Stack([", count: 50) + #"TextContent("deep")"# + String(repeating: "])", count: 50) + "])"
 
@@ -127,6 +153,21 @@ struct RobustnessTests {
         #expect(SliderValues.bounds(minimum: 1e16, maximum: 0) == 1e15...(1e15 + 1))
     }
 
+    @Test func sliderStepsTooSmallForTheRangeAreLeftToSnapping() {
+        let bounds = SliderValues.bounds(minimum: 0, maximum: 100)
+
+        #expect(SliderValues.step(nil, discrete: true, in: SliderValues.bounds(minimum: 0, maximum: 1e15)) == nil)
+        #expect(SliderValues.step(1e-8, discrete: false, in: bounds) == nil)
+        #expect(SliderValues.requestedStep(1e-8, discrete: false, in: bounds) == 1e-8)
+        #expect(SliderValues.step(0.5, discrete: false, in: bounds) == 0.5)
+        #expect(SliderValues.step(nil, discrete: true, in: 0...1000) == 1)
+        #expect(SliderValues.step(nil, discrete: true, in: 0...5000) == nil)
+        #expect(SliderValues.requestedStep(nil, discrete: true, in: 0...5000) == 1)
+        #expect(SliderValues.snapped(2345.678, to: 1, in: 0...5000) == 2346)
+        #expect(SliderValues.snapped(4999.9, to: 7, in: 0...5000) == 4998)
+        #expect(SliderValues.snapped(-3, to: 7, in: 0...5000) == 0)
+    }
+
     @Test func aGridGapThatIsNegativeOrNotFiniteIsNoGap() {
         #expect(ResponsiveGridLayout(spacing: -150).spacing == 0)
         #expect(ResponsiveGridLayout(spacing: .infinity).spacing == 0)
@@ -155,6 +196,22 @@ struct RobustnessTests {
         #expect(!current.isEmpty, "what is deeper reads as text")
     }
 
+    @Test func tabIndentedTextUnderAListItemDoesNotLoopForever() {
+        let compare = MarkdownList.Item(text: "Compare", checked: nil, children: [.paragraph("x >= y")])
+
+        #expect(MarkdownParser.parse("1. Compare\n\tx >= y") == [.list(MarkdownList(ordered: true, start: 1, items: [compare]))])
+    }
+
+    @Test func tabIndentedBlocksUnderAListItemKeepTheirMarkers() {
+        let blocks = MarkdownParser.parse("- a\n\t> quoted\n\t- b")
+
+        let item = MarkdownList.Item(text: "a", checked: nil, children: [
+            .quote([.paragraph("quoted")]),
+            .list(MarkdownList(ordered: false, start: 0, items: [MarkdownList.Item(text: "b", checked: nil, children: [])]))
+        ])
+        #expect(blocks == [.list(MarkdownList(ordered: false, start: 0, items: [item]))])
+    }
+
     @Test func referencesThatDoubleOnEachLevelStopExpanding() {
         var lines = [#"a0 = TextContent("x")"#]
         for level in 1...22 {
@@ -167,6 +224,41 @@ struct RobustnessTests {
 
         #expect(result.root?.typeName == "Card")
         #expect(ProcessInfo.processInfo.systemUptime - started < 2)
+    }
+
+    @Test func referencesUsedManyTimesStopMaterializingAtTheNodeBudget() {
+        let row = Array(repeating: "{a: 1}", count: 1000).joined(separator: ", ")
+        let rows = Array(repeating: "c", count: 5000).joined(separator: ", ")
+        let program = "root = Stack([])\nc = [\(row)]\nb = [\(rows)]\n$data = b"
+
+        let result = ComponentLibrary.openUI.parser.parse(program)
+
+        let materialized = valueCount(result.stateDeclarations["$data"] ?? .null)
+        #expect(materialized > 10000)
+        #expect(materialized <= Materializer.maxNodes)
+    }
+
+    @Test func nestedEachLoopsStopAtTheEvaluationBudget() {
+        let items = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+        let template = (0..<6).reduce(#"TextContent("x")"#) { inner, level in #"@Each(\#(items), "v\#(level)", \#(inner))"# }
+        let runtime = OpenUIRuntime(library: .openUI)
+
+        runtime.update(response: "root = Stack([\(template)])", isStreaming: false)
+
+        let elements = elementCount(runtime.root.map(OpenUIValue.element) ?? .null)
+        #expect(elements > 1000)
+        #expect(elements < EvaluationBudget.maxNodes)
+        #expect(runtime.errors.filter { $0.message.contains("Evaluation stopped") }.count == 1)
+    }
+
+    @Test func eachLoopsWithinTheBudgetAreKept() {
+        let items = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+        let runtime = OpenUIRuntime(library: .openUI)
+
+        runtime.update(response: #"root = Stack([@Each(\#(items), "a", @Each(\#(items), "b", TextContent("x")))])"#, isStreaming: false)
+
+        #expect(elementCount(runtime.root.map(OpenUIValue.element) ?? .null) == 101)
+        #expect(runtime.errors.isEmpty)
     }
 
     @Test func aPatternThatBacktracksGivesUpInsteadOfFreezing() throws {
@@ -221,5 +313,70 @@ struct RobustnessTests {
 
         #expect(links == ["https://getstream.io", "mailto:a@b.co"])
         #expect(String(InlineMarkdown.attributed(text).characters) == "web call app mail")
+    }
+}
+
+private func treeHeight(_ node: ASTNode) -> Int {
+    let children: [ASTNode]
+    switch node {
+    case .comp(_, let args, let mappedProps, _): children = args + (mappedProps ?? []).map(\.value)
+    case .arr(let elements): children = elements
+    case .obj(let entries): children = entries.map(\.value)
+    case .binary(_, let left, let right): children = [left, right]
+    case .unary(_, let operand): children = [operand]
+    case .ternary(let condition, let then, let otherwise): children = [condition, then, otherwise]
+    case .member(let object, _): children = [object]
+    case .index(let object, let index): children = [object, index]
+    case .assign(_, let value): children = [value]
+    case .str, .num, .bool, .null, .ref, .placeholder, .stateRef, .runtimeRef: children = []
+    }
+    var height = 0
+    for child in children {
+        height = max(height, treeHeight(child))
+    }
+    return 1 + height
+}
+
+private func elementCount(_ value: OpenUIValue) -> Int {
+    switch value {
+    case .element(let element):
+        var count = 1
+        for child in element.props.values {
+            count += elementCount(child)
+        }
+        return count
+    case .array(let items):
+        var count = 0
+        for item in items {
+            count += elementCount(item)
+        }
+        return count
+    case .object, .null, .bool, .number, .string, .expression:
+        return 0
+    }
+}
+
+private func valueCount(_ value: OpenUIValue) -> Int {
+    switch value {
+    case .array(let items):
+        var count = 1
+        for item in items {
+            count += valueCount(item)
+        }
+        return count
+    case .object(let object):
+        var count = 1
+        for item in object.values {
+            count += valueCount(item)
+        }
+        return count
+    case .element(let element):
+        var count = 1
+        for item in element.props.values {
+            count += valueCount(item)
+        }
+        return count
+    case .null, .bool, .number, .string, .expression:
+        return 1
     }
 }

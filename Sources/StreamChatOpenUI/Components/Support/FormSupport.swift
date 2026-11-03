@@ -117,6 +117,40 @@ extension View {
     }
 }
 
+// Saves the value a field shows by default once the model has finished writing it, unless one is
+// already stored, so the form sends and validates what the person sees (useSetDefaultValue).
+@available(iOS 17.0, macOS 14.0, *)
+enum FieldDefault {
+    @MainActor
+    static func save(_ value: OpenUIValue?, runtime: OpenUIRuntime, formName: String?, componentType: String, name: String) {
+        guard !runtime.isStreaming,
+              runtime.fieldValue(formName: formName, name: name) == nil,
+              let value else { return }
+        runtime.setFieldValue(formName: formName, componentType: componentType, name: name, value: value)
+    }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+private struct SavesDefault: ViewModifier {
+    let isStreaming: Bool
+    let save: @MainActor () -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear(perform: save)
+            .onChange(of: isStreaming) { _, isStreaming in
+                if !isStreaming { save() }
+            }
+    }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+extension View {
+    func savesDefault(isStreaming: Bool, _ save: @escaping @MainActor () -> Void) -> some View {
+        modifier(SavesDefault(isStreaming: isStreaming, save: save))
+    }
+}
+
 /// Helpers for selection fields (port of `selectionFieldUtils.ts`).
 @available(iOS 17.0, macOS 14.0, *)
 enum SelectionField {
@@ -162,13 +196,9 @@ enum SelectionField {
         }
     }
 
-    // Saves the default selection once the model has finished writing the field (useHydrateDefaultFieldValue).
     @MainActor
     static func hydrateDefault(runtime: OpenUIRuntime, formName: String?, componentType: String, name: String, single: Bool, defaultValue: OpenUIValue?) {
-        guard !runtime.isStreaming,
-              runtime.fieldValue(formName: formName, name: name) == nil,
-              let value = storedDefault(single: single, defaultValue: defaultValue) else { return }
-        runtime.setFieldValue(formName: formName, componentType: componentType, name: name, value: value)
+        FieldDefault.save(storedDefault(single: single, defaultValue: defaultValue), runtime: runtime, formName: formName, componentType: componentType, name: name)
     }
 
     static func toggle(single: Bool, selection: [String], value: String) -> [String] {
@@ -193,14 +223,30 @@ enum SliderValues {
         return lower...upper
     }
 
-    // A step SwiftUI's Slider takes: finite, positive and no larger than the range, which it
-    // otherwise stops on with "max stride must be positive".
-    static func step(_ step: Double?, discrete: Bool, in bounds: ClosedRange<Double>) -> Double? {
+    static let maxSteps = 1000.0
+
+    // The step values move by: the model's, or 1 for a discrete slider. It is finite, positive
+    // and no larger than the range, which SwiftUI's Slider otherwise stops on with "max stride
+    // must be positive".
+    static func requestedStep(_ step: Double?, discrete: Bool, in bounds: ClosedRange<Double>) -> Double? {
         let span = bounds.upperBound - bounds.lowerBound
         if let step, step.isFinite, step > 0 {
             return step <= span ? step : nil
         }
         return discrete && span >= 1 ? 1 : nil
+    }
+
+    // The step SwiftUI's Slider gets: none when the range holds more than `maxSteps` of them, as
+    // AppKit's tick marks crash on `max: 1e15` with a step of 1 and `step: 1e-8` hangs. Values
+    // still snap to the requested step.
+    static func step(_ step: Double?, discrete: Bool, in bounds: ClosedRange<Double>) -> Double? {
+        guard let requested = requestedStep(step, discrete: discrete, in: bounds) else { return nil }
+        return (bounds.upperBound - bounds.lowerBound) / requested <= maxSteps ? requested : nil
+    }
+
+    static func snapped(_ value: Double, to step: Double, in bounds: ClosedRange<Double>) -> Double {
+        let steps = ((value - bounds.lowerBound) / step).rounded()
+        return Swift.min(Swift.max(bounds.lowerBound + steps * step, bounds.lowerBound), bounds.upperBound)
     }
 
     static func values(_ value: OpenUIValue?, in bounds: ClosedRange<Double>) -> [Double] {

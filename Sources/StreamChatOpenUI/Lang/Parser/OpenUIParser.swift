@@ -199,6 +199,25 @@ public struct OpenUIParser: Sendable {
         return found
     }
 
+    // The `$variables` a statement uses, kept with the cache while the statement is unchanged.
+    private static func stateReferences(of statement: Statement, _ context: MaterializeContext) -> [String] {
+        let version = context.cache?.versions[statement.id]
+        if let version, let kept = context.cache?.stateReferences[statement.id], kept.version == version {
+            return kept.names
+        }
+        let nodes: [ASTNode]
+        switch statement {
+        case .state(_, let initial): nodes = [initial]
+        case .value(_, let expression): nodes = [expression]
+        case .query(_, let args, _, _), .mutation(_, let args, _): nodes = args
+        }
+        let names = nodes.flatMap(\.stateReferences)
+        if let version {
+            context.cache?.stateReferences[statement.id] = MaterializationCache.StateReferences(version: version, names: names)
+        }
+        return names
+    }
+
     /// A `$name` at the very end of streamed text, which may still be growing (`$d` of `$dishes`).
     struct PartialReference {
         let name: String
@@ -212,6 +231,28 @@ public struct OpenUIParser: Sendable {
         paramMap: ParamMap?,
         rootName: String?,
         partialReference: PartialReference? = nil
+    ) -> ParseResult {
+        var cache: MaterializationCache?
+        return buildResult(
+            table,
+            wasIncomplete: wasIncomplete,
+            statementCount: statementCount,
+            paramMap: paramMap,
+            rootName: rootName,
+            partialReference: partialReference,
+            cache: &cache
+        )
+    }
+
+    // With a cache, statements whose reads are unchanged since the last pass are reused.
+    static func buildResult(
+        _ table: StatementTable,
+        wasIncomplete: Bool,
+        statementCount: Int,
+        paramMap: ParamMap?,
+        rootName: String?,
+        partialReference: PartialReference?,
+        cache: inout MaterializationCache?
     ) -> ParseResult {
         let entry = pickEntry(table, rootName: rootName)
 
@@ -234,6 +275,12 @@ public struct OpenUIParser: Sendable {
             currentStatementId: entry?.id,
             unreached: unreached
         )
+        context.cache = cache
+        cache = nil
+        defer {
+            context.cache?.materializedNodes += context.materialized
+            cache = context.cache
+        }
         var root: ElementNode?
         var rootExpression: ASTNode?
         if let entry, let entrySymbol = symbols[entry.id] {
@@ -283,19 +330,11 @@ public struct OpenUIParser: Sendable {
         // Auto-declare: any $variable referenced but not declared gets a null default, except a
         // `$name` that may still be streaming in.
         for statement in statements {
-            let nodes: [ASTNode]
-            switch statement {
-            case .state(_, let initial): nodes = [initial]
-            case .value(_, let expression): nodes = [expression]
-            case .query(_, let args, _, _), .mutation(_, let args, _): nodes = args
-            }
-            for node in nodes {
-                for dependency in node.stateReferences where !stateDeclarations.contains(dependency) {
-                    if let partialReference, partialReference.name == dependency, partialReference.statementIds.contains(statement.id) {
-                        continue
-                    }
-                    stateDeclarations[dependency] = .null
+            for dependency in stateReferences(of: statement, context) where !stateDeclarations.contains(dependency) {
+                if let partialReference, partialReference.name == dependency, partialReference.statementIds.contains(statement.id) {
+                    continue
                 }
+                stateDeclarations[dependency] = .null
             }
         }
 
@@ -339,12 +378,16 @@ public struct OpenUIStreamParser: Sendable {
     public let rootName: String?
 
     private var buffer = ""
-    /// Preprocessed view of `buffer` (fences and comments stripped).
-    private var cleaned: [UInt8] = []
+    // Preprocessed view of `buffer` (fences and comments stripped).
+    private var cleaned = IncrementalPreprocessor()
     /// How far into `cleaned` statements are already completed.
     private var completedEnd = 0
     private var completed = StatementTable()
     private var completedCount = 0
+    // A new version for each statement read, so the cache can tell when one changed.
+    private var completedVersions: [String: Int] = [:]
+    private var lastVersion = 0
+    private var cache: MaterializationCache? = MaterializationCache()
 
     public init(paramMap: ParamMap, rootName: String? = nil) {
         self.paramMap = paramMap
@@ -358,19 +401,26 @@ public struct OpenUIStreamParser: Sendable {
     /// Appends a chunk and returns the latest result. Pass `complete` once the stream has ended.
     public mutating func push(_ chunk: String, complete: Bool = false) -> ParseResult {
         buffer += chunk
+        refreshCleaned(adding: chunk.utf8)
         return currentResult(complete: complete)
     }
 
     /// Sets the full text so far. Resets when the text no longer extends the previous buffer. Pass
     /// `complete` once the stream has ended.
     public mutating func set(_ fullText: String, complete: Bool = false) -> ParseResult {
-        if fullText.utf8.count < buffer.utf8.count || !fullText.utf8.starts(with: buffer.utf8) {
+        if !Self.text(fullText, startsWith: buffer) {
             reset()
         }
         if fullText.utf8.count > buffer.utf8.count {
+            let added = fullText.utf8.dropFirst(buffer.utf8.count)
             buffer = fullText
+            refreshCleaned(adding: added)
         }
         return currentResult(complete: complete)
+    }
+
+    var preprocessedBytes: Int {
+        cleaned.bytesRead
     }
 
     /// The latest result without consuming new data.
@@ -380,10 +430,29 @@ public struct OpenUIStreamParser: Sendable {
 
     public mutating func reset() {
         buffer = ""
-        cleaned = []
+        cleaned = IncrementalPreprocessor()
+        resetCompleted()
+    }
+
+    private mutating func resetCompleted() {
         completedEnd = 0
         completed.removeAll()
         completedCount = 0
+        completedVersions.removeAll()
+        cache = MaterializationCache()
+    }
+
+    // Compares the bytes at once where it can: the whole response is compared on every chunk.
+    private static func text(_ text: String, startsWith prefix: String) -> Bool {
+        let length = prefix.utf8.count
+        guard text.utf8.count >= length else { return false }
+        guard length > 0 else { return true }
+        let same = text.utf8.withContiguousStorageIfAvailable { textBytes in
+            prefix.utf8.withContiguousStorageIfAvailable { prefixBytes in
+                memcmp(textBytes.baseAddress!, prefixBytes.baseAddress!, length) == 0
+            }
+        }
+        return (same ?? nil) ?? text.utf8.starts(with: prefix.utf8)
     }
 
     private mutating func addStatements(_ text: String) {
@@ -391,19 +460,27 @@ public struct OpenUIStreamParser: Sendable {
         guard !trimmed.isEmpty else { return }
         for raw in Statements.split(Lexer.tokenize(trimmed)) {
             completed.set(OpenUIParser.classify(raw, ExpressionParser.parse(raw.tokens)))
+            completedVersions[raw.id] = nextVersion()
             completedCount += 1
         }
     }
 
-    private mutating func refreshCleaned() {
-        let next = Array(Preprocessor.preprocess(buffer).utf8)
-        let stablePrefix = cleaned[0..<min(completedEnd, cleaned.count)]
-        if !next.starts(with: stablePrefix) {
-            completedEnd = 0
-            completed.removeAll()
-            completedCount = 0
+    // Completed statements are read again when the text before `completedEnd` changes: a fence
+    // after unfenced text, or the line after them turning into a comment or a closing fence.
+    private mutating func refreshCleaned(adding bytes: some Collection<UInt8>) {
+        let startedOver = cleaned.append(bytes)
+        if startedOver || cleaned.count < completedEnd {
+            resetCompleted()
         }
-        cleaned = next
+    }
+
+    private mutating func nextVersion() -> Int {
+        lastVersion += 1
+        return lastVersion
+    }
+
+    var materializedNodes: Int {
+        cache?.materializedNodes ?? 0
     }
 
     /// Scans for newly completed statements; returns the start of the pending statement.
@@ -413,11 +490,12 @@ public struct OpenUIStreamParser: Sendable {
         var inString: UInt8?
         var escaped = false
         var statementStart = completedEnd
+        let text = cleaned.bytes
         let n = cleaned.count
         var i = completedEnd
 
         while i < n {
-            let c = cleaned[i]
+            let c = text[i]
             defer { i += 1 }
             if escaped {
                 escaped = false
@@ -444,13 +522,13 @@ public struct OpenUIStreamParser: Sendable {
                 ternaryDepth -= 1
             case 0x0a where depth <= 0 && ternaryDepth <= 0:
                 var peek = i + 1
-                while peek < n, cleaned[peek] == 0x20 || cleaned[peek] == 0x09 || cleaned[peek] == 0x0d || cleaned[peek] == 0x0a {
+                while peek < n, text[peek] == 0x20 || text[peek] == 0x09 || text[peek] == 0x0d || text[peek] == 0x0a {
                     peek += 1
                 }
-                if peek < n, cleaned[peek] == UInt8(ascii: "?") || (cleaned[peek] == UInt8(ascii: ":") && ternaryDepth > 0) {
+                if peek < n, text[peek] == UInt8(ascii: "?") || (text[peek] == UInt8(ascii: ":") && ternaryDepth > 0) {
                     continue
                 }
-                let statementText = String(decoding: cleaned[statementStart..<i], as: UTF8.self)
+                let statementText = String(decoding: text[statementStart..<i], as: UTF8.self)
                 addStatements(statementText)
                 statementStart = i + 1
                 completedEnd = i + 1
@@ -462,50 +540,71 @@ public struct OpenUIStreamParser: Sendable {
     }
 
     private mutating func currentResult(complete: Bool) -> ParseResult {
-        refreshCleaned()
         let pendingStart = scanNewCompleted()
-        let pendingText = JS.trim(String(decoding: cleaned[min(pendingStart, cleaned.count)...], as: UTF8.self))
+        let pendingText = JS.trim(String(decoding: cleaned.bytes[min(pendingStart, cleaned.count)..<cleaned.count], as: UTF8.self))
 
         if pendingText.isEmpty {
             if completedCount == 0 { return .empty() }
-            return OpenUIParser.buildResult(completed, wasIncomplete: false, statementCount: completedCount, paramMap: paramMap, rootName: rootName)
+            return buildResult(completed, versions: completedVersions, wasIncomplete: false, statementCount: completedCount)
         }
 
         let (closed, wasIncomplete) = Statements.autoClose(pendingText)
         let raw = Statements.split(Lexer.tokenize(closed))
         if raw.isEmpty {
             if completedCount == 0 { return .empty(incomplete: wasIncomplete) }
-            return OpenUIParser.buildResult(completed, wasIncomplete: wasIncomplete, statementCount: completedCount, paramMap: paramMap, rootName: rootName)
+            return buildResult(completed, versions: completedVersions, wasIncomplete: wasIncomplete, statementCount: completedCount)
         }
 
         // New IDs render progressively; existing IDs are only replaced once the pending
         // statement no longer needs automatic closing.
         var all = completed
+        var versions = completedVersions
         var pendingIds = Set<String>()
         for statement in raw {
             if completed.contains(statement.id) && wasIncomplete { continue }
             all.set(OpenUIParser.classify(statement, ExpressionParser.parse(statement.tokens)))
+            versions[statement.id] = nextVersion()
             pendingIds.insert(statement.id)
         }
         let tail = complete ? nil : Self.partialStateName(buffer: buffer, pendingText: pendingText)
-        return OpenUIParser.buildResult(
+        return buildResult(
             all,
+            versions: versions,
             wasIncomplete: wasIncomplete,
             statementCount: completedCount + raw.count,
+            partialReference: tail.map { OpenUIParser.PartialReference(name: $0, statementIds: pendingIds) }
+        )
+    }
+
+    private mutating func buildResult(
+        _ table: StatementTable,
+        versions: [String: Int],
+        wasIncomplete: Bool,
+        statementCount: Int,
+        partialReference: OpenUIParser.PartialReference? = nil
+    ) -> ParseResult {
+        cache?.versions = versions
+        return OpenUIParser.buildResult(
+            table,
+            wasIncomplete: wasIncomplete,
+            statementCount: statementCount,
             paramMap: paramMap,
             rootName: rootName,
-            partialReference: tail.map { OpenUIParser.PartialReference(name: $0, statementIds: pendingIds) }
+            partialReference: partialReference,
+            cache: &cache
         )
     }
 
     /// A `$name` ending the raw text may still be growing (`$d` of `$dishes`): it isn't declared
     /// unless the same name already appears in full in the pending text.
     static func partialStateName(buffer: String, pendingText: String) -> String? {
-        let scalars = Array(buffer.unicodeScalars)
-        var start = scalars.count
-        while start > 0, isWordCharacter(scalars[start - 1]) { start -= 1 }
-        guard start > 0, start < scalars.count, scalars[start - 1] == "$" else { return nil }
-        let tail = "$" + String(String.UnicodeScalarView(scalars[start...]))
+        let scalars = buffer.unicodeScalars
+        var start = scalars.endIndex
+        while start > scalars.startIndex, isWordCharacter(scalars[scalars.index(before: start)]) {
+            start = scalars.index(before: start)
+        }
+        guard start > scalars.startIndex, start < scalars.endIndex, scalars[scalars.index(before: start)] == "$" else { return nil }
+        let tail = "$" + String(scalars[start...])
         guard pendingText.hasSuffix(tail) else { return nil }
         let before = Array(pendingText.unicodeScalars.dropLast(tail.unicodeScalars.count))
         let needle = Array(tail.unicodeScalars)

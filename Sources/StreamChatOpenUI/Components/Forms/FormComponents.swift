@@ -311,7 +311,9 @@ struct SliderView: View {
         let field = context.runtime.stateField(name: name, binding: props["value"], formName: formName, componentType: "Slider")
         let rules = FormValidation.rules(from: props["rules"])
         let bounds = SliderValues.bounds(minimum: props.number("min"), maximum: props.number("max"))
-        let step = SliderValues.step(props.number("step"), discrete: props.string("variant") == "discrete", in: bounds)
+        let discrete = props.string("variant") == "discrete"
+        let step = SliderValues.step(props.number("step"), discrete: discrete, in: bounds)
+        let snap = SliderValues.requestedStep(props.number("step"), discrete: discrete, in: bounds)
         let stored = SliderValues.values(field.value.flatMap { JS.isNullish($0) ? nil : $0 } ?? props["defaultValue"], in: bounds)
         let values = draft.map { SliderValues.clamped($0, to: bounds) } ?? stored
         let label = props.text("label") ?? name
@@ -329,7 +331,7 @@ struct SliderView: View {
             }
             .accessibilityHidden(true)
             ForEach(values.indices, id: \.self) { index in
-                thumb(index, values: values, bounds: bounds, step: step, label: label) { next in
+                thumb(index, values: values, bounds: bounds, step: step, snap: snap, label: label) { next in
                     commit(next, field: field, name: name, rules: rules)
                 }
             }
@@ -344,6 +346,10 @@ struct SliderView: View {
             .accessibilityHidden(true)
         }
         .disabled(context.isStreaming)
+        .savesDefault(isStreaming: context.isStreaming) {
+            guard !field.isReactive else { return }
+            FieldDefault.save(SliderValues.stored(stored), runtime: context.runtime, formName: formName, componentType: "Slider", name: name)
+        }
         .registersValidation(name: name, rules: rules, isStreaming: context.isStreaming) {
             context.runtime.stateField(name: name, binding: props["value"], formName: formName).value
         }
@@ -356,13 +362,15 @@ struct SliderView: View {
         values: [Double],
         bounds: ClosedRange<Double>,
         step: Double?,
+        snap: Double?,
         label: String,
         commit: @escaping @MainActor ([Double]) -> Void
     ) -> some View {
         let value = Binding<Double>(
             get: { values.indices.contains(index) ? values[index] : bounds.lowerBound },
             set: { newValue in
-                let next = SliderValues.setting(draft ?? values, index: index, to: newValue)
+                let snapped = snap.map { SliderValues.snapped(newValue, to: $0, in: bounds) } ?? newValue
+                let next = SliderValues.setting(draft ?? values, index: index, to: snapped)
                 draft = next
                 if editingThumbs.isEmpty { commit(next) }
             }
@@ -446,6 +454,10 @@ struct ToggleGroupView: View {
             }
             .openUISurface(isSwitch ? (props.string("variant") ?? "clear") : "clear", padding: theme.spacing.m)
             .disabled(context.isStreaming)
+            .savesDefault(isStreaming: context.isStreaming) {
+                guard !field.isReactive, !aggregate.isEmpty else { return }
+                FieldDefault.save(.object(aggregate), runtime: context.runtime, formName: formName, componentType: componentType, name: name)
+            }
             .registersValidation(name: name, rules: rules, isStreaming: context.isStreaming) {
                 context.runtime.stateField(name: name, binding: props["value"], formName: formName).value ?? .object(aggregate)
             }
@@ -504,6 +516,7 @@ struct RadioGroupView: View {
         let rules = FormValidation.rules(from: props["rules"])
         let items = props.elements("items")
         let current = (field.value.flatMap { JS.isNullish($0) ? nil : $0 } ?? props["defaultValue"]).map { JS.toString($0) }
+        let shown = items.contains { (ComponentProps($0.props).text("value") ?? "") == current } ? current : nil
 
         if !items.isEmpty {
             VStack(alignment: .leading, spacing: theme.spacing.s) {
@@ -530,6 +543,10 @@ struct RadioGroupView: View {
                 }
             }
             .disabled(context.isStreaming)
+            .savesDefault(isStreaming: context.isStreaming) {
+                guard !field.isReactive, let shown else { return }
+                FieldDefault.save(.string(shown), runtime: context.runtime, formName: formName, componentType: "RadioGroup", name: name)
+            }
             .registersValidation(name: name, rules: rules, isStreaming: context.isStreaming) {
                 context.runtime.stateField(name: name, binding: props["value"], formName: formName).value
             }
@@ -572,11 +589,7 @@ struct SelectionFieldView: View {
                 }
             }
         }
-        .onAppear {
-            SelectionField.hydrateDefault(runtime: runtime, formName: formName, componentType: componentType, name: name, single: single, defaultValue: props["defaultValue"])
-        }
-        .onChange(of: context.isStreaming) { _, isStreaming in
-            guard !isStreaming else { return }
+        .savesDefault(isStreaming: context.isStreaming) {
             SelectionField.hydrateDefault(runtime: runtime, formName: formName, componentType: componentType, name: name, single: single, defaultValue: props["defaultValue"])
         }
         .registersValidation(name: name, rules: rules, isStreaming: context.isStreaming) {

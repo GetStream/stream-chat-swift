@@ -13,9 +13,17 @@ final class MaterializeContext {
     var unresolved: [String] = []
     var visited: Set<String> = []
     var depth = 0
-    var expansions = 0
+    var nodes = 0
     let partial: Bool
     var currentStatementId: String?
+    // Kept by the stream parser, with the logs below, to reuse what statements materialized to.
+    var cache: MaterializationCache?
+    var reads: [MaterializationCache.Read] = []
+    var reachedLog: [String] = []
+    var cycles = 0
+    var truncations = 0
+    var deepest = 0
+    var materialized = 0
     /// Statement IDs not reached yet (insertion ordered). Whatever remains is orphaned.
     private(set) var unreachedOrder: [String] = []
     private var unreached: Set<String> = []
@@ -36,8 +44,21 @@ final class MaterializeContext {
     }
 
     func markReached(_ id: String) {
+        if cache != nil { reachedLog.append(id) }
         guard tracksUnreached else { return }
         unreached.remove(id)
+    }
+
+    // Counts a node against the budget, or returns false when it is past the depth or the budget.
+    func spendNode() -> Bool {
+        nodes += 1
+        materialized += 1
+        deepest = max(deepest, depth)
+        guard depth <= Materializer.maxDepth, nodes <= Materializer.maxNodes else {
+            truncations += 1
+            return false
+        }
+        return true
     }
 
     var orphaned: [String] {

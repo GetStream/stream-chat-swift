@@ -12,7 +12,10 @@ enum Materializer {
     // each level, so a chain of references deeper than any real program reads as null instead
     // of running out of stack.
     static let maxDepth = 256
-    static let maxExpansions = 10000
+    // How many nodes one pass materializes, counting a reference's nodes again each place it is
+    // used. Declarations that each use the previous one many times multiply that, so past the
+    // budget nodes materialize to null.
+    static let maxNodes = 100_000
 
     /// Whether a prop value contains anything that needs runtime evaluation.
     static func containsDynamicValue(_ value: OpenUIValue) -> Bool {
@@ -170,7 +173,7 @@ enum Materializer {
         case expression
     }
 
-    private enum RefResult {
+    enum RefResult: Sendable {
         case value(OpenUIValue)
         case expression(ASTNode)
     }
@@ -178,7 +181,9 @@ enum Materializer {
     /// Resolves a reference: inlines it from the symbol table, detects cycles, and emits runtime
     /// references for `Query`/`Mutation` declarations.
     private static func resolveRef(_ name: String, _ context: MaterializeContext, mode: RefMode) -> RefResult {
-        guard !context.visited.contains(name), let target = context.symbols[name] else {
+        let isCycle = context.visited.contains(name)
+        if isCycle { context.cycles += 1 }
+        guard !isCycle, let target = context.lookUp(name) else {
             context.unresolved.append(name)
             return mode == .expression ? .expression(.placeholder(name)) : .value(.null)
         }
@@ -189,31 +194,31 @@ enum Materializer {
             return mode == .expression ? .expression(node) : .value(.expression(node))
         }
 
-        // A reference can be expanded once for each place it's used, so declarations that each
-        // use the previous one twice double the work: past a budget, they expand to nothing.
-        context.expansions += 1
-        guard context.expansions <= maxExpansions else {
-            return mode == .expression ? .expression(.placeholder(name)) : .value(.null)
+        if let reused = context.reuse(name, expression: mode == .expression) {
+            return reused
         }
+        let start = context.startMaterializing()
         context.visited.insert(name)
         let previousStatementId = context.currentStatementId
         context.currentStatementId = name
-        defer {
-            context.currentStatementId = previousStatementId
-            context.visited.remove(name)
-        }
 
+        let result: RefResult
         switch mode {
         case .value:
-            var result = materializeValue(target, context)
-            if case .element(var element) = result {
+            var value = materializeValue(target, context)
+            if case .element(var element) = value {
                 element.statementId = name
-                result = .element(element)
+                value = .element(element)
             }
-            return .value(result)
+            result = .value(value)
         case .expression:
-            return .expression(materializeExpression(target, context))
+            result = .expression(materializeExpression(target, context))
         }
+
+        context.currentStatementId = previousStatementId
+        context.visited.remove(name)
+        context.finishMaterializing(start, name: name, expression: mode == .expression, result: result)
+        return result
     }
 
     /// For lazy builtins like `@Each(array, varName, template)`, scopes the loop variable while
@@ -240,7 +245,7 @@ enum Materializer {
     static func materializeExpression(_ node: ASTNode, _ context: MaterializeContext, scopedRefs: Set<String> = []) -> ASTNode {
         context.depth += 1
         defer { context.depth -= 1 }
-        guard context.depth <= maxDepth else { return .null }
+        guard context.spendNode() else { return .null }
         switch node {
         case .ref(let name):
             if scopedRefs.contains(name) { return node }
@@ -314,7 +319,7 @@ enum Materializer {
     static func materializeValue(_ node: ASTNode, _ context: MaterializeContext) -> OpenUIValue {
         context.depth += 1
         defer { context.depth -= 1 }
-        guard context.depth <= maxDepth else { return .null }
+        guard context.spendNode() else { return .null }
         switch node {
         case .ref(let name):
             switch resolveRef(name, context, mode: .value) {
