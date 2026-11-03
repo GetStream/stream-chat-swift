@@ -10,31 +10,31 @@ import Foundation
 /// `id`, a `component` type discriminator and its type-specific properties
 /// inline. Parent-child relationships are expressed with id references, so the
 /// renderer rebuilds the tree at render time.
-public struct Component: Equatable, Sendable {
+struct Component: Equatable, Sendable {
     /// Wire keys that belong to the component envelope rather than the catalog schema.
     static let envelopeKeys: Set<String> = ["id", "component", "catalogId", "accessibility", "metadata"]
 
     /// The unique id of this component within its surface.
-    public let id: String
+    let id: String
 
     /// The catalog component type, for example `Text` or `Column`.
-    public let type: String
+    let type: String
 
     /// The catalog that defines this component, overriding the surface default.
-    public let catalogId: String?
+    let catalogId: String?
 
     /// Accessibility metadata for assistive technologies.
-    public let accessibility: AccessibilityAttributes?
+    let accessibility: AccessibilityAttributes?
 
     /// Vendor extension metadata attached to this instance.
-    public let metadata: JsonMap?
+    let metadata: JsonMap?
 
     /// The type-specific properties of the component.
-    public let properties: JsonMap
+    let properties: JsonMap
 
     /// Creates a component instance.
     /// `properties` must not contain envelope keys such as `id`.
-    public init(
+    init(
         id: String,
         type: String,
         catalogId: String? = nil,
@@ -52,7 +52,7 @@ public struct Component: Equatable, Sendable {
 
     /// Parses a component from a JSON object.
     /// Returns `nil` when the required `id` or `component` fields are missing.
-    public static func fromJson(_ json: JsonMap) -> Component? {
+    static func fromJson(_ json: JsonMap) -> Component? {
         guard let id = json["id"] as? String, !id.isEmpty,
               let type = json["component"] as? String, !type.isEmpty else {
             return nil
@@ -72,29 +72,29 @@ public struct Component: Equatable, Sendable {
     }
 
     /// The layout weight of this component inside a `Row` or `Column`.
-    public var weight: Double? {
+    var weight: Double? {
         Json.double(properties["weight"])
     }
 
     /// Reads a raw property value.
     /// Returns `nil` when the property is absent or null.
-    public func property(_ key: String) -> (any Sendable)? {
+    func property(_ key: String) -> (any Sendable)? {
         Json.normalized(properties[key])
     }
 
     /// Reads a property as a dynamic value.
     /// Missing properties produce ``DynamicValue/missing``.
-    public func dynamic(_ key: String) -> DynamicValue {
+    func dynamic(_ key: String) -> DynamicValue {
         DynamicValue(properties[key])
     }
 
     /// The validation rules declared by this component.
-    public var checks: [CheckRule] {
+    var checks: [CheckRule] {
         CheckRule.list(properties["checks"])
     }
 
     /// The serialized wire representation of the component.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         var json = properties
         json["id"] = id
         json["component"] = type
@@ -105,7 +105,7 @@ public struct Component: Equatable, Sendable {
     }
 
     /// Compares two components by their wire representation.
-    public static func == (lhs: Component, rhs: Component) -> Bool {
+    static func == (lhs: Component, rhs: Component) -> Bool {
         Json.isEqual(lhs.toJson(), rhs.toJson())
     }
 }

@@ -6,21 +6,21 @@ import Foundation
 
 /// What an agent is told so that its model writes replies' UI in A2UI: how a reply carries the
 /// UI, the protocol, the catalog it writes with, the app's own components, and examples.
-public struct A2UIInstructions {
+struct A2UIInstructions {
     /// The catalog the model writes with, the app's components among its own.
-    public var catalog: Catalog
+    var catalog: Catalog
     /// The info string of the fenced block a reply's UI is written in.
-    public var fence: String
+    var fence: String
     /// What the model is told first, such as which answers to write as UI.
-    public var preamble: String?
+    var preamble: String?
     /// Guidance on using the app's components.
-    public var notes: [String]
+    var notes: [String]
     /// Rules added after the protocol's.
-    public var rules: [String]
+    var rules: [String]
     /// Examples of replies with their UI.
-    public var examples: [String]
+    var examples: [String]
 
-    public init(
+    init(
         catalog: Catalog,
         fence: String,
         preamble: String? = nil,
@@ -37,7 +37,7 @@ public struct A2UIInstructions {
     }
 
     /// The instructions, in Markdown.
-    public var text: String {
+    var text: String {
         var sections: [String] = []
         if let preamble, !preamble.isEmpty {
             sections.append(preamble)

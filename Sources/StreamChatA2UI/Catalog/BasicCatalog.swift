@@ -21,7 +21,7 @@ public enum BasicCatalog {
     public static let catalogId = basicCatalogId
 
     /// Every component of the basic catalog.
-    public static var components: [ComponentDefinition] {
+    static var components: [ComponentDefinition] {
         TextComponents.all
             + MediaComponents.all
             + LayoutComponents.all
@@ -31,12 +31,12 @@ public enum BasicCatalog {
     }
 
     /// Every function of the basic catalog.
-    public static var functions: [FunctionDefinition] {
+    static var functions: [FunctionDefinition] {
         ValidationFunctions.all + FormatFunctions.all + ActionFunctions.all + LogicFunctions.all
     }
 
     /// Design guidance sent to agents that generate for this catalog.
-    public static let instructions = """
+    static let instructions = """
     For layout, use the Row and Column components to organize other components.
 
     ## Catalog Guidelines

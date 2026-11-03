@@ -5,9 +5,9 @@
 import SwiftUI
 
 /// The button component of the A2UI basic catalog.
-public enum ButtonComponent {
+enum ButtonComponent {
     /// All button components, in catalog order.
-    public static var all: [ComponentDefinition] {
+    static var all: [ComponentDefinition] {
         [button]
     }
 
@@ -16,7 +16,7 @@ public enum ButtonComponent {
     /// When the button declares `checks`, it disables itself while any check
     /// fails and shows the first failure message, as required by the
     /// specification's button validation behaviour.
-    public static let button = ComponentDefinition(
+    static let button = ComponentDefinition(
         name: "Button",
         description: "A clickable button that dispatches an action. Supports 'primary' and 'borderless' variants.",
         properties: [

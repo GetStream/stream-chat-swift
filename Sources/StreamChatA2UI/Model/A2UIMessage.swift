@@ -8,7 +8,7 @@ import Foundation
 ///
 /// Every wire message is a JSON object carrying a `version` discriminator plus
 /// exactly one message key.
-public enum A2UIMessage: Equatable, Sendable {
+enum A2UIMessage: Equatable, Sendable {
     /// Creates a surface and optionally seeds its components and data.
     case createSurface(CreateSurfaceMessage)
 
@@ -28,7 +28,7 @@ public enum A2UIMessage: Equatable, Sendable {
     case agentFunctionResponse(FunctionResponse)
 
     /// The id of the surface this message applies to, when it targets one.
-    public var surfaceId: String? {
+    var surfaceId: String? {
         switch self {
         case let .createSurface(message): return message.surfaceId
         case let .updateComponents(message): return message.surfaceId
@@ -39,7 +39,7 @@ public enum A2UIMessage: Equatable, Sendable {
     }
 
     /// The serialized wire representation, including the protocol version.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         var json: JsonMap = [A2UIProtocol.versionKey: A2UIProtocol.version]
         switch self {
         case let .createSurface(message): json["createSurface"] = message.toJson()
@@ -53,7 +53,7 @@ public enum A2UIMessage: Equatable, Sendable {
     }
 
     /// Compares two messages by their wire representation.
-    public static func == (lhs: A2UIMessage, rhs: A2UIMessage) -> Bool {
+    static func == (lhs: A2UIMessage, rhs: A2UIMessage) -> Bool {
         Json.isEqual(lhs.toJson(), rhs.toJson())
     }
 }
@@ -62,28 +62,28 @@ public enum A2UIMessage: Equatable, Sendable {
 ///
 /// Creating a surface implicitly instantiates the reserved `Surface` container
 /// whose child is the component with id `root`.
-public struct CreateSurfaceMessage: Sendable {
+struct CreateSurfaceMessage: Sendable {
     /// The globally unique id of the new surface.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// The default catalog for components and functions on this surface.
-    public let catalogId: String?
+    let catalogId: String?
 
     /// Whether the renderer attaches this surface's data model to agent messages.
-    public let sendDataModel: Bool
+    let sendDataModel: Bool
 
     /// Components to render immediately, allowing single-message UI creation.
-    public let components: [Component]
+    let components: [Component]
 
     /// The initial data model of the surface.
-    public let dataModel: JsonMap?
+    let dataModel: JsonMap?
 
     /// Surface-level extension metadata.
-    public let metadata: JsonMap?
+    let metadata: JsonMap?
 
     /// Creates a `createSurface` payload.
     /// Pass `components` and `dataModel` to build the UI in a single message.
-    public init(
+    init(
         surfaceId: String,
         catalogId: String? = nil,
         sendDataModel: Bool = false,
@@ -101,7 +101,7 @@ public struct CreateSurfaceMessage: Sendable {
 
     /// Parses the payload of a `createSurface` message.
     /// Throws when the required surface id is missing.
-    public static func fromJson(_ json: JsonMap) throws -> CreateSurfaceMessage {
+    static func fromJson(_ json: JsonMap) throws -> CreateSurfaceMessage {
         guard let surfaceId = json[surfaceIdKey] as? String, !surfaceId.isEmpty else {
             throw A2UIDecodingError.missingField(surfaceIdKey, in: "createSurface")
         }
@@ -124,7 +124,7 @@ public struct CreateSurfaceMessage: Sendable {
     }
 
     /// The serialized wire representation of the payload.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         var json: JsonMap = [surfaceIdKey: surfaceId]
         if let catalogId { json["catalogId"] = catalogId }
         if sendDataModel { json["sendDataModel"] = true }
@@ -136,23 +136,23 @@ public struct CreateSurfaceMessage: Sendable {
 }
 
 /// Payload of an `updateComponents` message.
-public struct UpdateComponentsMessage: Sendable {
+struct UpdateComponentsMessage: Sendable {
     /// The surface to update.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// The components to add or replace.
-    public let components: [Component]
+    let components: [Component]
 
     /// Creates an `updateComponents` payload.
     /// One component of the surface must eventually use the id `root`.
-    public init(surfaceId: String, components: [Component]) {
+    init(surfaceId: String, components: [Component]) {
         self.surfaceId = surfaceId
         self.components = components
     }
 
     /// Parses the payload of an `updateComponents` message.
     /// Throws when the required surface id is missing.
-    public static func fromJson(_ json: JsonMap) throws -> UpdateComponentsMessage {
+    static func fromJson(_ json: JsonMap) throws -> UpdateComponentsMessage {
         guard let surfaceId = json[surfaceIdKey] as? String, !surfaceId.isEmpty else {
             throw A2UIDecodingError.missingField(surfaceIdKey, in: "updateComponents")
         }
@@ -166,7 +166,7 @@ public struct UpdateComponentsMessage: Sendable {
     }
 
     /// The serialized wire representation of the payload.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         [surfaceIdKey: surfaceId, "components": components.map { $0.toJson() }]
     }
 }
@@ -175,19 +175,19 @@ public struct UpdateComponentsMessage: Sendable {
 ///
 /// Updates are upserts: existing paths are replaced, missing paths are created,
 /// and an explicit `null` value removes the entry.
-public struct UpdateDataModelMessage: Sendable {
+struct UpdateDataModelMessage: Sendable {
     /// The surface whose data model is updated.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// The path to update, defaulting to the whole data model.
-    public let path: DataPath
+    let path: DataPath
 
     /// The new value, or `nil` to delete the entry at `path`.
-    public let value: (any Sendable)?
+    let value: (any Sendable)?
 
     /// Creates an `updateDataModel` payload.
     /// Omit `path` to replace the entire data model.
-    public init(surfaceId: String, path: DataPath = .root, value: (any Sendable)?) {
+    init(surfaceId: String, path: DataPath = .root, value: (any Sendable)?) {
         self.surfaceId = surfaceId
         self.path = path
         self.value = Json.normalized(value)
@@ -195,7 +195,7 @@ public struct UpdateDataModelMessage: Sendable {
 
     /// Parses the payload of an `updateDataModel` message.
     /// Throws when the required surface id is missing.
-    public static func fromJson(_ json: JsonMap) throws -> UpdateDataModelMessage {
+    static func fromJson(_ json: JsonMap) throws -> UpdateDataModelMessage {
         guard let surfaceId = json[surfaceIdKey] as? String, !surfaceId.isEmpty else {
             throw A2UIDecodingError.missingField(surfaceIdKey, in: "updateDataModel")
         }
@@ -216,7 +216,7 @@ public struct UpdateDataModelMessage: Sendable {
     }
 
     /// The serialized wire representation of the payload.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         var json: JsonMap = [surfaceIdKey: surfaceId, "value": value ?? NSNull()]
         if !path.isRoot { json["path"] = path.description }
         return json
@@ -224,19 +224,19 @@ public struct UpdateDataModelMessage: Sendable {
 }
 
 /// Payload of a `deleteSurface` message.
-public struct DeleteSurfaceMessage: Sendable {
+struct DeleteSurfaceMessage: Sendable {
     /// The surface to remove.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// Creates a `deleteSurface` payload.
     /// The surface and its data model are discarded.
-    public init(surfaceId: String) {
+    init(surfaceId: String) {
         self.surfaceId = surfaceId
     }
 
     /// Parses the payload of a `deleteSurface` message.
     /// Throws when the required surface id is missing.
-    public static func fromJson(_ json: JsonMap) throws -> DeleteSurfaceMessage {
+    static func fromJson(_ json: JsonMap) throws -> DeleteSurfaceMessage {
         guard let surfaceId = json[surfaceIdKey] as? String, !surfaceId.isEmpty else {
             throw A2UIDecodingError.missingField(surfaceIdKey, in: "deleteSurface")
         }
@@ -244,7 +244,7 @@ public struct DeleteSurfaceMessage: Sendable {
     }
 
     /// The serialized wire representation of the payload.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         [surfaceIdKey: surfaceId]
     }
 }
@@ -253,21 +253,21 @@ public struct DeleteSurfaceMessage: Sendable {
 ///
 /// The renderer must always answer with a `rendererFunctionResponse` or an
 /// `error`, even for functions that return no value.
-public struct CallRendererFunctionMessage: Sendable {
+struct CallRendererFunctionMessage: Sendable {
     /// The id correlating this call with its response.
-    public let functionCallId: String
+    let functionCallId: String
 
     /// The function to execute, including its catalog and arguments.
-    public let callFunction: FunctionCall
+    let callFunction: FunctionCall
 
     /// The surface whose data model the arguments are evaluated against.
     ///
     /// When `nil`, the call runs against an empty data model.
-    public let surfaceId: String?
+    let surfaceId: String?
 
     /// Creates a `callRendererFunction` payload.
     /// The catalog id is required so the renderer can check the call boundary.
-    public init(functionCallId: String, callFunction: FunctionCall, surfaceId: String? = nil) {
+    init(functionCallId: String, callFunction: FunctionCall, surfaceId: String? = nil) {
         self.functionCallId = functionCallId
         self.callFunction = callFunction
         self.surfaceId = surfaceId
@@ -277,7 +277,7 @@ public struct CallRendererFunctionMessage: Sendable {
     ///
     /// Throws ``A2UIDecodingError/invalidFunctionCall(functionCallId:reason:)``
     /// for a malformed call, so the renderer can still answer the agent.
-    public static func fromJson(_ json: JsonMap) throws -> CallRendererFunctionMessage {
+    static func fromJson(_ json: JsonMap) throws -> CallRendererFunctionMessage {
         guard let functionCallId = json["functionCallId"] as? String, !functionCallId.isEmpty else {
             throw A2UIDecodingError.missingField("functionCallId", in: "callRendererFunction")
         }
@@ -313,7 +313,7 @@ public struct CallRendererFunctionMessage: Sendable {
     }
 
     /// The serialized wire representation of the payload.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         var json: JsonMap = ["functionCallId": functionCallId, "callFunction": callFunction.rawValue]
         if let surfaceId { json[surfaceIdKey] = surfaceId }
         return json
@@ -323,40 +323,40 @@ public struct CallRendererFunctionMessage: Sendable {
 /// The result of a function call, in either direction.
 ///
 /// Exactly one of `value` and `error` is present.
-public struct FunctionResponse: Sendable {
+struct FunctionResponse: Sendable {
     /// An error returned instead of a value.
-    public struct Failure: Equatable, Sendable {
+    struct Failure: Equatable, Sendable {
         /// A machine-readable error code.
-        public let code: String
+        let code: String
 
         /// A human-readable description of the failure.
-        public let message: String
+        let message: String
 
         /// Creates a function failure.
         /// Use a stable code so agents can branch on it.
-        public init(code: String, message: String) {
+        init(code: String, message: String) {
             self.code = code
             self.message = message
         }
 
         /// The serialized wire representation of the failure.
-        public var rawValue: JsonMap {
+        var rawValue: JsonMap {
             ["code": code, "message": message]
         }
     }
 
     /// The id of the call this response belongs to.
-    public let functionCallId: String
+    let functionCallId: String
 
     /// The returned value, when the call succeeded.
-    public let value: (any Sendable)?
+    let value: (any Sendable)?
 
     /// The failure, when the call did not succeed.
-    public let error: Failure?
+    let error: Failure?
 
     /// Creates a successful response.
     /// Pass `NSNull()` for functions that return no value.
-    public init(functionCallId: String, value: (any Sendable)?) {
+    init(functionCallId: String, value: (any Sendable)?) {
         self.functionCallId = functionCallId
         self.value = value
         self.error = nil
@@ -364,7 +364,7 @@ public struct FunctionResponse: Sendable {
 
     /// Creates a failed response.
     /// The call id must match the originating call.
-    public init(functionCallId: String, error: Failure) {
+    init(functionCallId: String, error: Failure) {
         self.functionCallId = functionCallId
         self.value = nil
         self.error = error
@@ -372,7 +372,7 @@ public struct FunctionResponse: Sendable {
 
     /// Parses a function response from a JSON object.
     /// Throws when the call id is missing.
-    public static func fromJson(_ json: JsonMap) throws -> FunctionResponse {
+    static func fromJson(_ json: JsonMap) throws -> FunctionResponse {
         guard let functionCallId = json["functionCallId"] as? String, !functionCallId.isEmpty else {
             throw A2UIDecodingError.missingField("functionCallId", in: "functionResponse")
         }
@@ -401,7 +401,7 @@ public struct FunctionResponse: Sendable {
     }
 
     /// The serialized wire representation of the response.
-    public func toJson() -> JsonMap {
+    func toJson() -> JsonMap {
         var json: JsonMap = ["functionCallId": functionCallId]
         if let error {
             json["error"] = error.rawValue
@@ -413,7 +413,7 @@ public struct FunctionResponse: Sendable {
 }
 
 /// Errors raised while decoding A2UI payloads.
-public enum A2UIDecodingError: Error, Equatable, CustomStringConvertible, Sendable {
+enum A2UIDecodingError: Error, Equatable, CustomStringConvertible, Sendable {
     /// The payload did not contain a known message key.
     case unknownMessageType([String])
 
@@ -435,7 +435,7 @@ public enum A2UIDecodingError: Error, Equatable, CustomStringConvertible, Sendab
     case invalidFunctionCall(functionCallId: String, reason: String)
 
     /// A human-readable description of the failure.
-    public var description: String {
+    var description: String {
         switch self {
         case let .unknownMessageType(keys):
             return "Unknown A2UI message type. Keys: \(keys.sorted().joined(separator: ", "))"
@@ -455,7 +455,7 @@ public enum A2UIDecodingError: Error, Equatable, CustomStringConvertible, Sendab
     /// The error to report to the agent for this failure.
     ///
     /// - Parameter surfaceId: The surface the failing message targeted, when known.
-    public func rendererError(surfaceId: String?) -> RendererError {
+    func rendererError(surfaceId: String?) -> RendererError {
         switch self {
         case let .invalidFunctionCall(functionCallId, _):
             return RendererError(
@@ -492,37 +492,37 @@ public enum A2UIDecodingError: Error, Equatable, CustomStringConvertible, Sendab
 ///
 /// ``A2UIConversation`` reports these to the agent, so the agent can correct
 /// the message.
-public struct A2UIDecodingFailure: Error, CustomStringConvertible {
+struct A2UIDecodingFailure: Error, CustomStringConvertible {
     /// Why decoding failed.
-    public let error: Error
+    let error: Error
 
     /// The payload that failed to decode.
-    public let payload: JsonMap
+    let payload: JsonMap
 
     /// Creates a decoding failure.
-    public init(error: Error, payload: JsonMap) {
+    init(error: Error, payload: JsonMap) {
         self.error = error
         self.payload = payload
     }
 
     /// The error to report to the agent.
-    public var rendererError: RendererError {
+    var rendererError: RendererError {
         A2UIMessageDecoder.rendererError(for: error, in: payload)
     }
 
     /// A human-readable description of the failure.
-    public var description: String {
+    var description: String {
         A2UIErrorFormatter.describe(error)
     }
 }
 
 /// Decodes agent-to-renderer messages from wire payloads.
-public enum A2UIMessageDecoder {
+enum A2UIMessageDecoder {
     /// Decodes a single A2UI message envelope.
     ///
     /// The `version` field is validated when present so that a v0.9 agent
     /// talking to a v1.0 renderer fails loudly instead of rendering nothing.
-    public static func decode(_ json: JsonMap) throws -> A2UIMessage {
+    static func decode(_ json: JsonMap) throws -> A2UIMessage {
         guard let rawVersion = json[A2UIProtocol.versionKey] else {
             throw A2UIDecodingError.missingField(A2UIProtocol.versionKey, in: "envelope")
         }
@@ -560,7 +560,7 @@ public enum A2UIMessageDecoder {
 
     /// Whether a JSON object looks like an A2UI agent-to-renderer message.
     /// Used to filter A2A data parts that carry other payloads.
-    public static func isMessage(_ json: JsonMap) -> Bool {
+    static func isMessage(_ json: JsonMap) -> Bool {
         !messageTypes.isDisjoint(with: json.keys)
     }
 
@@ -568,7 +568,7 @@ public enum A2UIMessageDecoder {
     ///
     /// The surface id is taken from the payload when it has one, so the agent
     /// can tell which surface the failing message targeted.
-    public static func rendererError(for error: Error, in json: JsonMap) -> RendererError {
+    static func rendererError(for error: Error, in json: JsonMap) -> RendererError {
         let surfaceId = messageTypes.lazy
             .compactMap { Json.map(json[$0])?[surfaceIdKey] as? String }
             .first
@@ -593,7 +593,7 @@ public enum A2UIMessageDecoder {
     /// The A2A binding states that a message list is not a transactional unit:
     /// a failing message is reported and the remaining messages are still
     /// processed.
-    public static func decodeList(_ values: JsonArray) -> (messages: [A2UIMessage], errors: [Error]) {
+    static func decodeList(_ values: JsonArray) -> (messages: [A2UIMessage], errors: [Error]) {
         var messages: [A2UIMessage] = []
         var errors: [Error] = []
         for value in values {

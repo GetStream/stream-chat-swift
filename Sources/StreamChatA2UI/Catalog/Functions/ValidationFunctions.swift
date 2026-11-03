@@ -8,14 +8,14 @@ import Foundation
 ///
 /// Every function returns a ``ValidationResult`` payload so that components can
 /// show a message and, in the case of `Button`, disable themselves.
-public enum ValidationFunctions {
+enum ValidationFunctions {
     /// All validation functions, in catalog order.
-    public static var all: [FunctionDefinition] {
+    static var all: [FunctionDefinition] {
         [required, regex, length, numeric, email]
     }
 
     /// Checks that a value is present and not empty.
-    public static let required = FunctionDefinition(
+    static let required = FunctionDefinition(
         name: "required",
         description: "Checks that the value is not null, undefined, or empty.",
         arguments: JsonSchema.object(
@@ -47,7 +47,7 @@ public enum ValidationFunctions {
     /// Empty values pass so that optional fields do not report an error before
     /// the user has typed anything; combine with `required` to make a field
     /// mandatory.
-    public static let regex = FunctionDefinition(
+    static let regex = FunctionDefinition(
         name: "regex",
         description: "Checks that the value matches a regular expression string.",
         arguments: JsonSchema.object(
@@ -103,7 +103,7 @@ public enum ValidationFunctions {
 
     /// Checks the length of a string, or the number of items in an array,
     /// against `min` and `max` bounds.
-    public static let length = FunctionDefinition(
+    static let length = FunctionDefinition(
         name: "length",
         description: "Checks string length constraints.",
         arguments: JsonSchema.object(
@@ -128,7 +128,7 @@ public enum ValidationFunctions {
     }
 
     /// Checks that a number is within the `min` and `max` bounds.
-    public static let numeric = FunctionDefinition(
+    static let numeric = FunctionDefinition(
         name: "numeric",
         description: "Checks numeric range constraints.",
         arguments: JsonSchema.object(
@@ -158,7 +158,7 @@ public enum ValidationFunctions {
     }
 
     /// Checks that a value is a syntactically valid email address.
-    public static let email = FunctionDefinition(
+    static let email = FunctionDefinition(
         name: "email",
         description: "Checks that the value is a valid email address.",
         arguments: JsonSchema.object(
@@ -176,7 +176,7 @@ public enum ValidationFunctions {
     }
 
     /// The message shown for a failed basic validation when neither the check nor the function gives one.
-    public static func defaultMessage(forFunction name: String) -> String? {
+    static func defaultMessage(forFunction name: String) -> String? {
         switch name {
         case required.name: return "This field is required."
         case regex.name: return "This value has an invalid format."
@@ -190,7 +190,7 @@ public enum ValidationFunctions {
 
     /// Validates an email address with a conservative pattern.
     /// Exposed for reuse by app-specific catalogs.
-    public static func isValidEmail(_ value: String) -> Bool {
+    static func isValidEmail(_ value: String) -> Bool {
         let range = NSRange(value.startIndex..., in: value)
         return emailExpression?.firstMatch(in: value, options: [], range: range) != nil
     }

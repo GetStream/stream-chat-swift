@@ -18,14 +18,14 @@ public struct ResolvedChild: Identifiable {
     public let componentId: String
 
     /// The data scope the child renders in.
-    public let dataContext: DataContext
+    let dataContext: DataContext
 
     /// The layout weight declared by the child component.
     public let weight: Double?
 
     /// Creates a resolved child.
     /// The renderer builds these from a ``ChildList``.
-    public init(id: String, componentId: String, dataContext: DataContext, weight: Double?) {
+    init(id: String, componentId: String, dataContext: DataContext, weight: Double?) {
         self.id = id
         self.componentId = componentId
         self.dataContext = dataContext
@@ -40,35 +40,35 @@ public struct ResolvedChild: Identifiable {
 @MainActor
 public struct ComponentRenderContext {
     /// The component instance being rendered.
-    public let component: Component
+    let component: Component
 
     /// The catalog definition of the component being rendered.
-    public let definition: ComponentDefinition
+    let definition: ComponentDefinition
 
     /// The surface the component belongs to.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// The data scope this instance renders in.
-    public let dataContext: DataContext
+    let dataContext: DataContext
 
     /// The evaluator used to resolve dynamic values and functions.
-    public let evaluator: ExpressionEvaluator
+    let evaluator: ExpressionEvaluator
 
     /// The renderer that builds children and dispatches actions.
-    public let renderer: SurfaceRenderer
+    let renderer: SurfaceRenderer
 
     /// The ids of the components from the surface's root down to this one, used to stop a
     /// component from containing itself.
-    public let ancestors: [String]
+    let ancestors: [String]
 
     /// How deeply nested this component is.
-    public var depth: Int {
+    var depth: Int {
         ancestors.count - 1
     }
 
     /// Creates a render context.
     /// The renderer creates these while walking the component tree.
-    public init(
+    init(
         component: Component,
         definition: ComponentDefinition,
         surfaceId: String,
@@ -92,7 +92,7 @@ public struct ComponentRenderContext {
     }
 
     /// Host capabilities such as the current locale.
-    public var services: RendererServices {
+    var services: RendererServices {
         evaluator.services
     }
 
@@ -100,7 +100,7 @@ public struct ComponentRenderContext {
 
     /// Reads a property as a dynamic value.
     /// Missing properties produce ``DynamicValue/missing``.
-    public func dynamic(_ key: String) -> DynamicValue {
+    func dynamic(_ key: String) -> DynamicValue {
         component.dynamic(key)
     }
 
@@ -170,7 +170,7 @@ public struct ComponentRenderContext {
 
     /// Reads a child list property.
     /// Defaults to the conventional `children` property.
-    public func childList(_ key: String = "children") -> ChildList {
+    func childList(_ key: String = "children") -> ChildList {
         ChildList(component.properties[key])
     }
 
@@ -213,7 +213,11 @@ public struct ComponentRenderContext {
 
     /// Builds the view for a child component.
     /// Missing components render a diagnostic placeholder.
-    public func childView(_ componentId: String?, dataContext childContext: DataContext? = nil) -> AnyView {
+    public func childView(_ componentId: String?) -> AnyView {
+        childView(componentId, dataContext: nil)
+    }
+
+    func childView(_ componentId: String?, dataContext childContext: DataContext?) -> AnyView {
         guard let componentId else { return AnyView(EmptyView()) }
         return renderer.view(
             componentId: componentId,
@@ -236,13 +240,13 @@ public struct ComponentRenderContext {
     // MARK: - Actions and validation
 
     /// The action declared by this component, if any.
-    public var action: ActionDefinition? {
+    var action: ActionDefinition? {
         ActionDefinition(component.properties["action"])
     }
 
     /// Performs an action, dispatching an event or calling a function.
     /// Call this from a component's interaction handler.
-    public func perform(_ action: ActionDefinition?) {
+    func perform(_ action: ActionDefinition?) {
         guard let action else { return }
         renderer.perform(action, componentId: component.id, dataContext: dataContext)
     }
@@ -253,7 +257,7 @@ public struct ComponentRenderContext {
     }
 
     /// The checks of this component that currently fail.
-    public var failingChecks: [ValidationResult] {
+    var failingChecks: [ValidationResult] {
         evaluator.failingChecks(component.checks, in: dataContext)
     }
 

@@ -5,14 +5,14 @@
 import SwiftUI
 
 /// The composite container components of the A2UI basic catalog.
-public enum ContainerComponents {
+enum ContainerComponents {
     /// All container components, in catalog order.
-    public static var all: [ComponentDefinition] {
+    static var all: [ComponentDefinition] {
         [tabs, modal]
     }
 
     /// A set of tabs, each with a title and a child component.
-    public static let tabs = ComponentDefinition(
+    static let tabs = ComponentDefinition(
         name: "Tabs",
         description: "A set of tabs, each with a title and child component.",
         properties: [
@@ -61,7 +61,7 @@ public enum ContainerComponents {
     /// The trigger is rendered inline; interacting with it presents the content
     /// as a sheet. The trigger's own action, if it has one, still fires, and a
     /// disabled button trigger doesn't open the modal.
-    public static let modal = ComponentDefinition(
+    static let modal = ComponentDefinition(
         name: "Modal",
         description: "A dialog that appears over the main content, triggered by a component in the main content.",
         properties: [

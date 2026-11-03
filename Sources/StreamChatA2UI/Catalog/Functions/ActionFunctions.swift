@@ -5,9 +5,9 @@
 import Foundation
 
 /// The side effecting functions of the A2UI basic catalog.
-public enum ActionFunctions {
+enum ActionFunctions {
     /// All action functions, in catalog order.
-    public static var all: [FunctionDefinition] {
+    static var all: [FunctionDefinition] {
         [openUrl]
     }
 
@@ -15,10 +15,10 @@ public enum ActionFunctions {
     ///
     /// Agent-generated content is untrusted, so the basic catalog only opens
     /// web pages; anything else is rejected instead of being handed to the system.
-    public static let allowedUrlSchemes: Set<String> = ["http", "https"]
+    static let allowedUrlSchemes: Set<String> = ["http", "https"]
 
     /// Opens a URL with the platform handler, in response to a user action.
-    public static let openUrl = FunctionDefinition(
+    static let openUrl = FunctionDefinition(
         name: "openUrl",
         description: "Opens the specified URL in a browser or handler (requires user activation). This function has no return value.",
         arguments: JsonSchema.object(

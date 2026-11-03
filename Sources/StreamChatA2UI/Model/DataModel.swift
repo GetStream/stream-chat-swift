@@ -13,14 +13,14 @@ import Foundation
 /// Instances are not thread-safe. The renderer always mutates them from the
 /// main actor, which is also where SwiftUI reads them.
 @MainActor
-public final class DataModel {
+final class DataModel {
     /// A change to the data model, reported to observers.
-    public struct Change {
+    struct Change {
         /// The absolute path that was written.
-        public let path: DataPath
+        let path: DataPath
 
         /// The value written at `path`, or `nil` when the value was removed.
-        public let value: (any Sendable)?
+        let value: (any Sendable)?
     }
 
     private var storage: JsonMap
@@ -28,20 +28,20 @@ public final class DataModel {
 
     /// Creates a data model with an optional initial value.
     /// Pass the `dataModel` payload of a `createSurface` message here.
-    public init(_ initialValue: JsonMap = [:]) {
+    init(_ initialValue: JsonMap = [:]) {
         self.storage = initialValue
     }
 
     /// The current contents of the data model.
     /// Use this when synchronizing state back to the agent.
-    public var snapshot: JsonMap {
+    var snapshot: JsonMap {
         storage
     }
 
     /// Registers an observer that is notified after every write.
     /// Call the returned closure to stop observing.
     @discardableResult
-    public func observe(_ observer: @escaping (Change) -> Void) -> () -> Void {
+    func observe(_ observer: @escaping (Change) -> Void) -> () -> Void {
         let token = UUID()
         observers[token] = observer
         return { [weak self] in
@@ -51,13 +51,13 @@ public final class DataModel {
 
     /// Reads the value at an absolute path.
     /// Returns `nil` when the path does not exist.
-    public func value(at path: DataPath) -> (any Sendable)? {
+    func value(at path: DataPath) -> (any Sendable)? {
         Json.normalized(Self.read(storage, segments: path.segments))
     }
 
     /// Reads and coerces the value at an absolute path.
     /// Coercion follows the A2UI type conversion rules.
-    public func string(at path: DataPath) -> String? { Json.string(value(at: path)) }
+    func string(at path: DataPath) -> String? { Json.string(value(at: path)) }
 
     /// Writes a value at an absolute path, creating intermediate containers.
     ///
@@ -65,7 +65,7 @@ public final class DataModel {
     /// upsert semantics defined by the specification. Writing to the root path
     /// replaces the whole data model. A write the data model cannot apply is
     /// logged and ignored; use ``set(_:at:)`` to handle the failure.
-    public func update(at path: DataPath, value: (any Sendable)?) {
+    func update(at path: DataPath, value: (any Sendable)?) {
         do {
             try set(value, at: path)
         } catch {
@@ -82,7 +82,7 @@ public final class DataModel {
     /// - Throws: ``DataModelError`` when the path descends through a value that
     ///   is not a container, or uses an invalid array index. The data model is
     ///   left unchanged.
-    public func set(_ value: (any Sendable)?, at path: DataPath) throws {
+    func set(_ value: (any Sendable)?, at path: DataPath) throws {
         let newValue = Json.normalized(value)
 
         guard !path.segments.isEmpty else {
@@ -108,7 +108,7 @@ public final class DataModel {
 
     /// Replaces the entire data model.
     /// Equivalent to writing to the root path.
-    public func replaceAll(with value: JsonMap) {
+    func replaceAll(with value: JsonMap) {
         update(at: .root, value: value)
     }
 
@@ -208,7 +208,7 @@ public final class DataModel {
 }
 
 /// A data model write that could not be applied.
-public enum DataModelError: Error, Equatable, CustomStringConvertible {
+enum DataModelError: Error, Equatable, CustomStringConvertible {
     /// The path descends through a value that is neither an object nor an array.
     case notAContainer(DataPath)
 
@@ -222,7 +222,7 @@ public enum DataModelError: Error, Equatable, CustomStringConvertible {
     case pathTooDeep(DataPath)
 
     /// A human-readable description of the failure.
-    public var description: String {
+    var description: String {
         switch self {
         case let .notAContainer(path):
             return "Cannot set path '\(path)' because it descends through a value that is not an object or an array."

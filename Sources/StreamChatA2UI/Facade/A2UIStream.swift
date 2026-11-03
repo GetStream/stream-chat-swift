@@ -9,9 +9,9 @@ import Foundation
 /// A message is a JSON object, and an agent writes them one per line, pretty-printed or in an
 /// array. Each complete one counts, in order, and the one still being written does not, so a UI
 /// shows as its messages arrive.
-public enum A2UIStream {
+enum A2UIStream {
     /// The complete messages in `text`, as written.
-    public static func messages(in text: String) -> [String] {
+    static func messages(in text: String) -> [String] {
         let bytes = Array(text.utf8)
         var messages: [String] = []
         var depth = 0

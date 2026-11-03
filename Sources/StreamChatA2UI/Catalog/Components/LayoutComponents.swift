@@ -5,9 +5,9 @@
 import SwiftUI
 
 /// The layout components of the A2UI basic catalog.
-public enum LayoutComponents {
+enum LayoutComponents {
     /// All layout components, in catalog order.
-    public static var all: [ComponentDefinition] {
+    static var all: [ComponentDefinition] {
         [row, column, list, card, divider]
     }
 
@@ -17,7 +17,7 @@ public enum LayoutComponents {
     private static let alignValues = ["start", "center", "end", "stretch"]
 
     /// Arranges its children horizontally.
-    public static let row = ComponentDefinition(
+    static let row = ComponentDefinition(
         name: "Row",
         description: "A layout component that arranges its children horizontally. "
             + "To create a grid layout, nest Columns within this Row.",
@@ -62,7 +62,7 @@ public enum LayoutComponents {
     }
 
     /// Arranges its children vertically.
-    public static let column = ComponentDefinition(
+    static let column = ComponentDefinition(
         name: "Column",
         description: "A layout component that arranges its children vertically. "
             + "To create a grid layout, nest Rows within this Column.",
@@ -112,7 +112,7 @@ public enum LayoutComponents {
     /// is normally embedded in a scrollable host, and nesting scroll views
     /// collapses the layout. Horizontal lists scroll, because that direction is
     /// safe inside a vertical scroll view.
-    public static let list = ComponentDefinition(
+    static let list = ComponentDefinition(
         name: "List",
         description: "A list of components. Vertical lists grow with their content; horizontal lists scroll.",
         properties: [
@@ -171,7 +171,7 @@ public enum LayoutComponents {
     }
 
     /// A single child wrapped in card styling.
-    public static let card = ComponentDefinition(
+    static let card = ComponentDefinition(
         name: "Card",
         description: "A container with card-like styling.",
         properties: [
@@ -202,7 +202,7 @@ public enum LayoutComponents {
     }
 
     /// A horizontal or vertical separator.
-    public static let divider = ComponentDefinition(
+    static let divider = ComponentDefinition(
         name: "Divider",
         description: "A horizontal or vertical dividing line.",
         properties: [

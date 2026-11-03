@@ -8,9 +8,9 @@ import Foundation
 ///
 /// A2UI has no operators, so agents use these functions for string
 /// interpolation, number, currency and date formatting.
-public enum FormatFunctions {
+enum FormatFunctions {
     /// All formatting functions, in catalog order.
-    public static var all: [FunctionDefinition] {
+    static var all: [FunctionDefinition] {
         [formatString, formatNumber, formatCurrency, formatDate, pluralize]
     }
 
@@ -18,7 +18,7 @@ public enum FormatFunctions {
     ///
     /// The template supports `${/absolute/path}`, `${relative/path}` and
     /// `${functionName(arg: value)}` expressions, and `\${` for a literal.
-    public static let formatString = FunctionDefinition(
+    static let formatString = FunctionDefinition(
         name: "formatString",
         description: """
         Performs string interpolation of data model values and other functions in the catalog functions list \
@@ -40,7 +40,7 @@ public enum FormatFunctions {
     }
 
     /// Formats a number with grouping separators and a fixed precision.
-    public static let formatNumber = FunctionDefinition(
+    static let formatNumber = FunctionDefinition(
         name: "formatNumber",
         description: "Formats a number with the specified grouping and decimal precision.",
         arguments: JsonSchema.object(
@@ -67,7 +67,7 @@ public enum FormatFunctions {
     }
 
     /// Formats a number as a localized currency amount.
-    public static let formatCurrency = FunctionDefinition(
+    static let formatCurrency = FunctionDefinition(
         name: "formatCurrency",
         description: "Formats a number as a currency string.",
         arguments: JsonSchema.object(
@@ -99,7 +99,7 @@ public enum FormatFunctions {
     ///
     /// Accepted input values are ISO 8601 strings, `yyyy-MM-dd` dates, `HH:mm`
     /// times and epoch timestamps in seconds or milliseconds.
-    public static let formatDate = FunctionDefinition(
+    static let formatDate = FunctionDefinition(
         name: "formatDate",
         description: "Formats a timestamp into a string using a Unicode TR35 date pattern.",
         arguments: JsonSchema.object(
@@ -141,7 +141,7 @@ public enum FormatFunctions {
     /// Foundation does not expose the CLDR plural rules, so the `zero`, `one`
     /// and `other` categories are selected and `other` is used as the fallback
     /// for every category a locale does not distinguish.
-    public static let pluralize = FunctionDefinition(
+    static let pluralize = FunctionDefinition(
         name: "pluralize",
         description: """
         Returns a localized string based on the Common Locale Data Repository (CLDR) plural category of the \
@@ -198,7 +198,7 @@ public enum FormatFunctions {
 }
 
 /// Parses the date representations accepted by A2UI payloads.
-public enum A2UIDateParser {
+enum A2UIDateParser {
     private static let patterns = [
         "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
         "yyyy-MM-dd'T'HH:mm:ssXXXXX",
@@ -214,7 +214,7 @@ public enum A2UIDateParser {
     ///
     /// A trailing `Z` or `±hh:mm` offset names it; a string without one is a
     /// wall-clock time, read and formatted in UTC so it never shifts.
-    public static func writtenTimeZone(of string: String) -> TimeZone {
+    static func writtenTimeZone(of string: String) -> TimeZone {
         let utc = TimeZone(secondsFromGMT: 0) ?? .current
         guard string.contains("T") || string.contains(" ") else { return utc }
         if string.hasSuffix("Z") || string.hasSuffix("z") { return utc }
@@ -236,7 +236,7 @@ public enum A2UIDateParser {
     ///
     /// Numbers are treated as epoch seconds, or milliseconds when the value is
     /// large enough that seconds would be implausible.
-    public static func date(from value: (any Sendable)?, timeZone: TimeZone = .current) -> Date? {
+    static func date(from value: (any Sendable)?, timeZone: TimeZone = .current) -> Date? {
         guard let value = Json.normalized(value) else { return nil }
         if let date = value as? Date { return date }
 

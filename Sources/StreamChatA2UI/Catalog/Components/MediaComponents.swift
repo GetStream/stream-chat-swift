@@ -7,14 +7,14 @@ import Combine
 import SwiftUI
 
 /// The media components of the A2UI basic catalog.
-public enum MediaComponents {
+enum MediaComponents {
     /// All media components, in catalog order.
-    public static var all: [ComponentDefinition] {
+    static var all: [ComponentDefinition] {
         [image, video, audioPlayer]
     }
 
     /// Displays a remote or bundled image.
-    public static let image = ComponentDefinition(
+    static let image = ComponentDefinition(
         name: "Image",
         description: "Displays an image from a URL.",
         properties: [
@@ -63,7 +63,7 @@ public enum MediaComponents {
     }
 
     /// Plays a remote video.
-    public static let video = ComponentDefinition(
+    static let video = ComponentDefinition(
         name: "Video",
         description: "Displays a video from a URL.",
         properties: [
@@ -93,7 +93,7 @@ public enum MediaComponents {
     }
 
     /// Plays a remote audio file.
-    public static let audioPlayer = ComponentDefinition(
+    static let audioPlayer = ComponentDefinition(
         name: "AudioPlayer",
         description: "A player for audio content from a URL.",
         properties: [

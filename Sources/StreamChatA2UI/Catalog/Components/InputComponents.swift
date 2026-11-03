@@ -10,9 +10,9 @@ import SwiftUI
 /// they read their value from the bound path and write back immediately as the
 /// user interacts, without contacting the agent. The updated state reaches the
 /// agent when an action is dispatched.
-public enum InputComponents {
+enum InputComponents {
     /// All input components, in catalog order.
-    public static var all: [ComponentDefinition] {
+    static var all: [ComponentDefinition] {
         [textField, checkBox, choicePicker, slider, dateTimeInput]
     }
 
@@ -22,7 +22,7 @@ public enum InputComponents {
     )
 
     /// A single or multi line text input.
-    public static let textField = ComponentDefinition(
+    static let textField = ComponentDefinition(
         name: "TextField",
         description: "A field for user text input.",
         properties: [
@@ -57,7 +57,7 @@ public enum InputComponents {
     }
 
     /// A labelled boolean input.
-    public static let checkBox = ComponentDefinition(
+    static let checkBox = ComponentDefinition(
         name: "CheckBox",
         description: "A checkbox with a label and a boolean value.",
         properties: [
@@ -106,7 +106,7 @@ public enum InputComponents {
     }
 
     /// A single or multi select option list.
-    public static let choicePicker = ComponentDefinition(
+    static let choicePicker = ComponentDefinition(
         name: "ChoicePicker",
         description: "A component that allows selecting one or more options from a list.",
         properties: [
@@ -166,7 +166,7 @@ public enum InputComponents {
     }
 
     /// A numeric slider with an optional discrete step count.
-    public static let slider = ComponentDefinition(
+    static let slider = ComponentDefinition(
         name: "Slider",
         description: "A slider for selecting a numeric value within a range.",
         properties: [
@@ -202,7 +202,7 @@ public enum InputComponents {
     }
 
     /// A date and/or time input.
-    public static let dateTimeInput = ComponentDefinition(
+    static let dateTimeInput = ComponentDefinition(
         name: "DateTimeInput",
         description: "An input for date and/or time.",
         properties: [

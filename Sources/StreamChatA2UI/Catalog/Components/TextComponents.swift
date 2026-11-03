@@ -5,14 +5,14 @@
 import SwiftUI
 
 /// The text and icon components of the A2UI basic catalog.
-public enum TextComponents {
+enum TextComponents {
     /// All text components, in catalog order.
-    public static var all: [ComponentDefinition] {
+    static var all: [ComponentDefinition] {
         [text, icon]
     }
 
     /// Displays text, optionally formatted with simple Markdown.
-    public static let text = ComponentDefinition(
+    static let text = ComponentDefinition(
         name: "Text",
         description: "Displays text. Simple Markdown formatting is supported.",
         properties: [
@@ -46,7 +46,7 @@ public enum TextComponents {
     }
 
     /// Displays one of the catalog's system icons.
-    public static let icon = ComponentDefinition(
+    static let icon = ComponentDefinition(
         name: "Icon",
         description: "Displays a system-provided icon from a predefined list.",
         properties: [
@@ -94,7 +94,7 @@ public enum TextComponents {
 /// The icon names defined by the A2UI basic catalog.
 ///
 /// Names are mapped onto SF Symbols so agent-provided icons look native.
-public enum A2UIIcon: String, CaseIterable {
+enum A2UIIcon: String, CaseIterable {
     case accountCircle
     case add
     case arrowBack
@@ -156,7 +156,7 @@ public enum A2UIIcon: String, CaseIterable {
     case warning
 
     /// The SF Symbol used to render this icon.
-    public var systemName: String {
+    var systemName: String {
         switch self {
         case .accountCircle: return "person.crop.circle"
         case .add: return "plus"
@@ -221,14 +221,14 @@ public enum A2UIIcon: String, CaseIterable {
     }
 
     /// Every icon name the catalog accepts.
-    public static var allNames: [String] {
+    static var allNames: [String] {
         allCases.map { $0.rawValue }.sorted()
     }
 
     /// Maps an A2UI icon name onto an SF Symbol.
     /// Unknown names fall back to a question mark glyph.
     @MainActor
-    public static func systemName(for name: String?) -> String {
+    static func systemName(for name: String?) -> String {
         guard let name, let icon = A2UIIcon(rawValue: name) else {
             if let name, !name.isEmpty {
                 a2uiLogger.warning("Unknown icon name '\(name)'.")

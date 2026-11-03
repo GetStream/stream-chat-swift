@@ -12,19 +12,19 @@ import Foundation
 /// captures the active scope plus the iteration index that the `@index` system
 /// function reads.
 @MainActor
-public struct DataContext {
+struct DataContext {
     /// The data model this context reads from and writes to.
-    public let model: DataModel
+    let model: DataModel
 
     /// The absolute path that relative bindings resolve against.
-    public let scopePath: DataPath
+    let scopePath: DataPath
 
     /// The zero-based index of the current item, when inside a collection scope.
-    public let itemIndex: Int?
+    let itemIndex: Int?
 
     /// Creates a context rooted at the given path.
     /// Pass `"/"` for the root scope.
-    public init(_ model: DataModel, _ path: String = "/", itemIndex: Int? = nil) {
+    init(_ model: DataModel, _ path: String = "/", itemIndex: Int? = nil) {
         self.model = model
         self.scopePath = DataPath(path)
         self.itemIndex = itemIndex
@@ -32,38 +32,38 @@ public struct DataContext {
 
     /// Creates a context rooted at the given path.
     /// Use this when descending into a collection scope.
-    public init(model: DataModel, scopePath: DataPath, itemIndex: Int? = nil) {
+    init(model: DataModel, scopePath: DataPath, itemIndex: Int? = nil) {
         self.model = model
         self.scopePath = scopePath
         self.itemIndex = itemIndex
     }
 
     /// Whether this context is a collection scope created by a list template.
-    public var isCollectionScope: Bool {
+    var isCollectionScope: Bool {
         itemIndex != nil
     }
 
     /// Resolves a possibly relative path against this scope.
     /// Absolute paths are returned unchanged.
-    public func resolve(_ path: DataPath) -> DataPath {
+    func resolve(_ path: DataPath) -> DataPath {
         path.isAbsolute ? path : scopePath.appending(path)
     }
 
     /// Reads the value at a possibly relative path.
     /// Returns `nil` when the resolved path does not exist.
-    public func value(at path: DataPath) -> (any Sendable)? {
+    func value(at path: DataPath) -> (any Sendable)? {
         model.value(at: resolve(path))
     }
 
     /// Writes a value at a possibly relative path.
     /// Passing `nil` removes the entry.
-    public func update(_ path: DataPath, _ value: (any Sendable)?) {
+    func update(_ path: DataPath, _ value: (any Sendable)?) {
         model.update(at: resolve(path), value: value)
     }
 
     /// Creates a child scope for one item of a bound collection.
     /// The item index becomes visible to the `@index` function.
-    public func collectionScope(path: DataPath, index: Int) -> DataContext {
+    func collectionScope(path: DataPath, index: Int) -> DataContext {
         DataContext(
             model: model,
             scopePath: resolve(path).appending(segment: String(index)),

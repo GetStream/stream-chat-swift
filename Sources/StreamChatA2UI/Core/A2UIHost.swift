@@ -6,49 +6,49 @@ import Combine
 import Foundation
 
 /// A change to the set of rendered surfaces.
-public protocol A2UIUpdate {
+protocol A2UIUpdate {
     /// The surface the update refers to.
     var surfaceId: String { get }
 }
 
 /// Emitted when an agent creates a surface.
-public struct SurfaceAdded: A2UIUpdate {
+struct SurfaceAdded: A2UIUpdate {
     /// The surface that was created.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// The definition the surface was created with.
-    public let definition: UiDefinition
+    let definition: UiDefinition
 
     /// Creates a surface-added update.
     /// The definition may still be incomplete while streaming.
-    public init(surfaceId: String, definition: UiDefinition) {
+    init(surfaceId: String, definition: UiDefinition) {
         self.surfaceId = surfaceId
         self.definition = definition
     }
 }
 
 /// Emitted when a surface's components or data change.
-public struct SurfaceUpdated: A2UIUpdate {
+struct SurfaceUpdated: A2UIUpdate {
     /// The surface that changed.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// The definition after the change.
-    public let definition: UiDefinition
+    let definition: UiDefinition
 
     /// Creates a surface-updated update.
-    public init(surfaceId: String, definition: UiDefinition) {
+    init(surfaceId: String, definition: UiDefinition) {
         self.surfaceId = surfaceId
         self.definition = definition
     }
 }
 
 /// Emitted when a surface is deleted.
-public struct SurfaceRemoved: A2UIUpdate {
+struct SurfaceRemoved: A2UIUpdate {
     /// The surface that was removed.
-    public let surfaceId: String
+    let surfaceId: String
 
     /// Creates a surface-removed update.
-    public init(surfaceId: String) {
+    init(surfaceId: String) {
         self.surfaceId = surfaceId
     }
 }
@@ -58,7 +58,7 @@ public struct SurfaceRemoved: A2UIUpdate {
 /// The host owns surface state, resolves catalogs and receives the events a
 /// surface produces. ``A2UIMessageProcessor`` is the default implementation.
 @MainActor
-public protocol A2UIHost: AnyObject {
+protocol A2UIHost: AnyObject {
     /// The catalogs this host can render.
     var catalogs: CatalogRegistry { get }
 
@@ -81,7 +81,7 @@ public protocol A2UIHost: AnyObject {
     func report(_ error: RendererError)
 }
 
-public extension A2UIHost {
+extension A2UIHost {
     /// Creates a renderer for a surface definition.
     ///
     /// The renderer is cheap and stateless, so views create one per render pass

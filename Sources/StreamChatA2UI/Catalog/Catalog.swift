@@ -21,26 +21,26 @@ public struct ComponentDefinition: Sendable {
     public let description: String?
 
     /// The JSON Schema of the component's own properties.
-    public let propertySchema: [String: JsonMap]
+    let propertySchema: [String: JsonMap]
 
     /// The property names the agent must always provide.
-    public let requiredProperties: [String]
+    let requiredProperties: [String]
 
     /// Parent component types allowed to contain this component.
     ///
     /// `nil` allows any parent. Use `["Surface"]` to restrict a component to
     /// the top level of a surface.
-    public let allowedParents: [String]?
+    let allowedParents: [String]?
 
     /// Child component types this container accepts.
     /// `nil` allows any child.
-    public let allowedChildren: [String]?
+    let allowedChildren: [String]?
 
     /// Example message payloads used by the debug gallery.
-    public let examples: [String]
+    let examples: [String]
 
     /// Renders one instance of the component.
-    public let builder: ComponentViewBuilder
+    let builder: ComponentViewBuilder
 
     /// Creates a component definition.
     /// The `component` discriminator is added to the schema automatically.
@@ -66,7 +66,7 @@ public struct ComponentDefinition: Sendable {
 
     /// The full JSON Schema of the component, as it appears in a catalog.
     /// Includes the `component` const discriminator required by the spec.
-    public var schema: JsonMap {
+    var schema: JsonMap {
         var properties = propertySchema
         properties["component"] = JsonSchema.constant(name)
         var schema = JsonSchema.object(
@@ -136,9 +136,9 @@ extension ComponentDefinition {
 }
 
 /// A function the renderer can evaluate, or that the agent may invoke.
-public struct FunctionDefinition: Sendable {
+struct FunctionDefinition: Sendable {
     /// The type of value a function returns.
-    public enum ReturnType: String, Sendable {
+    enum ReturnType: String, Sendable {
         case string
         case number
         case boolean
@@ -150,7 +150,7 @@ public struct FunctionDefinition: Sendable {
     }
 
     /// Which side of the connection may invoke a function.
-    public enum AllowedCallers: String, Sendable {
+    enum AllowedCallers: String, Sendable {
         /// Only the renderer, for example from a component binding.
         case rendererOnly
         /// Only the agent, through `callRendererFunction`.
@@ -160,29 +160,29 @@ public struct FunctionDefinition: Sendable {
     }
 
     /// The function name referenced by `call`.
-    public let name: String
+    let name: String
 
     /// A human-readable description included in the catalog schema.
-    public let description: String
+    let description: String
 
     /// The JSON Schema of the function's `args` object.
-    public let argumentsSchema: JsonMap?
+    let argumentsSchema: JsonMap?
 
     /// The type of value the function returns.
-    public let returnType: ReturnType
+    let returnType: ReturnType
 
     /// Which side of the connection may invoke the function.
-    public let allowedCallers: AllowedCallers
+    let allowedCallers: AllowedCallers
 
     /// Whether the function needs a user activation context, such as a tap.
-    public let requiresUserActivation: Bool
+    let requiresUserActivation: Bool
 
     /// The renderer-side implementation.
-    public let implementation: A2UIFunctionImplementation
+    let implementation: A2UIFunctionImplementation
 
     /// Creates a function definition.
     /// A function that requires user activation only runs from a user gesture, so an agent can't call it.
-    public init(
+    init(
         name: String,
         description: String,
         arguments: JsonMap? = nil,
@@ -201,18 +201,18 @@ public struct FunctionDefinition: Sendable {
     }
 
     /// Whether the agent is allowed to invoke this function remotely.
-    public var isAgentCallable: Bool {
+    var isAgentCallable: Bool {
         allowedCallers == .agentOnly || allowedCallers == .rendererOrAgent
     }
 
     /// Whether the renderer may evaluate this function from a component tree.
-    public var isRendererCallable: Bool {
+    var isRendererCallable: Bool {
         allowedCallers == .rendererOnly || allowedCallers == .rendererOrAgent
     }
 
     /// The full JSON Schema of the function, as it appears in a catalog.
     /// Includes the `call` const discriminator required by the spec.
-    public var schema: JsonMap {
+    var schema: JsonMap {
         var properties: JsonMap = [A2UIProtocol.callKey: JsonSchema.constant(name)]
         var required = [A2UIProtocol.callKey]
         if let argumentsSchema {
@@ -252,14 +252,14 @@ public struct Catalog: Sendable {
     public let instructions: String?
 
     /// The components of the catalog, keyed by type name.
-    public let components: [String: ComponentDefinition]
+    let components: [String: ComponentDefinition]
 
     /// The functions of the catalog, keyed by function name.
-    public let functions: [String: FunctionDefinition]
+    let functions: [String: FunctionDefinition]
 
     /// Creates a catalog from component and function definitions.
     /// Duplicate names are resolved in favour of the last definition.
-    public init(
+    init(
         catalogId: String,
         title: String? = nil,
         description: String? = nil,
@@ -283,15 +283,23 @@ public struct Catalog: Sendable {
 
     /// Looks up a function definition by name.
     /// Returns `nil` when this catalog does not define the function.
-    public func function(_ name: String) -> FunctionDefinition? {
+    func function(_ name: String) -> FunctionDefinition? {
         functions[name]
     }
 
-    /// Returns a copy with additional components and functions.
-    /// Use this to extend the basic catalog with app-specific components.
+    /// Returns a copy with `components` added, or replacing the ones of the same name, such as
+    /// to restyle one of the basic catalog's components.
     public func adding(
+        components newComponents: [ComponentDefinition],
+        catalogId: String? = nil,
+        instructions: String? = nil
+    ) -> Catalog {
+        adding(components: newComponents, functions: [], catalogId: catalogId, instructions: instructions)
+    }
+
+    func adding(
         components newComponents: [ComponentDefinition] = [],
-        functions newFunctions: [FunctionDefinition] = [],
+        functions newFunctions: [FunctionDefinition],
         catalogId: String? = nil,
         instructions: String? = nil
     ) -> Catalog {
@@ -323,7 +331,7 @@ public struct Catalog: Sendable {
     ///
     /// Send this to agents as an inline catalog, or embed it in a prompt when
     /// driving an LLM directly.
-    public func toJsonSchema() -> JsonMap {
+    func toJsonSchema() -> JsonMap {
         var componentSchemas: JsonMap = [:]
         for (name, definition) in components {
             componentSchemas[name] = definition.schema
@@ -362,38 +370,38 @@ public struct Catalog: Sendable {
 /// Resolution follows the order defined by the specification: an explicit
 /// component or function level `catalogId` wins, then the surface default
 /// catalog. There is deliberately no fallback to "any supported catalog".
-public struct CatalogRegistry: Sendable {
+struct CatalogRegistry: Sendable {
     /// The catalogs available to the renderer, keyed by catalog id.
-    public let catalogs: [String: Catalog]
+    let catalogs: [String: Catalog]
 
     /// A renderer-configured catalog used when a surface declares none.
     ///
     /// The specification requires a surface default; this optional value keeps
     /// the renderer usable with agents that omit `catalogId`.
-    public let defaultCatalogId: String?
+    let defaultCatalogId: String?
 
     /// Creates a registry from the catalogs a renderer supports.
     /// Pass `defaultCatalogId` to tolerate agents that omit the surface catalog.
-    public init(catalogs: [Catalog], defaultCatalogId: String? = nil) {
+    init(catalogs: [Catalog], defaultCatalogId: String? = nil) {
         self.catalogs = Dictionary(catalogs.map { ($0.catalogId, $0) }, uniquingKeysWith: { _, last in last })
         self.defaultCatalogId = defaultCatalogId
     }
 
     /// The ids of all supported catalogs, sorted for stable capability payloads.
-    public var supportedCatalogIds: [String] {
+    var supportedCatalogIds: [String] {
         catalogs.keys.sorted()
     }
 
     /// Looks up a catalog by id.
     /// Returns `nil` when the catalog is not supported.
-    public func catalog(_ catalogId: String?) -> Catalog? {
+    func catalog(_ catalogId: String?) -> Catalog? {
         guard let catalogId else { return nil }
         return catalogs[catalogId]
     }
 
     /// Resolves the catalog that applies to an entity.
     /// Falls back from the entity level id to the surface default.
-    public func resolveCatalog(entityCatalogId: String?, surfaceCatalogId: String?) -> Catalog? {
+    func resolveCatalog(entityCatalogId: String?, surfaceCatalogId: String?) -> Catalog? {
         if let catalog = catalog(entityCatalogId) { return catalog }
         if entityCatalogId != nil { return nil }
         if let catalog = catalog(surfaceCatalogId) { return catalog }
@@ -403,14 +411,14 @@ public struct CatalogRegistry: Sendable {
 
     /// Resolves a component definition for a component instance.
     /// Returns `nil` when neither the component nor the surface names a known catalog.
-    public func component(_ component: Component, surfaceCatalogId: String?) -> ComponentDefinition? {
+    func component(_ component: Component, surfaceCatalogId: String?) -> ComponentDefinition? {
         resolveCatalog(entityCatalogId: component.catalogId, surfaceCatalogId: surfaceCatalogId)?
             .component(component.type)
     }
 
     /// Resolves a function definition for a function call.
     /// Returns `nil` when the function is not defined in the resolved catalog.
-    public func function(_ call: FunctionCall, surfaceCatalogId: String?) -> FunctionDefinition? {
+    func function(_ call: FunctionCall, surfaceCatalogId: String?) -> FunctionDefinition? {
         resolveCatalog(entityCatalogId: call.catalogId, surfaceCatalogId: surfaceCatalogId)?
             .function(call.name)
     }
@@ -419,7 +427,7 @@ public struct CatalogRegistry: Sendable {
     ///
     /// Used for agent-initiated `callRendererFunction` messages, which carry an
     /// explicit catalog id but may target a catalog the surface does not use.
-    public func function(named name: String, catalogId: String?) -> FunctionDefinition? {
+    func function(named name: String, catalogId: String?) -> FunctionDefinition? {
         if let catalogId {
             return catalogs[catalogId]?.function(name)
         }

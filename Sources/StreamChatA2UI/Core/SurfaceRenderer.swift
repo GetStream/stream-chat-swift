@@ -12,22 +12,22 @@ import SwiftUI
 /// applies the shared behaviour every component needs: composition validation,
 /// accessibility attributes and action dispatch.
 @MainActor
-public final class SurfaceRenderer {
+final class SurfaceRenderer {
     /// The maximum nesting depth.
-    public static let defaultMaxDepth = A2UIProtocol.maxNestingDepth
+    static let defaultMaxDepth = A2UIProtocol.maxNestingDepth
 
     // The most components a surface may expand to, counting a component once for each place it
     // shows, so a component listed as a child several times on each level can't build millions.
     static let maxExpandedComponents = 5000
 
     /// The component tree being rendered.
-    public let definition: UiDefinition
+    let definition: UiDefinition
 
     /// The catalogs used to resolve component types.
-    public let catalogs: CatalogRegistry
+    let catalogs: CatalogRegistry
 
     /// The evaluator used for properties, functions and checks.
-    public let evaluator: ExpressionEvaluator
+    let evaluator: ExpressionEvaluator
 
     private let onAction: (RendererAction) -> Void
     private let onError: (RendererError) -> Void
@@ -35,7 +35,7 @@ public final class SurfaceRenderer {
 
     /// Creates a renderer for one surface definition.
     /// A new renderer is created whenever the definition changes.
-    public init(
+    init(
         definition: UiDefinition,
         catalogs: CatalogRegistry,
         evaluator: ExpressionEvaluator,
@@ -53,13 +53,13 @@ public final class SurfaceRenderer {
 
     /// Looks up a component of the surface by id.
     /// Used by containers to read child metadata such as layout weight.
-    public func component(_ id: String) -> Component? {
+    func component(_ id: String) -> Component? {
         definition.component(id)
     }
 
     /// Builds the view for the surface's `root` component.
     /// Returns an empty view while the root has not arrived yet.
-    public func rootView(dataContext: DataContext) -> AnyView {
+    func rootView(dataContext: DataContext) -> AnyView {
         guard definition.root != nil else {
             return AnyView(EmptyView())
         }
@@ -110,7 +110,7 @@ public final class SurfaceRenderer {
     /// Unknown ids and unknown component types render as empty views so that a
     /// partially streamed tree still displays, matching the progressive
     /// rendering behaviour required by the specification.
-    public func view(
+    func view(
         componentId: String,
         dataContext: DataContext,
         parent: ComponentDefinition?,
@@ -206,7 +206,7 @@ public final class SurfaceRenderer {
     /// Event actions are resolved against the data model and handed to the
     /// host, while function actions are evaluated locally or routed to the
     /// agent by the evaluator.
-    public func perform(_ action: ActionDefinition, componentId: String, dataContext: DataContext) {
+    func perform(_ action: ActionDefinition, componentId: String, dataContext: DataContext) {
         switch action {
         case let .event(event):
             var context: JsonMap = [:]
@@ -231,7 +231,7 @@ public final class SurfaceRenderer {
 
     /// Reports a renderer-side error for this surface.
     /// Components use this for failures they detect while rendering.
-    public func report(_ error: RendererError) {
+    func report(_ error: RendererError) {
         a2uiLogger.severe(error.message)
         onError(error)
     }

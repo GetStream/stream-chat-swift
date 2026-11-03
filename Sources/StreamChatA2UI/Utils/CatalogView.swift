@@ -16,13 +16,12 @@ public struct DebugCatalogView: View {
     /// The height applied to each example, when set.
     public let itemHeight: CGFloat?
 
-    /// Creates a gallery for a catalog.
-    /// Pass `onAction` to observe the actions the examples dispatch.
-    public init(
-        catalog: Catalog,
-        onAction: ((RendererAction) -> Void)? = nil,
-        itemHeight: CGFloat? = nil
-    ) {
+    /// Creates a gallery of the examples of a catalog's components.
+    public init(catalog: Catalog, itemHeight: CGFloat? = nil) {
+        self.init(catalog: catalog, onAction: nil, itemHeight: itemHeight)
+    }
+
+    init(catalog: Catalog, onAction: ((RendererAction) -> Void)?, itemHeight: CGFloat? = nil) {
         self._model = StateObject(wrappedValue: DebugCatalogModel(catalog: catalog, onAction: onAction))
         self.itemHeight = itemHeight
     }
