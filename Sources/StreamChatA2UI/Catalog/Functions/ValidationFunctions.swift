@@ -71,11 +71,34 @@ public enum ValidationFunctions {
                 reason: "'\(pattern)' is not a valid regular expression."
             )
         }
-        let range = NSRange(value.startIndex..., in: value)
-        let matches = expression.firstMatch(in: value, options: [], range: range) != nil
+        guard let matches = firstMatch(of: expression, in: value) else {
+            throw A2UIFunctionError.invalidArgument(
+                "pattern",
+                function: "regex",
+                reason: "'\(pattern)' took too long to match, so it can't be checked."
+            )
+        }
         return matches
             ? ValidationResult.valid.rawValue
             : ValidationResult(isValid: false).rawValue
+    }
+
+    // The agent writes the pattern, and one that backtracks, such as `^(a+)+$`, can take minutes
+    // on a short value. `nil` when the match took longer than `timeout`.
+    static func firstMatch(of expression: NSRegularExpression, in value: String, timeout: TimeInterval = 0.1) -> Bool? {
+        let deadline = ProcessInfo.processInfo.systemUptime + timeout
+        var found = false
+        var timedOut = false
+        expression.enumerateMatches(in: value, options: .reportProgress, range: NSRange(value.startIndex..., in: value)) { result, _, stop in
+            if result != nil {
+                found = true
+                stop.pointee = true
+            } else if ProcessInfo.processInfo.systemUptime > deadline {
+                timedOut = true
+                stop.pointee = true
+            }
+        }
+        return timedOut ? nil : found
     }
 
     /// Checks the length of a string, or the number of items in an array,

@@ -415,15 +415,17 @@ private struct A2UIChoicePickerView: View {
 }
 
 /// Renders an A2UI `Slider`, snapping to discrete steps when requested.
-private struct A2UISliderView: View {
+struct A2UISliderView: View {
     let context: ComponentRenderContext
 
     var body: some View {
         let label = context.string("label", default: "")
-        let minimum = Json.double(context.component.property("min")) ?? 0
-        let maximum = max(Json.double(context.component.property("max")) ?? 1, minimum + 0.000_1)
-        let steps = Json.int(context.component.property("steps"))
-        let binding = context.doubleBinding(default: minimum)
+        let range = Self.range(
+            minimum: Json.double(context.component.property("min")),
+            maximum: Json.double(context.component.property("max"))
+        )
+        let step = Self.step(in: range, steps: Json.int(context.component.property("steps")))
+        let binding = context.doubleBinding(default: range.lowerBound)
         let failures = context.failingChecks
 
         return VStack(alignment: .leading, spacing: 4) {
@@ -434,19 +436,43 @@ private struct A2UISliderView: View {
                 Spacer(minLength: 0)
                 Text(Json.stringify(binding.wrappedValue)).font(.subheadline.monospacedDigit())
             }
-            slider(binding: binding, minimum: minimum, maximum: maximum, steps: steps)
+            slider(binding: binding, range: range, step: step)
                 .accessibilityLabel(Text(label))
             ValidationMessages(results: failures)
+        }
+        // What the slider shows is what the person submits.
+        .onAppear {
+            if context.double("value") == nil {
+                context.write(range.lowerBound, to: "value")
+            }
         }
     }
 
     @ViewBuilder
-    private func slider(binding: Binding<Double>, minimum: Double, maximum: Double, steps: Int?) -> some View {
-        if let steps, steps > 0 {
-            Slider(value: binding, in: minimum...maximum, step: (maximum - minimum) / Double(steps))
+    private func slider(binding: Binding<Double>, range: ClosedRange<Double>, step: Double?) -> some View {
+        if let step {
+            Slider(value: binding, in: range, step: step)
         } else {
-            Slider(value: binding, in: minimum...maximum)
+            Slider(value: binding, in: range)
         }
+    }
+
+    // The agent writes the bounds, so they can be anything: SwiftUI's Slider needs finite bounds
+    // whose difference is representable, and a positive step.
+    static func range(minimum: Double?, maximum: Double?) -> ClosedRange<Double> {
+        let limit = 1e15
+        func bounded(_ value: Double?) -> Double? {
+            value.flatMap { $0.isFinite ? min(max($0, -limit), limit) : nil }
+        }
+        let lower = bounded(minimum) ?? 0
+        let upper = bounded(maximum).flatMap { $0 > lower ? $0 : nil } ?? lower + 1
+        return lower...upper
+    }
+
+    static func step(in range: ClosedRange<Double>, steps: Int?) -> Double? {
+        guard let steps, steps > 0 else { return nil }
+        let step = (range.upperBound - range.lowerBound) / Double(steps)
+        return step.isFinite && step > 0 ? step : nil
     }
 }
 
@@ -485,6 +511,20 @@ private struct A2UIDateTimeInputView: View {
             picker(label: label, selection: selection, components: components)
             ValidationMessages(results: failures)
         }
+        // What the picker shows is what the person submits.
+        .onAppear {
+            if (context.string("value") ?? "").isEmpty {
+                selection.wrappedValue = shown(selection.wrappedValue)
+            }
+        }
+    }
+
+    // A date within the picker's bounds, as the picker shows it.
+    private func shown(_ date: Date) -> Date {
+        let range = self.range
+        if let lower = range.lower, date < lower { return lower }
+        if let upper = range.upper, date > upper { return upper }
+        return date
     }
 
     @ViewBuilder

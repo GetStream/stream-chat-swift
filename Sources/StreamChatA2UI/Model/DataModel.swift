@@ -94,10 +94,14 @@ public final class DataModel {
             return
         }
 
+        guard path.segments.count <= A2UIProtocol.maxNestingDepth else {
+            throw DataModelError.pathTooDeep(path)
+        }
         if newValue == nil, Self.read(storage, segments: path.segments) == nil {
             return
         }
-        let updated = try Self.writing(newValue, into: storage, segments: path.segments[...], path: path)
+        var padding = Self.maxArrayIndex
+        let updated = try Self.writing(newValue, into: storage, segments: path.segments[...], path: path, padding: &padding)
         storage = updated as? JsonMap ?? storage
         notify(Change(path: path, value: newValue))
     }
@@ -116,24 +120,28 @@ public final class DataModel {
 
     // MARK: - Traversal
 
-    private static func read(_ current: (any Sendable)?, segments: [String]) -> (any Sendable)? {
-        guard let segment = segments.first else { return current }
-        let remaining = Array(segments.dropFirst())
-
-        if let map = current as? JsonMap {
-            return read(map[segment], segments: remaining)
+    private static func read(_ root: (any Sendable)?, segments: [String]) -> (any Sendable)? {
+        var current = root
+        for segment in segments {
+            if let map = current as? JsonMap {
+                current = map[segment]
+            } else if let list = current as? JsonArray, let index = arrayIndex(segment), index < list.count {
+                current = list[index]
+            } else {
+                return nil
+            }
         }
-        if let list = current as? JsonArray, let index = arrayIndex(segment), index < list.count {
-            return read(list[index], segments: remaining)
-        }
-        return nil
+        return current
     }
 
+    // `padding` is how many nulls the write may still add to fill gaps in arrays, across all of
+    // its levels, so one write can't allocate an array of arrays of nulls.
     private static func writing(
         _ value: (any Sendable)?,
         into current: (any Sendable)?,
         segments: ArraySlice<String>,
-        path: DataPath
+        path: DataPath,
+        padding: inout Int
     ) throws -> any Sendable {
         guard let segment = segments.first else { return value ?? NSNull() }
         let remaining = segments.dropFirst()
@@ -143,7 +151,7 @@ public final class DataModel {
                 map.removeValue(forKey: segment)
             } else {
                 let child = map[segment].flatMap { Json.normalized($0) } ?? emptyContainer(forNextSegment: remaining.first)
-                map[segment] = try writing(value, into: child, segments: remaining, path: path)
+                map[segment] = try writing(value, into: child, segments: remaining, path: path, padding: &padding)
             }
             return map
         }
@@ -157,16 +165,17 @@ public final class DataModel {
             } else {
                 throw DataModelError.invalidArrayIndex(segment, path: path)
             }
-            guard index <= Self.maxArrayIndex else {
+            guard index <= Self.maxArrayIndex, index - list.count <= padding else {
                 throw DataModelError.invalidArrayIndex(segment, path: path)
             }
+            padding -= max(index - list.count, 0)
             if remaining.isEmpty, value == nil {
                 if index < list.count { list[index] = NSNull() }
                 return list
             }
             let existing = index < list.count ? Json.normalized(list[index]) : nil
             let child = existing ?? emptyContainer(forNextSegment: remaining.first)
-            let written = try writing(value, into: child, segments: remaining, path: path)
+            let written = try writing(value, into: child, segments: remaining, path: path, padding: &padding)
             // Writing past the end pads the gap with nulls.
             while list.count < index {
                 list.append(NSNull())
@@ -209,6 +218,9 @@ public enum DataModelError: Error, Equatable, CustomStringConvertible {
     /// The root of the data model was set to something other than an object.
     case invalidRoot
 
+    /// The path has more segments than the data model nests.
+    case pathTooDeep(DataPath)
+
     /// A human-readable description of the failure.
     public var description: String {
         switch self {
@@ -218,6 +230,8 @@ public enum DataModelError: Error, Equatable, CustomStringConvertible {
             return "Cannot set path '\(path)': '\(segment)' is a non-numeric segment or out of bounds for an array."
         case .invalidRoot:
             return "The data model root must be an object."
+        case let .pathTooDeep(path):
+            return "Cannot set path '\(path)': it is deeper than \(A2UIProtocol.maxNestingDepth) levels."
         }
     }
 }

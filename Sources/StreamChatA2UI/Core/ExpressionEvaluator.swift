@@ -54,6 +54,7 @@ public final class ExpressionEvaluator {
 
     private var failureCount = 0
     private var userActivationDepth = 0
+    private var interpolationDepth = 0
 
     /// Creates an evaluator for one surface.
     /// Pass the surface's default catalog id so unqualified calls resolve.
@@ -291,6 +292,15 @@ public final class ExpressionEvaluator {
     /// Interpolates a `formatString` template in the given scope.
     /// Unresolved expressions become empty strings; a template that doesn't parse throws.
     public func interpolate(_ template: String, in context: DataContext) throws -> String {
+        // A template can come from the data model and format itself, through formatString.
+        guard interpolationDepth < A2UIProtocol.maxFunctionCallDepth else {
+            throw A2UIExpressionError(
+                "formatString templates nest more than \(A2UIProtocol.maxFunctionCallDepth) levels deep, "
+                    + "such as a template in the data model that formats itself."
+            )
+        }
+        interpolationDepth += 1
+        defer { interpolationDepth -= 1 }
         var output = ""
         for segment in try A2UIExpressionParser.parseTemplate(template) {
             switch segment {

@@ -88,7 +88,9 @@ public struct A2UIInstructions {
         var schema = catalog.toJsonSchema()
         schema["instructions"] = nil
         let options: JSONSerialization.WritingOptions = [.sortedKeys, .withoutEscapingSlashes]
-        guard let data = try? JSONSerialization.data(withJSONObject: schema, options: options) else {
+        // JSONSerialization raises an exception `try` can't catch for a value JSON can't hold.
+        guard JSONSerialization.isValidJSONObject(schema),
+              let data = try? JSONSerialization.data(withJSONObject: schema, options: options) else {
             return "{}"
         }
         return String(decoding: data, as: UTF8.self)

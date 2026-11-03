@@ -57,8 +57,14 @@ public struct ComponentRenderContext {
     /// The renderer that builds children and dispatches actions.
     public let renderer: SurfaceRenderer
 
-    /// How deeply nested this component is, used to stop reference cycles.
-    public let depth: Int
+    /// The ids of the components from the surface's root down to this one, used to stop a
+    /// component from containing itself.
+    public let ancestors: [String]
+
+    /// How deeply nested this component is.
+    public var depth: Int {
+        ancestors.count - 1
+    }
 
     /// Creates a render context.
     /// The renderer creates these while walking the component tree.
@@ -69,7 +75,7 @@ public struct ComponentRenderContext {
         dataContext: DataContext,
         evaluator: ExpressionEvaluator,
         renderer: SurfaceRenderer,
-        depth: Int
+        ancestors: [String]
     ) {
         self.component = component
         self.definition = definition
@@ -77,7 +83,7 @@ public struct ComponentRenderContext {
         self.dataContext = dataContext
         self.evaluator = evaluator
         self.renderer = renderer
-        self.depth = depth
+        self.ancestors = ancestors
     }
 
     /// The id of the component being rendered.
@@ -121,7 +127,7 @@ public struct ComponentRenderContext {
 
     /// Evaluates a property and coerces it to an integer.
     public func int(_ key: String) -> Int? {
-        double(key).map { Int($0) }
+        double(key).flatMap { Int(exactly: $0.rounded(.towardZero)) }
     }
 
     /// Evaluates a property and coerces it to a boolean.
@@ -213,7 +219,7 @@ public struct ComponentRenderContext {
             componentId: componentId,
             dataContext: childContext ?? dataContext,
             parent: definition,
-            depth: depth + 1
+            ancestors: ancestors
         )
     }
 
@@ -223,7 +229,7 @@ public struct ComponentRenderContext {
             componentId: child.componentId,
             dataContext: child.dataContext,
             parent: definition,
-            depth: depth + 1
+            ancestors: ancestors
         )
     }
 

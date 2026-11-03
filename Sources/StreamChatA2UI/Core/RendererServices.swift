@@ -31,6 +31,10 @@ public struct RendererServices: Sendable {
     /// Announces a change to assistive technologies, for components whose `accessibility.live` is set.
     public var announce: @MainActor @Sendable (String, AccessibilityAttributes.Live) -> Void
 
+    /// The URL an image, video or audio clip loads from, given the one the agent wrote, or `nil`
+    /// to not load it.
+    public var mediaURL: @Sendable (URL) -> URL?
+
     /// Creates a services container.
     /// Override any member to change renderer behaviour or make it testable.
     public init(
@@ -40,6 +44,9 @@ public struct RendererServices: Sendable {
         timeZone: TimeZone = .current,
         announce: @escaping @MainActor @Sendable (String, AccessibilityAttributes.Live) -> Void = {
             RendererServices.announceWithSystem($0, live: $1)
+        },
+        mediaURL: @escaping @Sendable (URL) -> URL? = { url in
+            ["http", "https"].contains(url.scheme?.lowercased() ?? "") ? url : nil
         }
     ) {
         self.openUrl = openUrl
@@ -47,6 +54,7 @@ public struct RendererServices: Sendable {
         self.locale = locale
         self.timeZone = timeZone
         self.announce = announce
+        self.mediaURL = mediaURL
     }
 
     /// The default services, wired to the current platform.

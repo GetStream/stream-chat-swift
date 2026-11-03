@@ -56,7 +56,8 @@ public enum MediaComponents {
                     label: context.component.accessibility?.label ?? .missing
                 ),
                 fit: context.option("fit", default: "fill"),
-                variant: context.option("variant", default: "mediumFeature")
+                variant: context.option("variant", default: "mediumFeature"),
+                mediaURL: context.services.mediaURL
             )
         )
     }
@@ -83,8 +84,8 @@ public enum MediaComponents {
     ) { context in
         AnyView(
             A2UIMediaPlayerView(
-                url: URL(string: context.string("url", default: "")),
-                posterUrl: context.string("posterUrl").flatMap { URL(string: $0) },
+                url: URL(string: context.string("url", default: "")).flatMap(context.services.mediaURL),
+                posterUrl: context.string("posterUrl").flatMap { URL(string: $0) }.flatMap(context.services.mediaURL),
                 title: nil,
                 isAudioOnly: false
             )
@@ -113,7 +114,7 @@ public enum MediaComponents {
     ) { context in
         AnyView(
             A2UIMediaPlayerView(
-                url: URL(string: context.string("url", default: "")),
+                url: URL(string: context.string("url", default: "")).flatMap(context.services.mediaURL),
                 posterUrl: nil,
                 title: context.string("description"),
                 isAudioOnly: true
@@ -135,6 +136,7 @@ struct A2UIImageView: View {
     let isDecorative: Bool
     let fit: String
     let variant: String
+    var mediaURL: @Sendable (URL) -> URL? = RendererServices.default.mediaURL
 
     // An image without a description is decorative, unless the agent labels it explicitly.
     static func isDecorative(description: String?, label: DynamicValue) -> Bool {
@@ -169,14 +171,13 @@ struct A2UIImageView: View {
         if source.isEmpty {
             EmptyView()
         } else if let url = URL(string: source), url.scheme != nil {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case let .success(image):
+            if let allowed = mediaURL(url) {
+                A2UIRemoteImage(url: allowed) { image in
                     scaled(image)
-                case .failure:
-                    EmptyView()
-                default:
-                    ProgressView()
+                } placeholder: { failed in
+                    if !failed {
+                        ProgressView()
+                    }
                 }
             }
         } else {
@@ -268,7 +269,8 @@ private struct AnyShape2: Shape {
     }
 }
 
-// The poster covers the video until it starts playing, the way HTML's `poster` does.
+// Nothing loads until the person plays it: the poster, or a placeholder, covers the player
+// until then, the way HTML's `poster` does, so a list of clips doesn't open a connection each.
 private struct A2UIMediaPlayerView: View {
     let url: URL?
     let posterUrl: URL?
@@ -283,12 +285,11 @@ private struct A2UIMediaPlayerView: View {
                 #if os(iOS) || os(tvOS) || os(macOS)
                 VideoPlayer(player: player)
                     .frame(height: height)
-                    .overlay { poster }
                 #else
-                unavailable
+                cover
                 #endif
             } else {
-                unavailable
+                cover
             }
         }
         .overlay(alignment: .bottomLeading) {
@@ -301,76 +302,68 @@ private struct A2UIMediaPlayerView: View {
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .onAppear { model.load(url) }
         .onChange(of: url) { model.load($0) }
-        .onDisappear { model.player?.pause() }
+        .onDisappear { model.release() }
     }
 
     private var height: CGFloat {
         isAudioOnly ? 80 : 200
     }
 
-    @ViewBuilder
-    private var poster: some View {
-        if let posterUrl, !isAudioOnly, !model.hasStarted {
-            ZStack {
+    private var cover: some View {
+        ZStack {
+            if let posterUrl, !isAudioOnly {
                 Color.black
-                AsyncImage(url: posterUrl) { image in
+                A2UIRemoteImage(url: posterUrl) { image in
                     image.resizable().aspectRatio(contentMode: .fit)
-                } placeholder: {
+                } placeholder: { _ in
                     Color.clear
                 }
+            } else {
+                Rectangle().fill(Color.gray.opacity(0.15))
+            }
+            if url != nil {
                 Button {
                     model.play()
                 } label: {
                     Image(systemName: "play.circle.fill")
-                        .font(.system(size: 44))
-                        .foregroundColor(.white)
-                        .shadow(radius: 4)
+                        .font(.system(size: isAudioOnly ? 32 : 44))
+                        .foregroundColor(posterUrl == nil || isAudioOnly ? .secondary : .white)
+                        .shadow(radius: posterUrl == nil || isAudioOnly ? 0 : 4)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text("Play"))
+            } else {
+                Image(systemName: isAudioOnly ? "speaker.wave.2" : "play.rectangle")
+                    .foregroundColor(.secondary)
             }
-        }
-    }
-
-    private var unavailable: some View {
-        ZStack {
-            Rectangle().fill(Color.gray.opacity(0.15))
-            Image(systemName: isAudioOnly ? "speaker.wave.2" : "play.rectangle")
-                .foregroundColor(.secondary)
         }
         .frame(height: height)
     }
 }
 
-// Keeps one player per URL: a bound URL that changes replaces the player, and the same URL keeps it.
+// Keeps the URL of a clip and makes its player only when the person plays it. A bound URL that
+// changes lets go of the player, and so does the view leaving the screen.
 @MainActor
 final class A2UIMediaPlayerModel: ObservableObject {
     @Published private(set) var player: AVPlayer?
-    @Published private(set) var hasStarted = false
     private(set) var url: URL?
-    private var playback: AnyCancellable?
 
     func load(_ newUrl: URL?) {
         guard newUrl != url else { return }
-        player?.pause()
+        release()
         url = newUrl
-        hasStarted = false
-        guard let newUrl, newUrl.scheme != nil else {
-            player = nil
-            playback = nil
-            return
-        }
-        let player = AVPlayer(url: newUrl)
-        playback = player.publisher(for: \.timeControlStatus)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] status in
-                if status != .paused { self?.hasStarted = true }
-            }
-        self.player = player
     }
 
     func play() {
-        hasStarted = true
+        guard let url else { return }
+        if player == nil {
+            player = AVPlayer(url: url)
+        }
         player?.play()
+    }
+
+    func release() {
+        player?.pause()
+        player = nil
     }
 }
