@@ -143,13 +143,21 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
 
     /// Gives its renderers the UI of the conversation's replies, oldest first, as each arrives or
     /// changes, whether or not the reply is on screen, so a format whose later replies change an
-    /// earlier one's UI follows them all. ``AIConversationView`` does it: call it with the
-    /// conversation's messages when you show replies yourself with ``AIUIView``.
+    /// earlier one's UI follows them all. It also tells them when a reply leaves the
+    /// conversation, or its UI does, such as when it is deleted. ``AIConversationView`` does it:
+    /// call it with the conversation's messages when you show replies yourself with ``AIUIView``.
     public func receive<Message: AIMessage>(_ messages: [Message]) {
-        for message in messages where message.role != .user {
-            guard let document = message.uiDocument else { continue }
-            let messageID = String(describing: message.id)
-            guard received[messageID] != document else { continue }
+        let documents = messages.compactMap { message -> (String, AIUIDocument)? in
+            guard message.role != .user, let document = message.uiDocument else { return nil }
+            return (String(describing: message.id), document)
+        }
+        let current = Set(documents.map { $0.0 })
+        for (messageID, document) in received where !current.contains(messageID) {
+            received[messageID] = nil
+            states[messageID] = nil
+            renderers.remove(document, messageID: messageID, in: context)
+        }
+        for (messageID, document) in documents where received[messageID] != document {
             received[messageID] = document
             renderers.receive(document, messageID: messageID, in: context)
         }

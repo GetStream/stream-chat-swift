@@ -32,6 +32,12 @@ extension AIUIRendererList {
         guard let position = all.firstIndex(where: { $0.reads(document) }) else { return }
         all[position].deliver(document, messageID: messageID, in: context.after(position))
     }
+
+    // Tells the engine that took a reply's last document that the reply, or its UI, is gone.
+    func remove(_ document: AIUIDocument, messageID: String, in context: AIUIRenderingContext) {
+        guard let position = all.firstIndex(where: { $0.reads(document) }) else { return }
+        all[position].forget(messageID: messageID, in: context.after(position))
+    }
 }
 
 /// Two lists of renderers, the first one asked first, which ``AIUIRendererListBuilder`` puts

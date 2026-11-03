@@ -13,6 +13,7 @@ final class AIUIHost_Tests: XCTestCase {
         weak var host: (any AIUIHosting)?
         var received: [(messageID: String, document: AIUIDocument)] = []
         var shown: [(messageID: String, document: AIUIDocument)] = []
+        var removed: [String] = []
 
         init(host: any AIUIHosting) {
             self.host = host
@@ -20,6 +21,10 @@ final class AIUIHost_Tests: XCTestCase {
 
         func receive(_ document: AIUIDocument, messageID: String) {
             received.append((messageID, document))
+        }
+
+        func remove(messageID: String) {
+            removed.append(messageID)
         }
 
         func view(for document: AIUIDocument, messageID: String) -> Text? {
@@ -214,6 +219,32 @@ final class AIUIHost_Tests: XCTestCase {
         let engine = try XCTUnwrap(renderer.engines.first)
         XCTAssertEqual(engine.received.map(\.messageID), replies.map(\.id), "rows only show the replies on screen")
         XCTAssertTrue(engine.shown.isEmpty)
+    }
+
+    func testEnginesHearWhenAReplyOrItsUIIsGone() throws {
+        let renderer = TestRenderer()
+        let host = AIUIHost { renderer } send: { _ in }
+        var replies = [
+            Reply(id: "a1", uiDocument: document("root = Card([a])")),
+            Reply(id: "a2", uiDocument: document("root = Card([b])")),
+            Reply(id: "a3", uiDocument: document("root = Card([c])"))
+        ]
+        host.receive(replies)
+        host.setState(.dictionary(["picked": .string("Ohrid")]), for: "a2")
+
+        replies[0].uiDocument = nil
+        replies.remove(at: 1)
+        host.receive(replies)
+        host.receive(replies)
+
+        let engine = try XCTUnwrap(renderer.engines.first)
+        XCTAssertEqual(engine.removed.sorted(), ["a1", "a2"], "a reply whose UI is gone, and a reply that is gone")
+        XCTAssertNil(host.state(for: "a2"), "what a gone reply's UI was left in goes too")
+
+        replies[0].uiDocument = document("root = Card([a])")
+        host.receive(replies)
+
+        XCTAssertEqual(engine.received.last?.messageID, "a1", "UI that comes back arrives again")
     }
 
     func testAReplyWhoseUINothingShowsWaitsBehindTheThinkingIndicator() {
