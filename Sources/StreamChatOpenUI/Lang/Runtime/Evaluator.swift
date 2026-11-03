@@ -47,12 +47,8 @@ public struct EvaluationContext {
 final class EvaluationBudget {
     static let maxNodes = 200_000
 
-    private var remaining: Int
+    private var remaining = maxNodes
     private var reported = false
-
-    init(nodes: Int = maxNodes) {
-        remaining = nodes
-    }
 
     // Whether a node is left, reporting, once, when none is.
     func hasRemaining(reportError: ((String) -> Void)?) -> Bool {

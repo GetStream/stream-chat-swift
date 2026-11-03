@@ -97,7 +97,7 @@ private struct FenceStripper: Sendable {
     }
 
     private static let backtick = UInt8(ascii: "`")
-    private static let quote = UInt8(ascii: "\"")
+    private static let doubleQuote = UInt8(ascii: "\"")
     private static let backslash = UInt8(ascii: "\\")
     private static let newline = UInt8(ascii: "\n")
 
@@ -159,11 +159,11 @@ private struct FenceStripper: Sendable {
             case .open:
                 if byte == Self.backslash {
                     quote = .escaped
-                } else if byte == Self.quote {
+                } else if byte == Self.doubleQuote {
                     quote = .none
                 }
             case .none:
-                if byte == Self.quote { quote = .open }
+                if byte == Self.doubleQuote { quote = .open }
             }
             if !fenced || place == .content { output.append(byte) }
             index += 1
