@@ -949,7 +949,7 @@ lane :impact_analysis do
       checks: ['Automated Code Review']
     },
     size: {
-      sources: ['Sources'],
+      sources: ['Sources', 'StreamChat.xcodeproj'],
       checks: ['Size Metrics']
     },
     xcmetrics: {
