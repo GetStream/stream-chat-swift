@@ -27,6 +27,12 @@ final class OpenUIEngine: AIUIEngine {
         self.library = library.withEntrances.addingContent(components)
     }
 
+    func remove(messageID: String) {
+        guard let runtime = runtimes.removeValue(forKey: messageID) else { return }
+        messageIDs[ObjectIdentifier(runtime)] = nil
+        runtime.dispose()
+    }
+
     func view(for document: AIUIDocument, messageID: String) -> OpenUIMessageView? {
         guard let program = document.text else { return nil }
         let runtime = runtimes[messageID] ?? makeRuntime(messageID: messageID, program: program, isStreaming: document.isStreaming)

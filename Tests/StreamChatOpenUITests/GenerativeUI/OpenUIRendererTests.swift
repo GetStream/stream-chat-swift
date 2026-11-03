@@ -132,6 +132,26 @@ struct OpenUIRendererTests {
         #expect(first?.runtime.root?.typeName == "Card")
     }
 
+    @Test func aReplyThatLeavesTheConversationStopsItsRuntime() async {
+        let tools = RecordingToolProvider(minimumRefreshInterval: 0.01) { _, _, count in ["n": .number(Double(count))] }
+        let engine = OpenUIEngine(library: .openUIChat, host: FakeHost(), toolProvider: tools)
+        let program = """
+        root = Card([TextContent("Health")])
+        health = Query("health", {}, {n: 0}, 0.01)
+        """
+        _ = engine.view(for: Self.document(program), messageID: "m1")
+        _ = engine.view(for: Self.document(program), messageID: "m2")
+        #expect(await waitUntil { tools.calls.count >= 4 })
+
+        engine.remove(messageID: "m1")
+        engine.remove(messageID: "m2")
+        let calls = tools.calls.count
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        #expect(engine.runtimes.isEmpty)
+        #expect(tools.calls.count <= calls + 2, "the replies' queries stop refreshing")
+    }
+
     @Test func aReplyStartsFromTheStateTheHostKept() {
         let host = FakeHost()
         host.states["m1"] = ["$name": "Ana"]
