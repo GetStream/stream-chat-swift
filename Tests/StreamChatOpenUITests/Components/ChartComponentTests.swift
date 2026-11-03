@@ -51,6 +51,36 @@ struct ChartComponentTests {
         #expect(RadarChartView.axes(labels: props.strings("labels"), series: props.array("series"), points: points) == ["Speed", "Power", "Range"])
     }
 
+    @Test(arguments: [
+        #"BarChart(["a", "b", "c"], [Series("s", [1e308, -1e308, 1])])"#,
+        #"LineChart(["a", "b"], [Series("s", [1e308, 1])])"#,
+        #"AreaChart(["a", "b"], [Series("s", [-1e308, 1])])"#,
+        #"HorizontalBarChart(["a", "b"], [Series("s", [1e308, -1e308])])"#,
+        #"ScatterChart([ScatterSeries("s", [Point(1e308, -1e308), Point(1, 2, 1e308)])])"#,
+        #"PieChart(["a", "b"], [1e308, 1e308])"#,
+        #"RadialChart(["a", "b"], [1e308, -1e308])"#,
+        #"SingleStackedBarChart(["a", "b"], [1e308, 1e308])"#,
+        #"RadarChart(["x", "y", "z"], [Series("s", [1e308, -1e308, 1])])"#
+    ])
+    func hugeValuesRenderWithoutTrapping(_ chart: String) {
+        let runtime = OpenUIRuntime(library: .openUIChat)
+        runtime.update(response: "root = Card([chart])\nchart = \(chart)", isStreaming: false)
+
+        #expect(runtime.root?.props["children"]?.arrayValue?.count == 1)
+        #expect(RenderingTests.render(runtime) != nil)
+    }
+
+    @Test func chartValuesAreKeptFiniteAndInRange() {
+        let series = OpenUIValue.element(ElementNode(typeName: "Series", props: ["category": "s", "values": [1e308, .number(.nan), -1e308, 3]]))
+        let (points, _) = ChartData.points(labels: ["a", "b", "c", "d"], series: [series])
+        let rows = ChartData.points(labels: ["label", "s"], series: [["a", 1e308], ["b", .number(-.infinity)]]).points
+
+        #expect(points.map(\.value) == [1e15, -1e15, 3])
+        #expect(points.map(\.category) == ["a", "c", "d"])
+        #expect(rows.map(\.value) == [1e15])
+        #expect(ChartData.slices(labels: ["a", "b", "c"], values: [1e308, .number(.infinity), 2]).map(\.value) == [1e15, 2])
+    }
+
     @Test func chartsWithManyCategoriesRender() {
         let labels = (1...12).map { "\"C\($0)\"" }.joined(separator: ", ")
         let values = (1...12).map(String.init).joined(separator: ", ")

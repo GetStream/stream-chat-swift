@@ -17,6 +17,16 @@ struct ChartPoint: Identifiable, Hashable {
 
 @available(iOS 17.0, macOS 14.0, *)
 enum ChartData {
+    static let maxMagnitude = 1e15
+
+    // Swift Charts traps on a value it can't turn into an Int, such as 1e308 from the model or a
+    // query, so a value is kept within ±1e15, like a slider's bounds, and one that isn't finite is
+    // left out.
+    static func plottable(_ value: Double) -> Double? {
+        guard value.isFinite else { return nil }
+        return Swift.min(Swift.max(value, -maxMagnitude), maxMagnitude)
+    }
+
     /// Port of `buildChartData`: `labels` + `Series` elements, or tabular rows (`[[label, v1, v2], ...]`).
     static func points(labels: [OpenUIValue], series: [OpenUIValue]) -> (points: [ChartPoint], series: [String]) {
         let labelStrings = labels.map { JS.isNullish($0) ? "" : JS.toString($0) }
@@ -28,7 +38,8 @@ enum ChartData {
                 let category = cells.first.map { JS.isNullish($0) ? "" : JS.toString($0) } ?? ""
                 for (seriesIndex, name) in seriesNames.enumerated() {
                     let cell = seriesIndex + 1 < cells.count ? cells[seriesIndex + 1] : nil
-                    points.append(ChartPoint(category: category, series: name, value: JS.toNumber(cell), order: rowIndex))
+                    guard let value = plottable(JS.toNumber(cell)) else { continue }
+                    points.append(ChartPoint(category: category, series: name, value: value, order: rowIndex))
                 }
             }
             return (points, seriesNames)
@@ -40,7 +51,8 @@ enum ChartData {
             guard case .string(let name)? = element.props["category"], case .array(let values)? = element.props["values"] else { continue }
             if !names.contains(name) { names.append(name) }
             for (index, label) in labelStrings.enumerated() where index < values.count {
-                points.append(ChartPoint(category: label, series: name, value: JS.toNumber(values[index]), order: index))
+                guard let value = plottable(JS.toNumber(values[index])) else { continue }
+                points.append(ChartPoint(category: label, series: name, value: value, order: index))
             }
         }
         return (points, names)
@@ -49,14 +61,14 @@ enum ChartData {
     /// `labels` + `values`, falling back to legacy `Slice` elements.
     static func slices(labels: [OpenUIValue], values: [OpenUIValue]) -> [(label: String, value: Double)] {
         if !labels.isEmpty, !values.isEmpty {
-            return labels.enumerated().map { index, label in
-                let value: Double
-                if index < values.count, case .number(let number) = values[index] { value = number } else { value = 0 }
-                return (JS.isNullish(label) ? "" : JS.toString(label), value)
+            return labels.enumerated().compactMap { index, label in
+                let number: Double
+                if index < values.count, case .number(let value) = values[index] { number = value } else { number = 0 }
+                return plottable(number).map { (JS.isNullish(label) ? "" : JS.toString(label), $0) }
             }
         }
-        return labels.compactMap(\.elementValue).map { slice in
-            (slice.props["category"].map { JS.toString($0) } ?? "", JS.toNumber(slice.props["value"]))
+        return labels.compactMap(\.elementValue).compactMap { slice in
+            plottable(JS.toNumber(slice.props["value"])).map { (slice.props["category"].map { JS.toString($0) } ?? "", $0) }
         }
     }
 }
@@ -187,12 +199,15 @@ struct ScatterChartView: View {
             names.append(name)
             for point in props["points"]?.arrayValue ?? [] {
                 let pointProps = point.elementValue?.props ?? point.objectValue ?? [:]
+                guard let x = ChartData.plottable(JS.toNumber(pointProps["x"])), let y = ChartData.plottable(JS.toNumber(pointProps["y"])) else {
+                    continue
+                }
                 points.append(ScatterPoint(
                     id: points.count,
                     series: name,
-                    x: JS.toNumber(pointProps["x"]),
-                    y: JS.toNumber(pointProps["y"]),
-                    z: JS.isNullish(pointProps["z"]) ? nil : JS.toNumber(pointProps["z"])
+                    x: x,
+                    y: y,
+                    z: JS.isNullish(pointProps["z"]) ? nil : ChartData.plottable(JS.toNumber(pointProps["z"]))
                 ))
             }
         }
