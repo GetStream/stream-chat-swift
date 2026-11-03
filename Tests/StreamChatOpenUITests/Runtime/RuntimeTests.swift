@@ -244,11 +244,11 @@ struct RuntimeTests {
             switch value {
             case .element(let element):
                 if element.typeName == "TextContent", let text = element.props["text"] { result.append(JS.toString(text)) }
-                element.props.values.forEach(walk)
+                for item in element.props.values { walk(item) }
             case .array(let items):
-                items.forEach(walk)
+                for item in items { walk(item) }
             case .object(let object):
-                object.values.forEach(walk)
+                for item in object.values { walk(item) }
             default:
                 break
             }

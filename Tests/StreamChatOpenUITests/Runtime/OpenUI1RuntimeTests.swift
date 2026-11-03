@@ -43,9 +43,9 @@ struct OpenUI1RuntimeTests {
             switch value {
             case .element(let element)?:
                 if element.statementId == statementId { found = element }
-                element.props.values.forEach(visit)
+                for item in element.props.values { visit(item) }
             case .array(let items)?:
-                items.forEach(visit)
+                for item in items { visit(item) }
             default:
                 break
             }
