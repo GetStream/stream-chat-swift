@@ -242,6 +242,25 @@ final class AIUIHost_Tests: XCTestCase {
         XCTAssertEqual(try XCTUnwrap(renderer.engines.first).shown.count, 1)
     }
 
+    func testLinksOpenWhereTheAppSays() throws {
+        var opened: [URL] = []
+        let host = AIUIHost { TestRenderer() } send: { _ in } open: { opened.append($0) }
+        let call = try XCTUnwrap(URL(string: "tel:+15550100"))
+
+        host.open(call)
+
+        XCTAssertEqual(opened, [call], "the app decides which links open")
+    }
+
+    func testOnlyWebAndEmailLinksOpenByDefault() throws {
+        for link in ["https://getstream.io", "HTTP://getstream.io", "mailto:a@b.co"] {
+            XCTAssertTrue(AIUILinks.isWebOrEmail(try XCTUnwrap(URL(string: link))), link)
+        }
+        for link in ["tel:+15550100", "sms:+15550100", "facetime:a@b.co", "otherapp://pay?to=x", "file:///etc/hosts"] {
+            XCTAssertFalse(AIUILinks.isWebOrEmail(try XCTUnwrap(URL(string: link))), link)
+        }
+    }
+
     func testWhatThePersonDoesGoesToTheAgent() async {
         var sent: [AIUIAction] = []
         let host = AIUIHost { TestRenderer() } send: { sent.append($0) }

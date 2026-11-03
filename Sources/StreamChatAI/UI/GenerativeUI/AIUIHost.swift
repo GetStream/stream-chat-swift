@@ -59,6 +59,7 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
 
     private let tools: [String: any AIClientTool]
     private let sendAction: @MainActor (AIUIAction) async throws -> Void
+    private let openLink: @MainActor (URL) -> Void
     private let engines = AIUIEngines()
     private var states: [String: RawJSON] = [:]
     private var received: [String: AIUIDocument] = [:]
@@ -66,19 +67,26 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
 
     /// - Parameters:
     ///   - components: The app's views the agent can place.
-    ///   - tools: The app's tools a reply's UI can run, to load data on this device.
+    ///   - tools: The app's tools a reply's UI can run, to load data on this device. They run
+    ///     whenever the UI asks, without asking the person, so pass only tools that are safe to
+    ///     run that way. They are apart from the tools the agent calls.
     ///   - renderers: The renderer of each format the agent writes.
     ///   - send: Sends what the person did to the agent, as their next message.
+    ///   - open: Opens a link from a reply's UI, such as with SwiftUI's `openURL`. By default, web
+    ///     and email links open and others don't: the agent writes the links, so another could
+    ///     call someone or act in another app.
     public init(
         components: [any AIUIComponent] = [],
         tools: [any AIClientTool] = [],
         @AIUIRendererListBuilder renderers: () -> Renderers,
-        send: @escaping @MainActor (AIUIAction) async throws -> Void
+        send: @escaping @MainActor (AIUIAction) async throws -> Void,
+        open: (@MainActor (URL) -> Void)? = nil
     ) {
         self.renderers = renderers()
         self.components = components
         self.tools = Dictionary(tools.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })
         sendAction = send
+        openLink = open ?? AIUILinks.openIfWebOrEmail
     }
 
     /// Whether one of its renderers reads `document`. The one that does can still show nothing
@@ -121,7 +129,7 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
     }
 
     public func open(_ url: URL) {
-        UIApplication.shared.open(url)
+        openLink(url)
     }
 
     /// The state a reply's UI was left in, such as a form's values, kept while the host is.
@@ -174,6 +182,24 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
     // Where its renderers show the documents of its conversation, with the engines it keeps.
     private var context: AIUIRenderingContext {
         AIUIRenderingContext(host: self, engines: engines, position: 0)
+    }
+}
+
+// The links a reply's UI opens unless the app opens them itself.
+enum AIUILinks {
+    static let schemes: Set<String> = ["http", "https", "mailto"]
+
+    static func isWebOrEmail(_ url: URL) -> Bool {
+        schemes.contains(url.scheme?.lowercased() ?? "")
+    }
+
+    @MainActor
+    static func openIfWebOrEmail(_ url: URL) {
+        guard isWebOrEmail(url) else {
+            log.warning("A reply's UI asked to open \(url), which isn't a web or email link")
+            return
+        }
+        UIApplication.shared.open(url)
     }
 }
 
