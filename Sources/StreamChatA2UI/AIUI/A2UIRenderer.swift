@@ -20,7 +20,12 @@ import SwiftUI
 /// Each reply keeps its own surfaces, so what the person enters in them survives scrolling. A
 /// button's event reaches the host as an ``AIUIAction`` named after it, with the person's words,
 /// its `userMessage`, as the label, and its surface, its component and its resolved `context` in
-/// the payload. Links open through the host.
+/// the payload, with the surface's data model too when the agent asks for it with
+/// `sendDataModel`. A function the catalog doesn't define runs as one of the host's tools, and
+/// links open through the host.
+///
+/// An app component named like one of the catalog's, such as `card` for `Card`, would replace
+/// it, so the agent doesn't get it and it is logged.
 @MainActor
 public final class A2UIRenderer: AIUIRenderer {
     /// The version of A2UI it reads.
@@ -38,6 +43,7 @@ public final class A2UIRenderer: AIUIRenderer {
     /// The id of the catalog with the app's components.
     public let catalogId: String
 
+    let instructions: String?
     let theme: A2UITheme?
     let mediaURL: @Sendable (URL) -> URL?
     let onError: (@MainActor (A2UIError, _ messageID: String) -> Void)?
@@ -45,6 +51,8 @@ public final class A2UIRenderer: AIUIRenderer {
     /// - Parameters:
     ///   - catalog: The catalog the agent writes with, the basic catalog by default.
     ///   - catalogId: The id the agent names the catalog with the app's components by.
+    ///   - instructions: What the agent's model is told before A2UI's own instructions, such as
+    ///     which answers to write as UI and when to use the app's components.
     ///   - theme: The look of the replies' A2UI. By default it follows the conversation's
     ///     `AIAppearance`, ``A2UITheme/init(appearance:)``.
     ///   - mediaURL: The URL an image, video or audio clip loads from, given the one the agent
@@ -55,15 +63,18 @@ public final class A2UIRenderer: AIUIRenderer {
     public init(
         catalog: Catalog = BasicCatalog.catalog,
         catalogId: String = A2UIRenderer.defaultCatalogId,
+        instructions: String? = nil,
         theme: A2UITheme? = nil,
         mediaURL: @escaping @Sendable (URL) -> URL? = { A2UIRenderer.webURL($0) },
         onError: (@MainActor (A2UIError, _ messageID: String) -> Void)? = nil
     ) {
         self.catalog = catalog
         self.catalogId = catalogId
+        self.instructions = instructions
         self.theme = theme
         self.mediaURL = mediaURL
         self.onError = onError
+        a2uiLogger.handler = Self.forwardToStreamCore
     }
 
     /// `url` when it is an http or https link, and `nil` otherwise: the agent writes the links a
@@ -77,20 +88,22 @@ public final class A2UIRenderer: AIUIRenderer {
 
     public func supports(version: String?) -> Bool {
         guard let version else { return true }
-        return Self.supportedVersions.contains(version)
+        return version == Self.version || A2UIReply.versionSpellings.contains(version)
     }
 
     /// The fence the agent writes its UI in, the catalog's id, and the instructions its model
     /// needs to write UI with the app's components.
     public func capabilities(components: [any AIUIComponent]) -> [String: RawJSON] {
-        let definitions = components.compactMap { component in
-            try? Self.definition(of: component.definition) { _ in AnyView(EmptyView()) }
-        }
-        let instructions = A2UIInstructions(catalog: catalogs(adding: definitions)[0], fence: fence)
+        let appComponents = definitions(of: components) { _ in { _ in AnyView(EmptyView()) } }
+        let prompt = A2UIInstructions(
+            catalog: catalogs(adding: appComponents)[0],
+            fence: fence,
+            preamble: instructions
+        )
         return [
             "fence": .string(fence),
             "catalog_id": .string(catalogId),
-            "instructions": .string(instructions.text)
+            "instructions": .string(prompt.text)
         ]
     }
 
@@ -108,6 +121,31 @@ public final class A2UIRenderer: AIUIRenderer {
         return [extended, catalog.adding(components: components)]
     }
 
+    /// The A2UI components of the app's that the agent can place, each shown by its `builder`.
+    /// One named like a component of the catalog would replace it, so it is left out, as is one
+    /// A2UI can't describe.
+    func definitions(
+        of components: [any AIUIComponent],
+        builder: (any AIUIComponent) -> ComponentViewBuilder
+    ) -> [ComponentDefinition] {
+        components.compactMap { component in
+            let definition: ComponentDefinition
+            do {
+                definition = try Self.definition(of: component.definition, builder: builder(component))
+            } catch {
+                log.error("A2UI leaves out the app's component \(component.name), which it can't describe", error: error)
+                return nil
+            }
+            guard catalog.component(definition.name) == nil else {
+                log.error(
+                    "A2UI leaves out the app's component \(component.name), which would replace the catalog's \(definition.name)"
+                )
+                return nil
+            }
+            return definition
+        }
+    }
+
     /// The A2UI component for one of the app's, described the same way on every platform.
     static func definition(
         of definition: AIUIComponentDefinition,
@@ -120,7 +158,13 @@ public final class A2UIRenderer: AIUIRenderer {
         return try PortableComponent.definition(portable, builder: builder)
     }
 
-    // The document versions it reads. The pre-release spellings come from agents prompted before
-    // the 1.0 release.
-    private static let supportedVersions: Set<String> = ["1", "1.0", "1.0.0", "v1.0"]
+    // The renderer's own messages go to StreamCore's logger, with the rest of the SDK's.
+    private static func forwardToStreamCore(_ level: A2UILogLevel, _ message: String) {
+        switch level {
+        case .debug: log.debug(message)
+        case .info: log.info(message)
+        case .warning: log.warning(message)
+        case .error: log.error(message)
+        }
+    }
 }

@@ -22,4 +22,16 @@ extension RawJSON {
             self = .nil
         }
     }
+
+    /// The value as A2UI's data model holds it, with `null` as `NSNull`.
+    var a2uiValue: any Sendable {
+        switch self {
+        case let .string(value): return value
+        case let .number(value): return value
+        case let .bool(value): return value
+        case let .array(values): return values.map(\.a2uiValue)
+        case let .dictionary(values): return values.mapValues(\.a2uiValue)
+        case .nil: return NSNull()
+        }
+    }
 }

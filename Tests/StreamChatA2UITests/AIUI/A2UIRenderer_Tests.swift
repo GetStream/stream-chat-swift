@@ -26,6 +26,16 @@ final class A2UIRenderer_Tests: XCTestCase {
         }
     }
 
+    struct CardNamedComponent: AIUIComponent {
+        struct Arguments: Decodable {}
+
+        let definition = AIUIComponentDefinition(name: "card", description: "The app's card")
+
+        func body(arguments: Arguments, context: AIUIComponentContext) -> some View {
+            Text("card")
+        }
+    }
+
     func test_format_fenceAndVersions() {
         let renderer = A2UIRenderer()
 
@@ -36,6 +46,8 @@ final class A2UIRenderer_Tests: XCTestCase {
         XCTAssertTrue(renderer.supports(version: nil))
         XCTAssertTrue(renderer.supports(version: "1.0"))
         XCTAssertTrue(renderer.supports(version: "v1.0"))
+        XCTAssertTrue(renderer.supports(version: "v1"))
+        XCTAssertTrue(renderer.supports(version: "1"))
         XCTAssertFalse(renderer.supports(version: "0.9"))
         XCTAssertFalse(renderer.supports(version: "2.0"))
     }
@@ -48,6 +60,21 @@ final class A2UIRenderer_Tests: XCTestCase {
         let instructions = try XCTUnwrap(capabilities["instructions"]?.stringValue)
         XCTAssertTrue(instructions.contains("PlaceCard"))
         XCTAssertTrue(instructions.contains("ui:a2ui@1.0"))
+    }
+
+    func test_capabilities_followTheAppsInstructions() throws {
+        let capabilities = A2UIRenderer(instructions: "Show places as cards.").capabilities(components: [])
+        let instructions = try XCTUnwrap(capabilities["instructions"]?.stringValue)
+
+        XCTAssertTrue(instructions.hasPrefix("Show places as cards."))
+    }
+
+    func test_definitions_leaveOutComponentsNamedLikeTheCatalogs() {
+        let definitions = A2UIRenderer().definitions(of: [CardNamedComponent(), PlaceCard()]) { _ in
+            { _ in AnyView(EmptyView()) }
+        }
+
+        XCTAssertEqual(definitions.map(\.name), ["PlaceCard"])
     }
 
     func test_catalogs_extendBothIds() {
@@ -91,5 +118,16 @@ final class A2UIRenderer_Tests: XCTestCase {
         )
         // Decoded JSON numbers stay numbers, even 1 and 0.
         XCTAssertEqual(RawJSON(a2ui: Json.decodeMap(#"{"one": 1}"#)?["one"]), .number(1))
+    }
+
+    func test_rawJSON_toA2UIValues() {
+        let json = RawJSON.dictionary([
+            "a": .array([.number(1), .string("b"), .nil]),
+            "c": .dictionary(["d": .bool(false)])
+        ])
+
+        XCTAssertEqual(RawJSON(a2ui: json.a2uiValue), json)
+        XCTAssertTrue(RawJSON.nil.a2uiValue is NSNull)
+        XCTAssertEqual(RawJSON.string("x").a2uiValue as? String, "x")
     }
 }

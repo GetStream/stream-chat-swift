@@ -132,13 +132,12 @@ final class SurfaceRenderer {
                 message: "Component nesting exceeded \(maxDepth) levels at '\(componentId)'.",
                 surfaceId: definition.surfaceId
             )
-            a2uiLogger.severe(error.message)
             onError(error)
             return AnyView(EmptyView())
         }
 
         guard let component = definition.component(componentId) else {
-            a2uiLogger.fine("Component '\(componentId)' is not defined yet on surface '\(definition.surfaceId)'.")
+            a2uiLogger.debug("Component '\(componentId)' is not defined yet on surface '\(definition.surfaceId)'.")
             return AnyView(EmptyView())
         }
 
@@ -152,18 +151,17 @@ final class SurfaceRenderer {
                     + "Neither the component nor its surface names a catalog this renderer supports.",
                 surfaceId: definition.surfaceId
             )
-            a2uiLogger.severe(error.message)
             onError(error)
             return AnyView(EmptyView())
         }
         guard let componentDefinition = catalog.component(component.type) else {
-            a2uiLogger.severe("Component type '\(component.type)' is not defined by catalog '\(catalog.catalogId)'.")
+            a2uiLogger.debug("Component type '\(component.type)' is not defined by catalog '\(catalog.catalogId)'.")
             return AnyView(EmptyView())
         }
 
         // The processor reported this to the agent when the component arrived.
         guard CompositionValidator.allows(componentDefinition, in: parent) else {
-            a2uiLogger.severe("Component '\(componentId)' (\(component.type)) is not allowed in '\(parent?.name ?? A2UIProtocol.surfaceComponentType)'.")
+            a2uiLogger.debug("Component '\(componentId)' (\(component.type)) is not allowed in '\(parent?.name ?? A2UIProtocol.surfaceComponentType)'.")
             return AnyView(EmptyView())
         }
 
@@ -221,10 +219,10 @@ final class SurfaceRenderer {
                 timestamp: evaluator.services.now(),
                 context: context
             )
-            a2uiLogger.info("Dispatching action '\(event.name)' from '\(componentId)'.")
+            a2uiLogger.debug("Dispatching action '\(event.name)' from '\(componentId)'.")
             onAction(rendererAction)
         case let .functionCall(call):
-            a2uiLogger.info("Invoking function '\(call.name)' from '\(componentId)'.")
+            a2uiLogger.debug("Invoking function '\(call.name)' from '\(componentId)'.")
             _ = evaluator.withUserActivation { evaluator.invoke(call, in: dataContext) }
         }
     }
@@ -232,7 +230,6 @@ final class SurfaceRenderer {
     /// Reports a renderer-side error for this surface.
     /// Components use this for failures they detect while rendering.
     func report(_ error: RendererError) {
-        a2uiLogger.severe(error.message)
         onError(error)
     }
 }

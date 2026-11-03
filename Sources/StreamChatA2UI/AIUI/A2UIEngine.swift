@@ -36,8 +36,8 @@ final class A2UIEngine: AIUIEngine {
 
     // A reply's surfaces start with its messages so far, before any view follows them.
     private func makeReply(messageID: String, source: String, isStreaming: Bool) -> A2UIReply {
-        let components = (host?.components ?? []).compactMap { component in
-            try? definition(of: component, messageID: messageID)
+        let components = renderer.definitions(of: host?.components ?? []) { component in
+            builder(of: component, messageID: messageID)
         }
         let services = RendererServices(openUrl: { [weak host] url in host?.open(url) }, mediaURL: renderer.mediaURL)
         let processor = A2UIMessageProcessor(
@@ -53,11 +53,11 @@ final class A2UIEngine: AIUIEngine {
         return reply
     }
 
-    // The A2UI component that shows one of the app's. Catalog builders return `AnyView`, because
-    // a catalog picks its components by name at runtime, so this is where the app's view loses
-    // its type, as the catalog's own components do.
-    private func definition(of component: some AIUIComponent, messageID: String) throws -> ComponentDefinition {
-        try A2UIRenderer.definition(of: component.definition) { [weak self] context in
+    // What shows one of the app's components. Catalog builders return `AnyView`, because a
+    // catalog picks its components by name at runtime, so this is where the app's view loses its
+    // type, as the catalog's own components do.
+    private func builder(of component: some AIUIComponent, messageID: String) -> ComponentViewBuilder {
+        { [weak self] context in
             AnyView(self?.view(of: component, in: context, messageID: messageID))
         }
     }
@@ -94,11 +94,13 @@ final class A2UIEngine: AIUIEngine {
         switch message {
         case let .action(action):
             let label = action.userMessage ?? buttonText(of: action, messageID: messageID) ?? Self.words(of: action.name)
-            host?.send(AIUIAction(messageID: messageID, format: .a2ui, name: action.name, label: label, payload: [
-                "surfaceId": .string(action.surfaceId),
-                "sourceComponentId": .string(action.sourceComponentId),
-                "context": .dictionary(action.context.mapValues { RawJSON(a2ui: $0) })
-            ]))
+            host?.send(AIUIAction(
+                messageID: messageID,
+                format: .a2ui,
+                name: action.name,
+                label: label,
+                payload: payload(of: action, messageID: messageID)
+            ))
         case let .error(error):
             if let onError = renderer.onError {
                 onError(A2UIError(error), messageID)
@@ -106,9 +108,46 @@ final class A2UIEngine: AIUIEngine {
                 log.error("A reply's A2UI can't show: \(error.code) \(error.message)")
             }
         case let .callAgentFunction(call):
-            log.error("A reply's A2UI calls \(call.callFunction.name), which a chat can't answer")
+            run(call, messageID: messageID)
         case .rendererFunctionResponse:
             break
+        }
+    }
+
+    // What an action tells the agent besides its name: its surface, its component and its
+    // resolved context, and the surface's data model when the agent asked for it.
+    private func payload(of action: RendererAction, messageID: String) -> [String: RawJSON] {
+        var payload: [String: RawJSON] = [
+            "surfaceId": .string(action.surfaceId),
+            "sourceComponentId": .string(action.sourceComponentId),
+            "context": .dictionary(action.context.mapValues { RawJSON(a2ui: $0) })
+        ]
+        if let surface = replies[messageID]?.processor.surfaceViewModel(action.surfaceId),
+           surface.definition?.sendDataModel == true {
+            payload["dataModel"] = RawJSON(a2ui: surface.dataModel.snapshot)
+        }
+        return payload
+    }
+
+    // A function the catalog doesn't define runs as one of the host's tools, on this device, as a
+    // chat has no channel to ask the agent. Without that tool it fails at once.
+    private func run(_ call: CallAgentFunctionMessage, messageID: String) {
+        guard let host else { return }
+        let callId = call.functionCallId
+        let name = call.callFunction.name
+        let arguments = call.callFunction.arguments.mapValues { RawJSON(a2ui: $0) }
+        Task { [weak self] in
+            let response: FunctionResponse
+            do {
+                let output = try await host.runTool(name, arguments: arguments)
+                response = FunctionResponse(functionCallId: callId, value: output.a2uiValue)
+            } catch {
+                response = FunctionResponse(
+                    functionCallId: callId,
+                    error: .init(code: RendererError.Code.executionError, message: error.localizedDescription)
+                )
+            }
+            self?.replies[messageID]?.processor.handle(.agentFunctionResponse(response))
         }
     }
 

@@ -64,7 +64,7 @@ final class DebugCatalogModel: ObservableObject {
                 let suffix = definition.examples.count > 1 ? "-\(index + 1)" : ""
                 let surfaceId = "\(name)\(suffix)"
                 guard let components = Json.decode(example) as? JsonArray else {
-                    a2uiLogger.severe("Example \(surfaceId) is not a JSON array of components.")
+                    a2uiLogger.error("Example \(surfaceId) is not a JSON array of components.")
                     continue
                 }
                 processor.handle(

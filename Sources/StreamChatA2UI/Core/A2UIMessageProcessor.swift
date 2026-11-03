@@ -218,7 +218,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
             dataModel = nil
         }
         viewModel.create(definition: definition, dataModel: dataModel)
-        a2uiLogger.info("Created surface '\(message.surfaceId)'.")
+        a2uiLogger.debug("Created surface '\(message.surfaceId)'.")
         surfaceUpdatesSubject.send(SurfaceAdded(surfaceId: message.surfaceId, definition: definition))
     }
 
@@ -238,7 +238,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         for error in CompositionValidator.errors(in: definition, batch: message.components, catalogs: catalogs) {
             report(error)
         }
-        a2uiLogger.info("Updated \(message.components.count) component(s) on surface '\(message.surfaceId)'.")
+        a2uiLogger.debug("Updated \(message.components.count) component(s) on surface '\(message.surfaceId)'.")
         surfaceUpdatesSubject.send(SurfaceUpdated(surfaceId: message.surfaceId, definition: definition))
     }
 
@@ -432,7 +432,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
             )
             return
         }
-        a2uiLogger.info("Updated data model of surface '\(message.surfaceId)' at '\(message.path)'.")
+        a2uiLogger.debug("Updated data model of surface '\(message.surfaceId)' at '\(message.path)'.")
         surfaceUpdatesSubject.send(SurfaceUpdated(surfaceId: message.surfaceId, definition: definition))
     }
 
@@ -447,7 +447,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
             remoteCalls.removeValue(forKey: key)
         }
         remoteCallIds = remoteCallIds.filter { !staleCalls.contains($0.value) }
-        a2uiLogger.info("Deleted surface '\(message.surfaceId)'.")
+        a2uiLogger.debug("Deleted surface '\(message.surfaceId)'.")
         surfaceUpdatesSubject.send(SurfaceRemoved(surfaceId: message.surfaceId))
     }
 
@@ -529,7 +529,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
             return
         }
         if let error = response.error {
-            a2uiLogger.severe("Agent function '\(key.name)' failed: \(error.code) \(error.message)")
+            a2uiLogger.error("Agent function '\(key.name)' failed: \(error.code) \(error.message)")
             remoteCalls[key] = .failed(error)
         } else {
             remoteCalls[key] = .resolved(Json.normalized(response.value))
@@ -567,7 +567,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
             remoteCalls[key] = .pending(callId)
             remoteCallIds[callId] = key
             scheduleTimeout(for: callId)
-            a2uiLogger.info("Routing function '\(name)' to the agent as call '\(callId)'.")
+            a2uiLogger.debug("Routing function '\(name)' to the agent as call '\(callId)'.")
             send(
                 .callAgentFunction(
                     CallAgentFunctionMessage(

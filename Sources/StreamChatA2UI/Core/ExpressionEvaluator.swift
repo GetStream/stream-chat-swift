@@ -195,7 +195,7 @@ final class ExpressionEvaluator {
         }
 
         guard let remoteRouter else {
-            a2uiLogger.severe("Function '\(name)' is not registered and no agent route is available.")
+            a2uiLogger.error("Function '\(name)' is not registered and no agent route is available.")
             failureCount += 1
             return nil
         }
@@ -269,7 +269,6 @@ final class ExpressionEvaluator {
     }
 
     private func fail(_ error: RendererError) -> (any Sendable)? {
-        a2uiLogger.severe(error.message)
         failureCount += 1
         remoteRouter?.report(error)
         return nil
