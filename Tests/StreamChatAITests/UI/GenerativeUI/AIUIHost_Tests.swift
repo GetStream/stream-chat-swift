@@ -231,6 +231,17 @@ final class AIUIHost_Tests: XCTestCase {
         XCTAssertFalse(showing.isThinking)
     }
 
+    func testAReplysViewIsMadeOnceForEachTimeItShows() throws {
+        let renderer = TestRenderer()
+        let host = AIUIHost { renderer } send: { _ in }
+
+        let view = AIUIView(host: host, document: document(), messageID: "m1")
+        _ = view.canShow
+        _ = view.body
+
+        XCTAssertEqual(try XCTUnwrap(renderer.engines.first).shown.count, 1)
+    }
+
     func testWhatThePersonDoesGoesToTheAgent() async {
         var sent: [AIUIAction] = []
         let host = AIUIHost { TestRenderer() } send: { sent.append($0) }
