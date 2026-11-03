@@ -22,10 +22,10 @@ struct RemoteImage: View {
         let image: CGImage
     }
 
-    // A web link the host lets load, which holds nothing the person typed.
+    // A web link the model wrote or a tool returned, which the host lets load.
     private var source: URL? {
-        guard let url = RemoteImageLoader.url(from: url).flatMap(mediaURL) else { return nil }
-        return runtime?.carriesInput(url) == true ? nil : url
+        guard let url, runtime?.allowsImageLink(url) != false else { return nil }
+        return RemoteImageLoader.url(from: url).flatMap(mediaURL)
     }
 
     var body: some View {

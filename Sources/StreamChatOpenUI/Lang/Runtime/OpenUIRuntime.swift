@@ -69,8 +69,6 @@ public final class OpenUIRuntime {
     @ObservationIgnored private var isRecomputing = false
     @ObservationIgnored private var needsRecompute = false
     @ObservationIgnored private var runtimeErrors: [OpenUIError] = []
-    // The latest text the person entered in each field or `$variable`, by its path.
-    @ObservationIgnored private var entered: [String: String] = [:]
     @ObservationIgnored private var functions: [String: OpenUIFunction]
     @ObservationIgnored private var customActions: [String: OpenUICustomAction]
 
@@ -310,7 +308,6 @@ public final class OpenUIRuntime {
         var wrapped: OpenUIObject = ["value": value ?? .null]
         if let componentType { wrapped["componentType"] = .string(componentType) }
         if isSecret { wrapped["secret"] = .bool(true) }
-        entered[(formName.map { $0 + "/" } ?? "") + name] = value?.stringValue
         guard let formName else {
             store.set(name, .object(wrapped))
             return
@@ -338,7 +335,6 @@ public final class OpenUIRuntime {
                 context.extraScope = ["$value": newValue ?? .null]
                 let next = expression.map { Evaluator.evaluate($0, context) } ?? newValue
                 self.store.set(target, next)
-                self.entered[target] = newValue?.stringValue
             }
         }
         let current = fieldValue(formName: formName, name: name)
@@ -349,16 +345,30 @@ public final class OpenUIRuntime {
         }
     }
 
-    // Whether a link holds something the person typed into this response, which an image the
-    // model links to would otherwise send to its server as they type, without a tap.
-    func carriesInput(_ url: URL) -> Bool {
-        let link = url.absoluteString
-        let decoded = link.removingPercentEncoding ?? link
-        return entered.values.contains { value in
-            guard value.count >= 3 else { return false }
-            let encoded = value.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? value
-            return decoded.contains(value) || link.contains(encoded)
+    // Whether an image may load from `link`, as the model wrote it: only from a link written out
+    // in the program, or one a tool returned. A link built from what the person typed is neither,
+    // so an image can't send it to a server as they type, however it is split or encoded.
+    func allowsImageLink(_ link: String) -> Bool {
+        guard !link.isEmpty else { return false }
+        if response?.contains(link) == true { return true }
+        return Self.value(.object(queryManager.snapshot.values), contains: link)
+    }
+
+    private static func value(_ value: OpenUIValue, contains link: String) -> Bool {
+        var pending = [value]
+        while let next = pending.popLast() {
+            switch next {
+            case .string(let string) where string == link:
+                return true
+            case .array(let items):
+                pending.append(contentsOf: items)
+            case .object(let object):
+                pending.append(contentsOf: object.entries.map(\.1))
+            default:
+                continue
+            }
         }
+        return false
     }
 
     /// The form state included with actions: `{ formName: fields }`, or the whole state.

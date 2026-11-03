@@ -178,17 +178,20 @@ struct RobustnessTests {
         #expect(FormValidation.firstMatch(of: expression, in: "aaa") == true)
     }
 
-    @Test func imageLinksThatHoldWhatThePersonTypedDoNotLoad() throws {
-        let runtime = OpenUIRuntime(library: .openUIChat)
-        runtime.setFieldValue(formName: "login", componentType: "Input", name: "pw", value: "hunter22", isSecret: true)
-        let leaking = try #require(URL(string: "https://attacker.example/p?pw=hunter22"))
-        let encoded = try #require(URL(string: "https://attacker.example/p?pw=hunter%2022"))
-        let logo = try #require(URL(string: "https://cdn.example/logo.png"))
+    @Test func imagesLoadOnlyFromLinksTheModelWroteOrAToolReturned() async {
+        let tools = FunctionToolProvider(["photos": { _ in ["url": "https://cdn.example/tool.png"] }])
+        let runtime = OpenUIRuntime(library: .openUIChat, toolProvider: tools)
+        runtime.update(response: """
+        root = Card([TextContent(photos.url), TextContent(logo)])
+        photos = Query("photos", {}, {url: ""})
+        logo = "https://cdn.example/logo.png"
+        """, isStreaming: false)
 
-        #expect(runtime.carriesInput(leaking))
-        #expect(!runtime.carriesInput(logo))
-        runtime.setFieldValue(formName: "login", componentType: "Input", name: "pw", value: "hunter 22", isSecret: true)
-        #expect(runtime.carriesInput(encoded), "percent-encoded too")
+        #expect(runtime.allowsImageLink("https://cdn.example/logo.png"))
+        #expect(await waitUntil { runtime.allowsImageLink("https://cdn.example/tool.png") })
+        #expect(!runtime.allowsImageLink("https://attacker.example/p?pw=hunter22"))
+        #expect(!runtime.allowsImageLink("https://cdn.example/logo.png?q=h"), "a written link with typed text after it")
+        #expect(!runtime.allowsImageLink(""))
     }
 
     @Test func passwordsNeverLeaveTheDevice() {
