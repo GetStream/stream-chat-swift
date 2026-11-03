@@ -59,9 +59,9 @@ public struct AIMessageRole: RawRepresentable, Hashable, Sendable, ExpressibleBy
 }
 
 extension AIMessage {
-    // Whether it is a reply the agent has started that has nothing to show yet: no text, steps
-    // or attachments, and no UI that `canShowUI` says shows.
-    func hasEmptyContent(canShowUI: (AIUIDocument) -> Bool) -> Bool {
-        role != .user && text.isEmpty && parts.isEmpty && attachments.isEmpty && !(uiDocument.map(canShowUI) ?? false)
+    // A reply the agent has started with no text, steps or attachments yet. Its generated UI can
+    // still show, when the conversation's host reads it.
+    var hasEmptyContent: Bool {
+        role != .user && text.isEmpty && parts.isEmpty && attachments.isEmpty
     }
 }
