@@ -340,8 +340,8 @@ public struct Catalog: Sendable {
     /// }
     /// ```
     public func replacingView(of name: String, with builder: @escaping ComponentViewBuilder) -> Catalog {
-        guard let component = component(name) else { return self }
-        return adding(components: [component.replacingView(with: builder)])
+        guard let existing = component(name) else { return self }
+        return adding(components: [existing.replacingView(with: builder)])
     }
 
     /// Returns a copy without the named components.
