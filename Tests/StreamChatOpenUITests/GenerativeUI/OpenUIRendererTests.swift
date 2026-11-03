@@ -208,11 +208,12 @@ struct OpenUIRendererTests {
     @Test func linksOpenOnTheHost() throws {
         let host = FakeHost()
         let engine = OpenUIEngine(library: .openUIChat, host: host, toolProvider: FunctionToolProvider([:]))
+        let link = try #require(URL(string: "https://getstream.io"))
 
         engine.handle(ActionEvent(type: BuiltinActionType.openURL, params: ["url": "https://getstream.io"], humanFriendlyMessage: "Open"), messageID: "m1")
         engine.handle(ActionEvent(type: BuiltinActionType.openURL, humanFriendlyMessage: "No link"), messageID: "m1")
 
-        #expect(host.opened == [try #require(URL(string: "https://getstream.io"))])
+        #expect(host.opened == [link])
         #expect(host.sent.isEmpty)
     }
 
@@ -225,7 +226,8 @@ struct OpenUIRendererTests {
         }
         engine.handle(ActionEvent(type: BuiltinActionType.openURL, params: ["url": "mailto:a@b.co"], humanFriendlyMessage: "Mail"), messageID: "m1")
 
-        #expect(host.opened == [try #require(URL(string: "mailto:a@b.co"))])
+        let mail = try #require(URL(string: "mailto:a@b.co"))
+        #expect(host.opened == [mail])
         #expect(host.sent.isEmpty)
     }
 
@@ -292,7 +294,8 @@ struct OpenUIRendererTests {
 
     @Test func componentsAndExpressionsBecomePlainJSON() throws {
         let result = ComponentLibrary.openUIChat.parser.parse(#"root = Card([TextContent("Hi")])"#)
-        let element = OpenUIValue.element(try #require(result.root))
+        let root = try #require(result.root)
+        let element = OpenUIValue.element(root)
 
         #expect(element.rawJSON.dictionaryValue?["typeName"] == "Card")
         #expect(element.rawJSON.dictionaryValue?["type"] == "element")

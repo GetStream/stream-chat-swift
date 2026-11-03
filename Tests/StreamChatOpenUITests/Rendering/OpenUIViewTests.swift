@@ -39,7 +39,7 @@ struct OpenUIViewTests {
             return AnyView(Text("Replaced"))
         }
         let second = owned.runtime(library: library, toolProvider: nil, initialState: nil, onAction: nil, response: Self.program, isStreaming: false)
-        try #require(RenderingTests.render(second))
+        _ = try #require(RenderingTests.render(second))
 
         #expect(first === second)
         #expect(replaced.count > 0)
