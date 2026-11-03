@@ -52,13 +52,14 @@ public extension AIUIHosting {
 /// AIConversationView(messages: messages, ui: ui)
 /// ```
 @MainActor
-public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableObject {
+public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, ObservableObject {
     /// The renderers of the formats it reads, the first one listed asked first.
     public let renderers: Renderers
     public let components: [any AIUIComponent]
 
     private let tools: [String: any AIClientTool]
     private let sendAction: @MainActor (AIUIAction) async throws -> Void
+    private let openLink: @MainActor (URL) -> Void
     private let engines = AIUIEngines()
     private var states: [String: RawJSON] = [:]
     private var received: [String: AIUIDocument] = [:]
@@ -66,19 +67,26 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
 
     /// - Parameters:
     ///   - components: The app's views the agent can place.
-    ///   - tools: The app's tools a reply's UI can run, to load data on this device.
+    ///   - tools: The app's tools a reply's UI can run, to load data on this device. They run
+    ///     whenever the UI asks, without asking the person, so pass only tools that are safe to
+    ///     run that way. They are apart from the tools the agent calls.
     ///   - renderers: The renderer of each format the agent writes.
     ///   - send: Sends what the person did to the agent, as their next message.
+    ///   - open: Opens a link from a reply's UI, such as with SwiftUI's `openURL`. By default, web
+    ///     and email links open and others don't: the agent writes the links, so another could
+    ///     call someone or act in another app.
     public init(
         components: [any AIUIComponent] = [],
         tools: [any AIClientTool] = [],
-        @AIUIRenderersBuilder renderers: () -> Renderers,
-        send: @escaping @MainActor (AIUIAction) async throws -> Void
+        @AIUIRendererListBuilder renderers: () -> Renderers,
+        send: @escaping @MainActor (AIUIAction) async throws -> Void,
+        open: (@MainActor (URL) -> Void)? = nil
     ) {
         self.renderers = renderers()
         self.components = components
         self.tools = Dictionary(tools.map { ($0.name, $0) }, uniquingKeysWith: { first, _ in first })
         sendAction = send
+        openLink = open ?? AIUILinks.openIfWebOrEmail
     }
 
     /// Whether one of its renderers reads `document`. The one that does can still show nothing
@@ -110,18 +118,18 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
             name: name,
             status: .awaitingClient,
             executor: .client,
-            arguments: try JSONEncoder().encode(arguments)
+            arguments: try JSONEncoder.streamCore.encode(arguments)
         )
         let result = await tool.run(call)
         if let failure = result.failure {
             throw AIUIToolError(message: failure)
         }
         guard let output = result.output else { return .nil }
-        return try JSONDecoder().decode(RawJSON.self, from: output)
+        return try JSONDecoder.streamCore.decode(RawJSON.self, from: output)
     }
 
     public func open(_ url: URL) {
-        UIApplication.shared.open(url)
+        openLink(url)
     }
 
     /// The state a reply's UI was left in, such as a form's values, kept while the host is.
@@ -135,13 +143,21 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
 
     /// Gives its renderers the UI of the conversation's replies, oldest first, as each arrives or
     /// changes, whether or not the reply is on screen, so a format whose later replies change an
-    /// earlier one's UI follows them all. ``AIConversationView`` does it: call it with the
-    /// conversation's messages when you show replies yourself with ``AIUIView``.
+    /// earlier one's UI follows them all. It also tells them when a reply leaves the
+    /// conversation, or its UI does, such as when it is deleted. ``AIConversationView`` does it:
+    /// call it with the conversation's messages when you show replies yourself with ``AIUIView``.
     public func receive<Message: AIMessage>(_ messages: [Message]) {
-        for message in messages where message.role != .user {
-            guard let document = message.uiDocument else { continue }
-            let messageID = String(describing: message.id)
-            guard received[messageID] != document else { continue }
+        let documents = messages.compactMap { message -> (String, AIUIDocument)? in
+            guard message.role != .user, let document = message.uiDocument else { return nil }
+            return (String(describing: message.id), document)
+        }
+        let current = Set(documents.map { $0.0 })
+        for (messageID, document) in received where !current.contains(messageID) {
+            received[messageID] = nil
+            states[messageID] = nil
+            renderers.remove(document, messageID: messageID, in: context)
+        }
+        for (messageID, document) in documents where received[messageID] != document {
             received[messageID] = document
             renderers.receive(document, messageID: messageID, in: context)
         }
@@ -157,7 +173,7 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
         }
         let definitions = components.compactMap { component -> RawJSON? in
             do {
-                return try JSONDecoder().decode(RawJSON.self, from: JSONEncoder().encode(component.definition))
+                return try JSONDecoder.streamCore.decode(RawJSON.self, from: JSONEncoder.streamCore.encode(component.definition))
             } catch {
                 log.error("Couldn't describe the component \(component.name) to the agent", error: error)
                 return nil
@@ -174,6 +190,24 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
     // Where its renderers show the documents of its conversation, with the engines it keeps.
     private var context: AIUIRenderingContext {
         AIUIRenderingContext(host: self, engines: engines, position: 0)
+    }
+}
+
+// The links a reply's UI opens unless the app opens them itself.
+enum AIUILinks {
+    static let schemes: Set<String> = ["http", "https", "mailto"]
+
+    static func isWebOrEmail(_ url: URL) -> Bool {
+        schemes.contains(url.scheme?.lowercased() ?? "")
+    }
+
+    @MainActor
+    static func openIfWebOrEmail(_ url: URL) {
+        guard isWebOrEmail(url) else {
+            log.warning("A reply's UI asked to open \(url), which isn't a web or email link")
+            return
+        }
+        UIApplication.shared.open(url)
     }
 }
 

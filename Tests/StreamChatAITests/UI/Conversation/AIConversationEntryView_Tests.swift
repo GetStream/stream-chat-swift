@@ -159,14 +159,14 @@ final class AIConversationEntryView_Tests: XCTestCase {
         )
     }
 
-    private func row<Renderers: AIUIRenderers>(
+    private func row<Renderers: AIUIRendererList>(
         _ message: Message,
         host: AIUIHost<Renderers>?
     ) -> AIUIConversationEntryView<Message, DefaultAIConversationViewFactory, Renderers> {
         row(message, host: host, factory: .shared)
     }
 
-    private func row<Renderers: AIUIRenderers, Factory: AIConversationViewFactory>(
+    private func row<Renderers: AIUIRendererList, Factory: AIConversationViewFactory>(
         _ message: Message,
         host: AIUIHost<Renderers>?,
         factory: Factory

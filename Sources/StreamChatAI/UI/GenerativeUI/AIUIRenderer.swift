@@ -12,7 +12,7 @@ import SwiftUI
 /// engine makes is the one the conversation shows, with its type, so SwiftUI updates it as it
 /// does any other view.
 @MainActor
-public protocol AIUIRenderer: AIUIRenderers where Content == Engine.Content {
+public protocol AIUIRenderer: AIUIRendererList where Content == Engine.Content {
     /// What shows the documents of one conversation.
     associatedtype Engine: AIUIEngine
 
@@ -46,6 +46,11 @@ extension AIUIRenderer {
     func deliver(_ document: AIUIDocument, messageID: String, in context: AIUIRenderingContext) {
         context.engine(of: self).receive(document, messageID: messageID)
     }
+
+    // Tells its engine, the one in `context`, that a reply or its UI is gone.
+    func forget(messageID: String, in context: AIUIRenderingContext) {
+        context.engine(of: self).remove(messageID: messageID)
+    }
 }
 
 /// Shows the documents of one renderer in one conversation. The host makes one per renderer and
@@ -63,6 +68,10 @@ public protocol AIUIEngine: AnyObject {
     /// default.
     func receive(_ document: AIUIDocument, messageID: String)
 
+    /// Forgets a reply that left the conversation, or whose UI did, such as one that was deleted,
+    /// so the engine can let go of what it kept for it. Nothing by default.
+    func remove(messageID: String)
+
     /// The view of a reply's document, or `nil` when it shows nothing of its own, such as a
     /// reply that only changed an earlier one's UI, so the reply's text shows. It is asked
     /// again only as the reply's own document changes, so a view that later replies change
@@ -72,4 +81,5 @@ public protocol AIUIEngine: AnyObject {
 
 public extension AIUIEngine {
     func receive(_ document: AIUIDocument, messageID: String) { /* Each reply's UI is its own. */ }
+    func remove(messageID: String) { /* Nothing kept for the reply. */ }
 }

@@ -47,7 +47,7 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
                     if let generated {
                         generated
                     }
-                    if !message.isGenerating && (!message.text.isEmpty || generated != nil) && isWriting != true {
+                    if showsActions(under: message) {
                         factory.makeReplyActionsView(
                             options: AIReplyActionsViewOptions(
                                 message: message,
@@ -70,5 +70,11 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
                 options: AIUserMessageViewOptions(message: nil, text: pending.text, attachments: pending.attachments)
             )
         }
+    }
+
+    // Whether a reply is finished and its answer, its text or generated UI, is written out.
+    private func showsActions(under message: Message) -> Bool {
+        let hasAnswer = !message.text.isEmpty || generated != nil
+        return !message.isGenerating && hasAnswer && isWriting != true
     }
 }

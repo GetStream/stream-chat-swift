@@ -70,6 +70,16 @@ final class A2UIEngine_Tests: XCTestCase {
         XCTAssertGreaterThan(controller.sizeThatFits(in: CGSize(width: 390, height: 800)).height, 0)
     }
 
+    func test_aReplyThatLeavesTheConversation_isForgotten() throws {
+        let source = [createSurface, components, data].joined(separator: "\n")
+        _ = engine.view(for: document(source), messageID: "m1")
+        _ = engine.view(for: document(source), messageID: "m2")
+
+        engine.remove(messageID: "m1")
+
+        XCTAssertEqual(Set(engine.replies.keys), ["m2"])
+    }
+
     func test_view_isNilForADocumentWithoutMessages() {
         XCTAssertNil(engine.view(for: AIUIDocument(format: .a2ui, content: .number(1)), messageID: "m1"))
         XCTAssertTrue(engine.replies.isEmpty)
