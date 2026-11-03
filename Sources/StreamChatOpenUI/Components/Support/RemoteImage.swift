@@ -196,7 +196,7 @@ final class RemoteImageLoader {
                 wait(for: url, waiter: waiter, continuation: continuation)
             }
         } onCancel: {
-            Task { @MainActor in self.stopWaiting(for: url, waiter: waiter) }
+            _ = Task { @MainActor in self.stopWaiting(for: url, waiter: waiter) }
         }
     }
 
@@ -229,11 +229,11 @@ final class RemoteImageLoader {
             guard let load = loads[url], load.task == nil else { continue }
             downloading += 1
             let id = load.id
-            loads[url]?.task = Task { await self.load(url, id: id) }
+            loads[url]?.task = Task { await self.download(url, id: id) }
         }
     }
 
-    private func load(_ url: URL, id: Int) async {
+    private func download(_ url: URL, id: Int) async {
         let fetch = self.fetch
         let maxPixelSize = self.maxPixelSize
         let maxBytes = self.maxBytes

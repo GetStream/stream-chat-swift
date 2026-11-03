@@ -61,6 +61,33 @@ struct RemoteImageTests {
         }
     }
 
+    // Holds fetches until the test opens it.
+    final class Gate: Sendable {
+        private let state = OSAllocatedUnfairLock(initialState: (isOpen: false, waiting: [CheckedContinuation<Void, Never>]()))
+
+        func pass() async {
+            await withCheckedContinuation { continuation in
+                let isOpen = state.withLock { state in
+                    if !state.isOpen { state.waiting.append(continuation) }
+                    return state.isOpen
+                }
+                if isOpen { continuation.resume() }
+            }
+        }
+
+        func open() {
+            let waiting = state.withLock { state in
+                state.isOpen = true
+                let waiting = state.waiting
+                state.waiting = []
+                return waiting
+            }
+            for continuation in waiting {
+                continuation.resume()
+            }
+        }
+    }
+
     static func waitUntil(_ condition: () -> Bool) async {
         for _ in 0..<500 where !condition() {
             try? await Task.sleep(nanoseconds: 10_000_000)
@@ -212,7 +239,12 @@ struct RemoteImageTests {
     @Test func aDownloadContinuesForTheViewsStillWaiting() async throws {
         let data = try Self.png(width: 10, height: 10)
         let log = FetchLog()
-        let loader = Self.loader(data: data, log: log, delay: 100_000_000)
+        let gate = Gate()
+        let loader = RemoteImageLoader { url, _ in
+            log.record(url)
+            await gate.pass()
+            return data
+        }
         let url = try #require(URL(string: "https://example.com/shared.png"))
 
         let leaving = Task { await loader.image(for: url) }
@@ -221,6 +253,7 @@ struct RemoteImageTests {
         leaving.cancel()
 
         #expect(await leaving.value == nil)
+        gate.open()
         #expect(await staying.value != nil)
         #expect(log.count == 1)
     }
