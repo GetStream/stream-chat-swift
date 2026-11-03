@@ -143,43 +143,6 @@ struct AgentReportingTests {
         #expect(error.surfaceId == nil)
         #expect(Json.map(RendererMessage.error(error).toJson()["error"])?["functionCallId"] as? String == "c1")
     }
-
-    @Test("A decoding failure from the agent connection is reported by the conversation")
-    func conversationReportsDecodingFailures() async {
-        let generator = FakeContentGenerator()
-        let processor = A2UIMessageProcessor(catalogs: [BasicCatalog.catalog])
-        let conversation = A2UIConversation(contentGenerator: generator, processor: processor)
-        var reported: [RendererError] = []
-        var appErrors = 0
-        conversation.onError = { _ in appErrors += 1 }
-        let cancellable = processor.rendererMessages.sink { message in
-            if case let .error(error) = message { reported.append(error) }
-        }
-
-        let failure = A2UIDecodingFailure(
-            error: A2UIDecodingError.missingField(surfaceIdKey, in: "deleteSurface"),
-            payload: ["version": "1.0", "deleteSurface": [:] as JsonMap]
-        )
-        generator.errorSubject.send(ContentGeneratorError(failure))
-
-        #expect(reported.map(\.code) == [RendererError.Code.validationFailed])
-        #expect(appErrors == 1)
-        #expect(failure.description.contains(surfaceIdKey))
-        cancellable.cancel()
-    }
-
-    @Test("Capabilities passed to a conversation are advertised")
-    func customCapabilities() {
-        let generator = FakeContentGenerator()
-        let processor = A2UIMessageProcessor(catalogs: [BasicCatalog.catalog])
-        let inline = RendererCapabilities(supportedCatalogIds: ["app"], inlineCatalogs: [["catalogId": "app"]])
-
-        #expect(A2UIConversation(contentGenerator: generator, processor: processor, capabilities: inline).capabilities == inline)
-        #expect(
-            A2UIConversation(contentGenerator: generator, processor: processor).capabilities.supportedCatalogIds
-                == [basicCatalogId]
-        )
-    }
 }
 
 @MainActor

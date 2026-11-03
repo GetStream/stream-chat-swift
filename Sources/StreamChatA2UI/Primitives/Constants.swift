@@ -15,18 +15,6 @@ public enum A2UIProtocol {
     /// The key used for the version discriminator on the wire.
     public static let versionKey = "version"
 
-    /// The A2A extension URI that activates A2UI v1.0.
-    public static let a2aExtensionUri = "https://a2ui.org/a2a-extension/a2ui/v1.0"
-
-    /// The MIME type that marks an A2A `DataPart` as carrying A2UI messages.
-    public static let mimeType = "application/a2ui+json"
-
-    /// The A2A message metadata key used to advertise renderer capabilities.
-    public static let rendererCapabilitiesKey = "a2uiRendererCapabilities"
-
-    /// The A2A message metadata key used to synchronize surface data models.
-    public static let rendererDataModelKey = "a2uiRendererDataModel"
-
     /// The id every surface's top-level component must use.
     public static let rootComponentId = "root"
 

@@ -113,10 +113,6 @@ public enum A2UIErrorFormatter {
             return error.description
         case let error as A2UIDecodingFailure:
             return describe(error.error)
-        case let error as A2AClientError:
-            return error.description
-        case let error as ContentGeneratorError:
-            return error.localizedDescription
         default:
             return error.localizedDescription
         }

@@ -102,19 +102,6 @@ public final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         surfaceViewModel(surfaceId).dataModel
     }
 
-    /// A snapshot of the data models of all surfaces that opted into syncing.
-    ///
-    /// Attached to outgoing agent messages for surfaces created with
-    /// `sendDataModel: true`.
-    public func synchronizedDataModel() -> RendererDataModel {
-        var payload: [String: JsonMap] = [:]
-        for (surfaceId, viewModel) in surfaces {
-            guard let definition = viewModel.definition, definition.sendDataModel else { continue }
-            payload[surfaceId] = viewModel.dataModel.snapshot
-        }
-        return RendererDataModel(surfaces: payload)
-    }
-
     /// Removes every surface and its data.
     /// Emits removal updates unless `emitUpdates` is `false`.
     public func clearSurfaces(emitUpdates: Bool = true) {
