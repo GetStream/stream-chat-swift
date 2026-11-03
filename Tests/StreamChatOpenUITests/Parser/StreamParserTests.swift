@@ -71,17 +71,20 @@ struct StreamParserTests {
 
     @Test func streamingALargeProgramInSmallChunksMatchesParsingItAtOnce() {
         let library = ComponentLibrary.openUIChat
-        let chunks = Self.chunks(of: Self.largeProgram, size: 10)
+        let setChunks = Self.chunks(of: Self.largeProgram, size: 10)
+        let pushChunks = Self.chunks(of: Self.largeProgram, size: 25)
         var setParser = library.makeStreamParser()
         var pushParser = library.makeStreamParser()
         var text = ""
         var setResult: ParseResult?
         var pushResult: ParseResult?
 
-        for (index, chunk) in chunks.enumerated() {
+        for (index, chunk) in setChunks.enumerated() {
             text += chunk
-            setResult = setParser.set(text, complete: index == chunks.count - 1)
-            pushResult = pushParser.push(chunk, complete: index == chunks.count - 1)
+            setResult = setParser.set(text, complete: index == setChunks.count - 1)
+        }
+        for (index, chunk) in pushChunks.enumerated() {
+            pushResult = pushParser.push(chunk, complete: index == pushChunks.count - 1)
         }
 
         let whole = library.parser.parse(Self.largeProgram)
@@ -91,5 +94,62 @@ struct StreamParserTests {
         let bytes = Self.largeProgram.utf8.count
         #expect(setParser.preprocessedBytes < 40 * bytes, "each chunk reads its own bytes and the line it ends")
         #expect(pushParser.preprocessedBytes < 40 * bytes)
+        // Each chunk materializes the root's list of references and the statement still
+        // arriving, and reuses the statements before it, rather than the whole program.
+        #expect(setParser.materializedNodes < 2 * whole.meta.statementCount * setChunks.count)
+        #expect(pushParser.materializedNodes < 2 * whole.meta.statementCount * pushChunks.count)
+    }
+
+    static func lines(_ range: ClosedRange<Int>, _ line: (Int) -> String) -> String {
+        range.map(line).joined(separator: "\n")
+    }
+
+    static let deepChain = [
+        "root = Card([x, p, d1])",
+        "p = Card([x])",
+        lines(1...60) { "d\($0) = Card([d\($0 + 1)])" },
+        "d61 = Card([p])",
+        lines(1...30) { "x\($0 == 1 ? "" : String($0)) = Card([x\($0 + 1)])" },
+        #"x31 = TextContent("end")"#
+    ].joined(separator: "\n")
+
+    static let reusedStatements: [(program: String, chunkSize: Int)] = [
+        // Declared after use, and declared again.
+        (#"root = Card([a, b])\#na = TextContent("one")\#nb = TextContent($t)\#na = TextContent("two")\#n$t = "x""#, 3),
+        // A cycle, cut where `b` is reached through `a` but not where `c` reaches it.
+        (#"root = Card([a, c])\#na = Card([b])\#nb = Card([a, TextContent("x")])\#nc = Card([b])"#, 3),
+        // `p`, and the `x` it uses, fit where the root uses them, but not at the end of the deep chain.
+        (deepChain, 60),
+        // Each `e` fits the node budget, but not all of them.
+        (#"a0 = TextContent("x")\#n"# + lines(1...13) { "a\($0) = [a\($0 - 1), a\($0 - 1)]" } + "\ne = [a13]\nroot = Card([e, e, e, e, e, e, e])", 40),
+        (#"root = Card([CardHeader($title), list])\#n$title = "Hi"\#nlist = Card([TextContent($title), Button("Go", @Set($title, "Bye"))])"#, 2)
+    ]
+
+    // A parser fed the text a chunk at a time reuses what statements materialized to before; one
+    // fed all of it at once can't, so the two agree only if reusing changes nothing. The deep
+    // chain needs the main thread's stack, as the runtime has.
+    @MainActor
+    @Test(arguments: reusedStatements.indices)
+    func reusedStatementsReadAsTheyDoFresh(_ index: Int) {
+        let (program, chunkSize) = Self.reusedStatements[index]
+        let library = ComponentLibrary.openUIChat
+        var streaming = library.makeStreamParser()
+        var text = ""
+
+        for chunk in Self.chunks(of: program, size: chunkSize) {
+            text += chunk
+            var fresh = library.makeStreamParser()
+            let streamed = streaming.set(text)
+            let whole = fresh.set(text)
+            guard streamed == whole else {
+                Issue.record("\(text.debugDescription) streams differently")
+                return
+            }
+        }
+        // Parsed at once, nothing is reused; only the count of statements read twice differs.
+        var streamed = streaming.set(program, complete: true)
+        let whole = library.parser.parse(program)
+        streamed.meta.statementCount = whole.meta.statementCount
+        #expect(streamed == whole)
     }
 }

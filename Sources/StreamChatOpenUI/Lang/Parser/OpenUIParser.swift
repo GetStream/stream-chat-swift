@@ -199,6 +199,25 @@ public struct OpenUIParser: Sendable {
         return found
     }
 
+    // The `$variables` a statement uses, kept with the cache while the statement is unchanged.
+    private static func stateReferences(of statement: Statement, _ context: MaterializeContext) -> [String] {
+        let version = context.cache?.versions[statement.id]
+        if let version, let kept = context.cache?.stateReferences[statement.id], kept.version == version {
+            return kept.names
+        }
+        let nodes: [ASTNode]
+        switch statement {
+        case .state(_, let initial): nodes = [initial]
+        case .value(_, let expression): nodes = [expression]
+        case .query(_, let args, _, _), .mutation(_, let args, _): nodes = args
+        }
+        let names = nodes.flatMap(\.stateReferences)
+        if let version {
+            context.cache?.stateReferences[statement.id] = MaterializationCache.StateReferences(version: version, names: names)
+        }
+        return names
+    }
+
     /// A `$name` at the very end of streamed text, which may still be growing (`$d` of `$dishes`).
     struct PartialReference {
         let name: String
@@ -212,6 +231,28 @@ public struct OpenUIParser: Sendable {
         paramMap: ParamMap?,
         rootName: String?,
         partialReference: PartialReference? = nil
+    ) -> ParseResult {
+        var cache: MaterializationCache?
+        return buildResult(
+            table,
+            wasIncomplete: wasIncomplete,
+            statementCount: statementCount,
+            paramMap: paramMap,
+            rootName: rootName,
+            partialReference: partialReference,
+            cache: &cache
+        )
+    }
+
+    // With a cache, statements whose reads are unchanged since the last pass are reused.
+    static func buildResult(
+        _ table: StatementTable,
+        wasIncomplete: Bool,
+        statementCount: Int,
+        paramMap: ParamMap?,
+        rootName: String?,
+        partialReference: PartialReference?,
+        cache: inout MaterializationCache?
     ) -> ParseResult {
         let entry = pickEntry(table, rootName: rootName)
 
@@ -234,6 +275,12 @@ public struct OpenUIParser: Sendable {
             currentStatementId: entry?.id,
             unreached: unreached
         )
+        context.cache = cache
+        cache = nil
+        defer {
+            context.cache?.materializedNodes += context.materialized
+            cache = context.cache
+        }
         var root: ElementNode?
         var rootExpression: ASTNode?
         if let entry, let entrySymbol = symbols[entry.id] {
@@ -283,19 +330,11 @@ public struct OpenUIParser: Sendable {
         // Auto-declare: any $variable referenced but not declared gets a null default, except a
         // `$name` that may still be streaming in.
         for statement in statements {
-            let nodes: [ASTNode]
-            switch statement {
-            case .state(_, let initial): nodes = [initial]
-            case .value(_, let expression): nodes = [expression]
-            case .query(_, let args, _, _), .mutation(_, let args, _): nodes = args
-            }
-            for node in nodes {
-                for dependency in node.stateReferences where !stateDeclarations.contains(dependency) {
-                    if let partialReference, partialReference.name == dependency, partialReference.statementIds.contains(statement.id) {
-                        continue
-                    }
-                    stateDeclarations[dependency] = .null
+            for dependency in stateReferences(of: statement, context) where !stateDeclarations.contains(dependency) {
+                if let partialReference, partialReference.name == dependency, partialReference.statementIds.contains(statement.id) {
+                    continue
                 }
+                stateDeclarations[dependency] = .null
             }
         }
 
@@ -345,6 +384,10 @@ public struct OpenUIStreamParser: Sendable {
     private var completedEnd = 0
     private var completed = StatementTable()
     private var completedCount = 0
+    // A new version for each statement read, so the cache can tell when one changed.
+    private var completedVersions: [String: Int] = [:]
+    private var lastVersion = 0
+    private var cache: MaterializationCache? = MaterializationCache()
 
     public init(paramMap: ParamMap, rootName: String? = nil) {
         self.paramMap = paramMap
@@ -388,9 +431,15 @@ public struct OpenUIStreamParser: Sendable {
     public mutating func reset() {
         buffer = ""
         cleaned = IncrementalPreprocessor()
+        resetCompleted()
+    }
+
+    private mutating func resetCompleted() {
         completedEnd = 0
         completed.removeAll()
         completedCount = 0
+        completedVersions.removeAll()
+        cache = MaterializationCache()
     }
 
     // Compares the bytes at once where it can: the whole response is compared on every chunk.
@@ -411,6 +460,7 @@ public struct OpenUIStreamParser: Sendable {
         guard !trimmed.isEmpty else { return }
         for raw in Statements.split(Lexer.tokenize(trimmed)) {
             completed.set(OpenUIParser.classify(raw, ExpressionParser.parse(raw.tokens)))
+            completedVersions[raw.id] = nextVersion()
             completedCount += 1
         }
     }
@@ -420,10 +470,17 @@ public struct OpenUIStreamParser: Sendable {
     private mutating func refreshCleaned(adding bytes: some Collection<UInt8>) {
         let startedOver = cleaned.append(bytes)
         if startedOver || cleaned.count < completedEnd {
-            completedEnd = 0
-            completed.removeAll()
-            completedCount = 0
+            resetCompleted()
         }
+    }
+
+    private mutating func nextVersion() -> Int {
+        lastVersion += 1
+        return lastVersion
+    }
+
+    var materializedNodes: Int {
+        cache?.materializedNodes ?? 0
     }
 
     /// Scans for newly completed statements; returns the start of the pending statement.
@@ -488,33 +545,53 @@ public struct OpenUIStreamParser: Sendable {
 
         if pendingText.isEmpty {
             if completedCount == 0 { return .empty() }
-            return OpenUIParser.buildResult(completed, wasIncomplete: false, statementCount: completedCount, paramMap: paramMap, rootName: rootName)
+            return buildResult(completed, versions: completedVersions, wasIncomplete: false, statementCount: completedCount)
         }
 
         let (closed, wasIncomplete) = Statements.autoClose(pendingText)
         let raw = Statements.split(Lexer.tokenize(closed))
         if raw.isEmpty {
             if completedCount == 0 { return .empty(incomplete: wasIncomplete) }
-            return OpenUIParser.buildResult(completed, wasIncomplete: wasIncomplete, statementCount: completedCount, paramMap: paramMap, rootName: rootName)
+            return buildResult(completed, versions: completedVersions, wasIncomplete: wasIncomplete, statementCount: completedCount)
         }
 
         // New IDs render progressively; existing IDs are only replaced once the pending
         // statement no longer needs automatic closing.
         var all = completed
+        var versions = completedVersions
         var pendingIds = Set<String>()
         for statement in raw {
             if completed.contains(statement.id) && wasIncomplete { continue }
             all.set(OpenUIParser.classify(statement, ExpressionParser.parse(statement.tokens)))
+            versions[statement.id] = nextVersion()
             pendingIds.insert(statement.id)
         }
         let tail = complete ? nil : Self.partialStateName(buffer: buffer, pendingText: pendingText)
-        return OpenUIParser.buildResult(
+        return buildResult(
             all,
+            versions: versions,
             wasIncomplete: wasIncomplete,
             statementCount: completedCount + raw.count,
+            partialReference: tail.map { OpenUIParser.PartialReference(name: $0, statementIds: pendingIds) }
+        )
+    }
+
+    private mutating func buildResult(
+        _ table: StatementTable,
+        versions: [String: Int],
+        wasIncomplete: Bool,
+        statementCount: Int,
+        partialReference: OpenUIParser.PartialReference? = nil
+    ) -> ParseResult {
+        cache?.versions = versions
+        return OpenUIParser.buildResult(
+            table,
+            wasIncomplete: wasIncomplete,
+            statementCount: statementCount,
             paramMap: paramMap,
             rootName: rootName,
-            partialReference: tail.map { OpenUIParser.PartialReference(name: $0, statementIds: pendingIds) }
+            partialReference: partialReference,
+            cache: &cache
         )
     }
 
