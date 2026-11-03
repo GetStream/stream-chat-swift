@@ -339,8 +339,8 @@ public struct OpenUIStreamParser: Sendable {
     public let rootName: String?
 
     private var buffer = ""
-    /// Preprocessed view of `buffer` (fences and comments stripped).
-    private var cleaned: [UInt8] = []
+    // Preprocessed view of `buffer` (fences and comments stripped).
+    private var cleaned = IncrementalPreprocessor()
     /// How far into `cleaned` statements are already completed.
     private var completedEnd = 0
     private var completed = StatementTable()
@@ -358,19 +358,26 @@ public struct OpenUIStreamParser: Sendable {
     /// Appends a chunk and returns the latest result. Pass `complete` once the stream has ended.
     public mutating func push(_ chunk: String, complete: Bool = false) -> ParseResult {
         buffer += chunk
+        refreshCleaned(adding: chunk.utf8)
         return currentResult(complete: complete)
     }
 
     /// Sets the full text so far. Resets when the text no longer extends the previous buffer. Pass
     /// `complete` once the stream has ended.
     public mutating func set(_ fullText: String, complete: Bool = false) -> ParseResult {
-        if fullText.utf8.count < buffer.utf8.count || !fullText.utf8.starts(with: buffer.utf8) {
+        if !Self.text(fullText, startsWith: buffer) {
             reset()
         }
         if fullText.utf8.count > buffer.utf8.count {
+            let added = fullText.utf8.dropFirst(buffer.utf8.count)
             buffer = fullText
+            refreshCleaned(adding: added)
         }
         return currentResult(complete: complete)
+    }
+
+    var preprocessedBytes: Int {
+        cleaned.bytesRead
     }
 
     /// The latest result without consuming new data.
@@ -380,10 +387,23 @@ public struct OpenUIStreamParser: Sendable {
 
     public mutating func reset() {
         buffer = ""
-        cleaned = []
+        cleaned = IncrementalPreprocessor()
         completedEnd = 0
         completed.removeAll()
         completedCount = 0
+    }
+
+    // Compares the bytes at once where it can: the whole response is compared on every chunk.
+    private static func text(_ text: String, startsWith prefix: String) -> Bool {
+        let length = prefix.utf8.count
+        guard text.utf8.count >= length else { return false }
+        guard length > 0 else { return true }
+        let same = text.utf8.withContiguousStorageIfAvailable { textBytes in
+            prefix.utf8.withContiguousStorageIfAvailable { prefixBytes in
+                memcmp(textBytes.baseAddress!, prefixBytes.baseAddress!, length) == 0
+            }
+        }
+        return (same ?? nil) ?? text.utf8.starts(with: prefix.utf8)
     }
 
     private mutating func addStatements(_ text: String) {
@@ -395,15 +415,15 @@ public struct OpenUIStreamParser: Sendable {
         }
     }
 
-    private mutating func refreshCleaned() {
-        let next = Array(Preprocessor.preprocess(buffer).utf8)
-        let stablePrefix = cleaned[0..<min(completedEnd, cleaned.count)]
-        if !next.starts(with: stablePrefix) {
+    // Completed statements are read again when the text before `completedEnd` changes: a fence
+    // after unfenced text, or the line after them turning into a comment or a closing fence.
+    private mutating func refreshCleaned(adding bytes: some Collection<UInt8>) {
+        let startedOver = cleaned.append(bytes)
+        if startedOver || cleaned.count < completedEnd {
             completedEnd = 0
             completed.removeAll()
             completedCount = 0
         }
-        cleaned = next
     }
 
     /// Scans for newly completed statements; returns the start of the pending statement.
@@ -413,11 +433,12 @@ public struct OpenUIStreamParser: Sendable {
         var inString: UInt8?
         var escaped = false
         var statementStart = completedEnd
+        let text = cleaned.bytes
         let n = cleaned.count
         var i = completedEnd
 
         while i < n {
-            let c = cleaned[i]
+            let c = text[i]
             defer { i += 1 }
             if escaped {
                 escaped = false
@@ -444,13 +465,13 @@ public struct OpenUIStreamParser: Sendable {
                 ternaryDepth -= 1
             case 0x0a where depth <= 0 && ternaryDepth <= 0:
                 var peek = i + 1
-                while peek < n, cleaned[peek] == 0x20 || cleaned[peek] == 0x09 || cleaned[peek] == 0x0d || cleaned[peek] == 0x0a {
+                while peek < n, text[peek] == 0x20 || text[peek] == 0x09 || text[peek] == 0x0d || text[peek] == 0x0a {
                     peek += 1
                 }
-                if peek < n, cleaned[peek] == UInt8(ascii: "?") || (cleaned[peek] == UInt8(ascii: ":") && ternaryDepth > 0) {
+                if peek < n, text[peek] == UInt8(ascii: "?") || (text[peek] == UInt8(ascii: ":") && ternaryDepth > 0) {
                     continue
                 }
-                let statementText = String(decoding: cleaned[statementStart..<i], as: UTF8.self)
+                let statementText = String(decoding: text[statementStart..<i], as: UTF8.self)
                 addStatements(statementText)
                 statementStart = i + 1
                 completedEnd = i + 1
@@ -462,9 +483,8 @@ public struct OpenUIStreamParser: Sendable {
     }
 
     private mutating func currentResult(complete: Bool) -> ParseResult {
-        refreshCleaned()
         let pendingStart = scanNewCompleted()
-        let pendingText = JS.trim(String(decoding: cleaned[min(pendingStart, cleaned.count)...], as: UTF8.self))
+        let pendingText = JS.trim(String(decoding: cleaned.bytes[min(pendingStart, cleaned.count)..<cleaned.count], as: UTF8.self))
 
         if pendingText.isEmpty {
             if completedCount == 0 { return .empty() }
@@ -501,11 +521,13 @@ public struct OpenUIStreamParser: Sendable {
     /// A `$name` ending the raw text may still be growing (`$d` of `$dishes`): it isn't declared
     /// unless the same name already appears in full in the pending text.
     static func partialStateName(buffer: String, pendingText: String) -> String? {
-        let scalars = Array(buffer.unicodeScalars)
-        var start = scalars.count
-        while start > 0, isWordCharacter(scalars[start - 1]) { start -= 1 }
-        guard start > 0, start < scalars.count, scalars[start - 1] == "$" else { return nil }
-        let tail = "$" + String(String.UnicodeScalarView(scalars[start...]))
+        let scalars = buffer.unicodeScalars
+        var start = scalars.endIndex
+        while start > scalars.startIndex, isWordCharacter(scalars[scalars.index(before: start)]) {
+            start = scalars.index(before: start)
+        }
+        guard start > scalars.startIndex, start < scalars.endIndex, scalars[scalars.index(before: start)] == "$" else { return nil }
+        let tail = "$" + String(scalars[start...])
         guard pendingText.hasSuffix(tail) else { return nil }
         let before = Array(pendingText.unicodeScalars.dropLast(tail.unicodeScalars.count))
         let needle = Array(tail.unicodeScalars)
