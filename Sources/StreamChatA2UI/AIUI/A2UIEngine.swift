@@ -18,6 +18,10 @@ final class A2UIEngine: AIUIEngine {
         self.host = host
     }
 
+    func remove(messageID: String) {
+        replies[messageID] = nil
+    }
+
     func view(for document: AIUIDocument, messageID: String) -> A2UIReplyView? {
         guard let source = Self.source(of: document) else { return nil }
         let reply = replies[messageID] ?? makeReply(messageID: messageID, source: source, isStreaming: document.isStreaming)
