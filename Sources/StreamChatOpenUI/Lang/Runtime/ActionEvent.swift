@@ -61,7 +61,7 @@ public struct ActionEvent: Sendable, Hashable {
     public var assistantMessage: String {
         var items: [OpenUIValue] = [.string("User clicked: \(humanFriendlyMessage)")]
         if formState != nil || context != nil {
-            items.append(.object(formState ?? [:]))
+            items.append(.object(formState?.withoutSecrets ?? [:]))
         }
         if let context {
             items.append(context)

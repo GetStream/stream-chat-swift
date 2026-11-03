@@ -49,8 +49,12 @@ public enum MarkdownParser {
     public static func parse(_ text: String) -> [MarkdownBlock] {
         let lines = text.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n")
         var index = 0
-        return parseBlocks(lines, &index, indent: 0)
+        return parseBlocks(lines, &index, indent: 0, depth: 0)
     }
+
+    // Quotes and lists nest this deep at most; deeper markers read as text, so the model's
+    // text can't recurse until the stack runs out.
+    static let maxDepth = 32
 
     private static func leadingSpaces(_ line: String) -> Int {
         var count = 0
@@ -152,7 +156,7 @@ public enum MarkdownParser {
         return alignments
     }
 
-    private static func parseBlocks(_ lines: [String], _ index: inout Int, indent: Int) -> [MarkdownBlock] {
+    private static func parseBlocks(_ lines: [String], _ index: inout Int, indent: Int, depth: Int) -> [MarkdownBlock] {
         var blocks: [MarkdownBlock] = []
         var paragraph: [String] = []
 
@@ -213,7 +217,7 @@ public enum MarkdownParser {
                 continue
             }
 
-            if line.trimmingCharacters(in: .whitespaces).hasPrefix(">") {
+            if depth < maxDepth, line.trimmingCharacters(in: .whitespaces).hasPrefix(">") {
                 flushParagraph()
                 var quoted: [String] = []
                 while index < lines.count {
@@ -225,7 +229,7 @@ public enum MarkdownParser {
                     index += 1
                 }
                 var quoteIndex = 0
-                blocks.append(.quote(parseBlocks(quoted, &quoteIndex, indent: 0)))
+                blocks.append(.quote(parseBlocks(quoted, &quoteIndex, indent: 0, depth: depth + 1)))
                 continue
             }
 
@@ -247,7 +251,7 @@ public enum MarkdownParser {
                 continue
             }
 
-            if let first = listItem(line) {
+            if depth < maxDepth, let first = listItem(line) {
                 flushParagraph()
                 var items: [MarkdownList.Item] = []
                 let ordered = first.ordered
@@ -274,7 +278,7 @@ public enum MarkdownParser {
                         text += "\n" + trimmedNext
                         index += 1
                     }
-                    let children = parseBlocks(lines, &index, indent: indent + item.indent)
+                    let children = parseBlocks(lines, &index, indent: indent + item.indent, depth: depth + 1)
                     items.append(MarkdownList.Item(text: text, checked: checked, children: children))
                 }
                 blocks.append(.list(MarkdownList(ordered: ordered, start: first.number, items: items)))

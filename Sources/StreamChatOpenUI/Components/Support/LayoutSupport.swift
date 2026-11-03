@@ -109,14 +109,21 @@ struct FlowLayout: Layout {
 /// A responsive grid: as many equal-width columns as fit `minItemWidth`.
 @available(iOS 17.0, macOS 14.0, *)
 struct ResponsiveGridLayout: Layout {
-    var spacing: CGFloat = 12
-    var minItemWidth: CGFloat = 150
-    var maxColumns: Int = 4
+    let spacing: CGFloat
+    let minItemWidth: CGFloat
+    let maxColumns: Int
+
+    // The model writes the gap, so one that is negative or not finite is no gap.
+    init(spacing: CGFloat = 12, minItemWidth: CGFloat = 150, maxColumns: Int = 4) {
+        self.spacing = spacing.isFinite ? max(spacing, 0) : 0
+        self.minItemWidth = minItemWidth.isFinite ? max(minItemWidth, 1) : 150
+        self.maxColumns = max(maxColumns, 1)
+    }
 
     private func columns(for width: CGFloat, count: Int) -> Int {
         guard width.isFinite, width > 0 else { return max(1, min(count, 2)) }
-        let fitting = Int((width + spacing) / (minItemWidth + spacing))
-        return max(1, min(maxColumns, min(fitting, max(count, 1))))
+        let fitting = ((width + spacing) / (minItemWidth + spacing)).rounded(.down)
+        return max(1, min(maxColumns, max(count, 1), Int(min(fitting, CGFloat(maxColumns)))))
     }
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {

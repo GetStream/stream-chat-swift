@@ -181,10 +181,26 @@ enum SelectionField {
 
 @available(iOS 17.0, macOS 14.0, *)
 enum SliderValues {
+    // The model writes the bounds, so they can be anything: SwiftUI's Slider needs finite bounds
+    // whose difference is representable.
     static func bounds(minimum: Double?, maximum: Double?) -> ClosedRange<Double> {
-        let lower = minimum.flatMap { $0.isFinite ? $0 : nil } ?? 0
-        let upper = Swift.max(maximum.flatMap { $0.isFinite ? $0 : nil } ?? 100, lower + 1)
+        let limit = 1e15
+        func bounded(_ value: Double?) -> Double? {
+            value.flatMap { $0.isFinite ? Swift.min(Swift.max($0, -limit), limit) : nil }
+        }
+        let lower = bounded(minimum) ?? 0
+        let upper = Swift.max(bounded(maximum) ?? 100, lower + 1)
         return lower...upper
+    }
+
+    // A step SwiftUI's Slider takes: finite, positive and no larger than the range, which it
+    // otherwise stops on with "max stride must be positive".
+    static func step(_ step: Double?, discrete: Bool, in bounds: ClosedRange<Double>) -> Double? {
+        let span = bounds.upperBound - bounds.lowerBound
+        if let step, step.isFinite, step > 0 {
+            return step <= span ? step : nil
+        }
+        return discrete && span >= 1 ? 1 : nil
     }
 
     static func values(_ value: OpenUIValue?, in bounds: ClosedRange<Double>) -> [Double] {

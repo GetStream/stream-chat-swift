@@ -10,11 +10,34 @@ struct OpenUIMessageView: View {
     let runtime: OpenUIRuntime
     let program: String
     let isStreaming: Bool
+    var mediaURL: @Sendable (URL) -> URL? = { $0 }
+
+    @State private var isOnScreen = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         OpenUIView(runtime: runtime)
-            .onAppear { runtime.update(response: program, isStreaming: isStreaming) }
+            .environment(\.openUIMediaURL, mediaURL)
+            .onAppear {
+                isOnScreen = true
+                runtime.update(response: program, isStreaming: isStreaming)
+                refreshWhileShown()
+            }
+            .onDisappear {
+                isOnScreen = false
+                refreshWhileShown()
+            }
             .onChange(of: program) { runtime.update(response: program, isStreaming: isStreaming) }
             .onChange(of: isStreaming) { runtime.update(response: program, isStreaming: isStreaming) }
+            .onChange(of: scenePhase) { refreshWhileShown() }
+    }
+
+    // A reply off screen, or in an app in the background, doesn't keep running the host's tools.
+    private func refreshWhileShown() {
+        if isOnScreen && scenePhase == .active {
+            runtime.queryManager.resumeRefreshes()
+        } else {
+            runtime.queryManager.pauseRefreshes()
+        }
     }
 }

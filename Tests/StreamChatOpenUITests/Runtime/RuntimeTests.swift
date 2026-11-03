@@ -210,6 +210,22 @@ struct QueryManagerTests {
         manager.evaluateQueries([])
     }
 
+    @Test func refreshesPauseWhileTheirReplyIsOffScreen() async {
+        let provider = RecordingToolProvider(minimumRefreshInterval: 0.01) { _, _, count in ["n": .number(Double(count))] }
+        let manager = QueryManager(toolProvider: provider)
+        manager.evaluateQueries([node("health", refresh: 0.02)])
+        #expect(await waitUntil { provider.calls.count >= 2 })
+
+        manager.pauseRefreshes()
+        let paused = provider.calls.count
+        try? await Task.sleep(nanoseconds: 150_000_000)
+        #expect(provider.calls.count <= paused + 1)
+
+        manager.resumeRefreshes()
+        #expect(await waitUntil { provider.calls.count >= paused + 3 })
+        manager.evaluateQueries([])
+    }
+
     @Test func mutationsReportStatusAndRejectConcurrentCalls() async {
         let provider = RecordingToolProvider { name, args, _ in
             try await Task.sleep(nanoseconds: 30_000_000)

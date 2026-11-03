@@ -254,8 +254,7 @@ struct LegendView: View {
     // A value's whole percentage of the total, or nil when the model's numbers don't make one,
     // such as an infinite slice.
     static func percent(_ value: Double, of total: Double) -> Int? {
-        let percent = (value / total * 100).rounded()
-        return percent.isFinite ? Int(percent) : nil
+        Int(exactly: (value / total * 100).rounded())
     }
 }
 

@@ -12,13 +12,20 @@ import SwiftUI
 final class OpenUIEngine: AIUIEngine {
     private weak var host: (any AIUIHosting)?
     private let toolProvider: any OpenUIToolProvider
+    private let mediaURL: @Sendable (URL) -> URL?
     private(set) var library: ComponentLibrary
     private(set) var runtimes: [String: OpenUIRuntime] = [:]
     private var messageIDs: [ObjectIdentifier: String] = [:]
 
-    init(library: ComponentLibrary, host: any AIUIHosting, toolProvider: any OpenUIToolProvider) {
+    init(
+        library: ComponentLibrary,
+        host: any AIUIHosting,
+        toolProvider: any OpenUIToolProvider,
+        mediaURL: @escaping @Sendable (URL) -> URL? = { $0 }
+    ) {
         self.host = host
         self.toolProvider = toolProvider
+        self.mediaURL = mediaURL
         self.library = library
         let components = OpenUIRenderer.placeableSchemas(of: host.components, in: library).map { placeable -> OpenUIComponentDefinition in
             let component: any AIUIComponent = placeable.component
@@ -36,7 +43,7 @@ final class OpenUIEngine: AIUIEngine {
     func view(for document: AIUIDocument, messageID: String) -> OpenUIMessageView? {
         guard let program = document.text else { return nil }
         let runtime = runtimes[messageID] ?? makeRuntime(messageID: messageID, program: program, isStreaming: document.isStreaming)
-        return OpenUIMessageView(runtime: runtime, program: program, isStreaming: document.isStreaming)
+        return OpenUIMessageView(runtime: runtime, program: program, isStreaming: document.isStreaming, mediaURL: mediaURL)
     }
 
     // A reply's runtime starts with its program, before any view follows it.
@@ -97,11 +104,13 @@ final class OpenUIEngine: AIUIEngine {
         if !params.isEmpty {
             payload["params"] = .dictionary(params.rawJSON)
         }
+        // Only the values of the form the action belongs to go to the agent, as the person's next
+        // message: outside a form, the action carries none, and a password never.
         if let form = event.formName {
             payload["form"] = .string(form)
-        }
-        if let values = event.formState, !values.isEmpty {
-            payload["values"] = .dictionary(values.rawJSON)
+            if let values = event.formState?.withoutSecrets, !values.isEmpty {
+                payload["values"] = .dictionary(values.rawJSON)
+            }
         }
         let label = event.humanFriendlyMessage.isEmpty ? (event.context?.stringValue ?? event.type) : event.humanFriendlyMessage
         host.send(AIUIAction(messageID: messageID, format: .openUI, name: event.type, label: label, payload: payload))

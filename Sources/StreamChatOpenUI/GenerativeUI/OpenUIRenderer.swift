@@ -28,14 +28,23 @@ public final class OpenUIRenderer: AIUIRenderer {
     /// The library the agent writes with, before the app's components join it.
     public let library: ComponentLibrary
     private let toolProvider: (any OpenUIToolProvider)?
+    private let mediaURL: @Sendable (URL) -> URL?
 
     /// - Parameters:
     ///   - library: The library the agent writes with, the chat library by default.
     ///   - toolProvider: Runs the tools of `Query()` and `Mutation()`. By default they are the
     ///     host's tools, run on the device.
-    public init(library: ComponentLibrary = .openUIChat, toolProvider: (any OpenUIToolProvider)? = nil) {
+    ///   - mediaURL: The URL an image loads from, given the web link the model wrote, or `nil` to
+    ///     not load it, such as to allow only your own image hosts. A link that holds something
+    ///     the person typed in the reply never loads. By default every other web link does.
+    public init(
+        library: ComponentLibrary = .openUIChat,
+        toolProvider: (any OpenUIToolProvider)? = nil,
+        mediaURL: @escaping @Sendable (URL) -> URL? = { $0 }
+    ) {
         self.library = library
         self.toolProvider = toolProvider
+        self.mediaURL = mediaURL
     }
 
     /// The fence the agent writes its program in, and the instructions its model needs to write
@@ -47,7 +56,7 @@ public final class OpenUIRenderer: AIUIRenderer {
     }
 
     public func makeEngine(host: any AIUIHosting) -> some AIUIEngine {
-        OpenUIEngine(library: library, host: host, toolProvider: toolProvider ?? HostToolProvider(host: host))
+        OpenUIEngine(library: library, host: host, toolProvider: toolProvider ?? HostToolProvider(host: host), mediaURL: mediaURL)
     }
 
     static func schema(of definition: AIUIComponentDefinition) throws -> ComponentSchema {

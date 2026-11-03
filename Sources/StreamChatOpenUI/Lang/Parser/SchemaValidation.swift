@@ -13,6 +13,7 @@ final class MaterializeContext {
     var unresolved: [String] = []
     var visited: Set<String> = []
     var depth = 0
+    var expansions = 0
     let partial: Bool
     var currentStatementId: String?
     /// Statement IDs not reached yet (insertion ordered). Whatever remains is orphaned.

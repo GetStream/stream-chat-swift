@@ -12,6 +12,8 @@ struct RemoteImage: View {
     var contentMode: ContentMode = .fill
     var alt: String?
     @Environment(\.openUITheme) private var theme
+    @Environment(\.openUIMediaURL) private var mediaURL
+    @Environment(OpenUIRuntime.self) private var runtime: OpenUIRuntime?
     @State private var loaded: LoadedImage?
     @State private var failedURL: URL?
 
@@ -20,8 +22,14 @@ struct RemoteImage: View {
         let image: CGImage
     }
 
+    // A web link the host lets load, which holds nothing the person typed.
+    private var source: URL? {
+        guard let url = RemoteImageLoader.url(from: url).flatMap(mediaURL) else { return nil }
+        return runtime?.carriesInput(url) == true ? nil : url
+    }
+
     var body: some View {
-        if let resolved = RemoteImageLoader.url(from: url) {
+        if let resolved = source {
             let image = loaded?.url == resolved ? loaded?.image : RemoteImageLoader.shared.cachedImage(for: resolved)
             Group {
                 if let image {
@@ -232,5 +240,19 @@ final class RemoteImageLoader {
             recentlyUsed.remove(at: index)
         }
         recentlyUsed.append(url)
+    }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+struct OpenUIMediaURLKey: EnvironmentKey {
+    static let defaultValue: @Sendable (URL) -> URL? = { $0 }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+extension EnvironmentValues {
+    // The URL an image loads from, given the one the model wrote, or `nil` to not load it.
+    var openUIMediaURL: @Sendable (URL) -> URL? {
+        get { self[OpenUIMediaURLKey.self] }
+        set { self[OpenUIMediaURLKey.self] = newValue }
     }
 }

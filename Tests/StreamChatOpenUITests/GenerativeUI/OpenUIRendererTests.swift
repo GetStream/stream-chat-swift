@@ -231,6 +231,35 @@ struct OpenUIRendererTests {
         #expect(host.sent.isEmpty)
     }
 
+    @Test func onlyTheActionsFormSendsItsValuesAndNeverItsPasswords() {
+        let host = FakeHost()
+        let engine = OpenUIEngine(library: .openUIChat, host: host, toolProvider: FunctionToolProvider([:]))
+        let state: OpenUIObject = [
+            "login": ["pw": ["value": "hunter22", "secret": true], "email": ["value": "a@b.co"]],
+            "$plan": "pro"
+        ]
+
+        engine.handle(ActionEvent(type: "continue_conversation", humanFriendlyMessage: "Show plans", formState: state), messageID: "m1")
+        engine.handle(
+            ActionEvent(type: "continue_conversation", humanFriendlyMessage: "Sign in", formState: ["login": state["login"]!], formName: "login"),
+            messageID: "m1"
+        )
+
+        #expect(host.sent[0].payload["values"] == nil, "an action outside a form carries no values")
+        #expect(host.sent[1].payload["values"] == .dictionary(["login": .dictionary(["email": .dictionary(["value": .string("a@b.co")])])]))
+    }
+
+    @Test func theHostDecidesWhereImagesLoadFrom() throws {
+        let renderer = OpenUIRenderer(mediaURL: { $0.host == "cdn.example" ? $0 : nil })
+        let engine = try #require(renderer.makeEngine(host: FakeHost()) as? OpenUIEngine)
+        let view = try #require(engine.view(for: Self.document(#"root = Card([TextContent("Hi")])"#), messageID: "m1"))
+
+        let own = try #require(URL(string: "https://cdn.example/a.png"))
+        let other = try #require(URL(string: "https://other.example/a.png"))
+        #expect(view.mediaURL(own) != nil)
+        #expect(view.mediaURL(other) == nil)
+    }
+
     @Test func actionsAfterTheConversationClosedAreDropped() {
         var host: FakeHost? = FakeHost()
         let engine = OpenUIEngine(library: .openUIChat, host: host!, toolProvider: FunctionToolProvider([:]))

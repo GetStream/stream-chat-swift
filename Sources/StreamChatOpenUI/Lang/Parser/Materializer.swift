@@ -12,6 +12,7 @@ enum Materializer {
     // each level, so a chain of references deeper than any real program reads as null instead
     // of running out of stack.
     static let maxDepth = 256
+    static let maxExpansions = 10000
 
     /// Whether a prop value contains anything that needs runtime evaluation.
     static func containsDynamicValue(_ value: OpenUIValue) -> Bool {
@@ -188,6 +189,12 @@ enum Materializer {
             return mode == .expression ? .expression(node) : .value(.expression(node))
         }
 
+        // A reference can be expanded once for each place it's used, so declarations that each
+        // use the previous one twice double the work: past a budget, they expand to nothing.
+        context.expansions += 1
+        guard context.expansions <= maxExpansions else {
+            return mode == .expression ? .expression(.placeholder(name)) : .value(.null)
+        }
         context.visited.insert(name)
         let previousStatementId = context.currentStatementId
         context.currentStatementId = name

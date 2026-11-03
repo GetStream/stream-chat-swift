@@ -102,6 +102,7 @@ public final class QueryManager {
     private var mutations: [String: MutationEntry] = [:]
     private var cache: [String: CacheEntry] = [:]
     private var disposed = false
+    private var refreshesPaused = false
     private var generation = 0
 
     public private(set) var snapshot = Snapshot()
@@ -343,7 +344,7 @@ public final class QueryManager {
             if interval != query.refreshInterval {
                 query.timer?.cancel()
                 query.timer = nil
-                if interval > 0 {
+                if interval > 0 && !refreshesPaused {
                     query.timer = makeRefreshTimer(query: query, statementId: node.statementId, interval: interval)
                 }
                 query.refreshInterval = interval
@@ -477,6 +478,23 @@ public final class QueryManager {
 
     public func activate() {
         disposed = false
+    }
+
+    // Stops the refresh timers while their reply is off screen, keeping the queries and their data.
+    func pauseRefreshes() {
+        refreshesPaused = true
+        for query in queries.values {
+            query.timer?.cancel()
+            query.timer = nil
+        }
+    }
+
+    func resumeRefreshes() {
+        guard refreshesPaused else { return }
+        refreshesPaused = false
+        for (statementId, query) in queries where query.refreshInterval > 0 && query.timer == nil {
+            query.timer = makeRefreshTimer(query: query, statementId: statementId, interval: query.refreshInterval)
+        }
     }
 
     /// Stops timers and in-flight bookkeeping. Cached data and query entries are kept.

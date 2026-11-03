@@ -140,10 +140,28 @@ public enum FormValidation {
             if isEmpty(value) { return nil }
             guard case .string(let string)? = value, case .string(let pattern)? = argument,
                   let regex = try? NSRegularExpression(pattern: pattern) else { return nil }
-            let range = NSRange(string.startIndex..., in: string)
-            return regex.firstMatch(in: string, range: range) != nil ? nil : L10n.Validation.pattern
+            // A pattern that takes too long to decide doesn't let the value through.
+            return firstMatch(of: regex, in: string) == true ? nil : L10n.Validation.pattern
         }
     ]
+
+    // The model writes the pattern, and one that backtracks, such as `^(a+)+$`, can take minutes
+    // on a short value. `nil` when the match took longer than `timeout`.
+    static func firstMatch(of expression: NSRegularExpression, in value: String, timeout: TimeInterval = 0.1) -> Bool? {
+        let deadline = ProcessInfo.processInfo.systemUptime + timeout
+        var found = false
+        var timedOut = false
+        expression.enumerateMatches(in: value, options: .reportProgress, range: NSRange(value.startIndex..., in: value)) { result, _, stop in
+            if result != nil {
+                found = true
+                stop.pointee = true
+            } else if ProcessInfo.processInfo.systemUptime > deadline {
+                timedOut = true
+                stop.pointee = true
+            }
+        }
+        return timedOut ? nil : found
+    }
 
     /// Runs rules against a value, stopping at the first error. Custom validators take precedence.
     public static func validate(_ value: OpenUIValue?, rules: [ValidationRule], customValidators: [String: Validator] = [:]) -> String? {

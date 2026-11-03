@@ -113,6 +113,93 @@ struct RobustnessTests {
         #expect(LegendView.percent(1, of: 4) == 25)
         #expect(LegendView.percent(.infinity, of: .infinity) == nil)
         #expect(LegendView.percent(.nan, of: 1) == nil)
+        #expect(LegendView.percent(1e20, of: 1) == nil, "finite, but too large for an Int")
+    }
+
+    @Test func sliderStepsAreOnesSwiftUITakes() {
+        let bounds = SliderValues.bounds(minimum: 0, maximum: 100)
+
+        #expect(SliderValues.step(101, discrete: false, in: bounds) == nil)
+        #expect(SliderValues.step(.infinity, discrete: false, in: bounds) == nil)
+        #expect(SliderValues.step(5, discrete: false, in: bounds) == 5)
+        #expect(SliderValues.step(nil, discrete: true, in: bounds) == 1)
+        #expect(SliderValues.step(nil, discrete: true, in: 0...0.5) == nil)
+        #expect(SliderValues.bounds(minimum: 1e16, maximum: 0) == 1e15...(1e15 + 1))
+    }
+
+    @Test func aGridGapThatIsNegativeOrNotFiniteIsNoGap() {
+        #expect(ResponsiveGridLayout(spacing: -150).spacing == 0)
+        #expect(ResponsiveGridLayout(spacing: .infinity).spacing == 0)
+        #expect(ResponsiveGridLayout(spacing: 8).spacing == 8)
+        #expect(ResponsiveGridLayout(minItemWidth: -1).minItemWidth == 1)
+    }
+
+    @Test func aGridWithANegativeGapLaysOut() {
+        let items = (0..<4).map { #"SnippetCardItem("i\#($0)", IconText(Icon("star"), "neutral", "m", "A"))"# }.joined(separator: ", ")
+        let runtime = OpenUIRuntime(library: .openUIChat)
+        runtime.update(response: #"root = Card([SnippetCardBlock([\#(items)], "grid", true, null, -150)])"#, isStreaming: false)
+
+        #expect(RenderingTests.render(runtime) != nil)
+    }
+
+    @Test func deeplyNestedQuotesInTextDoNotOverflowTheStack() {
+        let blocks = MarkdownParser.parse(String(repeating: ">", count: 10000) + " hello")
+
+        var depth = 0
+        var current = blocks
+        while case .quote(let inner)? = current.first {
+            depth += 1
+            current = inner
+        }
+        #expect(depth == MarkdownParser.maxDepth)
+        #expect(!current.isEmpty, "what is deeper reads as text")
+    }
+
+    @Test func referencesThatDoubleOnEachLevelStopExpanding() {
+        var lines = [#"a0 = TextContent("x")"#]
+        for level in 1...22 {
+            lines.append("a\(level) = [a\(level - 1), a\(level - 1)]")
+        }
+        lines.append("root = Card([a22])")
+        let started = ProcessInfo.processInfo.systemUptime
+
+        let result = ComponentLibrary.openUIChat.parser.parse(lines.joined(separator: "\n"))
+
+        #expect(result.root?.typeName == "Card")
+        #expect(ProcessInfo.processInfo.systemUptime - started < 2)
+    }
+
+    @Test func aPatternThatBacktracksGivesUpInsteadOfFreezing() throws {
+        let expression = try NSRegularExpression(pattern: "^(a+)+$")
+        let started = ProcessInfo.processInfo.systemUptime
+
+        #expect(FormValidation.firstMatch(of: expression, in: String(repeating: "a", count: 28) + "!") == nil)
+        #expect(ProcessInfo.processInfo.systemUptime - started < 2)
+        #expect(FormValidation.firstMatch(of: expression, in: "aaa") == true)
+    }
+
+    @Test func imageLinksThatHoldWhatThePersonTypedDoNotLoad() throws {
+        let runtime = OpenUIRuntime(library: .openUIChat)
+        runtime.setFieldValue(formName: "login", componentType: "Input", name: "pw", value: "hunter22", isSecret: true)
+        let leaking = try #require(URL(string: "https://attacker.example/p?pw=hunter22"))
+        let encoded = try #require(URL(string: "https://attacker.example/p?pw=hunter%2022"))
+        let logo = try #require(URL(string: "https://cdn.example/logo.png"))
+
+        #expect(runtime.carriesInput(leaking))
+        #expect(!runtime.carriesInput(logo))
+        runtime.setFieldValue(formName: "login", componentType: "Input", name: "pw", value: "hunter 22", isSecret: true)
+        #expect(runtime.carriesInput(encoded), "percent-encoded too")
+    }
+
+    @Test func passwordsNeverLeaveTheDevice() {
+        let form: OpenUIObject = [
+            "login": ["pw": ["value": "hunter22", "componentType": "Input", "secret": true], "email": ["value": "a@b.co", "componentType": "Input"]]
+        ]
+        let event = ActionEvent(type: "continue_conversation", humanFriendlyMessage: "Sign in", formState: form, formName: "login")
+
+        #expect(form.withoutSecrets == ["login": ["email": ["value": "a@b.co", "componentType": "Input"]]])
+        #expect(!event.assistantMessage.contains("hunter22"))
+        #expect(event.assistantMessage.contains("a@b.co"))
     }
 
     @Test func textAreaLineCountIsKeptInRange() {

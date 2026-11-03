@@ -92,7 +92,14 @@ struct TextInputView: View {
         let props = context.props
         let name = props.text("name") ?? ""
         let componentType = multiline ? "TextArea" : "Input"
-        let field = context.runtime.stateField(name: name, binding: props["value"], formName: formName, componentType: componentType)
+        let type = props.string("type") ?? "text"
+        let field = context.runtime.stateField(
+            name: name,
+            binding: props["value"],
+            formName: formName,
+            componentType: componentType,
+            isSecret: !multiline && type == "password"
+        )
         let rules = FormValidation.rules(from: props["rules"])
         let text = Binding<String>(
             get: { field.value.map { JS.isNullish($0) ? "" : JS.toString($0) } ?? "" },
@@ -102,7 +109,6 @@ struct TextInputView: View {
             }
         )
         let placeholder = props.text("placeholder") ?? ""
-        let type = props.string("type") ?? "text"
 
         Group {
             if multiline {
@@ -305,7 +311,7 @@ struct SliderView: View {
         let field = context.runtime.stateField(name: name, binding: props["value"], formName: formName, componentType: "Slider")
         let rules = FormValidation.rules(from: props["rules"])
         let bounds = SliderValues.bounds(minimum: props.number("min"), maximum: props.number("max"))
-        let step = props.number("step").flatMap { $0 > 0 ? $0 : nil } ?? (props.string("variant") == "discrete" ? 1 : nil)
+        let step = SliderValues.step(props.number("step"), discrete: props.string("variant") == "discrete", in: bounds)
         let stored = SliderValues.values(field.value.flatMap { JS.isNullish($0) ? nil : $0 } ?? props["defaultValue"], in: bounds)
         let values = draft.map { SliderValues.clamped($0, to: bounds) } ?? stored
         let label = props.text("label") ?? name

@@ -105,3 +105,16 @@ extension OpenUIObject: ExpressibleByDictionaryLiteral {
         self.init(elements)
     }
 }
+
+@available(iOS 17.0, macOS 14.0, *)
+extension OpenUIObject {
+    // Form state without what password fields hold, at any depth, for anything that leaves the
+    // device.
+    var withoutSecrets: OpenUIObject {
+        OpenUIObject(entries.compactMap { key, value -> (String, OpenUIValue)? in
+            guard case .object(let object) = value else { return (key, value) }
+            if object["secret"] == .bool(true) { return nil }
+            return (key, .object(object.withoutSecrets))
+        })
+    }
+}

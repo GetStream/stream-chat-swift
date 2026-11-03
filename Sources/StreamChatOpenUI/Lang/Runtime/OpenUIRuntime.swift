@@ -69,6 +69,8 @@ public final class OpenUIRuntime {
     @ObservationIgnored private var isRecomputing = false
     @ObservationIgnored private var needsRecompute = false
     @ObservationIgnored private var runtimeErrors: [OpenUIError] = []
+    // The latest text the person entered in each field or `$variable`, by its path.
+    @ObservationIgnored private var entered: [String: String] = [:]
     @ObservationIgnored private var functions: [String: OpenUIFunction]
     @ObservationIgnored private var customActions: [String: OpenUICustomAction]
 
@@ -304,9 +306,11 @@ public final class OpenUIRuntime {
     }
 
     /// Writes a field value as `{ value, componentType }`.
-    public func setFieldValue(formName: String?, componentType: String?, name: String, value: OpenUIValue?) {
+    public func setFieldValue(formName: String?, componentType: String?, name: String, value: OpenUIValue?, isSecret: Bool = false) {
         var wrapped: OpenUIObject = ["value": value ?? .null]
         if let componentType { wrapped["componentType"] = .string(componentType) }
+        if isSecret { wrapped["secret"] = .bool(true) }
+        entered[(formName.map { $0 + "/" } ?? "") + name] = value?.stringValue
         guard let formName else {
             store.set(name, .object(wrapped))
             return
@@ -317,7 +321,13 @@ public final class OpenUIRuntime {
     }
 
     /// Resolves a field that may be bound to a `$variable` (reactive) or stored as form state.
-    public func stateField(name: String, binding: OpenUIValue?, formName: String?, componentType: String? = nil) -> StateField {
+    public func stateField(
+        name: String,
+        binding: OpenUIValue?,
+        formName: String?,
+        componentType: String? = nil,
+        isSecret: Bool = false
+    ) -> StateField {
         if let target = ReactiveBinding.target(of: binding) {
             let expression = ReactiveBinding.expression(of: binding)
             return StateField(name: name, value: store.get(target), isReactive: true) { [weak self] newValue in
@@ -326,12 +336,25 @@ public final class OpenUIRuntime {
                 context.extraScope = ["$value": newValue ?? .null]
                 let next = expression.map { Evaluator.evaluate($0, context) } ?? newValue
                 self.store.set(target, next)
+                self.entered[target] = newValue?.stringValue
             }
         }
         let current = fieldValue(formName: formName, name: name)
         let value = JS.isNullish(current) ? (binding ?? current) : current
         return StateField(name: name, value: value, isReactive: false) { [weak self] newValue in
-            self?.setFieldValue(formName: formName, componentType: componentType, name: name, value: newValue)
+            self?.setFieldValue(formName: formName, componentType: componentType, name: name, value: newValue, isSecret: isSecret)
+        }
+    }
+
+    // Whether a link holds something the person typed into this response, which an image the
+    // model links to would otherwise send to its server as they type, without a tap.
+    func carriesInput(_ url: URL) -> Bool {
+        let link = url.absoluteString
+        let decoded = link.removingPercentEncoding ?? link
+        return entered.values.contains { value in
+            guard value.count >= 3 else { return false }
+            let encoded = value.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? value
+            return decoded.contains(value) || link.contains(encoded)
         }
     }
 
