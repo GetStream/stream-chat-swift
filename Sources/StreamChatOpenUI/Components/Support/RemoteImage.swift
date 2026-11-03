@@ -117,34 +117,52 @@ extension RemoteImage {
     }
 }
 
-// Loads the images the model links to: one download per URL, decoded off the main thread at no
-// more than `maxPixelSize`, and kept in a small in-memory cache that drops the least recently
-// shown images first.
+// Loads the images the model links to: one download per URL and `maxDownloads` at a time, decoded
+// off the main thread at no more than `maxPixelSize`, and kept in a small in-memory cache that
+// drops the least recently shown images first. A download stops once no view waits for it, and a
+// URL that failed isn't downloaded again for `failureLifetime`.
 @available(iOS 17.0, macOS 14.0, *)
 @MainActor
 final class RemoteImageLoader {
     typealias Fetch = @Sendable (_ url: URL, _ maxBytes: Int) async throws -> Data
 
     static let shared = RemoteImageLoader()
+    static let maxFailures = 256
 
     let maxPixelSize: Int
     let maxBytes: Int
     let costLimit: Int
+    let maxDownloads: Int
+    let failureLifetime: Duration
     private let fetch: Fetch
     private var images: [URL: CGImage] = [:]
     private var recentlyUsed: [URL] = []
     private var cost = 0
-    private var loads: [URL: Task<CGImage?, Never>] = [:]
+    private var loads: [URL: Load] = [:]
+    private var queued: [URL] = []
+    private var downloading = 0
+    private var failures: [URL: ContinuousClock.Instant] = [:]
+    private var lastID = 0
+
+    private struct Load {
+        let id: Int
+        var task: Task<Void, Never>?
+        var waiters: [Int: CheckedContinuation<CGImage?, Never>] = [:]
+    }
 
     init(
         maxPixelSize: Int = 1200,
         maxBytes: Int = 20_000_000,
         costLimit: Int = 64 * 1024 * 1024,
+        maxDownloads: Int = 4,
+        failureLifetime: Duration = .seconds(300),
         fetch: @escaping Fetch = { try await RemoteImageLoader.download($0, maxBytes: $1) }
     ) {
         self.maxPixelSize = maxPixelSize
         self.maxBytes = maxBytes
         self.costLimit = costLimit
+        self.maxDownloads = max(1, maxDownloads)
+        self.failureLifetime = failureLifetime
         self.fetch = fetch
     }
 
@@ -161,21 +179,98 @@ final class RemoteImageLoader {
         return image
     }
 
+    func hasFailed(_ url: URL) -> Bool {
+        guard let failed = failures[url] else { return false }
+        if failed.duration(to: .now) < failureLifetime { return true }
+        failures[url] = nil
+        return false
+    }
+
+    // The image, or nil when it fails or the calling task is cancelled.
     func image(for url: URL) async -> CGImage? {
         if let image = cachedImage(for: url) { return image }
-        if let load = loads[url] { return await load.value }
+        guard !hasFailed(url), !Task.isCancelled else { return nil }
+        let waiter = nextID()
+        return await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                wait(for: url, waiter: waiter, continuation: continuation)
+            }
+        } onCancel: {
+            Task { @MainActor in self.stopWaiting(for: url, waiter: waiter) }
+        }
+    }
+
+    private func nextID() -> Int {
+        lastID += 1
+        return lastID
+    }
+
+    private func wait(for url: URL, waiter: Int, continuation: CheckedContinuation<CGImage?, Never>) {
+        if loads[url] == nil {
+            loads[url] = Load(id: nextID())
+            queued.append(url)
+        }
+        loads[url]?.waiters[waiter] = continuation
+        startQueuedLoads()
+    }
+
+    private func stopWaiting(for url: URL, waiter: Int) {
+        guard let continuation = loads[url]?.waiters.removeValue(forKey: waiter) else { return }
+        continuation.resume(returning: nil)
+        guard loads[url]?.waiters.isEmpty == true else { return }
+        loads[url]?.task?.cancel()
+        loads[url] = nil
+        queued.removeAll { $0 == url }
+    }
+
+    private func startQueuedLoads() {
+        while downloading < maxDownloads, !queued.isEmpty {
+            let url = queued.removeFirst()
+            guard let load = loads[url], load.task == nil else { continue }
+            downloading += 1
+            let id = load.id
+            loads[url]?.task = Task { await self.load(url, id: id) }
+        }
+    }
+
+    private func load(_ url: URL, id: Int) async {
         let fetch = self.fetch
         let maxPixelSize = self.maxPixelSize
         let maxBytes = self.maxBytes
-        let load = Task.detached(priority: .utility) { () -> CGImage? in
+        let work = Task.detached(priority: .utility) { () -> CGImage? in
             guard let data = try? await fetch(url, maxBytes), data.count <= maxBytes else { return nil }
             return Self.downsample(data, maxPixelSize: maxPixelSize)
         }
-        loads[url] = load
-        let image = await load.value
+        let image = await withTaskCancellationHandler {
+            await work.value
+        } onCancel: {
+            work.cancel()
+        }
+        downloading -= 1
+        finish(url, id: id, image: image)
+        startQueuedLoads()
+    }
+
+    // Hands the image to the views still waiting. A load they all left was cancelled, which is
+    // no failure.
+    private func finish(_ url: URL, id: Int, image: CGImage?) {
+        guard let load = loads[url], load.id == id else { return }
         loads[url] = nil
-        if let image { store(image, for: url) }
-        return image
+        if let image {
+            store(image, for: url)
+        } else {
+            rememberFailure(url)
+        }
+        for continuation in load.waiters.values {
+            continuation.resume(returning: image)
+        }
+    }
+
+    private func rememberFailure(_ url: URL) {
+        failures[url] = .now
+        if failures.count > Self.maxFailures, let oldest = failures.min(by: { $0.value < $1.value })?.key {
+            failures[oldest] = nil
+        }
     }
 
     nonisolated static func downsample(_ data: Data, maxPixelSize: Int) -> CGImage? {

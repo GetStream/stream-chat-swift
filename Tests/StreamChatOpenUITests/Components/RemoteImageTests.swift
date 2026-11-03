@@ -43,6 +43,30 @@ struct RemoteImageTests {
         }
     }
 
+    // How many fetches run at once, and the most that ever did.
+    final class InFlight: Sendable {
+        private let counts = OSAllocatedUnfairLock(initialState: (current: 0, most: 0))
+
+        var most: Int { counts.withLock { $0.most } }
+
+        func start() {
+            counts.withLock { state in
+                state.current += 1
+                state.most = max(state.most, state.current)
+            }
+        }
+
+        func end() {
+            counts.withLock { $0.current -= 1 }
+        }
+    }
+
+    static func waitUntil(_ condition: () -> Bool) async {
+        for _ in 0..<500 where !condition() {
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+    }
+
     static func png(width: Int, height: Int) throws -> Data {
         let context = try #require(CGContext(
             data: nil,
@@ -105,7 +129,7 @@ struct RemoteImageTests {
         #expect(log.count == 1)
     }
 
-    @Test func failedLoadsAreNotCached() async throws {
+    @Test func failedLoadsAreNotDownloadedAgainForAWhile() async throws {
         let log = FetchLog()
         let loader = Self.loader(data: Data("not an image".utf8), log: log)
         let url = try #require(URL(string: "https://example.com/broken.png"))
@@ -113,7 +137,92 @@ struct RemoteImageTests {
         #expect(await loader.image(for: url) == nil)
         #expect(await loader.image(for: url) == nil)
         #expect(loader.cachedImage(for: url) == nil)
+        #expect(loader.hasFailed(url))
+        #expect(log.count == 1)
+    }
+
+    @Test func failedLoadsAreTriedAgainOnceTheyExpire() async throws {
+        let log = FetchLog()
+        let loader = RemoteImageLoader(failureLifetime: .zero) { url, _ in
+            log.record(url)
+            return Data("not an image".utf8)
+        }
+        let url = try #require(URL(string: "https://example.com/broken.png"))
+
+        #expect(await loader.image(for: url) == nil)
+        #expect(await loader.image(for: url) == nil)
         #expect(log.count == 2)
+    }
+
+    @Test func onlyAFewImagesDownloadAtOnce() async throws {
+        let data = try Self.png(width: 10, height: 10)
+        let inFlight = InFlight()
+        let loader = RemoteImageLoader(maxDownloads: 2) { _, _ in
+            inFlight.start()
+            defer { inFlight.end() }
+            try await Task.sleep(nanoseconds: 20_000_000)
+            return data
+        }
+        let urls = try (1...8).map { try #require(URL(string: "https://example.com/\($0).png")) }
+
+        let loaded = await withTaskGroup(of: Bool.self) { group in
+            for url in urls {
+                group.addTask { await loader.image(for: url) != nil }
+            }
+            var count = 0
+            for await image in group where image {
+                count += 1
+            }
+            return count
+        }
+
+        #expect(loaded == urls.count)
+        #expect(inFlight.most <= 2)
+    }
+
+    @Test func downloadsStopWhenNoViewWaits() async throws {
+        let data = try Self.png(width: 10, height: 10)
+        let log = FetchLog()
+        let stopped = FetchLog()
+        let loader = RemoteImageLoader { url, _ in
+            log.record(url)
+            if log.count == 1 {
+                do {
+                    try await Task.sleep(nanoseconds: 60_000_000_000)
+                } catch {
+                    stopped.record(url)
+                    throw error
+                }
+            }
+            return data
+        }
+        let url = try #require(URL(string: "https://example.com/slow.png"))
+
+        let waiting = Task { await loader.image(for: url) }
+        await Self.waitUntil { log.count == 1 }
+        waiting.cancel()
+
+        #expect(await waiting.value == nil)
+        await Self.waitUntil { stopped.count == 1 }
+        #expect(stopped.count == 1)
+        #expect(!loader.hasFailed(url), "a cancelled download is no failure")
+        #expect(await loader.image(for: url) != nil)
+    }
+
+    @Test func aDownloadContinuesForTheViewsStillWaiting() async throws {
+        let data = try Self.png(width: 10, height: 10)
+        let log = FetchLog()
+        let loader = Self.loader(data: data, log: log, delay: 100_000_000)
+        let url = try #require(URL(string: "https://example.com/shared.png"))
+
+        let leaving = Task { await loader.image(for: url) }
+        let staying = Task { await loader.image(for: url) }
+        await Self.waitUntil { log.count == 1 }
+        leaving.cancel()
+
+        #expect(await leaving.value == nil)
+        #expect(await staying.value != nil)
+        #expect(log.count == 1)
     }
 
     @Test func tooLargeDownloadsAreRejected() async throws {
