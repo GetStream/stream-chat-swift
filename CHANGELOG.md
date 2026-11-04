@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add generative UI: a reply can show interactive UI its agent wrote, in a format such as OpenUI or A2UI, in place of its text [#4370](https://github.com/GetStream/stream-chat-swift/pull/4370)
 - Add `AIClientToolDefinition.annotations` with MCP's `readOnlyHint`: a reply's UI runs a tool by itself only when it is read-only, and any other only when the person taps [#4373](https://github.com/GetStream/stream-chat-swift/pull/4373)
 - Add a failure message when photos picked in the composer can't be loaded [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
-- Add `AIConversation`, the state behind an AI conversation, shown by `AIConversationView(conversation:)` and `AIComposerView(conversation:)` [#4375](https://github.com/GetStream/stream-chat-swift/pull/4375)
+- Add `AIConversation`, the state behind an AI conversation, shown by `AIConversationView(conversation:)`, with a reply's generated UI by `AIConversationView(conversation:ui:)`, and `AIComposerView(conversation:)` [#4375](https://github.com/GetStream/stream-chat-swift/pull/4375)
 ### 🐞 Fixed
 - Fix a photo picked again from the library being attached twice [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🔄 Changed

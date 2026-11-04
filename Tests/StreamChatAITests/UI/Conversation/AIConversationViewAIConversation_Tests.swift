@@ -4,6 +4,7 @@
 
 import Combine
 @testable import StreamChatAI
+import StreamCore
 import SwiftUI
 import XCTest
 
@@ -199,6 +200,84 @@ final class AIConversationViewAIConversation_Tests: XCTestCase {
         XCTAssertNil(view.messageContent(entries[0]).content.conversation)
         XCTAssertEqual(changes, 0)
         following.cancel()
+    }
+
+    // MARK: - The conversation's generated UI
+
+    func test_conversationWithUI_showsAReplyThatShowsOnlyItsUIRatherThanTheAgentThinking() {
+        let question = ChatMessage.user("u1")
+        var reply = ChatMessage.reply("a1", "", generating: true)
+        reply.uiDocument = AIUIDocument(format: .openUI, content: .string("root = Card([])"))
+        let conversation = AIConversation(transport: ConversationTransport(messages: [question, reply]))
+        let host = AIUIHost { AIUIHost_Tests.TestRenderer() } send: { _ in }
+
+        let withoutUI = AIConversationView(conversation: conversation).content(AIPendingMessageTracker())
+        let withUI = AIConversationView(conversation: conversation, ui: host).content(AIPendingMessageTracker())
+
+        XCTAssertEqual(conversation.status, .submitted, "the conversation can't tell the reply shows anything")
+        XCTAssertEqual(withoutUI.messages.map(\.id), ["u1"])
+        XCTAssertTrue(withoutUI.isThinking)
+        XCTAssertEqual(withUI.messages.map(\.id), ["u1", "a1"])
+        XCTAssertFalse(withUI.isThinking, "the reply's UI shows")
+    }
+
+    func test_conversationWithUI_showsTheAgentThinkingWhileNothingReadsTheReplysUI() {
+        var reply = ChatMessage.reply("a1", "", generating: true)
+        reply.uiDocument = AIUIDocument(format: "cards", content: .string("{}"))
+        let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1"), reply]))
+        let host = AIUIHost { AIUIHost_Tests.TestRenderer() } send: { _ in }
+
+        let shown = AIConversationView(conversation: conversation, ui: host).content(AIPendingMessageTracker())
+
+        XCTAssertEqual(shown.messages.map(\.id), ["u1"])
+        XCTAssertTrue(shown.isThinking)
+    }
+
+    func test_conversationWithUI_showsTheAgentThinkingWhileAMessageIsOnItsWay() {
+        let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1"), .reply("a1")]))
+        let view = AIConversationView(conversation: conversation, ui: AIUIHost { AIUIHost_Tests.TestRenderer() } send: { _ in })
+
+        conversation.send("Porto?")
+        let shown = view.content(AIPendingMessageTracker())
+
+        XCTAssertEqual(shown.messages.count, 3)
+        XCTAssertTrue(shown.isThinking, "the latest reply is the previous message's")
+    }
+
+    func test_conversationWithUI_givesEveryReplysUIToTheEnginesBeforeItsRowsShow() throws {
+        let replies = (0..<3).map { index in
+            var reply = ChatMessage.reply("a\(index)")
+            reply.uiDocument = AIUIDocument(format: .openUI, content: .string("root = Card([t\(index)])"))
+            return reply
+        }
+        let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1")] + replies))
+        let renderer = AIUIHost_Tests.TestRenderer()
+        let host = AIUIHost { renderer } send: { _ in }
+
+        _ = AIConversationView(conversation: conversation, ui: host).content(AIPendingMessageTracker())
+
+        let engine = try XCTUnwrap(renderer.engines.first)
+        XCTAssertEqual(engine.received.map(\.messageID), ["a0", "a1", "a2"])
+    }
+
+    func test_conversationWithUI_rowsOfferTheConversationsActions() throws {
+        guard #available(iOS 16, *) else { throw XCTSkip("Rows render with ImageRenderer") }
+        let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1"), .reply("a1")]))
+        let host = AIUIHost { AIUIHost_Tests.TestRenderer() } send: { _ in }
+        let factory = RecordingFactory()
+        let view = AIConversationView(conversation: conversation, ui: host, viewFactory: factory)
+        let entries = view.content(AIPendingMessageTracker()).messages
+        let rated = view.messageContent(entries[1]).content
+
+        for entry in entries {
+            render(view.messageContent(entry))
+        }
+
+        XCTAssertEqual(factory.edits, ["u1": true])
+        XCTAssertNotNil(factory.actions["a1"]?.onRegenerate)
+        factory.actions["a1"]?.onRate?(.positive)
+        XCTAssertEqual(conversation.ratings["a1"], .positive)
+        XCTAssertNotEqual(rated, view.messageContent(entries[1]).content, "the row shows the new rating")
     }
 
     // MARK: - Rows

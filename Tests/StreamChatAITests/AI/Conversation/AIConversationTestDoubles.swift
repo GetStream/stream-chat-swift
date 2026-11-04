@@ -12,6 +12,7 @@ struct ChatMessage: AIMessage, Equatable {
     var isGenerating = false
     var attachments: [AIMessageAttachment] = []
     var rating: AIMessageRating?
+    var uiDocument: AIUIDocument?
 
     static func user(_ id: String, _ text: String = "Plan a weekend in Lisbon") -> ChatMessage {
         ChatMessage(id: id, role: .user, text: text)
