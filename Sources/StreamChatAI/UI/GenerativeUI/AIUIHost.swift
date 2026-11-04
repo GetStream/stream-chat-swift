@@ -16,8 +16,10 @@ public protocol AIUIHosting: AnyObject, Sendable {
     /// Sends what the person did to the agent.
     func send(_ action: AIUIAction)
     /// Runs one of the app's tools for a reply's UI, such as to load data on this device.
+    /// - Parameter userInitiated: Whether the person asked for it, such as with a tap, rather
+    ///   than the UI while it shows. Only a read-only tool runs when they didn't.
     /// - Returns: The tool's output.
-    func runTool(_ name: String, arguments: [String: RawJSON]) async throws -> RawJSON
+    func runTool(_ name: String, arguments: [String: RawJSON], userInitiated: Bool) async throws -> RawJSON
     /// Opens a link from a reply's UI.
     func open(_ url: URL)
     /// The state a reply's UI was left in, such as a form's values.
@@ -67,9 +69,11 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
 
     /// - Parameters:
     ///   - components: The app's views the agent can place.
-    ///   - tools: The app's tools a reply's UI can run, to load data on this device. They run
-    ///     whenever the UI asks, without asking the person, so pass only tools that are safe to
-    ///     run that way. They are apart from the tools the agent calls.
+    ///   - tools: The app's tools a reply's UI can run on this device, which the agent's
+    ///     instructions list. They run without asking the person. One whose definition says it
+    ///     is read-only (`readOnlyHint`) runs whenever the UI asks, such as to load data while it
+    ///     shows; any other only when the person taps something that runs it. They are apart from
+    ///     the tools the agent calls.
     ///   - renderers: The renderer of each format the agent writes.
     ///   - send: Sends what the person did to the agent, as their next message.
     ///   - open: Opens a link from a reply's UI, such as with SwiftUI's `openURL`. By default, web
@@ -109,9 +113,16 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
         }
     }
 
-    public func runTool(_ name: String, arguments: [String: RawJSON] = [:]) async throws -> RawJSON {
+    public func runTool(
+        _ name: String,
+        arguments: [String: RawJSON] = [:],
+        userInitiated: Bool = false
+    ) async throws -> RawJSON {
         guard let tool = tools[name] else {
             throw AIUIToolError(message: "No tool named \(name)")
+        }
+        guard userInitiated || tool.definition.isReadOnly else {
+            throw AIUIToolError(message: "\(name) isn't read-only, so it runs only when the person asks for it")
         }
         let call = AIToolCallPart(
             id: UUID().uuidString,
@@ -163,11 +174,17 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
         }
     }
 
+    // The app's tools a reply's UI can run, in a steady order for the agent's instructions.
+    private var toolDefinitions: [AIClientToolDefinition] {
+        tools.values.map(\.definition).sorted { $0.name < $1.name }
+    }
+
     /// What the agent's backend needs to write UI this app shows: each format it reads, with
-    /// what its renderer adds, and the app's components.
+    /// what its renderer adds, such as the instructions that list the app's tools, and the app's
+    /// components.
     public var capabilities: [String: RawJSON] {
         let formats = renderers.all.map { renderer -> RawJSON in
-            var fields = renderer.capabilities(components: components)
+            var fields = renderer.capabilities(components: components, tools: toolDefinitions)
             fields["format"] = .string(renderer.format.rawValue)
             return .dictionary(fields)
         }
