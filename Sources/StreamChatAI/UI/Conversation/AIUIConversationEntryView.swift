@@ -18,19 +18,28 @@ public struct AIUIConversationEntryView<
     let factory: Factory
     let approver: AIToolApprover?
     let host: AIUIHost<Renderers>?
+    // The conversation the list shows, which offers what the person can do with the message.
+    let conversation: AIConversation<Message>?
     // Compared rather than the row, whose message, factory and host belong to the main actor.
     nonisolated let shown: AIConversationEntrySnapshot
 
-    init(entry: AIConversationEntry<Message>, factory: Factory, approver: AIToolApprover?, host: AIUIHost<Renderers>?) {
+    init(
+        entry: AIConversationEntry<Message>,
+        factory: Factory,
+        approver: AIToolApprover?,
+        host: AIUIHost<Renderers>?,
+        conversation: AIConversation<Message>? = nil
+    ) {
         self.entry = entry
         self.factory = factory
         self.approver = approver
         self.host = host
-        shown = AIConversationEntrySnapshot(entry: entry, approver: approver, host: host)
+        self.conversation = conversation
+        shown = AIConversationEntrySnapshot(entry: entry, approver: approver, host: host, conversation: conversation)
     }
 
     public var body: some View {
-        AIConversationRow(entry: entry, factory: factory, approver: approver, generated: generated)
+        AIConversationRow(entry: entry, factory: factory, approver: approver, conversation: conversation, generated: generated)
     }
 
     // The UI the agent generated for the reply, when one of the host's renderers shows it.

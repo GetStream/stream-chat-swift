@@ -6,8 +6,8 @@ import StreamCore
 import SwiftUI
 import UIKit
 
-/// The buttons under a finished reply: copy and share, then regenerate and rate when the app
-/// handles them.
+/// The buttons under a finished reply: copy and share while it has text, then regenerate and rate
+/// when the app handles them.
 public struct AIReplyActionsView: View {
     var text: String
     var actions: AIReplyActions
@@ -29,19 +29,8 @@ public struct AIReplyActionsView: View {
 
     public var body: some View {
         HStack(spacing: layout.spacingXs) {
-            button(isCopied ? images.messageCopied : images.messageCopy, isCopied ? L10n.MessageActions.copied : L10n.MessageActions.copy) {
-                UIPasteboard.general.string = text
-                isCopied = true
-                Task {
-                    try? await Task.sleep(nanoseconds: 1_500_000_000)
-                    isCopied = false
-                }
-            }
-            if #available(iOS 16.0, *) {
-                ShareLink(item: text) {
-                    icon(images.messageShare)
-                }
-                .accessibilityLabel(L10n.MessageActions.share)
+            if !text.isEmpty {
+                textActions
             }
             if let onRegenerate = actions.onRegenerate {
                 button(images.messageRegenerate, L10n.MessageActions.regenerate, action: onRegenerate)
@@ -60,6 +49,24 @@ public struct AIReplyActionsView: View {
             }
         }
         .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var textActions: some View {
+        button(isCopied ? images.messageCopied : images.messageCopy, isCopied ? L10n.MessageActions.copied : L10n.MessageActions.copy) {
+            UIPasteboard.general.string = text
+            isCopied = true
+            Task {
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                isCopied = false
+            }
+        }
+        if #available(iOS 16.0, *) {
+            ShareLink(item: text) {
+                icon(images.messageShare)
+            }
+            .accessibilityLabel(L10n.MessageActions.share)
+        }
     }
 
     private func button(_ image: Image, _ label: String, action: @escaping @MainActor () -> Void) -> some View {

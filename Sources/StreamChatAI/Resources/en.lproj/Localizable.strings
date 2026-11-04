@@ -2,8 +2,11 @@
 "composer.button.all_photos" = "All Photos";
 "composer.photos_failed.title" = "Photos Not Added";
 "composer.photos_failed.message" = "Some photos couldn't be loaded. If they're in iCloud, check your internet connection and try again.";
+"composer.editing" = "Editing message";
+"composer.button.cancel_editing" = "Cancel editing";
 "streaming.code_block.language_fallback" = "plain text";
 "conversation.button.scroll_to_latest" = "Scroll to latest";
+"conversation.error.agent" = "The agent couldn't answer. Try again.";
 "attachment.image" = "Image";
 "attachment.file" = "File";
 "attachment.details" = "%1$@ · %2$@";

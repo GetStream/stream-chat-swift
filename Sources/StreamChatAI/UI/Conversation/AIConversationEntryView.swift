@@ -12,18 +12,27 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
     let entry: AIConversationEntry<Message>
     let factory: Factory
     let approver: AIToolApprover?
+    // The conversation the list shows, which offers what the person can do with the message.
+    let conversation: AIConversation<Message>?
     // Compared rather than the row, whose message and factory belong to the main actor.
     nonisolated let shown: AIConversationEntrySnapshot
 
-    init(entry: AIConversationEntry<Message>, factory: Factory, approver: AIToolApprover?) {
+    init(entry: AIConversationEntry<Message>, factory: Factory, approver: AIToolApprover?, conversation: AIConversation<Message>?) {
         self.entry = entry
         self.factory = factory
         self.approver = approver
-        shown = AIConversationEntrySnapshot(entry: entry, approver: approver)
+        self.conversation = conversation
+        shown = AIConversationEntrySnapshot(entry: entry, approver: approver, conversation: conversation)
     }
 
     public var body: some View {
-        AIConversationRow<Message, Factory, Never>(entry: entry, factory: factory, approver: approver, generated: nil)
+        AIConversationRow<Message, Factory, Never>(
+            entry: entry,
+            factory: factory,
+            approver: approver,
+            conversation: conversation,
+            generated: nil
+        )
     }
 
     // SwiftUI compares rows of the same message, so what they show is all that can differ.
@@ -33,7 +42,7 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
 }
 
 // What a row shows, including each reasoning step's whole thinking, which can grow while the
-// message stays the same.
+// message stays the same, and what its conversation offers to do with it.
 final class AIConversationEntrySnapshot: Equatable, Sendable {
     let isPending: Bool
     let role: AIMessageRole
@@ -46,11 +55,31 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
     let isLatestReply: Bool
     let uiDocument: AIUIDocument?
     let host: ObjectIdentifier?
+    let conversation: ObjectIdentifier?
+    let rating: AIMessageRating?
+    let offersRegenerate: Bool
+    let offersEdit: Bool
 
-    init<Message: AIMessage>(entry: AIConversationEntry<Message>, approver: AIToolApprover?, host: AnyObject? = nil) {
+    @MainActor
+    init<Message: AIMessage>(
+        entry: AIConversationEntry<Message>,
+        approver: AIToolApprover?,
+        host: AnyObject? = nil,
+        conversation: AIConversation<Message>? = nil
+    ) {
         self.approver = approver.map { [$0.userID, $0.clientID, $0.authorizer?.callbackScheme ?? ""] } ?? []
         isLatestReply = entry.isLatestReply
         self.host = host.map(ObjectIdentifier.init)
+        self.conversation = conversation.map(ObjectIdentifier.init)
+        if let conversation, let message = entry.message {
+            rating = message.role == .user ? nil : conversation.ratings[message.id]
+            offersRegenerate = message.role != .user && conversation.offersRegenerate(isLatestReply: entry.isLatestReply)
+            offersEdit = conversation.offersEdit(message)
+        } else {
+            rating = nil
+            offersRegenerate = false
+            offersEdit = false
+        }
         if let message = entry.message {
             isPending = false
             role = message.role
@@ -84,5 +113,9 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
             && lhs.isLatestReply == rhs.isLatestReply
             && lhs.uiDocument == rhs.uiDocument
             && lhs.host == rhs.host
+            && lhs.conversation == rhs.conversation
+            && lhs.rating == rhs.rating
+            && lhs.offersRegenerate == rhs.offersRegenerate
+            && lhs.offersEdit == rhs.offersEdit
     }
 }

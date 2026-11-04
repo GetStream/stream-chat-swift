@@ -14,8 +14,11 @@ final class Localization_Tests: XCTestCase {
             L10n.Composer.photosFailedMessage,
             "Some photos couldn't be loaded. If they're in iCloud, check your internet connection and try again."
         )
+        XCTAssertEqual(L10n.Composer.editing, "Editing message")
+        XCTAssertEqual(L10n.Composer.cancelEditing, "Cancel editing")
         XCTAssertEqual(L10n.StreamingMessage.codeBlockLanguageFallback, "plain text")
         XCTAssertEqual(L10n.Conversation.scrollToLatest, "Scroll to latest")
+        XCTAssertEqual(L10n.Conversation.agentError, "The agent couldn't answer. Try again.")
         XCTAssertEqual(L10n.Attachment.image, "Image")
         XCTAssertEqual(L10n.Attachment.file, "File")
         XCTAssertEqual(L10n.Attachment.details("PDF", "2.4 MB"), "PDF · 2.4 MB")
