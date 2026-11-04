@@ -25,6 +25,7 @@ class ConnectionRepository: @unchecked Sendable {
     let webSocketConnectEndpoint = AllocatedUnfairLock<Endpoint<EmptyResponse>?>(nil)
     let connectUserInfo = AllocatedUnfairLock<UserInfo?>(nil)
     let isClientInActiveMode: Bool
+    let webSocketEventProtocol: WebSocketEventProtocol
     private let syncRepository: SyncRepository
     private let webSocketEncoder: RequestEncoder?
     private let webSocketClient: WebSocketClient?
@@ -33,6 +34,7 @@ class ConnectionRepository: @unchecked Sendable {
 
     init(
         isClientInActiveMode: Bool,
+        webSocketEventProtocol: WebSocketEventProtocol = .legacy,
         syncRepository: SyncRepository,
         webSocketEncoder: RequestEncoder?,
         webSocketClient: WebSocketClient?,
@@ -40,6 +42,7 @@ class ConnectionRepository: @unchecked Sendable {
         timerType: TimerScheduling.Type
     ) {
         self.isClientInActiveMode = isClientInActiveMode
+        self.webSocketEventProtocol = webSocketEventProtocol
         self.syncRepository = syncRepository
         self.webSocketEncoder = webSocketEncoder
         self.webSocketClient = webSocketClient
@@ -142,23 +145,27 @@ class ConnectionRepository: @unchecked Sendable {
             return
         }
         let userInfo = connectUserInfo.value
+        let eventProtocol = webSocketEventProtocol == .legacy ? nil : webSocketEventProtocol.rawValue
         // The server closes the socket when the auth frame does not arrive within 10 seconds.
         delegate.provideToken(timeout: 10) { [weak webSocketClient] result in
             switch result {
             case let .success(token):
                 let user = userInfo ?? UserInfo(id: token.userId)
-                let payload = WSAuthMessageRequest(
-                    products: ["chat"],
-                    token: token.rawValue,
-                    userDetails: ConnectUserDetailsRequest(
-                        custom: user.extraData.isEmpty ? nil : user.extraData,
-                        id: user.id,
-                        image: user.imageURL?.absoluteString,
-                        invisible: user.isInvisible,
-                        language: user.language?.languageCode,
-                        name: user.name,
-                        privacySettings: user.privacySettings
-                    )
+                let payload = WebSocketAuthFrame(
+                    message: WSAuthMessageRequest(
+                        products: ["chat"],
+                        token: token.rawValue,
+                        userDetails: ConnectUserDetailsRequest(
+                            custom: user.extraData.isEmpty ? nil : user.extraData,
+                            id: user.id,
+                            image: user.imageURL?.absoluteString,
+                            invisible: user.isInvisible,
+                            language: user.language?.languageCode,
+                            name: user.name,
+                            privacySettings: user.privacySettings
+                        )
+                    ),
+                    eventProtocol: eventProtocol
                 )
                 webSocketClient?.engine?.send(jsonMessage: payload)
             case let .failure(error):
@@ -299,5 +306,33 @@ class ConnectionRepository: @unchecked Sendable {
                 waiter.value(.failure(ClientError.MissingConnectionId()))
             }
         }
+    }
+}
+
+/// The first frame sent over the opened socket, extending `WSAuthMessageRequest` with the negotiated event protocol.
+struct WebSocketAuthFrame: Codable, Sendable {
+    let message: WSAuthMessageRequest
+    /// Without it, the server uses the legacy protocol.
+    let eventProtocol: Int?
+
+    private enum CodingKeys: String, CodingKey {
+        case eventProtocol = "event_protocol"
+    }
+
+    init(message: WSAuthMessageRequest, eventProtocol: Int?) {
+        self.message = message
+        self.eventProtocol = eventProtocol
+    }
+
+    init(from decoder: Decoder) throws {
+        message = try WSAuthMessageRequest(from: decoder)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        eventProtocol = try container.decodeIfPresent(Int.self, forKey: .eventProtocol)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        try message.encode(to: encoder)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(eventProtocol, forKey: .eventProtocol)
     }
 }

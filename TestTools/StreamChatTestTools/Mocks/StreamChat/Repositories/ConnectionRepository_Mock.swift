@@ -55,9 +55,10 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy, @unchecked Sen
         )
     }
 
-    override init(isClientInActiveMode: Bool, syncRepository: SyncRepository, webSocketEncoder: RequestEncoder?, webSocketClient: WebSocketClient?, apiClient: APIClient, timerType: TimerScheduling.Type) {
+    override init(isClientInActiveMode: Bool, webSocketEventProtocol: WebSocketEventProtocol = .legacy, syncRepository: SyncRepository, webSocketEncoder: RequestEncoder?, webSocketClient: WebSocketClient?, apiClient: APIClient, timerType: TimerScheduling.Type) {
         super.init(
             isClientInActiveMode: isClientInActiveMode,
+            webSocketEventProtocol: webSocketEventProtocol,
             syncRepository: syncRepository,
             webSocketEncoder: webSocketEncoder,
             webSocketClient: webSocketClient,
