@@ -1,6 +1,7 @@
 {
     "type": "notification.channel_mutes_updated",
     "me": {
+        "blocked_user_ids": [],
         "custom": {
             "roles": []
         },

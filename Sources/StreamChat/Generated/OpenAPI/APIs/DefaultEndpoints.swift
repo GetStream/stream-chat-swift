@@ -1483,11 +1483,13 @@ extension Endpoint {
         )
     }
 
-    static func unreadCounts(requiresConnectionId: Bool = false) -> Endpoint<CurrentUserUnreads> {
+    static func unreadCounts(includeLargeChannels: Bool?, requiresConnectionId: Bool = false) -> Endpoint<CurrentUserUnreads> {
         return .init(
             path: .unreadCounts,
             method: .get,
-            queryItems: nil,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "include_large_channels": includeLargeChannels
+            ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
         )

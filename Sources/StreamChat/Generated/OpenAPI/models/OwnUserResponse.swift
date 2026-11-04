@@ -7,7 +7,7 @@ import Foundation
 final class OwnUserResponse: Sendable, Decodable {
     let avgResponseTime: Int?
     let banned: Bool
-    let blockedUserIds: [String]?
+    let blockedUserIds: [String]
     let channelMutes: [MutedChannelPayload]
     let createdAt: Date
     let custom: [String: RawJSON]
@@ -37,7 +37,7 @@ final class OwnUserResponse: Sendable, Decodable {
     init(
         avgResponseTime: Int? = nil,
         banned: Bool,
-        blockedUserIds: [String]? = nil,
+        blockedUserIds: [String],
         channelMutes: [MutedChannelPayload],
         createdAt: Date,
         custom: [String: RawJSON],
@@ -94,7 +94,7 @@ final class OwnUserResponse: Sendable, Decodable {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
         banned = try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false
-        blockedUserIds = try container.decodeIfPresent([String].self, forKey: .blockedUserIds)
+        blockedUserIds = try container.decode([String].self, forKey: .blockedUserIds)
         channelMutes = try container.decodeArrayIgnoringFailures(
             [MutedChannelPayload].self,
             forKey: .channelMutes

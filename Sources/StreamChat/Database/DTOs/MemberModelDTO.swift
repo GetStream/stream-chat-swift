@@ -141,10 +141,7 @@ extension NSManagedObjectContext {
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
     ) throws -> MemberDTO {
-        guard let userId = payload.memberId else {
-            throw ClientError("Member payload is missing a user id")
-        }
-        let dto = MemberDTO.loadOrCreate(userId: userId, channelId: channelId, context: self, cache: cache)
+        let dto = MemberDTO.loadOrCreate(userId: payload.userId, channelId: channelId, context: self, cache: cache)
 
         // Save user-part of member first
         if let userPayload = payload.user {
@@ -172,7 +169,7 @@ extension NSManagedObjectContext {
             dto.extraData = try JSONEncoder.default.encode(payload.custom)
         } catch {
             log.error(
-                "Failed to decode extra payload for channel member with id: <\(userId)>. Error: \(error)"
+                "Failed to decode extra payload for channel member with id: <\(payload.userId)>. Error: \(error)"
             )
             dto.extraData = nil
         }
