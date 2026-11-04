@@ -5683,8 +5683,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.15.0;
+				branch = "add/ws-auth-event-protocol";
+				kind = branch;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
