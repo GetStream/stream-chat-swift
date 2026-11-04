@@ -54,10 +54,13 @@
 		82F714AB2B078AE800442A74 /* StreamSwiftTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 82F714AA2B078AE800442A74 /* StreamSwiftTestHelpers */; };
 		82FF61E82B6AB5B3007185B6 /* StreamChatTestMockServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84114A7D3073E3E10035A01F /* StreamChatAI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84114A743073E3E10035A01F /* StreamChatAI.framework */; };
+		4F0E5A173073E3E10035A01F /* StreamChatOpenUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F0E5A023073E3E10035A01F /* StreamChatOpenUI.framework */; };
 		84114A933073E3E10035A01F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
+		4F0E5A0B3073E3E10035A01F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
 		84114A983073E3E10035A01F /* StreamCore in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A963073E3E10035A01F /* StreamCore */; };
 		84114A993073E3E10035A01F /* StreamCoreUI in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A973073E3E10035A01F /* StreamCoreUI */; };
 		84114AA13073E3E10035A01F /* StreamChatAI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84114A743073E3E10035A01F /* StreamChatAI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A20A06113073E3E10035A01F /* StreamChatOpenUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4F0E5A023073E3E10035A01F /* StreamChatOpenUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A20A06013073E3E10035A01F /* StreamChatA2UI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A20A01743073E3E10035A01F /* StreamChatA2UI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84748F892AC37F40007E3285 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		84748F8D2AC37F40007E3285 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -103,6 +106,7 @@
 		F8933BDC25FF569E0054BBFF /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		F89C23ED25E520140082CA5B /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		F89C23EE25E522FA0082CA5B /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
+		4F0E5A403073E3E10035A01F /* StreamChatAI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84114A743073E3E10035A01F /* StreamChatAI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -232,12 +236,26 @@
 			remoteGlobalIDString = 84114A733073E3E10035A01F;
 			remoteInfo = StreamChatAI;
 		};
+		4F0E5A183073E3E10035A01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F0E5A013073E3E10035A01F;
+			remoteInfo = StreamChatOpenUI;
+		};
 		84114AA23073E3E10035A01F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 84114A733073E3E10035A01F;
 			remoteInfo = StreamChatAI;
+		};
+		A20A06123073E3E10035A01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F0E5A013073E3E10035A01F;
+			remoteInfo = StreamChatOpenUI;
 		};
 		A20A06023073E3E10035A01F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -435,6 +453,13 @@
 			remoteGlobalIDString = 790881FC25432B7200896F03;
 			remoteInfo = StreamChatUI;
 		};
+		4F0E5A413073E3E10035A01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84114A733073E3E10035A01F;
+			remoteInfo = StreamChatAI;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -524,6 +549,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				84114AA13073E3E10035A01F /* StreamChatAI.framework in Embed Frameworks */,
+				A20A06113073E3E10035A01F /* StreamChatOpenUI.framework in Embed Frameworks */,
 				A20A06013073E3E10035A01F /* StreamChatA2UI.framework in Embed Frameworks */,
 				AD4C2CA72EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */,
 				C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */,
@@ -577,7 +603,9 @@
 		799C9451247D59B1001F1104 /* StreamChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		84114A743073E3E10035A01F /* StreamChatAI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatAI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F0E5A023073E3E10035A01F /* StreamChatOpenUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatOpenUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84114A7C3073E3E10035A01F /* StreamChatAITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatAITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F0E5A0F3073E3E10035A01F /* StreamChatOpenUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatOpenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		84790E952AC1D346003AFF1C /* DemoShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DemoShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20A01743073E3E10035A01F /* StreamChatA2UI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatA2UI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20A037C3073E3E10035A01F /* StreamChatA2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatA2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -917,12 +945,26 @@
 			);
 			target = 84114A733073E3E10035A01F /* StreamChatAI */;
 		};
+		4F0E5A0D3073E3E10035A01F /* Exceptions for "StreamChatOpenUI" folder in "StreamChatOpenUI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4F0E5A013073E3E10035A01F /* StreamChatOpenUI */;
+		};
 		84114A8C3073E3E10035A01F /* Exceptions for "StreamChatAITests" folder in "StreamChatAITests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				StreamChatAI.xctestplan,
 			);
 			target = 84114A7B3073E3E10035A01F /* StreamChatAITests */;
+		};
+		4F0E5A1B3073E3E10035A01F /* Exceptions for "StreamChatOpenUITests" folder in "StreamChatOpenUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				StreamChatOpenUI.xctestplan,
+			);
+			target = 4F0E5A0E3073E3E10035A01F /* StreamChatOpenUITests */;
 		};
 		A20A018B3073E3E10035A01F /* Exceptions for "StreamChatA2UI" folder in "StreamChatA2UI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -978,12 +1020,28 @@
 			path = StreamChatAITests;
 			sourceTree = "<group>";
 		};
+		4F0E5A1A3073E3E10035A01F /* StreamChatOpenUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4F0E5A1B3073E3E10035A01F /* Exceptions for "StreamChatOpenUITests" folder in "StreamChatOpenUITests" target */,
+			);
+			path = StreamChatOpenUITests;
+			sourceTree = "<group>";
+		};
 		3E5561BB87023C3EB9645330 /* StreamChatAI */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				84114A8B3073E3E10035A01F /* Exceptions for "StreamChatAI" folder in "StreamChatAI" target */,
 			);
 			path = StreamChatAI;
+			sourceTree = "<group>";
+		};
+		4F0E5A0C3073E3E10035A01F /* StreamChatOpenUI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4F0E5A0D3073E3E10035A01F /* Exceptions for "StreamChatOpenUI" folder in "StreamChatOpenUI" target */,
+			);
+			path = StreamChatOpenUI;
 			sourceTree = "<group>";
 		};
 		40ADD6011925B249E5D20AAC /* StreamChatUITests */ = {
@@ -1198,11 +1256,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4F0E5A053073E3E10035A01F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F0E5A403073E3E10035A01F /* StreamChatAI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84114A793073E3E10035A01F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				84114A7D3073E3E10035A01F /* StreamChatAI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F0E5A113073E3E10035A01F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F0E5A173073E3E10035A01F /* StreamChatOpenUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1342,6 +1416,7 @@
 				F92E81895CF872FB8A12F68E /* Info.plist */,
 				A20A0500000000000000000B /* StreamChatA2UITests */,
 				328C773B8B344FBC79D03A0D /* StreamChatAITests */,
+				4F0E5A1A3073E3E10035A01F /* StreamChatOpenUITests */,
 				2B83FF282E4D6A632417381C /* StreamChatCommonUITests */,
 				60EFEDEFD8215DCD23839E06 /* StreamChatTests */,
 				40ADD6011925B249E5D20AAC /* StreamChatUITests */,
@@ -1355,6 +1430,7 @@
 				09ACEA5FF15B939BD2C4F3FB /* StreamChat */,
 				A20A0500000000000000000A /* StreamChatA2UI */,
 				3E5561BB87023C3EB9645330 /* StreamChatAI */,
+				4F0E5A0C3073E3E10035A01F /* StreamChatOpenUI */,
 				B3CFFDAE42ABE96E7974D963 /* StreamChatAICMark */,
 				1957E7CD6DC302EE3B0ACCD1 /* StreamChatCommonUI */,
 				1A87E72C96820F7460ED1C7E /* StreamChatLogsUI */,
@@ -1410,9 +1486,11 @@
 				4F1C0DF02F7E00AA00C0FFEE /* StreamChatLogsUI.framework */,
 				AD5D7BC42EFA26FF004A63E2 /* StreamChatCommonUITests.xctest */,
 				84114A743073E3E10035A01F /* StreamChatAI.framework */,
+				4F0E5A023073E3E10035A01F /* StreamChatOpenUI.framework */,
 				84114A7C3073E3E10035A01F /* StreamChatAITests.xctest */,
 				A20A01743073E3E10035A01F /* StreamChatA2UI.framework */,
 				A20A037C3073E3E10035A01F /* StreamChatA2UITests.xctest */,
+				4F0E5A0F3073E3E10035A01F /* StreamChatOpenUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1458,6 +1536,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		84114A6F3073E3E10035A01F /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F0E5A033073E3E10035A01F /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1600,6 +1685,7 @@
 				84790E9E2AC1D346003AFF1C /* PBXTargetDependency */,
 				AD4C2CA92EF1C1A4000E4FC1 /* PBXTargetDependency */,
 				84114AA33073E3E10035A01F /* PBXTargetDependency */,
+				A20A06133073E3E10035A01F /* PBXTargetDependency */,
 				A20A06033073E3E10035A01F /* PBXTargetDependency */,
 				4F1C0DED2F7E00AA00C0FFEE /* PBXTargetDependency */,
 			);
@@ -1735,6 +1821,30 @@
 			productReference = 84114A743073E3E10035A01F /* StreamChatAI.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		4F0E5A013073E3E10035A01F /* StreamChatOpenUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F0E5A073073E3E10035A01F /* Build configuration list for PBXNativeTarget "StreamChatOpenUI" */;
+			buildPhases = (
+				4F0E5A033073E3E10035A01F /* Headers */,
+				4F0E5A043073E3E10035A01F /* Sources */,
+				4F0E5A053073E3E10035A01F /* Frameworks */,
+				4F0E5A063073E3E10035A01F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4F0E5A423073E3E10035A01F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4F0E5A0C3073E3E10035A01F /* StreamChatOpenUI */,
+			);
+			name = StreamChatOpenUI;
+			packageProductDependencies = (
+			);
+			productName = StreamChatOpenUI;
+			productReference = 4F0E5A023073E3E10035A01F /* StreamChatOpenUI.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		84114A7B3073E3E10035A01F /* StreamChatAITests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 84114A8A3073E3E10035A01F /* Build configuration list for PBXNativeTarget "StreamChatAITests" */;
@@ -1756,6 +1866,29 @@
 			);
 			productName = StreamChatAITests;
 			productReference = 84114A7C3073E3E10035A01F /* StreamChatAITests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4F0E5A0E3073E3E10035A01F /* StreamChatOpenUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F0E5A133073E3E10035A01F /* Build configuration list for PBXNativeTarget "StreamChatOpenUITests" */;
+			buildPhases = (
+				4F0E5A103073E3E10035A01F /* Sources */,
+				4F0E5A113073E3E10035A01F /* Frameworks */,
+				4F0E5A123073E3E10035A01F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4F0E5A193073E3E10035A01F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4F0E5A1A3073E3E10035A01F /* StreamChatOpenUITests */,
+			);
+			name = StreamChatOpenUITests;
+			packageProductDependencies = (
+			);
+			productName = StreamChatOpenUITests;
+			productReference = 4F0E5A0F3073E3E10035A01F /* StreamChatOpenUITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		84790E942AC1D346003AFF1C /* DemoShare */ = {
@@ -2100,7 +2233,13 @@
 					84114A733073E3E10035A01F = {
 						CreatedOnToolsVersion = 27.1;
 					};
+					4F0E5A013073E3E10035A01F = {
+						CreatedOnToolsVersion = 27.1;
+					};
 					84114A7B3073E3E10035A01F = {
+						CreatedOnToolsVersion = 27.1;
+					};
+					4F0E5A0E3073E3E10035A01F = {
 						CreatedOnToolsVersion = 27.1;
 					};
 					84790E942AC1D346003AFF1C = {
@@ -2183,6 +2322,8 @@
 				84114A7B3073E3E10035A01F /* StreamChatAITests */,
 				A20A01733073E3E10035A01F /* StreamChatA2UI */,
 				A20A037B3073E3E10035A01F /* StreamChatA2UITests */,
+				4F0E5A013073E3E10035A01F /* StreamChatOpenUI */,
+				4F0E5A0E3073E3E10035A01F /* StreamChatOpenUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -2261,7 +2402,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4F0E5A063073E3E10035A01F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F0E5A0B3073E3E10035A01F /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84114A7A3073E3E10035A01F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F0E5A123073E3E10035A01F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2457,7 +2613,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4F0E5A043073E3E10035A01F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84114A783073E3E10035A01F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F0E5A103073E3E10035A01F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2648,10 +2818,20 @@
 			target = 84114A733073E3E10035A01F /* StreamChatAI */;
 			targetProxy = 84114A7E3073E3E10035A01F /* PBXContainerItemProxy */;
 		};
+		4F0E5A193073E3E10035A01F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F0E5A013073E3E10035A01F /* StreamChatOpenUI */;
+			targetProxy = 4F0E5A183073E3E10035A01F /* PBXContainerItemProxy */;
+		};
 		84114AA33073E3E10035A01F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 84114A733073E3E10035A01F /* StreamChatAI */;
 			targetProxy = 84114AA23073E3E10035A01F /* PBXContainerItemProxy */;
+		};
+		A20A06133073E3E10035A01F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F0E5A013073E3E10035A01F /* StreamChatOpenUI */;
+			targetProxy = A20A06123073E3E10035A01F /* PBXContainerItemProxy */;
 		};
 		A20A06033073E3E10035A01F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2794,6 +2974,11 @@
 			isa = PBXTargetDependency;
 			target = 790881FC25432B7200896F03 /* StreamChatUI */;
 			targetProxy = F8933BCF25FF56710054BBFF /* PBXContainerItemProxy */;
+		};
+		4F0E5A423073E3E10035A01F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 84114A733073E3E10035A01F /* StreamChatAI */;
+			targetProxy = 4F0E5A413073E3E10035A01F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3484,6 +3669,37 @@
 			};
 			name = Debug;
 		};
+		4F0E5A083073E3E10035A01F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatOpenUI/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatOpenUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		84114A843073E3E10035A01F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3507,6 +3723,38 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-fmodule-name=StreamChatAICMark -Wno-strict-prototypes";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatAI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4F0E5A093073E3E10035A01F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatOpenUI/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatOpenUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -3552,6 +3800,38 @@
 			};
 			name = Profile;
 		};
+		4F0E5A0A3073E3E10035A01F /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatOpenUI/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatOpenUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
+		};
 		84114A863073E3E10035A01F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3576,6 +3856,34 @@
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4F0E5A143073E3E10035A01F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatOpenUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -3607,6 +3915,33 @@
 			};
 			name = Release;
 		};
+		4F0E5A153073E3E10035A01F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatOpenUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		84114A883073E3E10035A01F /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3630,6 +3965,33 @@
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
+		};
+		4F0E5A163073E3E10035A01F /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatOpenUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Profile;
@@ -5136,12 +5498,32 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		4F0E5A073073E3E10035A01F /* Build configuration list for PBXNativeTarget "StreamChatOpenUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F0E5A083073E3E10035A01F /* Debug */,
+				4F0E5A093073E3E10035A01F /* Release */,
+				4F0E5A0A3073E3E10035A01F /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		84114A8A3073E3E10035A01F /* Build configuration list for PBXNativeTarget "StreamChatAITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				84114A863073E3E10035A01F /* Debug */,
 				84114A873073E3E10035A01F /* Release */,
 				84114A883073E3E10035A01F /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4F0E5A133073E3E10035A01F /* Build configuration list for PBXNativeTarget "StreamChatOpenUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F0E5A143073E3E10035A01F /* Debug */,
+				4F0E5A153073E3E10035A01F /* Release */,
+				4F0E5A163073E3E10035A01F /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

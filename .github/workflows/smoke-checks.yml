@@ -125,6 +125,9 @@ jobs:
     - name: Build A2UI
       run: bundle exec fastlane test_a2ui device:"iPhone 16" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
+    - name: Build OpenUI
+      run: bundle exec fastlane test_openui device:"iPhone 16" build_for_testing:true ${{ env.VERBOSE }}
+      timeout-minutes: 25
 
   test-llc-debug:
     name: Test LLC (Debug)
@@ -331,6 +334,42 @@ jobs:
       if: failure()
       with:
         name: Test Data A2UI
+        path: |
+          fastlane/test_output/logs/*/Diagnostics/**/*.txt
+          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
+
+  test-openui-debug:
+    name: Test OpenUI (Debug)
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    needs: guard
+    steps:
+    - uses: actions/checkout@v7
+    - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_YEETD: true
+        SKIP_SWIFT_BOOTSTRAP: true
+    - name: Run OpenUI Tests (Debug)
+      run: bundle exec fastlane test_openui device:"${{ env.IOS_SIMULATOR_DEVICE }}" ${{ env.VERBOSE }}
+      timeout-minutes: 60
+    - name: Upload raw Xcode logs
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
+        path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
+    - name: Parse xcresult
+      if: failure()
+      run: |
+        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
+          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
+        fi
+        xcparse logs fastlane/test_output/StreamChatOpenUI.xcresult fastlane/test_output/logs/
+    - uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: Test Data OpenUI
         path: |
           fastlane/test_output/logs/*/Diagnostics/**/*.txt
           fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*

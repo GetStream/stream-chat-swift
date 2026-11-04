@@ -36,6 +36,10 @@ let package = Package(
             targets: ["StreamChatA2UI"]
         ),
         .library(
+            name: "StreamChatOpenUI",
+            targets: ["StreamChatOpenUI"]
+        ),
+        .library(
             name: "StreamChatTestTools",
             targets: ["StreamChatTestTools"]
         ),
@@ -86,6 +90,13 @@ let package = Package(
             name: "StreamChatA2UI",
             dependencies: ["StreamChatAI"],
             exclude: ["Info.plist"]
+        ),
+        // The OpenUI Lang renderer, and the renderer of StreamChatAI's generated UI built on it
+        .target(
+            name: "StreamChatOpenUI",
+            dependencies: ["StreamChatAI"],
+            exclude: ["Info.plist"],
+            resources: [.process("Resources")]
         ),
         .target(
             name: "StreamChatLogsUI",
