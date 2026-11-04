@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add Scheduled Messages [#4357](https://github.com/GetStream/stream-chat-swift/pull/4357)
 - Add `ChannelListQuery.includeActiveMemberCount` to load `ChatChannel.activeMemberCount`, the number of members who are neither deactivated nor deleted [#4368](https://github.com/GetStream/stream-chat-swift/pull/4368)
+- Add `NotificationAddedToChannelEvent.unreadChannelCountsByGroup`, and update the current user's unread counts when they are added to a channel [#4379](https://github.com/GetStream/stream-chat-swift/pull/4379)
 
 ## StreamChatAI
 ### ✅ Added

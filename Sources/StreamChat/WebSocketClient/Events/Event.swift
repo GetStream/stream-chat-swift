@@ -136,7 +136,12 @@ extension WSEvent: @unchecked Sendable, Event {
         case .typeMessageUpdatedEvent(let event):
             return .init(createdAt: event.createdAt, channelMessageCount: event.channelMessageCount, cid: event.cid, message: event.message, user: event.user)
         case .typeNotificationAddedToChannelEvent(let event):
-            return .init(createdAt: event.createdAt, channel: event.channel)
+            return .init(
+                createdAt: event.createdAt,
+                channel: event.channel,
+                groupedUnreadChannels: event.groupedUnreadChannels,
+                unreadCount: .init(channels: event.unreadChannels, messages: event.totalUnreadCount, threads: nil)
+            )
         case .typeNotificationChannelDeletedEvent(let event):
             return .init(
                 createdAt: event.createdAt,

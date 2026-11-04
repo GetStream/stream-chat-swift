@@ -244,7 +244,7 @@ extension NotificationMutesUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when the current user is added to the channel member list.
-public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCount, HasUnreadChannelCountsByGroup {
     /// The identifier of a channel a message is sent to.
     public var cid: ChannelId { channel.cid }
 
@@ -253,6 +253,9 @@ public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnr
 
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
+
+    /// Unread channel counts keyed by the backend-provided group identifier.
+    public let unreadChannelCountsByGroup: [String: Int]?
 
     /// The membership information of the current user.
     public let member: ChatChannelMember
@@ -264,12 +267,14 @@ public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnr
         channel: ChatChannel,
         unreadCount: UnreadCount?,
         member: ChatChannelMember,
-        createdAt: Date
+        createdAt: Date,
+        unreadChannelCountsByGroup: [String: Int]? = nil
     ) {
         self.channel = channel
         self.unreadCount = unreadCount
         self.member = member
         self.createdAt = createdAt
+        self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
     }
 }
 
@@ -285,7 +290,8 @@ extension NotificationAddedToChannelEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             unreadCount: UnreadCount(currentUserDTO: currentUser),
             member: memberDTO.asModel(),
-            createdAt: createdAt
+            createdAt: createdAt,
+            unreadChannelCountsByGroup: currentUser.unreadChannelCountsByGroup
         )
     }
 }
