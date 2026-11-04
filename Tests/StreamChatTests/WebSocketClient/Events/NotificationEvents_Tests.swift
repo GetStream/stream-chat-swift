@@ -170,6 +170,8 @@ final class NotificationsEvents_Tests: XCTestCase {
             event?.channel.cid,
             ChannelId(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E")
         )
+        XCTAssertEqual(event?.totalUnreadCount, 790)
+        XCTAssertEqual(event?.unreadChannels, 9)
     }
 
     func test_notificationAddedToChannelEventDTO_withMissingFields() throws {
@@ -377,11 +379,15 @@ final class NotificationsEvents_Tests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
+        let unreadChannelCountsByGroup: [String: Int] = ["direct": 3, "team": 2]
         let unreadCount = UnreadCountPayload(channels: 13, messages: 53, threads: 10)
         let eventPayload = NotificationAddedToChannelEventDTO(
             channel: .dummy(cid: .unique),
             createdAt: .unique,
-            member: .dummy()
+            groupedUnreadChannels: unreadChannelCountsByGroup,
+            member: .dummy(),
+            totalUnreadCount: 53,
+            unreadChannels: 13
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -396,11 +402,13 @@ final class NotificationsEvents_Tests: XCTestCase {
             cache: nil
         )
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: unreadCount))
+        try session.saveEvent(event: .typeNotificationAddedToChannelEvent(eventPayload))
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? NotificationAddedToChannelEvent)
         XCTAssertEqual(event.channel.cid, eventPayload.channel.cid)
         XCTAssert(event.unreadCount?.isEqual(toPayload: unreadCount) == true)
+        XCTAssertEqual(event.unreadChannelCountsByGroup, unreadChannelCountsByGroup)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 

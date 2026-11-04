@@ -272,6 +272,29 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertEqual(Int64(unreadThreads), currentUser?.unreadThreadsCount)
     }
 
+    func test_saveEvent_whenNotificationAddedToChannel_appliesUnreadCounts() throws {
+        let eventPayload = NotificationAddedToChannelEventDTO(
+            channel: .dummy(cid: .unique),
+            createdAt: .unique,
+            groupedUnreadChannels: ["direct": 1, "team": 4],
+            member: .dummy(),
+            totalUnreadCount: 12,
+            unreadChannels: 5
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
+            try session.saveEvent(event: .typeNotificationAddedToChannelEvent(eventPayload))
+        }
+
+        try database.readSynchronously { session in
+            let currentUser = try XCTUnwrap(session.currentUser)
+            XCTAssertEqual(currentUser.unreadMessagesCount, 12)
+            XCTAssertEqual(currentUser.unreadChannelsCount, 5)
+            XCTAssertEqual(currentUser.unreadChannelCountsByGroup, ["direct": 1, "team": 4])
+        }
+    }
+
     func test_saveEvent_mergesUnreadChannelCountsByGroupIntoExistingValues() throws {
         let userId = UserId.unique
         try database.writeSynchronously { session in
