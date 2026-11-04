@@ -281,25 +281,26 @@ Do not manually edit files in `Sources/StreamChatCommonUI/Generated/`:
 
 ### OpenAPI code generation
 
-`Scripts/openapi_generate.sh` regenerates `Sources/StreamChat/Generated/OpenAPI/` from the backend spec. The config (allow-lists) and the ordered pipeline steps live in that script; the transform functions live in `Scripts/openapi_generate_helpers.sh` (alphabetical).
+`Scripts/openapi_generate.sh` regenerates `Sources/StreamChat/Generated/OpenAPI/` from the backend spec. The lists (allowed endpoints, events and models, coding conformances, removed properties) live in `Scripts/openapi-allowed.json`. The ordered pipeline steps and one-off fixes live in the script, and the transform functions live in `Scripts/openapi_generate_helpers.sh` (alphabetical).
 
 Running it:
-- Requires the `chat` backend repo checked out at `../chat` (the script runs `make openapi` and builds the generator there), plus `swiftformat`, `sourcery`, and `python3`.
-- Run `Scripts/openapi_generate.sh` from the repo root. It deletes and rebuilds the output directory and ends by printing the endpoints the spec offers but `allowed_endpoints` prunes.
+- Requires the `chat` backend repo checked out at `../chat` (the script runs `make openapi` and builds the generator there), plus `jq`, `swiftformat`, `sourcery`, and `python3`.
+- Run `Scripts/openapi_generate.sh` from the repo root. It deletes and rebuilds the output directory and ends by printing the endpoints the spec offers but `allowedEndpoints` prunes.
 - If unrelated files change because the spec moved on, revert them with `git checkout HEAD -- <file>`.
 
 Adding an endpoint:
-1. Add it to `allowed_endpoints`, but only if production code calls it. The "Unused endpoints" report lists the candidate names.
-2. Add every model the endpoint reaches (the full transitive closure) to `allowed_models`, using the generator's original names. A missing model surfaces as a build failure.
+1. Add it to `allowedEndpoints` in `Scripts/openapi-allowed.json`, but only if production code calls it. The "Unused endpoints" report lists the candidate names.
+2. Add every model the endpoint reaches (the full transitive closure) to `allowedModels`, using the generator's original names. A missing model surfaces as a build failure.
 3. Rename new models onto the SDK names they replace with `rename_generated` (the model file and its references) or `rename_generated_type` (references only). Point unused responses at `EmptyResponse`.
-4. Classify every retained model, under its post-rename name, into exactly one of `encodable_only_models`, `decodable_only_models`, or `codable_models`. The script fails on any model that is unclassified or classified twice. Add the model to `allowed_hashable_models` only if it needs `Hashable`.
-5. Add any new WebSocket events to `allowed_events`.
-6. Drop properties the SDK never reads with `remove_property`, in the "Unread by the SDK" block.
+4. Classify every retained model, under its post-rename name, into exactly one of `encodableOnlyModels`, `decodableOnlyModels`, or `codableModels`. The script fails on any model that is unclassified or classified twice. Add the model to `allowedHashableModels` only if it needs `Hashable`.
+5. Add any new WebSocket events to `allowedEvents`.
+6. Drop properties the SDK never reads by adding them to `removedProperties`.
 7. To expose a model publicly, use `publicize_model` or `publicize_raw_representable`.
 
 Rules:
 - Keep every list and every block of calls alphabetical. The only exception is the commented order-sensitive renames.
 - Steps before the rename step (step 4) use the generator's original names; steps after it use the renamed names.
+- In `Scripts/openapi-allowed.json`, `allowedEndpoints`, `allowedEvents` and `allowedModels` use the generator's original names. The other keys use the renamed names.
 - Workarounds for backend spec bugs need a CHA ticket comment, e.g. `# Remove when fixed: CHA-XXXX`.
 - Verify by regenerating, building the `StreamChat` scheme, running the unit tests, and reviewing `git diff Sources/StreamChat/Generated/OpenAPI`.
 
