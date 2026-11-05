@@ -50,7 +50,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0"),
-        .package(url: "https://github.com/GetStream/stream-core-swift.git", branch: "add/ws-auth-event-protocol"),
+        .package(url: "https://github.com/GetStream/stream-core-swift.git", branch: "develop"),
         .package(url: "https://github.com/GetStream/stream-logs-ui-swift.git", from: "0.2.0")
     ],
     targets: [
