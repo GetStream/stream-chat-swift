@@ -1104,6 +1104,44 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         XCTAssertNil(PushPreferenceDTO.load(id: "currentUserId", context: database.viewContext))
     }
 
+    func test_setPushPreference_withSchedule_savesAndRemovesScheduleInDatabase() throws {
+        // GIVEN
+        let userId: UserId = .unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+        let schedule = PushSchedule(
+            timezone: TimeZone(identifier: "Europe/Amsterdam")!,
+            quietHours: [QuietHoursRule(days: QuietHoursDay.weekdays, start: "18:00", end: "09:00")]
+        )
+
+        // WHEN
+        let setResult: Result<PushPreference, Error> = try waitFor { done in
+            currentUserUpdater.setPushPreference(PushPreferenceInput(schedule: PushScheduleInput(schedule)), completion: done)
+            apiClient.test_simulateResponse(.success(UpsertPushPreferencesResponse(
+                userChannelPreferences: [:],
+                userPreferences: [userId: PushPreference(level: "all", schedule: schedule)]
+            )))
+        }
+
+        // THEN
+        XCTAssertEqual(setResult.value?.schedule, schedule)
+        AssertAsync.willBeEqual(try? self.database.viewContext.currentUser?.pushPreference?.asModel().schedule, schedule)
+
+        // WHEN
+        let removeResult: Result<PushPreference, Error> = try waitFor { done in
+            currentUserUpdater.setPushPreference(PushPreferenceInput(removeSchedule: true), completion: done)
+            apiClient.test_simulateResponse(.success(UpsertPushPreferencesResponse(
+                userChannelPreferences: [:],
+                userPreferences: [userId: PushPreference(level: "all")]
+            )))
+        }
+
+        // THEN
+        XCTAssertNil(removeResult.error)
+        AssertAsync.willBeNil(self.database.viewContext.currentUser?.pushPreference?.scheduleData)
+    }
+
     func test_setPushPreference_successfulResponse_whenNoCurrentUser_doesNotCrashOrSave() throws {
         // GIVEN — no current user seeded in the database
         let preference = PushPreferenceInput(chatLevel: .all, removeDisable: true)

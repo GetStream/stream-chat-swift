@@ -204,6 +204,8 @@ allowed_models=(
   PollVotesResponse
   PushPreferenceInput
   PushPreferencesResponse
+  PushScheduleInput
+  PushScheduleResponse
   QueryBannedUsersPayload
   QueryBannedUsersResponse
   QueryChannelsRequest
@@ -221,6 +223,8 @@ allowed_models=(
   QueryThreadsResponse
   QueryUsersPayload
   QueryUsersResponse
+  QuietHoursRuleInput
+  QuietHoursRuleResponse
   ReactionGroupResponse
   ReactionRequest
   ReactionResponse
@@ -375,6 +379,10 @@ allowed_hashable_models=(
   MarkUnreadRequest
   PushPreference
   PushPreferenceInput
+  PushSchedule
+  PushScheduleInput
+  QuietHoursRule
+  QuietHoursRuleInput
   Role
   SharedLocation
   UploadConfig
@@ -422,6 +430,7 @@ encodable_only_models=(
   PaginationParams
   PollOptionRequestBody
   PushPreferenceInput
+  PushScheduleInput
   QueryBannedUsersPayload
   QueryChannelsRequest
   QueryDraftsRequest
@@ -432,6 +441,7 @@ encodable_only_models=(
   QueryScheduledMessagesRequest
   QueryThreadsRequest
   QueryUsersPayload
+  QuietHoursRuleInput
   ReactionRequest
   RemoveUserGroupMembersRequest
   ScheduledMessageQueryStatus
@@ -580,6 +590,8 @@ codable_models=(
   GiphyImages
   MemberInfoPayload
   MessageAttachmentPayload
+  PushSchedule
+  QuietHoursRule
   Role
   SortParamRequest
   UserPayload
@@ -668,7 +680,9 @@ rename_generated PollVoteResponse PollVotePayloadResponse
 rename_generated PollVoteResponseData PollVotePayload
 rename_generated PollVotesResponse PollVoteListResponse
 rename_generated PushPreferencesResponse PushPreference
+rename_generated PushScheduleResponse PushSchedule
 rename_generated QueryPollVotesRequest QueryPollVotesRequestBody
+rename_generated QuietHoursRuleResponse QuietHoursRule
 rename_generated ReactionGroupResponse MessageReactionGroupPayload
 rename_generated ReactionResponse MessageReactionPayload
 rename_generated ReminderResponseData ReminderPayload
@@ -729,6 +743,8 @@ retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 retype_property ChannelPartialUpdateResponse cid String ChannelId
 retype_property PushPreference chatLevel String PushPreferenceLevel
+retype_property QuietHoursRule days "[String]" "[QuietHoursDay]"
+retype_property QuietHoursRuleInput days "[String]" "[QuietHoursDay]"
 for f in "$OUTPUT_DIR_CHAT"/models/*EventDTO.swift; do
   [ -e "$f" ] || continue
   base="$(basename "$f" .swift)"
@@ -741,6 +757,7 @@ retype_property MessageDeliveredEventDTO lastDeliveredAt String Date
 rename_property PushPreference chatLevel level
 
 restore_nonoptional_property PushPreference level PushPreferenceLevel .all
+restore_nonoptional_property QuietHoursRule days "[QuietHoursDay]" "[]"
 restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
 
 # /sync replays events without fields the spec marks required.
@@ -921,6 +938,8 @@ remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 publicize_model AppSettings
 publicize_model CurrentUserUnreads
 publicize_model PushPreference
+publicize_model PushSchedule
+publicize_model QuietHoursRule
 publicize_model Role
 publicize_model SharedLocation
 publicize_model UnmuteUsersResponse

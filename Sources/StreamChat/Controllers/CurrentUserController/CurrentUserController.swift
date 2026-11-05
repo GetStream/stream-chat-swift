@@ -556,6 +556,51 @@ public extension CurrentChatUserController {
         }
     }
 
+    /// Sets a recurring quiet hours schedule for the current user's push notifications.
+    ///
+    /// While a quiet window is active, the server drops (it does not delay) the user's push notifications
+    /// for chat messages, video calls (ringing included) and feeds, in every channel. Reminder pushes still go through.
+    /// The schedule replaces any schedule that was set before.
+    ///
+    /// The stored schedule is available in `currentUser.pushPreference?.schedule`.
+    ///
+    /// - Parameters:
+    ///   - schedule: The quiet hours schedule.
+    ///   - completion: The completion call once the request is finished. It fails with
+    ///   ``ClientError/QuietHoursNotStored`` when the server does not support quiet hours.
+    func setQuietHours(
+        _ schedule: PushSchedule,
+        completion: (@MainActor (Result<PushPreference, Error>) -> Void)? = nil
+    ) {
+        let userPreference = PushPreferenceInput(
+            schedule: PushScheduleInput(schedule)
+        )
+
+        currentUserUpdater.setPushPreference(userPreference) { result in
+            // Older backends ignore the field, so a schedule missing from the response was not stored.
+            let result = result.flatMap { preference -> Result<PushPreference, Error> in
+                preference.schedule == nil ? .failure(ClientError.QuietHoursNotStored()) : .success(preference)
+            }
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Removes the quiet hours schedule of the current user's push notifications.
+    /// - Parameter completion: The completion call once the request is finished.
+    func removeQuietHours(
+        completion: (@MainActor (Result<PushPreference, Error>) -> Void)? = nil
+    ) {
+        let userPreference = PushPreferenceInput(removeSchedule: true)
+
+        currentUserUpdater.setPushPreference(userPreference) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
     /// Loads the draft messages for the current user.
     ///
     /// It will load the first page of drafts of the current user.
