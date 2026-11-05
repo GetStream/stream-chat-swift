@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add quiet hours for push notifications with `CurrentChatUserController.setQuietHours(_:)` and `removeQuietHours()` [#4383](https://github.com/GetStream/stream-chat-swift/pull/4383)
 
 # [5.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.16.0)
 _November 04, 2026_
