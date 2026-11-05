@@ -211,8 +211,8 @@ public struct ChatClientConfig: Sendable {
     ///
     /// Use ``WebSocketEventProtocol/v3`` to reduce bandwidth in apps with large channels.
     ///
-    /// Defaults to ``WebSocketEventProtocol/legacy``.
-    public var webSocketEventProtocol: WebSocketEventProtocol = .legacy
+    /// Defaults to ``WebSocketEventProtocol/v2``.
+    public var webSocketEventProtocol: WebSocketEventProtocol = .v2
 
     public init(
         apiKey: APIKey

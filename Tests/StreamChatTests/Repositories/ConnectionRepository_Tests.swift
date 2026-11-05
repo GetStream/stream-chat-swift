@@ -396,7 +396,7 @@ final class ConnectionRepository_Tests: XCTestCase {
 
     private func makeRepository(
         webSocketClient: WebSocketClient,
-        webSocketEventProtocol: WebSocketEventProtocol = .legacy
+        webSocketEventProtocol: WebSocketEventProtocol = .v2
     ) -> ConnectionRepository {
         ConnectionRepository(
             isClientInActiveMode: true,

@@ -710,7 +710,7 @@ class AppConfigViewController: UITableViewController {
 
     private func pushWebSocketEventProtocolSelectorVC() {
         let selectorViewController = OptionsSelectorViewController<WebSocketEventProtocol>(
-            options: [.legacy, .v3],
+            options: [.v2, .v3],
             initialSelectedOptions: [chatClientConfig.webSocketEventProtocol],
             allowsMultipleSelection: false,
             optionFormatter: \.demoDescription
@@ -831,6 +831,6 @@ class AppConfigViewController: UITableViewController {
 
 private extension WebSocketEventProtocol {
     var demoDescription: String {
-        self == .v3 ? "v3" : "Legacy"
+        self == .v3 ? "v3" : "v2"
     }
 }

@@ -34,7 +34,7 @@ class ConnectionRepository: @unchecked Sendable {
 
     init(
         isClientInActiveMode: Bool,
-        webSocketEventProtocol: WebSocketEventProtocol = .legacy,
+        webSocketEventProtocol: WebSocketEventProtocol = .v2,
         syncRepository: SyncRepository,
         webSocketEncoder: RequestEncoder?,
         webSocketClient: WebSocketClient?,
@@ -145,7 +145,7 @@ class ConnectionRepository: @unchecked Sendable {
             return
         }
         let userInfo = connectUserInfo.value
-        let eventProtocol = webSocketEventProtocol == .legacy ? nil : webSocketEventProtocol.rawValue
+        let eventProtocol = webSocketEventProtocol == .v2 ? nil : webSocketEventProtocol.rawValue
         // The server closes the socket when the auth frame does not arrive within 10 seconds.
         delegate.provideToken(timeout: 10) { [weak webSocketClient] result in
             switch result {

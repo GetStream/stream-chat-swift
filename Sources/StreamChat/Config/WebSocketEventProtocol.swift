@@ -13,7 +13,7 @@ public struct WebSocketEventProtocol: Hashable, Sendable {
     }
 
     /// The events include all their data.
-    public static let legacy = Self(rawValue: 0)
+    public static let v2 = Self(rawValue: 2)
 
     /// Reduces bandwidth by leaving the members out of the events of large channels.
     ///
