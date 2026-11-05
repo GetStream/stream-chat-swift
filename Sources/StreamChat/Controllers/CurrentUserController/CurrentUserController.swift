@@ -558,20 +558,27 @@ public extension CurrentChatUserController {
 
     /// Sets a recurring quiet hours schedule for the current user's push notifications.
     ///
-    /// While a quiet window is active, the server drops (it does not delay) the user's push notifications
-    /// for chat messages, video calls (ringing included) and feeds, in every channel. Reminder pushes still go through.
+    /// While a quiet window is active, the server drops (it does not delay) the user's chat push notifications,
+    /// in every channel. Reminder pushes still go through.
     /// The schedule replaces any schedule that was set before.
     ///
-    /// The stored schedule is available in `currentUser.pushPreference?.schedule`.
-    ///
     /// - Parameters:
-    ///   - schedule: The quiet hours schedule.
+    ///   - schedule: The quiet hours schedule, with 1 to 7 rules.
     ///   - completion: The completion call once the request is finished. It fails with
+    ///   ``ClientError/QuietHoursEmpty`` when the schedule has no rules, and with
     ///   ``ClientError/QuietHoursNotStored`` when the server does not support quiet hours.
     func setQuietHours(
         _ schedule: PushSchedule,
         completion: (@MainActor (Result<PushPreference, Error>) -> Void)? = nil
     ) {
+        // The server treats empty rules as omitted and would keep the stored ones.
+        guard !schedule.quietHours.isEmpty else {
+            callback {
+                completion?(.failure(ClientError.QuietHoursEmpty()))
+            }
+            return
+        }
+
         let userPreference = PushPreferenceInput(
             schedule: PushScheduleInput(schedule)
         )

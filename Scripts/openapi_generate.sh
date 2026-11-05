@@ -757,7 +757,6 @@ retype_property MessageDeliveredEventDTO lastDeliveredAt String Date
 rename_property PushPreference chatLevel level
 
 restore_nonoptional_property PushPreference level PushPreferenceLevel .all
-restore_nonoptional_property QuietHoursRule days "[QuietHoursDay]" "[]"
 restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
 
 # /sync replays events without fields the spec marks required.

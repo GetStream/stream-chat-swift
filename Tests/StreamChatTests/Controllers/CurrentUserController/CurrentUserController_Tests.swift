@@ -969,6 +969,17 @@ final class CurrentUserController_Tests: XCTestCase {
         XCTAssertTrue(result.error is ClientError.QuietHoursNotStored)
     }
 
+    func test_setQuietHours_whenScheduleHasNoRules_failsWithoutCallingUpdater() throws {
+        // WHEN
+        let result: Result<PushPreference, Error> = try waitFor { done in
+            controller.setQuietHours(PushSchedule(quietHours: []), completion: done)
+        }
+
+        // THEN
+        XCTAssertTrue(result.error is ClientError.QuietHoursEmpty)
+        XCTAssertNil(env.currentUserUpdater?.setPushPreference_preference)
+    }
+
     func test_setQuietHours_propagatesError() throws {
         // GIVEN
         let expectedError = TestError()

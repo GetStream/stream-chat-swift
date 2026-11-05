@@ -1142,6 +1142,27 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         AssertAsync.willBeNil(self.database.viewContext.currentUser?.pushPreference?.scheduleData)
     }
 
+    func test_setPushPreference_whenSavingFails_propagatesDatabaseError() throws {
+        // GIVEN
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
+        }
+        let testError = TestError()
+        database.write_errorResponse = testError
+
+        // WHEN
+        let result: Result<PushPreference, Error> = try waitFor { done in
+            currentUserUpdater.setPushPreference(PushPreferenceInput(removeSchedule: true), completion: done)
+            apiClient.test_simulateResponse(.success(UpsertPushPreferencesResponse(
+                userChannelPreferences: [:],
+                userPreferences: ["userId": PushPreference(level: "all")]
+            )))
+        }
+
+        // THEN
+        XCTAssertEqual(result.error as? TestError, testError)
+    }
+
     func test_setPushPreference_successfulResponse_whenNoCurrentUser_doesNotCrashOrSave() throws {
         // GIVEN — no current user seeded in the database
         let preference = PushPreferenceInput(chatLevel: .all, removeDisable: true)

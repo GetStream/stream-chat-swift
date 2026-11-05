@@ -164,7 +164,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
         XCTAssertEqual(schedule.quietHours[0].days, QuietHoursDay.weekdays)
         XCTAssertEqual(schedule.quietHours[0].start, "18:00")
         XCTAssertEqual(schedule.quietHours[0].end, "09:00")
-        XCTAssertEqual(schedule.quietHours[1].days, [])
+        XCTAssertNil(schedule.quietHours[1].days)
         XCTAssertEqual(schedule.quietHours[1].start, "00:00")
         XCTAssertEqual(schedule.quietHours[1].end, "24:00")
     }
