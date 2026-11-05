@@ -1111,8 +1111,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
         }
         let schedule = PushSchedule(
-            timezone: TimeZone(identifier: "Europe/Amsterdam")!,
-            quietHours: [QuietHoursRule(days: QuietHoursDay.weekdays, start: "18:00", end: "09:00")]
+            quietHours: [QuietHoursRule(days: QuietHoursDay.weekdays, start: "18:00", end: "09:00")],
+            timezone: TimeZone(identifier: "Europe/Amsterdam")!
         )
 
         // WHEN

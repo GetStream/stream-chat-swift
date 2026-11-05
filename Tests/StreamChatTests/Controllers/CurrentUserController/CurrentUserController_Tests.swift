@@ -921,8 +921,8 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_setQuietHours_callsUpdaterWithSchedule() {
         // GIVEN
         let schedule = PushSchedule(
-            timezone: TimeZone(identifier: "Europe/Amsterdam")!,
-            quietHours: [QuietHoursRule(days: QuietHoursDay.weekdays, start: "18:00", end: "09:00")]
+            quietHours: [QuietHoursRule(days: QuietHoursDay.weekdays, start: "18:00", end: "09:00")],
+            timezone: TimeZone(identifier: "Europe/Amsterdam")!
         )
 
         // WHEN

@@ -205,7 +205,6 @@ allowed_models=(
   PushPreferenceInput
   PushPreferencesResponse
   PushScheduleInput
-  PushScheduleResponse
   QueryBannedUsersPayload
   QueryBannedUsersResponse
   QueryChannelsRequest
@@ -224,7 +223,6 @@ allowed_models=(
   QueryUsersPayload
   QueryUsersResponse
   QuietHoursRuleInput
-  QuietHoursRuleResponse
   ReactionGroupResponse
   ReactionRequest
   ReactionResponse
@@ -379,9 +377,7 @@ allowed_hashable_models=(
   MarkUnreadRequest
   PushPreference
   PushPreferenceInput
-  PushSchedule
   PushScheduleInput
-  QuietHoursRule
   QuietHoursRuleInput
   Role
   SharedLocation
@@ -590,8 +586,6 @@ codable_models=(
   GiphyImages
   MemberInfoPayload
   MessageAttachmentPayload
-  PushSchedule
-  QuietHoursRule
   Role
   SortParamRequest
   UserPayload
@@ -680,9 +674,7 @@ rename_generated PollVoteResponse PollVotePayloadResponse
 rename_generated PollVoteResponseData PollVotePayload
 rename_generated PollVotesResponse PollVoteListResponse
 rename_generated PushPreferencesResponse PushPreference
-rename_generated PushScheduleResponse PushSchedule
 rename_generated QueryPollVotesRequest QueryPollVotesRequestBody
-rename_generated QuietHoursRuleResponse QuietHoursRule
 rename_generated ReactionGroupResponse MessageReactionGroupPayload
 rename_generated ReactionResponse MessageReactionPayload
 rename_generated ReminderResponseData ReminderPayload
@@ -720,6 +712,9 @@ rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
+# Hand-written public models; only point the references at their names.
+rename_generated_type PushScheduleResponse PushSchedule
+
 # StreamCore provides the device and privacy settings models; only point the references at its names.
 rename_generated_type DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
 rename_generated_type DeviceResponse Device
@@ -743,7 +738,6 @@ retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 retype_property ChannelPartialUpdateResponse cid String ChannelId
 retype_property PushPreference chatLevel String PushPreferenceLevel
-retype_property QuietHoursRule days "[String]" "[QuietHoursDay]"
 retype_property QuietHoursRuleInput days "[String]" "[QuietHoursDay]"
 for f in "$OUTPUT_DIR_CHAT"/models/*EventDTO.swift; do
   [ -e "$f" ] || continue
@@ -937,8 +931,6 @@ remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 publicize_model AppSettings
 publicize_model CurrentUserUnreads
 publicize_model PushPreference
-publicize_model PushSchedule
-publicize_model QuietHoursRule
 publicize_model Role
 publicize_model SharedLocation
 publicize_model UnmuteUsersResponse

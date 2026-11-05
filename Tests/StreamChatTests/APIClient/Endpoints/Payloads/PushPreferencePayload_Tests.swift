@@ -159,7 +159,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
 
         // THEN
         let schedule = try XCTUnwrap(payload.schedule)
-        XCTAssertEqual(schedule.timezone, "Europe/Amsterdam")
+        XCTAssertEqual(schedule.timezone.identifier, "Europe/Amsterdam")
         XCTAssertEqual(schedule.quietHours.count, 2)
         XCTAssertEqual(schedule.quietHours[0].days, QuietHoursDay.weekdays)
         XCTAssertEqual(schedule.quietHours[0].start, "18:00")
@@ -167,6 +167,20 @@ final class PushPreferencePayload_Tests: XCTestCase {
         XCTAssertNil(schedule.quietHours[1].days)
         XCTAssertEqual(schedule.quietHours[1].start, "00:00")
         XCTAssertEqual(schedule.quietHours[1].end, "24:00")
+    }
+
+    func test_pushSchedule_withUnknownTimeZone_decodesCurrentTimeZone() throws {
+        // GIVEN
+        let json = """
+        { "timezone": "Mars/Olympus_Mons", "quiet_hours": [{ "start": "22:00", "end": "07:00" }] }
+        """.data(using: .utf8)!
+
+        // WHEN
+        let schedule = try JSONDecoder.default.decode(PushSchedule.self, from: json)
+
+        // THEN
+        XCTAssertEqual(schedule.timezone, .current)
+        XCTAssertEqual(schedule.quietHours.count, 1)
     }
 
     func test_pushPreferencePayload_withoutSchedule_hasNilSchedule() throws {
@@ -185,12 +199,12 @@ final class PushPreferencePayload_Tests: XCTestCase {
     func test_pushPreferenceInput_withSchedule_encoding() throws {
         // GIVEN
         let schedule = PushSchedule(
-            timezone: TimeZone(identifier: "America/New_York")!,
             quietHours: [
                 QuietHoursRule(days: [.friday], start: "22:00", end: "07:00"),
                 QuietHoursRule(days: QuietHoursDay.weekend, start: "00:00", end: "24:00"),
                 QuietHoursRule(start: "12:00", end: "13:00")
-            ]
+            ],
+            timezone: TimeZone(identifier: "America/New_York")!
         )
         let requestPayload = PushPreferenceInput(schedule: PushScheduleInput(schedule))
 
@@ -224,7 +238,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
     func test_pushSchedule_defaultsToCurrentTimeZone() {
         let schedule = PushSchedule(quietHours: [QuietHoursRule(start: "18:00", end: "09:00")])
 
-        XCTAssertEqual(schedule.timezone, TimeZone.current.identifier)
+        XCTAssertEqual(schedule.timezone, TimeZone.current)
     }
 
     func test_quietHoursDay_encodesRawValue() {

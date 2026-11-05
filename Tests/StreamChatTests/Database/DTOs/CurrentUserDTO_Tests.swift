@@ -75,11 +75,11 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
                 level: "mentions",
                 disabledUntil: Date().addingTimeInterval(3600),
                 schedule: PushSchedule(
-                    timezone: TimeZone(identifier: "Europe/Amsterdam")!,
                     quietHours: [
                         QuietHoursRule(days: QuietHoursDay.weekdays, start: "18:00", end: "09:00"),
                         QuietHoursRule(start: "00:00", end: "24:00")
-                    ]
+                    ],
+                    timezone: TimeZone(identifier: "Europe/Amsterdam")!
                 )
             )
         )
