@@ -25,6 +25,7 @@ class ConnectionRepository: @unchecked Sendable {
     let webSocketConnectEndpoint = AllocatedUnfairLock<Endpoint<EmptyResponse>?>(nil)
     let connectUserInfo = AllocatedUnfairLock<UserInfo?>(nil)
     let isClientInActiveMode: Bool
+    let webSocketEventProtocol: WebSocketEventProtocol
     private let syncRepository: SyncRepository
     private let webSocketEncoder: RequestEncoder?
     private let webSocketClient: WebSocketClient?
@@ -33,6 +34,7 @@ class ConnectionRepository: @unchecked Sendable {
 
     init(
         isClientInActiveMode: Bool,
+        webSocketEventProtocol: WebSocketEventProtocol = .v2,
         syncRepository: SyncRepository,
         webSocketEncoder: RequestEncoder?,
         webSocketClient: WebSocketClient?,
@@ -40,6 +42,7 @@ class ConnectionRepository: @unchecked Sendable {
         timerType: TimerScheduling.Type
     ) {
         self.isClientInActiveMode = isClientInActiveMode
+        self.webSocketEventProtocol = webSocketEventProtocol
         self.syncRepository = syncRepository
         self.webSocketEncoder = webSocketEncoder
         self.webSocketClient = webSocketClient
@@ -142,12 +145,14 @@ class ConnectionRepository: @unchecked Sendable {
             return
         }
         let userInfo = connectUserInfo.value
+        let eventProtocol = webSocketEventProtocol == .v2 ? nil : webSocketEventProtocol.rawValue
         // The server closes the socket when the auth frame does not arrive within 10 seconds.
         delegate.provideToken(timeout: 10) { [weak webSocketClient] result in
             switch result {
             case let .success(token):
                 let user = userInfo ?? UserInfo(id: token.userId)
                 let payload = WSAuthMessageRequest(
+                    eventProtocol: eventProtocol,
                     products: ["chat"],
                     token: token.rawValue,
                     userDetails: ConnectUserDetailsRequest(

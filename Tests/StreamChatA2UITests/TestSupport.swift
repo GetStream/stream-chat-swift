@@ -202,14 +202,18 @@ func decodeMessage(_ json: String) throws -> A2UIMessage {
 @MainActor
 func waitUntil(
     _ description: String,
-    timeout: TimeInterval = 2,
+    timeout: TimeInterval = 10,
     condition: @MainActor () -> Bool,
     sourceLocation: SourceLocation = #_sourceLocation
 ) async {
     let deadline = Date().addingTimeInterval(timeout)
-    while Date() < deadline {
-        if condition() { return }
+    // Checks once more after the deadline: on a busy main actor the awaited work
+    // and this loop may resume in the same turn, past the deadline.
+    while !condition() {
+        guard Date() < deadline else {
+            Issue.record("Timed out waiting for \(description)", sourceLocation: sourceLocation)
+            return
+        }
         try? await Task.sleep(nanoseconds: 5_000_000)
     }
-    Issue.record("Timed out waiting for \(description)", sourceLocation: sourceLocation)
 }

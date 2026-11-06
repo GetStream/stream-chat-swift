@@ -250,6 +250,7 @@ class AppConfigViewController: UITableViewController {
         case shouldShowShadowedMessages
         case isChannelAutomaticFilteringEnabled
         case isLocalUnreadCountEnabled
+        case webSocketEventProtocol
     }
 
     enum UserConfigOption: String, CaseIterable {
@@ -445,6 +446,9 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(chatClientConfig.isLocalUnreadCountEnabled) { [weak self] newValue in
                 self?.chatClientConfig.isLocalUnreadCountEnabled = newValue
             }
+        case .webSocketEventProtocol:
+            cell.detailTextLabel?.text = chatClientConfig.webSocketEventProtocol.demoDescription
+            cell.accessoryType = .disclosureIndicator
         }
     }
 
@@ -459,6 +463,8 @@ class AppConfigViewController: UITableViewController {
             showBaseURLInputAlert()
         case .reconnectionTimeout:
             pushReconnectionTimeoutSelectorVC()
+        case .webSocketEventProtocol:
+            pushWebSocketEventProtocolSelectorVC()
         default:
             break
         }
@@ -702,6 +708,22 @@ class AppConfigViewController: UITableViewController {
         navigationController?.pushViewController(selectorViewController, animated: true)
     }
 
+    private func pushWebSocketEventProtocolSelectorVC() {
+        let selectorViewController = OptionsSelectorViewController<WebSocketEventProtocol>(
+            options: [.v2, .v3],
+            initialSelectedOptions: [chatClientConfig.webSocketEventProtocol],
+            allowsMultipleSelection: false,
+            optionFormatter: \.demoDescription
+        )
+        selectorViewController.didChangeSelectedOptions = { [weak self] options in
+            guard let selectedOption = options.first else { return }
+            self?.chatClientConfig.webSocketEventProtocol = selectedOption
+            self?.tableView.reloadData()
+        }
+
+        navigationController?.pushViewController(selectorViewController, animated: true)
+    }
+
     private func showBaseURLInputAlert() {
         let alert = UIAlertController(
             title: "Base URL",
@@ -804,5 +826,11 @@ class AppConfigViewController: UITableViewController {
         }
 
         navigationController?.pushViewController(selectorViewController, animated: true)
+    }
+}
+
+private extension WebSocketEventProtocol {
+    var demoDescription: String {
+        self == .v3 ? "v3" : "v2"
     }
 }
