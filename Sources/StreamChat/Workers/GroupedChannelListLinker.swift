@@ -23,6 +23,9 @@ import Foundation
 /// The backend sends no event when a channel passes a `query_timestamp` cutoff, so linked channels are
 /// re-checked periodically and unlinked once they no longer match. Reconnect sync re-checks them too,
 /// because the events it replays are not posted.
+///
+/// `notification.message_new` and `notification.channel_partial_updated` carry no membership, so a channel without a stored
+/// one is watched first and linked once watching saves it. It isn't linked when the query doesn't watch.
 final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     private let channelWatcherHandler: ChannelWatcherHandling
     private let databaseContainer: DatabaseContainer
@@ -59,7 +62,16 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationMessageNewEvent },
-                callback: { [weak self] event in self?.updateLinking(for: event.channel.cid, isNewMessage: true) }
+                // Members who aren't watching receive it without membership, so a channel without one is watched first.
+                // Note that we check for local channel state where membership information might still be there.
+                callback: { [weak self] event in
+                    guard let self else { return }
+                    if event.channel.membership != nil {
+                        self.updateLinking(for: event.cid, isNewMessage: true)
+                    } else if self.isInGroup(event.channel.extraData[GroupedChannelKey.group]?.stringValue) {
+                        self.watchAndLinkIfNeeded(event.cid, queryTimestamp: event.queryTimestamp, isNewMessage: true)
+                    }
+                }
             ),
             EventObserver(
                 notificationCenter: nc,
@@ -84,7 +96,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationRemovedFromChannelEvent },
-                callback: { [weak self] event in self?.updateLinking(for: event.cid, isMember: false) }
+                callback: { [weak self] event in self?.updateLinking(for: event.cid) }
             ),
             EventObserver(
                 notificationCenter: nc,
@@ -94,6 +106,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationChannelPartialUpdatedEvent },
+                // Members who aren't watching receive it without membership (we also check membership state from the local store).
                 callback: { [weak self] event in self?.handlePartialUpdate(event) }
             )
         ]
@@ -106,25 +119,29 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     }
 
     private func handlePartialUpdate(_ event: NotificationChannelPartialUpdatedEvent) {
-        if event.isChannelStored {
+        if event.hasMembership {
             updateLinking(for: event.cid, skipsBelowLoadedChannels: true)
         } else if isInGroup(event.group) {
-            // Watching fetches and saves the channel, then it can be linked to the query.
-            databaseContainer.read({ [query, queryTimestamp = event.queryTimestamp] session in
-                guard let queryDTO = session.channelListQuery(query) else { return false }
-                return queryDTO.watch && Self.isWithinLoadedChannels(queryTimestamp, of: queryDTO)
-            }, completion: { [weak self, cid = event.cid] result in
-                if case .success(true) = result {
-                    self?.channelWatcherHandler.attemptToWatch(channelIds: [cid]) { [weak self] error in
-                        if let error {
-                            log.warning("Failed to start watching partially updated channel: \(cid), error: \(error.localizedDescription)")
-                        } else {
-                            self?.updateLinking(for: cid, startsWatching: false)
-                        }
+            watchAndLinkIfNeeded(event.cid, queryTimestamp: event.queryTimestamp)
+        }
+    }
+
+    private func watchAndLinkIfNeeded(_ cid: ChannelId, queryTimestamp: Date, isNewMessage: Bool = false) {
+        // Watching fetches and saves the channel, then it can be linked to the query.
+        databaseContainer.read({ [query] session in
+            guard let queryDTO = session.channelListQuery(query) else { return false }
+            return queryDTO.watch && Self.isWithinLoadedChannels(queryTimestamp, of: queryDTO)
+        }, completion: { [weak self] result in
+            if case .success(true) = result {
+                self?.channelWatcherHandler.attemptToWatch(channelIds: [cid]) { [weak self] error in
+                    if let error {
+                        log.warning("Failed to start watching channel before linking: \(cid), error: \(error.localizedDescription)")
+                    } else {
+                        self?.updateLinking(for: cid, isNewMessage: isNewMessage, startsWatching: false)
                     }
                 }
-            })
-        }
+            }
+        })
     }
 
     private func removeExpiredChannels() {
@@ -141,10 +158,10 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     /// whether it should belong to the query and whether it is already part of the list.
     /// After a fresh link, starts watching the channel when the query was issued with
     /// ``QueryOptions/watch`` and the channel isn't already linked to another query.
-    private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false, isMember: Bool = true, skipsBelowLoadedChannels: Bool = false, startsWatching: Bool = true) {
+    private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false, skipsBelowLoadedChannels: Bool = false, startsWatching: Bool = true) {
         databaseContainer.write(converting: { [query] session -> Bool in
             guard let groupKey = query.groupKey, let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: cid, query: query) else { return false }
-            let shouldBelong = try isMember && session.canLinkChannel(channelDTO, toGroup: groupKey)
+            let shouldBelong = try session.canLinkChannel(channelDTO, toGroup: groupKey)
             let isInList = queryDTO.channels.contains(channelDTO)
             if shouldBelong, !isInList, !skipsBelowLoadedChannels || Self.isWithinLoadedChannels(channelDTO.queryTimestamp.bridgeDate, of: queryDTO) {
                 // Channel isn't linked to any query yet, so it isn't already being watched.

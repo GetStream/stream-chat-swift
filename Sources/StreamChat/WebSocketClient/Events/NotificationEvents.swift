@@ -24,15 +24,19 @@ public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadC
     /// Unread channel counts keyed by the backend-provided group identifier.
     public let unreadChannelCountsByGroup: [String: Int]?
 
+    let queryTimestamp: Date
+
     init(
         channel: ChatChannel,
         message: ChatMessage,
+        queryTimestamp: Date,
         createdAt: Date,
         unreadCount: UnreadCount?,
         unreadChannelCountsByGroup: [String: Int]? = nil
     ) {
         self.channel = channel
         self.message = message
+        self.queryTimestamp = queryTimestamp
         self.createdAt = createdAt
         self.unreadCount = unreadCount
         self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
@@ -50,6 +54,7 @@ extension NotificationNewMessageEventDTO: EventDTO {
         return try? NotificationMessageNewEvent(
             channel: channelDTO.asModel(),
             message: messageDTO.asModel(),
+            queryTimestamp: GroupedChannelKey.queryTimestamp(createdAt: channel.createdAt, lastMessageAt: channel.lastMessageAt, touchedAt: channel.touchedAt),
             createdAt: createdAt,
             unreadCount: UnreadCount(currentUserDTO: currentUser),
             unreadChannelCountsByGroup: currentUser.unreadChannelCountsByGroup
@@ -533,13 +538,13 @@ public final class NotificationChannelPartialUpdatedEvent: ChannelSpecificEvent 
     public let createdAt: Date
 
     let group: String?
-    let isChannelStored: Bool
+    let hasMembership: Bool
     let queryTimestamp: Date
 
-    init(cid: ChannelId, group: String?, isChannelStored: Bool, queryTimestamp: Date, createdAt: Date) {
+    init(cid: ChannelId, group: String?, hasMembership: Bool, queryTimestamp: Date, createdAt: Date) {
         self.cid = cid
         self.group = group
-        self.isChannelStored = isChannelStored
+        self.hasMembership = hasMembership
         self.queryTimestamp = queryTimestamp
         self.createdAt = createdAt
     }
@@ -550,8 +555,8 @@ extension NotificationChannelPartialUpdatedEventDTO: EventDTO {
         NotificationChannelPartialUpdatedEvent(
             cid: channel.cid,
             group: channel.group,
-            isChannelStored: session.channel(cid: channel.cid) != nil,
-            queryTimestamp: max(channel.createdAt, channel.lastMessageAt ?? .distantPast, channel.touchedAt ?? .distantPast),
+            hasMembership: session.channel(cid: channel.cid)?.membership != nil,
+            queryTimestamp: GroupedChannelKey.queryTimestamp(createdAt: channel.createdAt, lastMessageAt: channel.lastMessageAt, touchedAt: channel.touchedAt),
             createdAt: createdAt
         )
     }

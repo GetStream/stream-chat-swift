@@ -2101,6 +2101,7 @@ final class ChannelListController_Tests: XCTestCase {
         NotificationMessageNewEvent(
             channel: channel,
             message: .unique,
+            queryTimestamp: .unique,
             createdAt: .unique,
             unreadCount: nil
         )

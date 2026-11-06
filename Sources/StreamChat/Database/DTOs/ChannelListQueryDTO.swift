@@ -196,11 +196,9 @@ extension NSManagedObjectContext {
             let filter = try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: filterData)
             return filter?.predicate
         }()
-        let currentUserId = currentUser?.user.id
         return { channel, groupKey in
             let canShowChannel = !channel.isHidden && !channel.isDisabled && channel.deletedAt == nil
-            // Channels saved from notification events carry `members` but no `membership`.
-            let isMember = channel.membership != nil || channel.members.contains { $0.user.id == currentUserId }
+            let isMember = channel.membership != nil
             let isMemberInGroup = isMember && (groupKey == GroupedChannelKey.all || channel.group == groupKey)
             return canShowChannel && isMemberInGroup && (groupFilterPredicate?.evaluate(with: channel) ?? true)
         }
