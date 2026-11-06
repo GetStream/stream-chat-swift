@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add quiet hours for push notifications with `CurrentChatUserController.setQuietHours(_:)` and `removeQuietHours()` [#4383](https://github.com/GetStream/stream-chat-swift/pull/4383)
+- Add automatic translations of poll questions, options and answers [#4390](https://github.com/GetStream/stream-chat-swift/pull/4390)
+
+## StreamChatUI
+### ✅ Added
+- Show translated poll questions, options and answers when `Components.messageAutoTranslationEnabled` is `true` [#4390](https://github.com/GetStream/stream-chat-swift/pull/4390)
 
 # [5.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.16.0)
 _November 04, 2026_
