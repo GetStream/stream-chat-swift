@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add quiet hours for push notifications with `CurrentChatUserController.setQuietHours(_:)` and `removeQuietHours()` [#4383](https://github.com/GetStream/stream-chat-swift/pull/4383)
+- Add tvOS 15 support, with audio recording on tvOS 17 [#4386](https://github.com/GetStream/stream-chat-swift/pull/4386)
+### 🐞 Fixed
+- Fix downloaded attachments staying downloaded after their file was removed [#4386](https://github.com/GetStream/stream-chat-swift/pull/4386)
 
 # [5.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.16.0)
 _November 04, 2026_

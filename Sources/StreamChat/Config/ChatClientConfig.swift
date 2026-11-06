@@ -30,6 +30,9 @@ public struct ChatClientConfig: Sendable {
     }
 
     /// The folder `ChatClient` uses to store its local cache files.
+    ///
+    /// On tvOS this defaults to `Library/Caches`, the only writable location for tvOS apps. The system may purge it
+    /// while the app isn't running. The SDK then starts with an empty cache, and local changes that weren't sent yet are lost.
     public var localStorageFolderURL: URL? = {
         Self.initLocalStorageFolderURL(groupIdentifier: nil)
     }()
@@ -42,12 +45,15 @@ public struct ChatClientConfig: Sendable {
     ///
     /// Set this to a non-user-visible location such as `Library/Application Support` or `Library/Caches` to keep
     /// downloaded attachments out of the Files app and, optionally, out of backups. When `nil`, the SDK falls back
-    /// to the default `Documents` directory.
+    /// to the default `Documents` directory (`Library/Caches` on tvOS).
+    ///
+    /// On tvOS the default is `Library/Caches`, because tvOS apps can't write to `Documents`. The system may purge it
+    /// while the app isn't running, and purged attachments can be downloaded again.
     ///
     /// - Important: Relative download paths are resolved against this URL on each launch, so changing it between
     /// launches means previously downloaded files stored under the old location won't be found.
     public var localAttachmentDownloadsFolderURL: URL? = {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        FileManager.default.streamStorageDirectory
     }()
 
     static func initLocalStorageFolderURL(groupIdentifier: String?) -> URL? {
@@ -57,14 +63,19 @@ public struct ChatClientConfig: Sendable {
         #else
         if let groupIdentifier = groupIdentifier {
             if let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupIdentifier) {
+                #if os(tvOS)
+                // tvOS allows writing only to the Caches folder of an app group container.
+                return url.appendingPathComponent("Library/Caches", isDirectory: true)
+                #else
                 return url
+                #endif
             }
             log
                 .error(
                     "Chat is configured to use the App Group: \(groupIdentifier) but the target seems to be not configured correctly"
                 )
         }
-        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        return FileManager.default.streamStorageDirectory
         #endif
     }
 

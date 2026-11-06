@@ -516,3 +516,16 @@ jobs:
     - name: Test SPM Integration
       run: bundle exec fastlane spm_integration ${{ env.VERBOSE }}
       timeout-minutes: 25
+
+  build-tvos:
+    name: Build LLC (tvOS)
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    needs: guard
+    steps:
+    - uses: actions/checkout@v7
+    - uses: ./.github/actions/ruby-cache
+    - uses: ./.github/actions/xcode-cache
+    - name: Build LLC for tvOS
+      run: bundle exec fastlane build_tvos ${{ env.VERBOSE }}
+      timeout-minutes: 40

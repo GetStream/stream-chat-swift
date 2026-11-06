@@ -38,7 +38,7 @@ extension SystemEnvironment {
     }
 
     private static var model: String {
-        #if os(iOS)
+        #if os(iOS) || os(tvOS)
         return deviceModelName
         #elseif os(macOS)
         return macModelIdentifier
@@ -62,7 +62,7 @@ extension SystemEnvironment {
     #endif
 
     private static var osVersion: String {
-        #if os(iOS)
+        #if os(iOS) || os(tvOS)
         let version = ProcessInfo.processInfo.operatingSystemVersion
         let patch: Int? = version.patchVersion > 0 ? version.patchVersion : nil
         return [version.majorVersion, version.minorVersion, patch]
@@ -77,6 +77,8 @@ extension SystemEnvironment {
     private static var os: String {
         #if os(iOS)
         return "iOS"
+        #elseif os(tvOS)
+        return "tvOS"
         #elseif os(macOS)
         return "MacOS"
         #endif

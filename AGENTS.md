@@ -263,6 +263,7 @@ CI is driven by Fastlane (see `fastlane/Fastfile`). Key lanes:
 - `build_test_app_and_frameworks` — builds test app and SDK frameworks
 - `build_imessage_clone`, `build_slack_clone`, `build_messenger_clone`, `build_youtube_clone` — builds example apps
 - `spm_integration` — validates SPM integration
+- `build_tvos` — builds StreamChat for the tvOS Simulator
 - `run_swift_format` — runs SwiftFormat validation
 - `validate_public_interface` — checks for unintended public API changes
 
