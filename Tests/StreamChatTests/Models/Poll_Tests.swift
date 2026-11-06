@@ -537,6 +537,20 @@ final class Poll_Tests: XCTestCase {
         XCTAssertNil(Poll.mock(pollDescription: nil, descriptionTranslations: [.spanish: "Elige uno"]).translatedDescription(for: .spanish))
     }
 
+    func test_translatedDescription_usesDescriptionOriginalLanguage() {
+        let poll = Poll.mock(
+            pollDescription: "Pick one",
+            name: "Pizza",
+            nameTranslations: [.english: "Pizza"],
+            descriptionTranslations: [.italian: "Scegline uno"],
+            originalLanguage: .italian,
+            descriptionOriginalLanguage: .english
+        )
+
+        XCTAssertEqual(poll.translatedDescription(for: .italian), "Scegline uno")
+        XCTAssertNil(poll.translatedDescription(for: .english))
+    }
+
     func test_pollOption_translatedText() {
         let option = PollOption(text: "Soup", translations: [.spanish: "Sopa"], originalLanguage: .english)
 

@@ -30,6 +30,7 @@ class PollDTO: NSManagedObject {
     @NSManaged var nameTranslations: [String: String]?
     @NSManaged var descriptionTranslations: [String: String]?
     @NSManaged var originalLanguage: String?
+    @NSManaged var descriptionOriginalLanguage: String?
 
     override func willSave() {
         super.willSave()
@@ -137,7 +138,8 @@ extension PollDTO {
                 .map { try $0.asModel() },
             nameTranslations: nameTranslations?.mapKeys { TranslationLanguage(languageCode: $0) },
             descriptionTranslations: descriptionTranslations?.mapKeys { TranslationLanguage(languageCode: $0) },
-            originalLanguage: originalLanguage.map { TranslationLanguage(languageCode: $0) }
+            originalLanguage: originalLanguage.map { TranslationLanguage(languageCode: $0) },
+            descriptionOriginalLanguage: descriptionOriginalLanguage.map { TranslationLanguage(languageCode: $0) }
         )
     }
     
@@ -162,7 +164,7 @@ extension NSManagedObjectContext {
         pollDto.nameTranslations = I18n.translations(from: payload.nameI18n)?.mapKeys(\.languageCode)
         pollDto.descriptionTranslations = I18n.translations(from: payload.descriptionI18n)?.mapKeys(\.languageCode)
         pollDto.originalLanguage = I18n.originalLanguage(from: payload.nameI18n)
-            ?? I18n.originalLanguage(from: payload.descriptionI18n)
+        pollDto.descriptionOriginalLanguage = I18n.originalLanguage(from: payload.descriptionI18n)
         pollDto.updatedAt = payload.updatedAt.bridgeDate
         pollDto.voteCount = payload.voteCount
         pollDto.voteCountsByOption = payload.voteCountsByOption

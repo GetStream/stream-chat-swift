@@ -45,7 +45,7 @@ final class PollDTO_Tests: XCTestCase {
                 )
             ],
             nameI18n: ["language": "en", "en_text": "What's for lunch?", "es_text": "¿Qué hay de almuerzo?"],
-            descriptionI18n: ["language": "en", "en_text": "Pick one", "es_text": "Elige uno"]
+            descriptionI18n: ["language": "fr", "fr_text": "Pick one", "es_text": "Elige uno"]
         )
 
         try database.writeSynchronously { session in
@@ -55,7 +55,8 @@ final class PollDTO_Tests: XCTestCase {
         let poll = try XCTUnwrap(database.readSynchronously { try $0.poll(id: pollId)?.asModel() })
         XCTAssertEqual(poll.originalLanguage, .english)
         XCTAssertEqual(poll.nameTranslations, [.english: "What's for lunch?", .spanish: "¿Qué hay de almuerzo?"])
-        XCTAssertEqual(poll.descriptionTranslations, [.english: "Pick one", .spanish: "Elige uno"])
+        XCTAssertEqual(poll.descriptionOriginalLanguage, .french)
+        XCTAssertEqual(poll.descriptionTranslations, [.french: "Pick one", .spanish: "Elige uno"])
         XCTAssertEqual(poll.translatedName(for: .spanish), "¿Qué hay de almuerzo?")
         XCTAssertEqual(poll.translatedDescription(for: .spanish), "Elige uno")
 

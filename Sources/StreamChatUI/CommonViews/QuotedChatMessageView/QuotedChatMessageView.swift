@@ -189,7 +189,10 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         }
 
         if let poll = message.poll, !message.isDeleted {
-            textView.text = "📊 \(poll.name(in: content?.channel?.membership?.language))"
+            let translationLanguage = components.messageAutoTranslationEnabled
+                ? content?.channel?.membership?.language
+                : nil
+            textView.text = "📊 \(poll.name(in: translationLanguage))"
         }
     }
 

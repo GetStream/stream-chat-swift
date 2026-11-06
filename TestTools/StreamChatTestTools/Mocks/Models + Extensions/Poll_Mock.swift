@@ -30,7 +30,8 @@ extension Poll {
         ownVotes: [PollVote] = [],
         nameTranslations: [TranslationLanguage: String]? = nil,
         descriptionTranslations: [TranslationLanguage: String]? = nil,
-        originalLanguage: TranslationLanguage? = nil
+        originalLanguage: TranslationLanguage? = nil,
+        descriptionOriginalLanguage: TranslationLanguage? = nil
     ) -> Poll {
         .init(
             allowAnswers: allowAnswers,
@@ -56,7 +57,8 @@ extension Poll {
             ownVotes: ownVotes,
             nameTranslations: nameTranslations,
             descriptionTranslations: descriptionTranslations,
-            originalLanguage: originalLanguage
+            originalLanguage: originalLanguage,
+            descriptionOriginalLanguage: descriptionOriginalLanguage
         )
     }
 }

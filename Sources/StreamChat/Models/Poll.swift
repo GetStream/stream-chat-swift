@@ -81,8 +81,11 @@ public final class Poll: Identifiable, Sendable {
     /// The available automatic translations of the poll description.
     public let descriptionTranslations: [TranslationLanguage: String]?
 
-    /// The original language of the poll.
+    /// The original language of the poll name.
     public let originalLanguage: TranslationLanguage?
+
+    /// The original language of the poll description.
+    let descriptionOriginalLanguage: TranslationLanguage?
 
     init(
         allowAnswers: Bool,
@@ -108,7 +111,8 @@ public final class Poll: Identifiable, Sendable {
         ownVotes: [PollVote],
         nameTranslations: [TranslationLanguage: String]? = nil,
         descriptionTranslations: [TranslationLanguage: String]? = nil,
-        originalLanguage: TranslationLanguage? = nil
+        originalLanguage: TranslationLanguage? = nil,
+        descriptionOriginalLanguage: TranslationLanguage? = nil
     ) {
         self.allowAnswers = allowAnswers
         self.allowUserSuggestedOptions = allowUserSuggestedOptions
@@ -134,6 +138,7 @@ public final class Poll: Identifiable, Sendable {
         self.nameTranslations = nameTranslations
         self.descriptionTranslations = descriptionTranslations
         self.originalLanguage = originalLanguage
+        self.descriptionOriginalLanguage = descriptionOriginalLanguage
     }
 }
 
@@ -162,7 +167,8 @@ extension Poll: Equatable {
             lhs.ownVotes == rhs.ownVotes &&
             lhs.nameTranslations == rhs.nameTranslations &&
             lhs.descriptionTranslations == rhs.descriptionTranslations &&
-            lhs.originalLanguage == rhs.originalLanguage
+            lhs.originalLanguage == rhs.originalLanguage &&
+            lhs.descriptionOriginalLanguage == rhs.descriptionOriginalLanguage
     }
 }
 
@@ -185,7 +191,7 @@ public extension Poll {
             of: pollDescription,
             in: descriptionTranslations,
             for: language,
-            originalLanguage: originalLanguage
+            originalLanguage: descriptionOriginalLanguage
         )
     }
 }

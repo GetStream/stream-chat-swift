@@ -458,6 +458,7 @@
         <attribute name="answersCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="custom" optional="YES" attributeType="Binary"/>
+        <attribute name="descriptionOriginalLanguage" optional="YES" attributeType="String"/>
         <attribute name="descriptionTranslations" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="enforceUniqueVote" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" attributeType="String"/>
