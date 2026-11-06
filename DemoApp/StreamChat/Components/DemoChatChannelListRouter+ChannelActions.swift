@@ -163,6 +163,22 @@ extension DemoChatChannelListRouter {
                     }
                 }
             ]),
+            DemoActionSection("Translation", items: [
+                .item(
+                    context.channel?.isAutoTranslationEnabled == true ? "Disable auto translation" : "Enable auto translation",
+                    isEnabled: context.canUpdateChannel
+                ) { [unowned self] in
+                    let isEnabled = channelController.channel?.isAutoTranslationEnabled == true
+                    channelController.partialChannelUpdate(extraData: ["auto_translation_enabled": .bool(!isEnabled)]) { error in
+                        if let error = error {
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't update the auto translation of the channel \(cid)",
+                                message: "\(error)"
+                            )
+                        }
+                    }
+                }
+            ]),
             DemoActionSection("Slow Mode", items: [
                 .item("Enable slow mode", isEnabled: context.canSetChannelCooldown) { [unowned self] in
                     self.rootViewController
