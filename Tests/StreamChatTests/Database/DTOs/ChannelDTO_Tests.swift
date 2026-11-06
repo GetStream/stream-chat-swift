@@ -1109,7 +1109,9 @@ final class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(cid: cid, members: nil, memberCount: 150), query: nil, cache: nil)
         }
 
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+        let channel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: cid)?.asModel())
+        }
         XCTAssertEqual(Set(channel.lastActiveMembers.map(\.id)), Set(members.map(\.userId)))
         XCTAssertEqual(channel.memberCount, 150)
     }
