@@ -21,6 +21,10 @@ open class PollResultsVoteListVC:
     /// The poll option which the votes belong to.
     public var option: PollOption
 
+    /// The language to show the option text in, when it has a translation to it.
+    /// If `nil`, the original text is shown.
+    public var translationLanguage: TranslationLanguage?
+
     public required init(
         pollVoteListController: PollVoteListController,
         poll: Poll,
@@ -134,7 +138,7 @@ open class PollResultsVoteListVC:
 
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionHeaderView)
-        view.content = .init(option: option, poll: poll)
+        view.content = .init(option: option, poll: poll, translationLanguage: translationLanguage)
         style(sectionHeaderView: view, contentView: view.container, isEmptySection: false)
         return view
     }

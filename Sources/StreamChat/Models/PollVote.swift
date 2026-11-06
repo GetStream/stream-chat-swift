@@ -33,6 +33,47 @@ public struct PollVote: Hashable, Equatable, Identifiable, Sendable {
     /// This property is optional and may be `nil` if the vote was submitted anonymously.
     public let user: ChatUser?
 
+    /// The available automatic translations of the answer text.
+    public let answerTextTranslations: [TranslationLanguage: String]?
+
+    /// The original language of the answer text.
+    public let originalLanguage: TranslationLanguage?
+
+    init(
+        id: String,
+        createdAt: Date,
+        updatedAt: Date,
+        pollId: String,
+        optionId: String?,
+        isAnswer: Bool,
+        answerText: String?,
+        user: ChatUser?,
+        answerTextTranslations: [TranslationLanguage: String]? = nil,
+        originalLanguage: TranslationLanguage? = nil
+    ) {
+        self.id = id
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.pollId = pollId
+        self.optionId = optionId
+        self.isAnswer = isAnswer
+        self.answerText = answerText
+        self.user = user
+        self.answerTextTranslations = answerTextTranslations
+        self.originalLanguage = originalLanguage
+    }
+
+    /// Gets the translated answer text given the desired language in case the translation is valid.
+    public func translatedAnswerText(for language: TranslationLanguage) -> String? {
+        guard let answerText else { return nil }
+        return I18n.validTranslation(
+            of: answerText,
+            in: answerTextTranslations,
+            for: language,
+            originalLanguage: originalLanguage
+        )
+    }
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }

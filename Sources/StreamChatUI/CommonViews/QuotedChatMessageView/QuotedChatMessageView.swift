@@ -189,7 +189,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         }
 
         if let poll = message.poll, !message.isDeleted {
-            textView.text = "📊 \(poll.name)"
+            textView.text = "📊 \(poll.name(in: content?.channel?.membership?.language))"
         }
     }
 

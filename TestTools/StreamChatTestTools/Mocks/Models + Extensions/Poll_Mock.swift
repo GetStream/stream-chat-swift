@@ -27,7 +27,10 @@ extension Poll {
         options: [PollOption] = [],
         latestVotesByOption: [PollOption] = [],
         latestVotes: [PollVote] = [],
-        ownVotes: [PollVote] = []
+        ownVotes: [PollVote] = [],
+        nameTranslations: [TranslationLanguage: String]? = nil,
+        descriptionTranslations: [TranslationLanguage: String]? = nil,
+        originalLanguage: TranslationLanguage? = nil
     ) -> Poll {
         .init(
             allowAnswers: allowAnswers,
@@ -50,7 +53,10 @@ extension Poll {
             options: options,
             latestVotesByOption: latestVotesByOption,
             latestVotes: latestVotes,
-            ownVotes: ownVotes
+            ownVotes: ownVotes,
+            nameTranslations: nameTranslations,
+            descriptionTranslations: descriptionTranslations,
+            originalLanguage: originalLanguage
         )
     }
 }
@@ -64,7 +70,9 @@ extension PollVote {
         optionId: String? = nil,
         isAnswer: Bool = false,
         answerText: String? = nil,
-        user: ChatUser? = nil
+        user: ChatUser? = nil,
+        answerTextTranslations: [TranslationLanguage: String]? = nil,
+        originalLanguage: TranslationLanguage? = nil
     ) -> PollVote {
         .init(
             id: id,
@@ -74,7 +82,9 @@ extension PollVote {
             optionId: optionId,
             isAnswer: isAnswer,
             answerText: answerText,
-            user: user
+            user: user,
+            answerTextTranslations: answerTextTranslations,
+            originalLanguage: originalLanguage
         )
     }
 }
