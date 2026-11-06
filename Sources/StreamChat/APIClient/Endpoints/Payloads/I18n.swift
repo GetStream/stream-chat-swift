@@ -29,7 +29,7 @@ enum I18n {
 }
 
 extension I18n {
-    /// The translation of the text in the given language, or `nil` when there is none or it is the same as the text.
+    /// The translation of the text in the given language, or `nil` when there is none, it is empty, or it is the same as the text.
     static func validTranslation(
         of text: String,
         in translations: [TranslationLanguage: String]?,
@@ -38,7 +38,7 @@ extension I18n {
     ) -> String? {
         guard !text.isEmpty else { return nil }
         guard language != originalLanguage else { return nil }
-        guard let translatedText = translations?[language] else { return nil }
+        guard let translatedText = translations?[language], !translatedText.isEmpty else { return nil }
         guard translatedText != text else { return nil }
         return translatedText
     }
