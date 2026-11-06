@@ -60,6 +60,13 @@ public struct PollOption: Hashable, Equatable, Identifiable, Sendable {
         )
     }
 
+    /// The option text in the given language, or the original text when there is no valid translation to it.
+    ///
+    /// - Parameter language: The language to show the text in. If `nil`, the original text is returned.
+    public func text(in language: TranslationLanguage?) -> String {
+        language.flatMap(translatedText(for:)) ?? text
+    }
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }

@@ -572,6 +572,36 @@ final class Poll_Tests: XCTestCase {
         XCTAssertNil(PollVote.mock(answerTextTranslations: [.spanish: "Hola"]).translatedAnswerText(for: .spanish))
     }
 
+    func test_nameInLanguage() {
+        let poll = Poll.mock(name: "Lunch", nameTranslations: [.spanish: "Almuerzo"], originalLanguage: .english)
+
+        XCTAssertEqual(poll.name(in: .spanish), "Almuerzo")
+        XCTAssertEqual(poll.name(in: .french), "Lunch")
+        XCTAssertEqual(poll.name(in: nil), "Lunch")
+    }
+
+    func test_pollOption_textInLanguage() {
+        let option = PollOption(text: "Soup", translations: [.spanish: "Sopa"], originalLanguage: .english)
+
+        XCTAssertEqual(option.text(in: .spanish), "Sopa")
+        XCTAssertEqual(option.text(in: .english), "Soup")
+        XCTAssertEqual(option.text(in: nil), "Soup")
+    }
+
+    func test_pollVote_answerTextInLanguage() {
+        let vote = PollVote.mock(
+            isAnswer: true,
+            answerText: "Fish, please",
+            answerTextTranslations: [.spanish: "Pescado, por favor"],
+            originalLanguage: .english
+        )
+
+        XCTAssertEqual(vote.answerText(in: .spanish), "Pescado, por favor")
+        XCTAssertEqual(vote.answerText(in: .french), "Fish, please")
+        XCTAssertEqual(vote.answerText(in: nil), "Fish, please")
+        XCTAssertNil(PollVote.mock(answerText: nil).answerText(in: .spanish))
+    }
+
     func test_equality_comparesTranslations() {
         let createdAt = Date()
         let poll = Poll.mock(createdAt: createdAt, id: "poll", name: "Lunch")

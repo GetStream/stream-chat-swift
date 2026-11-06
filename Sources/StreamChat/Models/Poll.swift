@@ -184,6 +184,13 @@ public extension Poll {
         )
     }
 
+    /// The poll name in the given language, or the original name when there is no valid translation to it.
+    ///
+    /// - Parameter language: The language to show the name in. If `nil`, the original name is returned.
+    func name(in language: TranslationLanguage?) -> String {
+        language.flatMap(translatedName(for:)) ?? name
+    }
+
     /// Gets the translated description of the poll given the desired language in case the translation is valid.
     func translatedDescription(for language: TranslationLanguage) -> String? {
         guard let pollDescription else { return nil }

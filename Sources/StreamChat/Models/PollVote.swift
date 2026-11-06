@@ -74,6 +74,13 @@ public struct PollVote: Hashable, Equatable, Identifiable, Sendable {
         )
     }
 
+    /// The answer text in the given language, or the original text when there is no valid translation to it.
+    ///
+    /// - Parameter language: The language to show the answer in. If `nil`, the original answer text is returned.
+    public func answerText(in language: TranslationLanguage?) -> String? {
+        language.flatMap(translatedAnswerText(for:)) ?? answerText
+    }
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
