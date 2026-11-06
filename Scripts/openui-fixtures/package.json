@@ -4,6 +4,6 @@
   "type": "module",
   "description": "Runs the upstream OpenUI TypeScript sources (lang-core, react-ui prompt options) from a clone to produce the Swift port's conformance fixtures.",
   "dependencies": {
-    "zod": "4.4.3"
+    "zod": "4.6.6"
   }
 }
