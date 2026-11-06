@@ -524,6 +524,7 @@
         <attribute name="chatLevel" attributeType="String"/>
         <attribute name="disabledUntil" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="String"/>
+        <attribute name="scheduleData" optional="YES" attributeType="Binary"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="pushPreference" inverseEntity="ChannelDTO"/>
         <relationship name="currentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="pushPreference" inverseEntity="CurrentUserDTO"/>
         <uniquenessConstraints>

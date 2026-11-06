@@ -916,6 +916,122 @@ final class CurrentUserController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionResult?.error as? TestError, expectedError)
     }
 
+    // MARK: - setQuietHours
+
+    func test_setQuietHours_callsUpdaterWithSchedule() {
+        // GIVEN
+        let schedule = PushSchedule(
+            quietHours: [QuietHoursRule(days: QuietHoursDay.weekdays, start: "18:00", end: "09:00")],
+            timezone: TimeZone(identifier: "Europe/Amsterdam")!
+        )
+
+        // WHEN
+        controller.setQuietHours(schedule)
+
+        // THEN
+        let expectedPreference = PushPreferenceInput(
+            schedule: PushScheduleInput(
+                quietHours: [QuietHoursRuleInput(days: QuietHoursDay.weekdays, end: "09:00", start: "18:00")],
+                timezone: "Europe/Amsterdam"
+            )
+        )
+        XCTAssertEqual(env.currentUserUpdater?.setPushPreference_preference, expectedPreference)
+        XCTAssertNil(env.currentUserUpdater?.setPushPreference_preference?.disabledUntil)
+        XCTAssertNil(env.currentUserUpdater?.setPushPreference_preference?.channelCid)
+    }
+
+    func test_setQuietHours_whenScheduleIsReturned_propagatesSuccess() throws {
+        // GIVEN
+        let schedule = PushSchedule(quietHours: [QuietHoursRule(start: "22:00", end: "07:00")])
+        let expectedPreference = PushPreference(level: .all, schedule: schedule)
+
+        // WHEN
+        let result: Result<PushPreference, Error> = try waitFor { done in
+            controller.setQuietHours(schedule, completion: done)
+            env.currentUserUpdater?.setPushPreference_completion?(.success(expectedPreference))
+        }
+
+        // THEN
+        XCTAssertEqual(result.value, expectedPreference)
+    }
+
+    func test_setQuietHours_whenScheduleIsNotReturned_fails() throws {
+        // GIVEN
+        let schedule = PushSchedule(quietHours: [QuietHoursRule(start: "22:00", end: "07:00")])
+
+        // WHEN
+        let result: Result<PushPreference, Error> = try waitFor { done in
+            controller.setQuietHours(schedule, completion: done)
+            env.currentUserUpdater?.setPushPreference_completion?(.success(PushPreference(level: .all)))
+        }
+
+        // THEN
+        XCTAssertTrue(result.error is ClientError.QuietHoursNotStored)
+    }
+
+    func test_setQuietHours_whenScheduleHasNoRules_failsWithoutCallingUpdater() throws {
+        // WHEN
+        let result: Result<PushPreference, Error> = try waitFor { done in
+            controller.setQuietHours(PushSchedule(quietHours: []), completion: done)
+        }
+
+        // THEN
+        XCTAssertTrue(result.error is ClientError.QuietHoursEmpty)
+        XCTAssertNil(env.currentUserUpdater?.setPushPreference_preference)
+    }
+
+    func test_setQuietHours_propagatesError() throws {
+        // GIVEN
+        let expectedError = TestError()
+
+        // WHEN
+        let result: Result<PushPreference, Error> = try waitFor { done in
+            controller.setQuietHours(PushSchedule(quietHours: [QuietHoursRule(start: "22:00", end: "07:00")]), completion: done)
+            env.currentUserUpdater?.setPushPreference_completion?(.failure(expectedError))
+        }
+
+        // THEN
+        XCTAssertEqual(result.error as? TestError, expectedError)
+    }
+
+    // MARK: - removeQuietHours
+
+    func test_removeQuietHours_callsUpdaterWithRemoveSchedule() {
+        // WHEN
+        controller.removeQuietHours()
+
+        // THEN
+        XCTAssertEqual(env.currentUserUpdater?.setPushPreference_preference, PushPreferenceInput(removeSchedule: true))
+    }
+
+    func test_removeQuietHours_propagatesSuccess() throws {
+        // GIVEN
+        let expectedPreference = PushPreference(level: .all)
+
+        // WHEN
+        let result: Result<PushPreference, Error> = try waitFor { done in
+            controller.removeQuietHours(completion: done)
+            env.currentUserUpdater?.setPushPreference_completion?(.success(expectedPreference))
+        }
+
+        // THEN
+        XCTAssertEqual(result.value, expectedPreference)
+    }
+
+    func test_removeQuietHours_propagatesError() throws {
+        // GIVEN
+        let expectedError = TestError()
+
+        // WHEN
+        let result: Result<PushPreference, Error> = try waitFor { done in
+            controller.removeQuietHours(completion: done)
+            env.currentUserUpdater?.setPushPreference_completion?(.failure(expectedError))
+        }
+
+        // THEN
+        XCTAssertEqual(result.error as? TestError, expectedError)
+    }
+
     // MARK: - muteUsers
 
     func test_muteUsers_callsUpdaterWithCorrectParameters() {

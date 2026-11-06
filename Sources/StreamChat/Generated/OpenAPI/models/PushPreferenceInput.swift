@@ -35,17 +35,25 @@ final class PushPreferenceInput: Sendable, Encodable, JSONEncodable {
     let disabledUntil: Date?
     /// Remove the disabled until time. (IE stop snoozing notifications)
     let removeDisable: Bool?
+    /// Remove the user's quiet-hours schedule, the counterpart of remove_disable. It is applied before schedule, so sending both in one item replaces the stored schedule instead of merging into it. Cannot be combined with channel_cid. To switch from a schedule to a snooze, send remove_schedule together with disabled_until.
+    let removeSchedule: Bool?
+    /// A recurring quiet-hours schedule: while any quiet window is active, push notifications for the user are suppressed. Suppressed notifications are dropped, not delayed.
+    let schedule: PushScheduleInput?
 
     init(
         channelCid: String? = nil,
         chatLevel: PushPreferenceLevel? = nil,
         disabledUntil: Date? = nil,
-        removeDisable: Bool? = nil
+        removeDisable: Bool? = nil,
+        removeSchedule: Bool? = nil,
+        schedule: PushScheduleInput? = nil
     ) {
         self.channelCid = channelCid
         self.chatLevel = chatLevel
         self.disabledUntil = disabledUntil
         self.removeDisable = removeDisable
+        self.removeSchedule = removeSchedule
+        self.schedule = schedule
     }
 
     func encode(to encoder: Encoder) throws {
@@ -54,6 +62,8 @@ final class PushPreferenceInput: Sendable, Encodable, JSONEncodable {
         try container.encodeIfPresent(chatLevel, forKey: .chatLevel)
         try container.encodeIfPresent(disabledUntil, forKey: .disabledUntil)
         try container.encodeIfPresent(removeDisable, forKey: .removeDisable)
+        try container.encodeIfPresent(removeSchedule, forKey: .removeSchedule)
+        try container.encodeIfPresent(schedule, forKey: .schedule)
     }
 }
 
@@ -62,7 +72,9 @@ extension PushPreferenceInput: Hashable {
         lhs.channelCid == rhs.channelCid &&
             lhs.chatLevel == rhs.chatLevel &&
             lhs.disabledUntil == rhs.disabledUntil &&
-            lhs.removeDisable == rhs.removeDisable
+            lhs.removeDisable == rhs.removeDisable &&
+            lhs.removeSchedule == rhs.removeSchedule &&
+            lhs.schedule == rhs.schedule
     }
 
     func hash(into hasher: inout Hasher) {
@@ -70,5 +82,7 @@ extension PushPreferenceInput: Hashable {
         hasher.combine(chatLevel)
         hasher.combine(disabledUntil)
         hasher.combine(removeDisable)
+        hasher.combine(removeSchedule)
+        hasher.combine(schedule)
     }
 }

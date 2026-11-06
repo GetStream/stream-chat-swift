@@ -204,6 +204,7 @@ allowed_models=(
   PollVotesResponse
   PushPreferenceInput
   PushPreferencesResponse
+  PushScheduleInput
   QueryBannedUsersPayload
   QueryBannedUsersResponse
   QueryChannelsRequest
@@ -221,6 +222,7 @@ allowed_models=(
   QueryThreadsResponse
   QueryUsersPayload
   QueryUsersResponse
+  QuietHoursRuleInput
   ReactionGroupResponse
   ReactionRequest
   ReactionResponse
@@ -375,6 +377,8 @@ allowed_hashable_models=(
   MarkUnreadRequest
   PushPreference
   PushPreferenceInput
+  PushScheduleInput
+  QuietHoursRuleInput
   Role
   SharedLocation
   UploadConfig
@@ -422,6 +426,7 @@ encodable_only_models=(
   PaginationParams
   PollOptionRequestBody
   PushPreferenceInput
+  PushScheduleInput
   QueryBannedUsersPayload
   QueryChannelsRequest
   QueryDraftsRequest
@@ -432,6 +437,7 @@ encodable_only_models=(
   QueryScheduledMessagesRequest
   QueryThreadsRequest
   QueryUsersPayload
+  QuietHoursRuleInput
   ReactionRequest
   RemoveUserGroupMembersRequest
   ScheduledMessageQueryStatus
@@ -706,6 +712,9 @@ rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
+# Hand-written public models; only point the references at their names.
+rename_generated_type PushScheduleResponse PushSchedule
+
 # StreamCore provides the device and privacy settings models; only point the references at its names.
 rename_generated_type DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
 rename_generated_type DeviceResponse Device
@@ -729,6 +738,7 @@ retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 retype_property ChannelPartialUpdateResponse cid String ChannelId
 retype_property PushPreference chatLevel String PushPreferenceLevel
+retype_property QuietHoursRuleInput days "[String]" "[QuietHoursDay]"
 for f in "$OUTPUT_DIR_CHAT"/models/*EventDTO.swift; do
   [ -e "$f" ] || continue
   base="$(basename "$f" .swift)"
