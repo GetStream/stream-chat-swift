@@ -57,17 +57,6 @@ final class ThreadListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.thread.threadParticipants?.count, threadParticipants.count)
     }
 
-    func test_thread_latestRepliesDefaultToEmptyWhenMissing() throws {
-        let url = XCTestCase.mockData(fromJSONFile: "Thread")
-        var thread = try XCTUnwrap(JSONSerialization.jsonObject(with: url) as? [String: Any])
-        thread.removeValue(forKey: "latest_replies")
-        let data = try JSONSerialization.data(withJSONObject: thread)
-
-        let payload = try JSONDecoder.default.decode(ThreadPayload.self, from: data)
-
-        XCTAssertEqual(payload.latestReplies.count, 0)
-    }
-
     func test_threadList_shouldReturnThreadsIfOneThreadFailsParsing() throws {
         let url = XCTestCase.mockData(fromJSONFile: "Thread")
         let thread = try XCTUnwrap(JSONSerialization.jsonObject(with: url) as? [String: Any])

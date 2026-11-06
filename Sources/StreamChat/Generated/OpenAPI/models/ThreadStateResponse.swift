@@ -24,13 +24,13 @@ final class ThreadStateResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        thread = try ThreadResponse(from: decoder)
-        draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
-        latestReplies = try container.decodeArrayIfPresentIgnoringFailures(
+        self.thread = try ThreadResponse(from: decoder)
+        self.draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
+        self.latestReplies = try container.decodeArrayIgnoringFailures(
             [MessageResponse].self,
             forKey: .latestReplies
-        ) ?? []
-        read = try container.decodeArrayIfPresentIgnoringFailures(
+        )
+        self.read = try container.decodeArrayIfPresentIgnoringFailures(
             [ReadStateResponse].self,
             forKey: .read
         )
