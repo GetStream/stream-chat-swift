@@ -39,6 +39,15 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.allowBluetoothDevice])
     }
 
+    func test_activateRecordingSession_whenNoInputIsAvailable_throwsWithoutSettingCategory() {
+        stubAudioSession.isInputAvailable = false
+
+        XCTAssertThrowsError(try subject.activateRecordingSession()) { error in
+            XCTAssertTrue(error is AudioSessionConfiguratorError)
+        }
+        XCTAssertNil(stubAudioSession.setCategoryWasCalledWithCategory)
+    }
+
     func test_activateRecordingSession_setActiveFailed_reportsTheErrorOnTheCompletion() throws {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
         stubAudioSession.setActiveResult = .failure(genericError)
@@ -225,6 +234,7 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
     var stubbedProperties: [String: Any] = [:]
 
     @objc var category: AVAudioSession.Category { self[dynamicMember: \.category] }
+    var isInputAvailable = true
 
     private(set) var setCategoryWasCalledWithCategory: AVAudioSession.Category?
     private(set) var setCategoryWasCalledWithMode: AVAudioSession.Mode?

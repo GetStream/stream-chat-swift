@@ -375,7 +375,46 @@ final class DatabaseContainer_Tests: XCTestCase {
             XCTAssertEqual(nil, attachmentDTO.localState)
         }
     }
-    
+
+    func test_resetEphemeralValues_clearsDownloadedAttachmentsWithMissingFiles() throws {
+        let container = DatabaseContainer_Spy(kind: .inMemory)
+        let cid = ChannelId.unique
+        let messageId = MessageId.unique
+        let missingFileAttachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
+        let existingFileAttachmentId = AttachmentId(cid: cid, messageId: messageId, index: 1)
+        let existingFilePath = "\(String.unique)-file.txt"
+        let existingFileURL = URL.streamAttachmentLocalStorageURL(forRelativePath: existingFilePath)
+        try FileManager.default.createDirectory(at: existingFileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try UUID().uuidString.write(to: existingFileURL, atomically: false, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: existingFileURL) }
+        try container.createCurrentUser()
+        try container.writeSynchronously { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    channel: .dummy(cid: cid),
+                    messages: [.dummy(messageId: messageId)]
+                )
+            )
+            let missingFileDTO = try session.saveAttachment(payload: .image(), id: missingFileAttachmentId)
+            missingFileDTO.localDownloadState = .downloaded
+            missingFileDTO.localRelativePath = "\(String.unique)-file.txt"
+            let existingFileDTO = try session.saveAttachment(payload: .image(), id: existingFileAttachmentId)
+            existingFileDTO.localDownloadState = .downloaded
+            existingFileDTO.localRelativePath = existingFilePath
+        }
+
+        container.resetEphemeralValues()
+
+        try container.readSynchronously { session in
+            let missingFileDTO = try XCTUnwrap(session.attachment(id: missingFileAttachmentId))
+            XCTAssertEqual(nil, missingFileDTO.localDownloadState)
+            XCTAssertEqual(nil, missingFileDTO.localRelativePath)
+            let existingFileDTO = try XCTUnwrap(session.attachment(id: existingFileAttachmentId))
+            XCTAssertEqual(LocalAttachmentDownloadState.downloaded, existingFileDTO.localDownloadState)
+            XCTAssertEqual(existingFilePath, existingFileDTO.localRelativePath)
+        }
+    }
+
     func test_databaseContainer_doesntCallsResetEphemeralValues_whenFlagIsSetToFalse() {
         // Create a new on-disk database with the test data model
         let dbURL = URL.newTemporaryFileURL()

@@ -99,8 +99,8 @@ extension ChatClient {
                 // No background task scheduler exists for app extensions.
                 return nil
             } else {
-                #if os(iOS)
-                return IOSBackgroundTaskScheduler()
+                #if os(iOS) || os(tvOS)
+                return DefaultBackgroundTaskScheduler()
                 #else
                 // No need for background schedulers on macOS, app continues running when inactive.
                 return nil
