@@ -22,6 +22,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         case readReceiptsEnabled
         case deliveryReceiptsEnabled
         case pushPreferences
+        case quietHours
         case userGroups
         case detailedUnreadCounts
         case avgResponseTime
@@ -137,6 +138,13 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
             cell.accessoryView = makeButton(title: "Configure", action: { [weak self] in
                 self?.showPushPreferences()
             })
+        case .quietHours:
+            let quietHours = currentUserController.currentUser?.pushPreference?.schedule?.quietHours ?? []
+            cell.textLabel?.text = "Quiet Hours"
+            cell.detailTextLabel?.text = quietHours.isEmpty ? "Off" : "\(quietHours.count) quiet window(s)"
+            cell.accessoryView = makeButton(title: "Configure", action: { [weak self] in
+                self?.showQuietHours()
+            })
         case .userGroups:
             cell.textLabel?.text = "User Groups"
             cell.detailTextLabel?.text = "List, search, and manage user groups"
@@ -234,6 +242,27 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         let hostingController = UIHostingController(rootView: pushPreferencesView)
         hostingController.title = "Push Preferences"
         present(hostingController, animated: true)
+    }
+
+    private func showQuietHours() {
+        guard #available(iOS 15, *) else {
+            presentAlert(title: "Quiet Hours", message: "This screen requires iOS 15 or later.")
+            return
+        }
+        let quietHoursView = QuietHoursView(
+            initialSchedule: currentUserController.currentUser?.pushPreference?.schedule,
+            onSave: { [weak self] schedule, completion in
+                self?.currentUserController.setQuietHours(schedule) { completion($0) }
+            },
+            onRemove: { [weak self] completion in
+                self?.currentUserController.removeQuietHours { completion($0) }
+            },
+            onDismiss: { [weak self] in
+                self?.dismiss(animated: true)
+                self?.tableView.reloadData()
+            }
+        )
+        present(UIHostingController(rootView: quietHoursView), animated: true)
     }
 
     @objc private func didTapUpdateButton() {

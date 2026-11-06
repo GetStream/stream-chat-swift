@@ -556,6 +556,58 @@ public extension CurrentChatUserController {
         }
     }
 
+    /// Sets a recurring quiet hours schedule for the current user's push notifications.
+    ///
+    /// While a quiet window is active, the server drops (it does not delay) the user's chat push notifications,
+    /// in every channel. Reminder pushes still go through.
+    /// The schedule replaces any schedule that was set before.
+    ///
+    /// - Parameters:
+    ///   - schedule: The quiet hours schedule, with 1 to 7 rules.
+    ///   - completion: The completion call once the request is finished. It fails with
+    ///   ``ClientError/QuietHoursEmpty`` when the schedule has no rules, and with
+    ///   ``ClientError/QuietHoursNotStored`` when the server does not support quiet hours.
+    func setQuietHours(
+        _ schedule: PushSchedule,
+        completion: (@MainActor (Result<PushPreference, Error>) -> Void)? = nil
+    ) {
+        // The server treats empty rules as omitted and would keep the stored ones.
+        guard !schedule.quietHours.isEmpty else {
+            callback {
+                completion?(.failure(ClientError.QuietHoursEmpty()))
+            }
+            return
+        }
+
+        let userPreference = PushPreferenceInput(
+            schedule: PushScheduleInput(schedule)
+        )
+
+        currentUserUpdater.setPushPreference(userPreference) { result in
+            // Older backends ignore the field, so a schedule missing from the response was not stored.
+            let result = result.flatMap { preference -> Result<PushPreference, Error> in
+                preference.schedule == nil ? .failure(ClientError.QuietHoursNotStored()) : .success(preference)
+            }
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Removes the quiet hours schedule of the current user's push notifications.
+    /// - Parameter completion: The completion call once the request is finished.
+    func removeQuietHours(
+        completion: (@MainActor (Result<PushPreference, Error>) -> Void)? = nil
+    ) {
+        let userPreference = PushPreferenceInput(removeSchedule: true)
+
+        currentUserUpdater.setPushPreference(userPreference) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
     /// Loads the draft messages for the current user.
     ///
     /// It will load the first page of drafts of the current user.

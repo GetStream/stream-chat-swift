@@ -254,14 +254,14 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
         let request = UpsertPushPreferencesRequest(preferences: [preference])
-        apiClient.request(endpoint: .updatePushNotificationPreferences(upsertPushPreferencesRequest: request)) { [weak self] result in
+        apiClient.request(endpoint: .updatePushNotificationPreferences(upsertPushPreferencesRequest: request)) { [database] result in
             switch result {
             case let .success(response):
                 guard let userPreference = response.userPreferences.values.first else {
                     completion(.failure(ClientError.CurrentUserDoesNotExist()))
                     return
                 }
-                self?.database.write { session in
+                database.write { session in
                     guard let currentUserDTO = session.currentUser else {
                         log.error("Cannot save push preference: no current user in the database")
                         return
@@ -271,8 +271,13 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                         payload: userPreference
                     )
                     currentUserDTO.pushPreference = savedDTO
+                } completion: { error in
+                    if let error {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success(userPreference))
+                    }
                 }
-                completion(.success(userPreference))
             case let .failure(error):
                 completion(.failure(error))
             }

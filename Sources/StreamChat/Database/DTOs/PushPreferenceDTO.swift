@@ -10,6 +10,7 @@ class PushPreferenceDTO: NSManagedObject {
     @NSManaged var id: String
     @NSManaged var chatLevel: String
     @NSManaged var disabledUntil: DBDate?
+    @NSManaged var scheduleData: Data?
     @NSManaged var currentUser: CurrentUserDTO?
     @NSManaged var channel: ChannelDTO?
 
@@ -42,7 +43,8 @@ extension PushPreference {
         
         return PushPreference(
             level: PushPreferenceLevel(rawValue: dto.chatLevel),
-            disabledUntil: dto.disabledUntil?.bridgeDate
+            disabledUntil: dto.disabledUntil?.bridgeDate,
+            schedule: dto.scheduleData.flatMap { try? JSONDecoder.default.decode(PushSchedule.self, from: $0) }
         )
     }
 }
@@ -55,6 +57,7 @@ extension NSManagedObjectContext {
         dto.id = id
         dto.chatLevel = payload.level.rawValue
         dto.disabledUntil = payload.disabledUntil?.bridgeDate
+        dto.scheduleData = try payload.schedule.map { try JSONEncoder.default.encode($0) }
         return dto
     }
 }

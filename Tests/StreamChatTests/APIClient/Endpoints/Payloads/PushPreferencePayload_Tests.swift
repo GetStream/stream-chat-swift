@@ -139,6 +139,114 @@ final class PushPreferencePayload_Tests: XCTestCase {
         ])
     }
 
+    func test_pushPreferencePayload_withSchedule_isDecodedCorrectly() throws {
+        // GIVEN
+        let json = """
+        {
+            "chat_level": "all",
+            "schedule": {
+                "timezone": "Europe/Amsterdam",
+                "quiet_hours": [
+                    { "days": ["mon", "tue", "wed", "thu", "fri"], "start": "18:00", "end": "09:00" },
+                    { "start": "00:00", "end": "24:00" }
+                ]
+            }
+        }
+        """.data(using: .utf8)!
+
+        // WHEN
+        let payload = try JSONDecoder.default.decode(PushPreference.self, from: json)
+
+        // THEN
+        let schedule = try XCTUnwrap(payload.schedule)
+        XCTAssertEqual(schedule.timezone.identifier, "Europe/Amsterdam")
+        XCTAssertEqual(schedule.quietHours.count, 2)
+        XCTAssertEqual(schedule.quietHours[0].days, QuietHoursDay.weekdays)
+        XCTAssertEqual(schedule.quietHours[0].start, "18:00")
+        XCTAssertEqual(schedule.quietHours[0].end, "09:00")
+        XCTAssertNil(schedule.quietHours[1].days)
+        XCTAssertEqual(schedule.quietHours[1].start, "00:00")
+        XCTAssertEqual(schedule.quietHours[1].end, "24:00")
+    }
+
+    func test_pushSchedule_withUnknownTimeZone_decodesCurrentTimeZone() throws {
+        // GIVEN
+        let json = """
+        { "timezone": "Mars/Olympus_Mons", "quiet_hours": [{ "start": "22:00", "end": "07:00" }] }
+        """.data(using: .utf8)!
+
+        // WHEN
+        let schedule = try JSONDecoder.default.decode(PushSchedule.self, from: json)
+
+        // THEN
+        XCTAssertEqual(schedule.timezone, .current)
+        XCTAssertEqual(schedule.quietHours.count, 1)
+    }
+
+    func test_pushPreferencePayload_withoutSchedule_hasNilSchedule() throws {
+        // GIVEN
+        let json = """
+        { "chat_level": "all" }
+        """.data(using: .utf8)!
+
+        // WHEN
+        let payload = try JSONDecoder.default.decode(PushPreference.self, from: json)
+
+        // THEN
+        XCTAssertNil(payload.schedule)
+    }
+
+    func test_pushPreferenceInput_withSchedule_encoding() throws {
+        // GIVEN
+        let schedule = PushSchedule(
+            quietHours: [
+                QuietHoursRule(days: [.friday], start: "22:00", end: "07:00"),
+                QuietHoursRule(days: QuietHoursDay.weekend, start: "00:00", end: "24:00"),
+                QuietHoursRule(start: "12:00", end: "13:00")
+            ],
+            timezone: TimeZone(identifier: "America/New_York")!
+        )
+        let requestPayload = PushPreferenceInput(schedule: PushScheduleInput(schedule))
+
+        // WHEN
+        let encoded = try JSONEncoder.default.encode(requestPayload)
+
+        // THEN
+        AssertJSONEqual(encoded, [
+            "schedule": [
+                "timezone": "America/New_York",
+                "quiet_hours": [
+                    ["days": ["fri"], "start": "22:00", "end": "07:00"],
+                    ["days": ["sat", "sun"], "start": "00:00", "end": "24:00"],
+                    ["start": "12:00", "end": "13:00"]
+                ]
+            ]
+        ])
+    }
+
+    func test_pushPreferenceInput_withRemoveSchedule_encoding() throws {
+        // GIVEN
+        let requestPayload = PushPreferenceInput(removeSchedule: true)
+
+        // WHEN
+        let encoded = try JSONEncoder.default.encode(requestPayload)
+
+        // THEN
+        AssertJSONEqual(encoded, ["remove_schedule": true])
+    }
+
+    func test_pushSchedule_defaultsToCurrentTimeZone() {
+        let schedule = PushSchedule(quietHours: [QuietHoursRule(start: "18:00", end: "09:00")])
+
+        XCTAssertEqual(schedule.timezone, TimeZone.current)
+    }
+
+    func test_quietHoursDay_encodesRawValue() {
+        XCTAssertEqual(JSONEncoder.default.encodedString(QuietHoursDay.wednesday), "wed")
+        let day: QuietHoursDay = "thu"
+        XCTAssertEqual(day, .thursday)
+    }
+
     func test_pushPreferencesPayloadResponse_isDecodedCorrectly() throws {
         // GIVEN
         let json = """

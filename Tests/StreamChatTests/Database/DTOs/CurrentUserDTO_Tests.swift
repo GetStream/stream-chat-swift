@@ -73,7 +73,14 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             ),
             pushPreference: .init(
                 level: "mentions",
-                disabledUntil: Date().addingTimeInterval(3600)
+                disabledUntil: Date().addingTimeInterval(3600),
+                schedule: PushSchedule(
+                    quietHours: [
+                        QuietHoursRule(days: QuietHoursDay.weekdays, start: "18:00", end: "09:00"),
+                        QuietHoursRule(start: "00:00", end: "24:00")
+                    ],
+                    timezone: TimeZone(identifier: "Europe/Amsterdam")!
+                )
             )
         )
 
@@ -113,6 +120,8 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.deliveryReceipts?.enabled)
         XCTAssertEqual(payload.pushPreferences?.level, loadedCurrentUser.pushPreference?.level)
         XCTAssertNearlySameDate(payload.pushPreferences?.disabledUntil, loadedCurrentUser.pushPreference?.disabledUntil)
+        XCTAssertEqual(payload.pushPreferences?.schedule, loadedCurrentUser.pushPreference?.schedule)
+        XCTAssertNotNil(loadedCurrentUser.pushPreference?.schedule)
     }
 
     func test_saveCurrentUser_fullUserResponse_isStoredAndLoadedFromDB() throws {
