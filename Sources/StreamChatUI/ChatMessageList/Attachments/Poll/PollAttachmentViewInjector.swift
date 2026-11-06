@@ -117,6 +117,13 @@ public class PollAttachmentViewInjector: AttachmentViewInjector {
             )
         }
 
-        pollAttachmentView.content = .init(poll: poll, currentUserId: currentUserId)
+        let translationLanguage = contentView.components.messageAutoTranslationEnabled
+            ? contentView.channel?.membership?.language
+            : nil
+        pollAttachmentView.content = .init(
+            poll: poll,
+            currentUserId: currentUserId,
+            translationLanguage: translationLanguage
+        )
     }
 }
