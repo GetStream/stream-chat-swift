@@ -207,6 +207,13 @@ public struct ChatClientConfig: Sendable {
     /// Defaults to `false`.
     public var isLocalUnreadCountEnabled: Bool = false
 
+    /// The protocol that the server uses for the events it sends over the WebSocket connection.
+    ///
+    /// Use ``WebSocketEventProtocol/v3`` to reduce bandwidth in apps with large channels.
+    ///
+    /// Defaults to ``WebSocketEventProtocol/v2``.
+    public var webSocketEventProtocol: WebSocketEventProtocol = .v2
+
     public init(
         apiKey: APIKey
     ) {

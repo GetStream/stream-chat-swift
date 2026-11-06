@@ -87,11 +87,12 @@ final class ChatClient_Tests: XCTestCase {
         env.connectionRepositoryBuilder = {
             ConnectionRepository_Mock(
                 isClientInActiveMode: $0,
-                syncRepository: $1,
-                webSocketEncoder: $2,
-                webSocketClient: $3,
-                apiClient: $4,
-                timerType: $5
+                webSocketEventProtocol: $1,
+                syncRepository: $2,
+                webSocketEncoder: $3,
+                webSocketClient: $4,
+                apiClient: $5,
+                timerType: $6
             )
         }
         env.databaseContainerBuilder = { [config] kind, clientConfig in
@@ -123,11 +124,12 @@ final class ChatClient_Tests: XCTestCase {
         env.connectionRepositoryBuilder = {
             ConnectionRepository_Mock(
                 isClientInActiveMode: $0,
-                syncRepository: $1,
-                webSocketEncoder: $2,
-                webSocketClient: $3,
-                apiClient: $4,
-                timerType: $5
+                webSocketEventProtocol: $1,
+                syncRepository: $2,
+                webSocketEncoder: $3,
+                webSocketClient: $4,
+                apiClient: $5,
+                timerType: $6
             )
         }
         env.databaseContainerBuilder = { kind, _ in
@@ -155,11 +157,12 @@ final class ChatClient_Tests: XCTestCase {
         env.connectionRepositoryBuilder = {
             ConnectionRepository_Mock(
                 isClientInActiveMode: $0,
-                syncRepository: $1,
-                webSocketEncoder: $2,
-                webSocketClient: $3,
-                apiClient: $4,
-                timerType: $5
+                webSocketEventProtocol: $1,
+                syncRepository: $2,
+                webSocketEncoder: $3,
+                webSocketClient: $4,
+                apiClient: $5,
+                timerType: $6
             )
         }
         env.databaseContainerBuilder = { kind, _ in
@@ -1184,11 +1187,12 @@ private class TestEnvironment {
             connectionRepositoryBuilder: {
                 self.connectionRepository = ConnectionRepository_Mock(
                     isClientInActiveMode: $0,
-                    syncRepository: $1,
-                    webSocketEncoder: $2,
-                    webSocketClient: $3,
-                    apiClient: $4,
-                    timerType: $5
+                    webSocketEventProtocol: $1,
+                    syncRepository: $2,
+                    webSocketEncoder: $3,
+                    webSocketClient: $4,
+                    apiClient: $5,
+                    timerType: $6
                 )
                 return self.connectionRepository!
             },

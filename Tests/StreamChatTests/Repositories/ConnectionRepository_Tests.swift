@@ -325,6 +325,28 @@ final class ConnectionRepository_Tests: XCTestCase {
         ])
     }
 
+    func test_webSocketConnectionEstablished_whenEventProtocolV3Enabled_sendsEventProtocol() throws {
+        let engine = WebSocketEngine_Mock()
+        let webSocketClient = makeWebSocketClient(engine: engine)
+        let token = Token.unique(userId: "luke")
+        let delegate = ConnectionDetailsProviderDelegate_Spy()
+        delegate.provideTokenResult = .success(token)
+        webSocketRequestEncoder.connectionDetailsProviderDelegate = delegate
+        repository = makeRepository(webSocketClient: webSocketClient, webSocketEventProtocol: .v3)
+        repository.updateWebSocketEndpoint(with: token, userInfo: UserInfo(id: "luke"))
+
+        webSocketClient.connect()
+        engine.simulateConnectionSuccess()
+
+        let frame = try XCTUnwrap(engine.send_jsonMessages.last)
+        AssertJSONEqual(frame, [
+            "token": token.rawValue,
+            "products": ["chat"] as NSArray,
+            "user_details": ["id": "luke"] as [String: Any],
+            "event_protocol": 3
+        ])
+    }
+
     func test_webSocketConnectionEstablished_whenNoUserInfo_usesTokenUserId() throws {
         let engine = WebSocketEngine_Mock()
         let webSocketClient = makeWebSocketClient(engine: engine)
@@ -372,9 +394,13 @@ final class ConnectionRepository_Tests: XCTestCase {
         )
     }
 
-    private func makeRepository(webSocketClient: WebSocketClient) -> ConnectionRepository {
+    private func makeRepository(
+        webSocketClient: WebSocketClient,
+        webSocketEventProtocol: WebSocketEventProtocol = .v2
+    ) -> ConnectionRepository {
         ConnectionRepository(
             isClientInActiveMode: true,
+            webSocketEventProtocol: webSocketEventProtocol,
             syncRepository: syncRepository,
             webSocketEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,

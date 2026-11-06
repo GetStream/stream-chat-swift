@@ -223,6 +223,7 @@ public class ChatClient: @unchecked Sendable {
         )
         let connectionRepository = environment.connectionRepositoryBuilder(
             config.isClientInActiveMode,
+            config.webSocketEventProtocol,
             syncRepository,
             webSocketEncoder,
             webSocketClient,

@@ -1096,6 +1096,26 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertNil(channel?.membership)
     }
 
+    func test_channelDetailPayload_withoutMembers_keepsStoredMembers() throws {
+        let cid: ChannelId = .unique
+        let members: [MemberPayload] = [.dummy(), .dummy()]
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid, members: members), query: nil, cache: nil)
+        }
+
+        // Event protocol v3 leaves the members out of the events of channels with more than 100 members
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid, members: nil, memberCount: 150), query: nil, cache: nil)
+        }
+
+        let channel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: cid)?.asModel())
+        }
+        XCTAssertEqual(Set(channel.lastActiveMembers.map(\.id)), Set(members.map(\.userId)))
+        XCTAssertEqual(channel.memberCount, 150)
+    }
+
     func test_channelPayload_latestMessagesArePopulated() throws {
         try XCTSkipIf(
             ProcessInfo().operatingSystemVersion.majorVersion < 15,

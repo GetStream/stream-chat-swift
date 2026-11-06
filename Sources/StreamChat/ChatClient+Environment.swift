@@ -78,6 +78,7 @@ extension ChatClient {
 
         var connectionRepositoryBuilder: @Sendable (
             _ isClientInActiveMode: Bool,
+            _ webSocketEventProtocol: WebSocketEventProtocol,
             _ syncRepository: SyncRepository,
             _ webSocketEncoder: RequestEncoder?,
             _ webSocketClient: WebSocketClient?,
@@ -86,11 +87,12 @@ extension ChatClient {
         ) -> ConnectionRepository = {
             ConnectionRepository(
                 isClientInActiveMode: $0,
-                syncRepository: $1,
-                webSocketEncoder: $2,
-                webSocketClient: $3,
-                apiClient: $4,
-                timerType: $5
+                webSocketEventProtocol: $1,
+                syncRepository: $2,
+                webSocketEncoder: $3,
+                webSocketClient: $4,
+                apiClient: $5,
+                timerType: $6
             )
         }
 
