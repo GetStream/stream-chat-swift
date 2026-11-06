@@ -20,8 +20,8 @@ public extension AIConversationView {
     ///     as the person scrolls to its start. It shows a spinner meanwhile, and what is on
     ///     screen stays in place as they arrive. Pass nil once there are none left.
     ///   - viewFactory: The views of the messages, and the actions under each finished reply.
-    ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
-    ///     an error with a way to retry.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as what the agent is doing, or an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     init<Item: AIMessage, Factory: AIConversationViewFactory>(
         messages: [Item],
@@ -33,18 +33,21 @@ public extension AIConversationView {
         @ViewBuilder footer: () -> Footer = { EmptyView() },
         @ViewBuilder emptyContent: () -> EmptyContent = { EmptyView() }
     ) where Message == AIConversationEntry<Item>, MessageContent == EquatableView<AIConversationEntryView<Item, Factory>> {
+        let footer = footer()
+        let emptyContent = emptyContent()
         self.init(
             content: { tracker in
                 let entries = tracker.entries(for: messages, pending: pendingMessage)
                 return (entries, isThinking || tracker.isAwaitingReply(in: messages, pending: pendingMessage))
             },
             isSentByCurrentUser: \.isFromUser,
-            loadOlderMessages: loadOlderMessages,
+            loadOlderMessages: { loadOlderMessages },
             messageContent: { entry in
-                AIConversationEntryView(entry: entry, factory: viewFactory, approver: approver).equatable()
+                AIConversationEntryView(entry: entry, factory: viewFactory, approver: approver, conversation: nil).equatable()
             },
-            footer: footer(),
-            emptyContent: emptyContent()
+            footer: { footer },
+            emptyContent: { emptyContent },
+            changes: .none
         )
     }
 
@@ -62,8 +65,8 @@ public extension AIConversationView {
     ///   - loadOlderMessages: Loads the messages before the first one, which the list asks for
     ///     as the person scrolls to its start. It shows a spinner meanwhile, and what is on
     ///     screen stays in place as they arrive. Pass nil once there are none left.
-    ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
-    ///     an error with a way to retry.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as what the agent is doing, or an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     init<Item: AIMessage>(
         messages: [Item],
@@ -107,8 +110,8 @@ public extension AIConversationView {
     ///     as the person scrolls to its start. It shows a spinner meanwhile, and what is on
     ///     screen stays in place as they arrive. Pass nil once there are none left.
     ///   - viewFactory: The views of the messages, and the actions under each finished reply.
-    ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
-    ///     an error with a way to retry.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as what the agent is doing, or an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     init<Item: AIMessage, Factory: AIConversationViewFactory, Renderers: AIUIRendererList>(
         messages: [Item],
@@ -122,6 +125,8 @@ public extension AIConversationView {
         @ViewBuilder emptyContent: () -> EmptyContent = { EmptyView() }
     ) where Message == AIConversationEntry<Item>,
         MessageContent == EquatableView<AIUIConversationEntryView<Item, Factory, Renderers>> {
+        let footer = footer()
+        let emptyContent = emptyContent()
         self.init(
             content: { tracker in
                 // The rows show only the replies on screen, so the engines take every reply's UI first.
@@ -130,12 +135,13 @@ public extension AIConversationView {
                 return (entries, isThinking || tracker.isAwaitingReply(in: messages, pending: pendingMessage, ui: ui))
             },
             isSentByCurrentUser: \.isFromUser,
-            loadOlderMessages: loadOlderMessages,
+            loadOlderMessages: { loadOlderMessages },
             messageContent: { entry in
                 AIUIConversationEntryView(entry: entry, factory: viewFactory, approver: approver, host: ui).equatable()
             },
-            footer: footer(),
-            emptyContent: emptyContent()
+            footer: { footer },
+            emptyContent: { emptyContent },
+            changes: .none
         )
     }
 
@@ -156,8 +162,8 @@ public extension AIConversationView {
     ///   - loadOlderMessages: Loads the messages before the first one, which the list asks for
     ///     as the person scrolls to its start. It shows a spinner meanwhile, and what is on
     ///     screen stays in place as they arrive. Pass nil once there are none left.
-    ///   - footer: A view under the latest turn's messages, such as what the agent is doing, or
-    ///     an error with a way to retry.
+    ///   - footer: A view under the latest turn's messages, or under the empty content while
+    ///     there are none, such as what the agent is doing, or an error with a way to retry.
     ///   - emptyContent: What the list shows while there are no messages, centered in it.
     init<Item: AIMessage, Renderers: AIUIRendererList>(
         messages: [Item],

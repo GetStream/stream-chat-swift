@@ -44,11 +44,12 @@ import SwiftUI
 public struct AIComposerView<ComposerFactory: AIComposerViewFactory>: View {
     private let viewFactory: ComposerFactory
 
+    // The view model the composer keeps: the first one it is given, or one of its own.
     @StateObject var viewModel: AIComposerViewModel
+    // The view model it shows instead, such as its conversation's, which another conversation
+    // replaces.
+    let followedViewModel: AIComposerViewModel?
     @StateObject var speechHandler: SpeechHandler = .init()
-
-    @Injected(\.aiAppearance.colors) private var colors
-    @Injected(\.aiAppearance.tokens.layout) private var layout
 
     var onMessageSend: (MessageData) -> Void
     var onStopGenerating: (() -> Void)?
@@ -61,38 +62,32 @@ public struct AIComposerView<ComposerFactory: AIComposerViewFactory>: View {
     ) {
         self.viewFactory = viewFactory
         _viewModel = StateObject(wrappedValue: viewModel ?? AIComposerViewModel())
+        followedViewModel = nil
         self.onMessageSend = onMessageSend
         self.onStopGenerating = onStopGenerating
     }
-    
-    public var body: some View {
-        HStack {
-            viewFactory.makeLeadingComposerView(
-                options: .init(onTap: {
-                    viewModel.sheetShown = true
-                })
-            )
-            
-            viewFactory.makeComposerInputView(
-                options: .init(
-                    viewModel: viewModel,
-                    speechHandler: speechHandler,
-                    onMessageSend: onMessageSend,
-                    onStopGenerating: onStopGenerating
-                )
-            )
 
-            viewFactory.makeTrailingComposerView(options: .init())
-        }
-        .padding(.all, layout.spacingXs)
-        .foregroundStyle(Color(colors.composerText))
-        .sheet(isPresented: $viewModel.sheetShown) {
-            let picker = viewFactory.makeComposerPickerView(options: .init(viewModel: viewModel))
-            if #available(iOS 16, *) {
-                picker.presentationDetents([.medium, .large])
-            } else {
-                picker
-            }
-        }
+    init(
+        viewFactory: ComposerFactory,
+        following viewModel: AIComposerViewModel,
+        onMessageSend: @escaping (MessageData) -> Void,
+        onStopGenerating: (() -> Void)?
+    ) {
+        self.viewFactory = viewFactory
+        // Unused while it follows `viewModel`.
+        _viewModel = StateObject(wrappedValue: AIComposerViewModel())
+        followedViewModel = viewModel
+        self.onMessageSend = onMessageSend
+        self.onStopGenerating = onStopGenerating
+    }
+
+    public var body: some View {
+        AIComposerContentView(
+            viewFactory: viewFactory,
+            viewModel: followedViewModel ?? viewModel,
+            speechHandler: speechHandler,
+            onMessageSend: onMessageSend,
+            onStopGenerating: onStopGenerating
+        )
     }
 }

@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.16.0)
+_November 04, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add Scheduled Messages [#4357](https://github.com/GetStream/stream-chat-swift/pull/4357)
@@ -13,12 +18,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add generative UI: a reply can show interactive UI its agent wrote, in a format such as OpenUI or A2UI, in place of its text [#4370](https://github.com/GetStream/stream-chat-swift/pull/4370)
 - Add `AIClientToolDefinition.annotations` with MCP's `readOnlyHint`: a reply's UI runs a tool by itself only when it is read-only, and any other only when the person taps [#4373](https://github.com/GetStream/stream-chat-swift/pull/4373)
 - Add a failure message when photos picked in the composer can't be loaded [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
+- Add `AIConversation`, the state behind an AI conversation, shown by `AIConversationView(conversation:)`, with a reply's generated UI by `AIConversationView(conversation:ui:)`, and `AIComposerView(conversation:)` [#4375](https://github.com/GetStream/stream-chat-swift/pull/4375)
 ### 🐞 Fixed
 - Fix a photo picked again from the library being attached twice [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🔄 Changed
 - `AIComposerView` is available on iOS 15, with a single-line text field and no "All photos" button there [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🎭 New Localizations
 - Add `composer.photos_failed.*` keys [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
+- Add `conversation.error.agent`, `composer.editing` and `composer.button.cancel_editing` keys [#4375](https://github.com/GetStream/stream-chat-swift/pull/4375)
 
 ## StreamChatA2UI
 ### ✅ Added

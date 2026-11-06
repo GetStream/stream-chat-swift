@@ -30,6 +30,9 @@ public protocol AIMessage: Identifiable, Sendable {
     /// The UI the agent generated for a reply, shown in place of its text when the
     /// conversation's ``AIUIHost`` can, such as `AIUIDocument(customData: message.extraData)`.
     var uiDocument: AIUIDocument? { get }
+    /// How the person rated a reply, as your backend has it. ``AIConversation`` shows it until
+    /// the person rates the reply on this device.
+    var rating: AIMessageRating? { get }
     /// The whole of a reasoning step's thinking when the app has it, such as from live
     /// updates. Without it, the step shows its own excerpt. It is read each time the
     /// conversation updates, so look it up rather than work it out.
@@ -41,6 +44,7 @@ public extension AIMessage {
     var parts: [AIMessagePart] { [] }
     var attachments: [AIMessageAttachment] { [] }
     var uiDocument: AIUIDocument? { nil }
+    var rating: AIMessageRating? { nil }
     func reasoningText(for step: AIReasoningPart) -> String? { nil }
 }
 

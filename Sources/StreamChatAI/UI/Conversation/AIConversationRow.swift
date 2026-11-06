@@ -12,6 +12,8 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
     let entry: AIConversationEntry<Message>
     let factory: Factory
     let approver: AIToolApprover?
+    // The conversation the list shows, which offers what the person can do with the message.
+    let conversation: AIConversation<Message>?
     let generated: Generated?
 
     // Whether the reply's answer is still being written out, which its actions wait for so they
@@ -28,7 +30,8 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
                     options: AIUserMessageViewOptions(
                         message: message,
                         text: message.text,
-                        attachments: entry.sentAttachments.isEmpty ? message.attachments : entry.sentAttachments
+                        attachments: entry.sentAttachments.isEmpty ? message.attachments : entry.sentAttachments,
+                        onEdit: conversation?.editAction(for: message)
                     )
                 )
             } else {
@@ -52,7 +55,8 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
                             options: AIReplyActionsViewOptions(
                                 message: message,
                                 text: message.text,
-                                isLatestReply: entry.isLatestReply
+                                isLatestReply: entry.isLatestReply,
+                                actions: conversation?.replyActions(for: message, isLatestReply: entry.isLatestReply)
                             )
                         )
                         .transition(.opacity)
@@ -72,9 +76,10 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
         }
     }
 
-    // Whether a reply is finished and its answer, its text or generated UI, is written out.
+    // Whether a reply is finished and its answer, its text, attachments or generated UI, is
+    // written out.
     private func showsActions(under message: Message) -> Bool {
-        let hasAnswer = !message.text.isEmpty || generated != nil
+        let hasAnswer = !message.text.isEmpty || !message.attachments.isEmpty || generated != nil
         return !message.isGenerating && hasAnswer && isWriting != true
     }
 }
