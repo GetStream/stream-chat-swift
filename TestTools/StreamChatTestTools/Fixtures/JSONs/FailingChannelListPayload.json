@@ -843,6 +843,7 @@
         }
       ],
       "membership": {
+        "user_id": "han_solo",
         "user": {
           "id": "han_solo",
           "role": "user",
@@ -3166,6 +3167,7 @@
         }
       ],
       "membership": {
+        "user_id": "han_solo",
         "user": {
           "id": "han_solo",
           "role": "user",
@@ -5016,6 +5018,7 @@
         }
       ],
       "membership": {
+        "user_id": "han_solo",
         "user": {
           "id": "han_solo",
           "role": "user",

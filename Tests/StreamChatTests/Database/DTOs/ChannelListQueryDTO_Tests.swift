@@ -49,8 +49,8 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
             ],
             name: "user_per_channel_type_channels",
             sort: [
-                SortParamRequest(direction: -1, field: "last_message_at", type: "string"),
-                SortParamRequest(direction: -1, field: "created_at", type: "string")
+                SortParamRequest(direction: -1, field: "last_message_at"),
+                SortParamRequest(direction: -1, field: "created_at")
             ]
         )
 
@@ -66,8 +66,8 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
             let sortData = try XCTUnwrap(dto.sortJSONData)
             let savedSort = try JSONDecoder.default.decode([[String: RawJSON]].self, from: sortData)
             XCTAssertEqual(savedSort, [
-                ["direction": .number(-1), "field": .string("last_message_at"), "type": .string("string")],
-                ["direction": .number(-1), "field": .string("created_at"), "type": .string("string")]
+                ["direction": .number(-1), "field": .string("last_message_at")],
+                ["direction": .number(-1), "field": .string("created_at")]
             ])
         }
     }

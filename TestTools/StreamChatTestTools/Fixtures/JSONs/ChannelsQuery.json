@@ -1525,6 +1525,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-01-20T19:15:03.911517Z",
           "updated_at" : "2020-01-20T19:15:03.911517Z",
           "role" : "member",
@@ -1549,6 +1550,7 @@
           }
         },
         {
+          "user_id" : "test-user-1",
           "created_at" : "2020-06-04T13:36:37.96589Z",
           "updated_at" : "2020-06-04T13:36:37.96589Z",
           "role" : "member",
@@ -1564,6 +1566,7 @@
           }
         },
         {
+          "user_id" : "test-user-2",
           "created_at" : "2020-06-04T13:36:44.793348Z",
           "updated_at" : "2020-06-04T13:36:44.793348Z",
           "role" : "member",
@@ -1579,6 +1582,7 @@
           }
         },
         {
+          "user_id" : "steep-moon-9",
           "created_at" : "2020-06-05T12:55:48.581959Z",
           "updated_at" : "2020-06-05T12:55:48.581959Z",
           "role" : "member",
@@ -1601,6 +1605,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-01-20T19:15:03.911517Z",
         "updated_at" : "2020-01-20T19:15:03.911517Z",
         "role" : "channel_member",
@@ -2650,6 +2655,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2019-12-12T15:41:05.025286Z",
           "updated_at" : "2019-12-12T15:41:05.025286Z",
           "role" : "owner",
@@ -2675,6 +2681,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2019-12-12T15:41:05.025286Z",
         "updated_at" : "2019-12-12T15:41:05.025286Z",
         "role" : "channel_member",
@@ -3690,6 +3697,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-06-05T12:53:09.862721Z",
           "updated_at" : "2020-06-05T12:53:09.862721Z",
           "role" : "owner",
@@ -3714,6 +3722,7 @@
           }
         },
         {
+          "user_id" : "steep-moon-9",
           "created_at" : "2020-06-05T12:56:15.379938Z",
           "updated_at" : "2020-06-05T12:56:15.379938Z",
           "role" : "member",
@@ -3736,6 +3745,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-06-05T12:53:09.862721Z",
         "updated_at" : "2020-06-05T12:53:09.862721Z",
         "role" : "channel_member",
@@ -4835,6 +4845,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-06-08T11:57:36.664052Z",
           "updated_at" : "2020-06-08T11:57:36.664052Z",
           "role" : "owner",
@@ -4859,6 +4870,7 @@
           }
         },
         {
+          "user_id" : "steep-moon-9",
           "created_at" : "2020-06-08T11:57:51.276778Z",
           "updated_at" : "2020-06-08T11:57:51.276778Z",
           "role" : "member",
@@ -4881,6 +4893,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-06-08T11:57:36.664052Z",
         "updated_at" : "2020-06-08T11:57:36.664052Z",
         "role" : "channel_member",
@@ -5674,6 +5687,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-06-08T11:52:39.734117Z",
           "updated_at" : "2020-06-08T11:52:39.734117Z",
           "role" : "owner",
@@ -5698,6 +5712,7 @@
           }
         },
         {
+          "user_id" : "steep-moon-9",
           "created_at" : "2020-06-08T11:52:55.086408Z",
           "updated_at" : "2020-06-08T11:52:55.086408Z",
           "role" : "member",
@@ -5720,6 +5735,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-06-08T11:52:39.734117Z",
         "updated_at" : "2020-06-08T11:52:39.734117Z",
         "role" : "channel_member",
@@ -6053,6 +6069,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-06-08T11:51:12.274612Z",
           "updated_at" : "2020-06-08T11:51:12.274612Z",
           "role" : "owner",
@@ -6077,6 +6094,7 @@
           }
         },
         {
+          "user_id" : "steep-moon-9",
           "created_at" : "2020-06-08T11:51:51.933155Z",
           "updated_at" : "2020-06-08T11:51:51.933155Z",
           "role" : "member",
@@ -6099,6 +6117,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-06-08T11:51:12.274612Z",
         "updated_at" : "2020-06-08T11:51:12.274612Z",
         "role" : "channel_member",
@@ -6368,6 +6387,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-06-08T11:50:51.392009Z",
           "updated_at" : "2020-06-08T11:50:51.392009Z",
           "role" : "owner",
@@ -6393,6 +6413,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-06-08T11:50:51.392009Z",
         "updated_at" : "2020-06-08T11:50:51.392009Z",
         "role" : "channel_member",
@@ -6716,6 +6737,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-06-08T11:49:28.889886Z",
           "updated_at" : "2020-06-08T11:49:28.889886Z",
           "role" : "owner",
@@ -6741,6 +6763,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-06-08T11:49:28.889886Z",
         "updated_at" : "2020-06-08T11:49:28.889886Z",
         "role" : "channel_member",
@@ -7075,6 +7098,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-06-06T02:32:06.864569Z",
           "updated_at" : "2020-06-06T02:32:06.864569Z",
           "role" : "owner",
@@ -7099,6 +7123,7 @@
           }
         },
         {
+          "user_id" : "noisy-mountain-3",
           "created_at" : "2020-06-06T02:32:06.86457Z",
           "updated_at" : "2020-06-06T02:32:07.090203Z",
           "role" : "member",
@@ -7115,6 +7140,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-06-06T02:32:06.864569Z",
         "updated_at" : "2020-06-06T02:32:06.864569Z",
         "role" : "channel_member",
@@ -8586,6 +8612,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2019-12-13T14:29:33.360061Z",
           "updated_at" : "2019-12-13T14:29:33.360061Z",
           "role" : "owner",
@@ -8610,6 +8637,7 @@
           }
         },
         {
+          "user_id" : "steep-moon-9",
           "created_at" : "2019-12-13T14:29:56.013272Z",
           "updated_at" : "2019-12-13T14:29:56.013272Z",
           "role" : "member",
@@ -8632,6 +8660,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2019-12-13T14:29:33.360061Z",
         "updated_at" : "2019-12-13T14:29:33.360061Z",
         "role" : "channel_member",
@@ -9029,6 +9058,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-06-04T14:53:35.139416Z",
           "updated_at" : "2020-06-04T14:53:35.139416Z",
           "role" : "owner",
@@ -9053,6 +9083,7 @@
           }
         },
         {
+          "user_id" : "noisy-mountain-3",
           "created_at" : "2020-06-04T14:53:35.139416Z",
           "updated_at" : "2020-06-04T14:53:35.817145Z",
           "role" : "member",
@@ -9069,6 +9100,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-06-04T14:53:35.139416Z",
         "updated_at" : "2020-06-04T14:53:35.139416Z",
         "role" : "channel_member",
@@ -10468,6 +10500,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2019-12-16T15:19:47.270346Z",
           "updated_at" : "2019-12-16T15:19:47.270346Z",
           "role" : "owner",
@@ -10493,6 +10526,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2019-12-16T15:19:47.270346Z",
         "updated_at" : "2019-12-16T15:19:47.270346Z",
         "role" : "channel_member",
@@ -12427,6 +12461,7 @@
       ],
       "members" : [
         {
+          "user_id" : "bender",
           "created_at" : "2019-12-12T20:41:06.191606Z",
           "updated_at" : "2019-12-12T20:41:06.191606Z",
           "role" : "owner",
@@ -12556,6 +12591,7 @@
           }
         },
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2019-12-13T03:23:37.900562Z",
           "updated_at" : "2019-12-13T03:23:37.900562Z",
           "role" : "member",
@@ -12581,6 +12617,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2019-12-13T03:23:37.900562Z",
         "updated_at" : "2019-12-13T03:23:37.900562Z",
         "role" : "channel_member",
@@ -12884,6 +12921,7 @@
         "cid" : "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F"
       },
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-05-18T02:33:45.574394Z",
         "updated_at" : "2020-05-18T02:33:45.574394Z",
         "role" : "channel_member",
@@ -12906,6 +12944,7 @@
       },
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-05-18T02:33:45.574394Z",
           "updated_at" : "2020-05-18T02:33:45.574394Z",
           "role" : "owner",
@@ -12930,6 +12969,7 @@
           }
         },
         {
+          "user_id" : "noisy-mountain-3",
           "created_at" : "2020-05-18T02:33:45.574394Z",
           "updated_at" : "2020-05-18T02:33:45.824164Z",
           "role" : "member",
@@ -13228,6 +13268,7 @@
         "cid" : "team:3713C2BC-F865-44FE-807F-85CD7175FCB2"
       },
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-05-17T02:33:45.586276Z",
         "updated_at" : "2020-05-17T02:33:45.586276Z",
         "role" : "channel_member",
@@ -13250,6 +13291,7 @@
       },
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-05-17T02:33:45.586276Z",
           "updated_at" : "2020-05-17T02:33:45.586276Z",
           "role" : "owner",
@@ -13274,6 +13316,7 @@
           }
         },
         {
+          "user_id" : "noisy-mountain-3",
           "created_at" : "2020-05-17T02:33:45.586276Z",
           "updated_at" : "2020-05-17T02:33:45.79185Z",
           "role" : "member",
@@ -13455,6 +13498,7 @@
         "cid" : "team:ACAE4EC2-046C-4298-85EA-5A7E41C9CB6F"
       },
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-05-17T02:33:12.373057Z",
         "updated_at" : "2020-05-17T02:33:12.373057Z",
         "role" : "channel_member",
@@ -13477,6 +13521,7 @@
       },
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-05-17T02:33:12.373057Z",
           "updated_at" : "2020-05-17T02:33:12.373057Z",
           "role" : "owner",
@@ -13501,6 +13546,7 @@
           }
         },
         {
+          "user_id" : "noisy-mountain-3",
           "created_at" : "2020-05-17T02:33:12.373057Z",
           "updated_at" : "2020-05-17T02:33:12.373057Z",
           "role" : "member",
@@ -13682,6 +13728,7 @@
         "cid" : "team:9E38A3E7-315C-441E-87CE-D65DEE26D390"
       },
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-05-17T02:32:06.96436Z",
         "updated_at" : "2020-05-17T02:32:06.96436Z",
         "role" : "channel_member",
@@ -13704,6 +13751,7 @@
       },
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-05-17T02:32:06.96436Z",
           "updated_at" : "2020-05-17T02:32:06.96436Z",
           "role" : "owner",
@@ -13728,6 +13776,7 @@
           }
         },
         {
+          "user_id" : "noisy-mountain-3",
           "created_at" : "2020-05-17T02:32:06.96436Z",
           "updated_at" : "2020-05-17T02:32:06.96436Z",
           "role" : "member",
@@ -14026,6 +14075,7 @@
         "cid" : "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6"
       },
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-05-17T02:30:58.05297Z",
         "updated_at" : "2020-05-17T02:30:58.05297Z",
         "role" : "channel_member",
@@ -14048,6 +14098,7 @@
       },
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-05-17T02:30:58.05297Z",
           "updated_at" : "2020-05-17T02:30:58.05297Z",
           "role" : "owner",
@@ -14072,6 +14123,7 @@
           }
         },
         {
+          "user_id" : "noisy-mountain-3",
           "created_at" : "2020-05-17T02:30:58.05297Z",
           "updated_at" : "2020-05-17T02:30:58.338672Z",
           "role" : "member",
@@ -14415,6 +14467,7 @@
       ],
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-05-15T12:15:28.681126Z",
           "updated_at" : "2020-05-15T12:15:28.681126Z",
           "role" : "owner",
@@ -14439,6 +14492,7 @@
           }
         },
         {
+          "user_id" : "noisy-mountain-3",
           "created_at" : "2020-05-15T12:15:28.681127Z",
           "updated_at" : "2020-05-15T12:15:29.37786Z",
           "role" : "member",
@@ -14455,6 +14509,7 @@
         }
       ],
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-05-15T12:15:28.681126Z",
         "updated_at" : "2020-05-15T12:15:28.681126Z",
         "role" : "channel_member",
@@ -14777,6 +14832,7 @@
         "cid" : "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E"
       },
       "membership" : {
+        "user_id" : "broken-waterfall-5",
         "created_at" : "2020-05-15T02:42:18.263412Z",
         "updated_at" : "2020-05-15T02:42:18.263412Z",
         "role" : "channel_member",
@@ -14799,6 +14855,7 @@
       },
       "members" : [
         {
+          "user_id" : "broken-waterfall-5",
           "created_at" : "2020-05-15T02:42:18.263412Z",
           "updated_at" : "2020-05-15T02:42:18.263412Z",
           "role" : "owner",
@@ -14823,6 +14880,7 @@
           }
         },
         {
+          "user_id" : "noisy-mountain-3",
           "created_at" : "2020-05-15T02:42:18.263412Z",
           "updated_at" : "2020-05-15T02:42:18.497583Z",
           "role" : "member",

@@ -244,7 +244,7 @@ extension NotificationMutesUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when the current user is added to the channel member list.
-public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCount, HasUnreadChannelCountsByGroup {
     /// The identifier of a channel a message is sent to.
     public var cid: ChannelId { channel.cid }
 
@@ -253,6 +253,9 @@ public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnr
 
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
+
+    /// Unread channel counts keyed by the backend-provided group identifier.
+    public let unreadChannelCountsByGroup: [String: Int]?
 
     /// The membership information of the current user.
     public let member: ChatChannelMember
@@ -264,12 +267,14 @@ public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnr
         channel: ChatChannel,
         unreadCount: UnreadCount?,
         member: ChatChannelMember,
-        createdAt: Date
+        createdAt: Date,
+        unreadChannelCountsByGroup: [String: Int]? = nil
     ) {
         self.channel = channel
         self.unreadCount = unreadCount
         self.member = member
         self.createdAt = createdAt
+        self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
     }
 }
 
@@ -277,8 +282,7 @@ extension NotificationAddedToChannelEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let channelDTO = session.channel(cid: channel.cid),
-            let memberUserId = member.memberId,
-            let memberDTO = session.member(userId: memberUserId, cid: channel.cid),
+            let memberDTO = session.member(userId: member.userId, cid: channel.cid),
             let currentUser = session.currentUser
         else { return nil }
 
@@ -286,7 +290,8 @@ extension NotificationAddedToChannelEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             unreadCount: UnreadCount(currentUserDTO: currentUser),
             member: memberDTO.asModel(),
-            createdAt: createdAt
+            createdAt: createdAt,
+            unreadChannelCountsByGroup: currentUser.unreadChannelCountsByGroup
         )
     }
 }
@@ -318,8 +323,7 @@ extension NotificationRemovedFromChannelEventDTO: EventDTO {
         guard
             let user,
             let userDTO = session.user(id: user.id),
-            let memberUserId = member.memberId,
-            let memberDTO = session.member(userId: memberUserId, cid: cid)
+            let memberDTO = session.member(userId: member.userId, cid: cid)
         else { return nil }
 
         return try? NotificationRemovedFromChannelEvent(
@@ -383,8 +387,7 @@ extension NotificationInvitedEventDTO: EventDTO {
         guard
             let user,
             let userDTO = session.user(id: user.id),
-            let memberUserId = member.memberId,
-            let memberDTO = session.member(userId: memberUserId, cid: cid)
+            let memberDTO = session.member(userId: member.userId, cid: cid)
         else { return nil }
 
         return try? NotificationInvitedEvent(
@@ -427,8 +430,7 @@ extension NotificationInviteAcceptedEventDTO: EventDTO {
             let user,
             let userDTO = session.user(id: user.id),
             let channelDTO = session.channel(cid: channel.cid),
-            let memberUserId = member.memberId,
-            let memberDTO = session.member(userId: memberUserId, cid: channel.cid)
+            let memberDTO = session.member(userId: member.userId, cid: channel.cid)
         else { return nil }
 
         return try? NotificationInviteAcceptedEvent(
@@ -471,8 +473,7 @@ extension NotificationInviteRejectedEventDTO: EventDTO {
             let user,
             let userDTO = session.user(id: user.id),
             let channelDTO = session.channel(cid: channel.cid),
-            let memberUserId = member.memberId,
-            let memberDTO = session.member(userId: memberUserId, cid: channel.cid)
+            let memberDTO = session.member(userId: member.userId, cid: channel.cid)
         else { return nil }
 
         return try? NotificationInviteRejectedEvent(

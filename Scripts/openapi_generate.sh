@@ -299,6 +299,7 @@ allowed_models=(
   UserRequest
   UserResponse
   VoteData
+  VotingVisibility
   WrappedUnreadCountsResponse
   WSEvent
 )
@@ -583,6 +584,7 @@ codable_models=(
   Role
   SortParamRequest
   UserPayload
+  VotingVisibility
 )
 
 # 1. Clean + generate.
@@ -702,7 +704,6 @@ rename_generated_type UserResponseCommonFields UserPayload
 # Has isInvisible and privacySettings, but SDK never consumes these
 rename_generated_type UserResponsePrivacyFields UserPayload
 
-rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
@@ -791,12 +792,13 @@ require_property UserWatchingStartEventDTO cid
 require_property UserWatchingStopEventDTO cid
 
 # Unread by the SDK
-remove_property AIIndicatorClearEventDTO channelId channelType custom receivedAt
-remove_property AIIndicatorStopEventDTO channelId channelType custom receivedAt
-remove_property AIIndicatorUpdateEventDTO channelId channelType custom receivedAt
+remove_property AIIndicatorClearEventDTO channelId channelType custom receivedAt user
+remove_property AIIndicatorStopEventDTO channelId channelType custom receivedAt user
+remove_property AIIndicatorUpdateEventDTO channelId channelType custom receivedAt user
+remove_property AppSettings defaults
 remove_property BanRequest banFromFutureChannels deleteMessages deleteReactions ipBan
 remove_property ChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
-remove_property ChannelDetailPayload hideMessagesBefore muteExpiresAt muted
+remove_property ChannelDetailPayload fork hideMessagesBefore muteExpiresAt muted
 remove_property ChannelGetOrCreateRequest hideForCreator memberCustomInclude threadUnreadCounts
 remove_property ChannelHiddenEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
 remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage configOverrides createdBy createdById disabled frozen truncatedById
@@ -835,7 +837,7 @@ remove_property MessageResponse html imageLabels mml
 remove_property MessageUpdatedEventDTO channelCustom channelId channelMemberCount channelType custom messageId messageUpdate receivedAt team
 remove_property MutedChannelPayloadResponse channelMutes ownUser
 remove_property MutedUserPayload user
-remove_property NotificationAddedToChannelEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property NotificationAddedToChannelEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team unreadCount
 remove_property NotificationChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team unreadCount
 remove_property NotificationChannelMutesUpdatedEventDTO custom receivedAt
 remove_property NotificationChannelPartialUpdatedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
@@ -860,8 +862,8 @@ remove_property PollVoteCastedEventDTO activityId cid custom messageId receivedA
 remove_property PollVoteChangedEventDTO activityId cid custom messageId receivedAt
 remove_property PollVotePayload answerTextI18n
 remove_property PollVoteRemovedEventDTO activityId cid custom messageId receivedAt
-remove_property PushPreference callLevel chatPreferences feedsLevel feedsPreferences
-remove_property PushPreferenceInput callLevel chatPreferences feedsLevel feedsPreferences userId
+remove_property PushPreference callLevel chatPreferences feedsLevel feedsPreferences schedule
+remove_property PushPreferenceInput callLevel chatPreferences feedsLevel feedsPreferences removeSchedule schedule userId
 remove_property QueryBannedUsersPayload createdAtAfter createdAtAfterOrEqual createdAtBefore createdAtBeforeOrEqual
 remove_property QueryChannelsRequest memberCustomInclude
 remove_property QueryMembersPayload createdAtAfter createdAtAfterOrEqual createdAtBefore createdAtBeforeOrEqual members userIdGt userIdGte userIdLt userIdLte
@@ -887,6 +889,7 @@ remove_property SearchResultMessage html imageLabels mml
 remove_property SendMessageRequest includeChannelContext includeMentionedMembers keepChannelHidden
 remove_property SendMessageResponsePayload channelContext mentionedMembers
 remove_property SharedLocation channel message
+remove_property SortParamRequest type
 remove_property SyncResponse inaccessibleCids
 remove_property ThreadParticipantPayload lastThreadMessageAt leftThreadAt userId
 remove_property ThreadResponse deletedAt threadParticipants
@@ -896,6 +899,7 @@ remove_property TruncateChannelRequest memberIds truncatedAt
 remove_property TypingStartEventDTO channelId channelType custom receivedAt
 remove_property TypingStopEventDTO channelId channelType custom receivedAt
 remove_property UnmuteChannelRequest expiration
+remove_property UnreadChannel hasUnread
 remove_property UpdateChannelRequest cooldown removeFilterTags skipPush
 remove_property UpdateMessagePartialRequest skipEnrichUrl skipPush
 remove_property UpdateReminderRequest expiresAt
@@ -932,10 +936,10 @@ publicize_model UserGroup
 publicize_model UserGroupMember
 
 publicize_raw_representable ChannelCapability
-publicize_raw_representable CreatePollRequestBody VotingVisibility
 publicize_raw_representable PushPreferenceInput PushPreferenceLevel
 publicize_raw_representable ScheduledMessageFailureReason
 publicize_raw_representable TranslateMessageRequest TranslationLanguage
+publicize_raw_representable VotingVisibility
 
 # 7. Coding conformances and cleanup.
 apply_directional_coding_conformances
