@@ -1,8 +1,7 @@
 sources:
   - ./Generated/OpenAPI/models/ChannelDetailPayload.swift
-  - ./Generated/OpenAPI/models/ChannelStateResponse.swift
+  - ./Generated/OpenAPI/models/ChannelStateResponseFields.swift
   - ./Generated/OpenAPI/models/DraftMessagePayload.swift
-  - ./Generated/OpenAPI/models/FullUserResponse.swift
   - ./Generated/OpenAPI/models/GroupedChannelsBucket.swift
   - ./Generated/OpenAPI/models/MemberInfoPayload.swift
   - ./Generated/OpenAPI/models/MemberPayload.swift
@@ -12,7 +11,6 @@ sources:
   - ./Generated/OpenAPI/models/OwnUserResponse.swift
   - ./Generated/OpenAPI/models/QueryChannelsResponse.swift
   - ./Generated/OpenAPI/models/QueryThreadsResponse.swift
-  - ./Generated/OpenAPI/models/SearchResultMessage.swift
   - ./Generated/OpenAPI/models/SyncResponse.swift
   - ./Generated/OpenAPI/models/ThreadParticipantPayload.swift
   - ./Generated/OpenAPI/models/ThreadResponse.swift
@@ -24,12 +22,12 @@ output:
   ./Generated/OpenAPI/OpenAPIDecoders.generated.swift
 args:
   # Models exposing `allKeys`, the wire keys of their stored properties.
-  allKeys: [FullUserResponse, MessageAttachmentPayload]
+  allKeys: [MessageAttachmentPayload]
   # Non-optional properties which fall back to a default when the key is missing or null.
   defaultValues:
     ChannelDetailPayload:
       custom: "[:]"
-    ChannelStateResponse:
+    ChannelStateResponseFields:
       threads: "[]"
     DraftMessagePayload:
       custom: "[:]"
@@ -62,40 +60,31 @@ args:
       language: "\"\""
       teams: "[]"
       unreadThreads: "0"
-    SearchResultMessage:
-      custom: "[:]"
-      mentionedChannel: "false"
-      mentionedHere: "false"
-      pinned: "false"
-      reactionCounts: "[:]"
-      reactionScores: "[:]"
-      restrictedVisibility: "[]"
-      shadowed: "false"
-      silent: "false"
     ThreadParticipantPayload:
       custom: "[:]"
     ThreadResponse:
       activeParticipantCount: "0"
       custom: "[:]"
     ThreadStateResponse:
-      activeParticipantCount: "0"
-      custom: "[:]"
       latestReplies: "[]"
     UserPayload:
       banned: "false"
       custom: "[:]"
       language: "\"\""
       teams: "[]"
+  # Nested models, decoded from the same decoder as the model holding them.
+  embedded:
+    ThreadStateResponse: thread
   # Arrays where an element that fails to decode is logged and dropped instead of failing the whole payload.
   lossyArrays:
     ChannelDetailPayload: [members]
-    ChannelStateResponse: [activeLiveLocations, members, messages, pendingMessages, pinnedMessages, read, threads, watchers]
+    ChannelStateResponseFields: [activeLiveLocations, members, messages, pendingMessages, pinnedMessages, read, threads, watchers]
     GroupedChannelsBucket: [channels]
     MessageResponse: [attachments, latestReactions, mentionedGroups, mentionedRoles, mentionedUsers, ownReactions, restrictedVisibility]
     OwnUserResponse: [channelMutes, devices]
     QueryChannelsResponse: [channels]
     QueryThreadsResponse: [threads]
-    SearchResultMessage: [attachments, latestReactions, mentionedGroups, mentionedRoles, mentionedUsers, ownReactions, restrictedVisibility]
     # Remove when fixed: IOS-2065
     SyncResponse: [events]
-    ThreadStateResponse: [latestReplies, read, threadParticipants]
+    ThreadResponse: [threadParticipants]
+    ThreadStateResponse: [latestReplies, read]

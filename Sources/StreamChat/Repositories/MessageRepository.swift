@@ -311,7 +311,7 @@ class MessageRepository: @unchecked Sendable {
                 nonisolated(unsafe) var message: ChatMessage?
                 self.database.write({ session in
                     message = try session.saveMessage(
-                        payload: response.message.asMessageResponse(),
+                        payload: response.message.message,
                         syncOwnReactions: true,
                         skipDraftUpdate: false,
                         cache: nil

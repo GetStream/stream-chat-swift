@@ -6,7 +6,7 @@ import Foundation
 
 final class GroupedChannelsBucket: Sendable, Decodable {
     /// Channels returned for this bucket
-    let channels: [ChannelStateResponse]
+    let channels: [ChannelStateResponseFields]
     /// Cursor for the next page of this group
     let next: String?
     /// Cursor for the previous page of this group
@@ -15,7 +15,7 @@ final class GroupedChannelsBucket: Sendable, Decodable {
     let unreadChannels: Int?
 
     init(
-        channels: [ChannelStateResponse],
+        channels: [ChannelStateResponseFields],
         next: String? = nil,
         prev: String? = nil,
         unreadChannels: Int? = nil
@@ -29,7 +29,7 @@ final class GroupedChannelsBucket: Sendable, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         channels = try container.decodeArrayIgnoringFailures(
-            [ChannelStateResponse].self,
+            [ChannelStateResponseFields].self,
             forKey: .channels
         )
         next = try container.decodeIfPresent(String.self, forKey: .next)

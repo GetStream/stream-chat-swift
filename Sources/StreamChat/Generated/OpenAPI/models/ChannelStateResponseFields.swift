@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ChannelStateResponse: Sendable, Decodable {
+final class ChannelStateResponseFields: Sendable, Decodable {
     /// Active live locations in the channel
     let activeLiveLocations: [SharedLocation]?
     /// Represents channel in chat

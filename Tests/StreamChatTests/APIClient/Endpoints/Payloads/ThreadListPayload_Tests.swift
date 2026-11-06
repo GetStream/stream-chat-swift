@@ -15,28 +15,28 @@ final class ThreadListPayload_Tests: XCTestCase {
         // 1 of the 3 threads has no `parent_message`, which is optional in the payload.
         // Such a thread is skipped when it is saved to the database, see `ThreadDTO_Tests`.
         XCTAssertEqual(payload.threads.count, 3)
-        XCTAssertEqual(payload.threads.filter { $0.parentMessage == nil }.count, 1)
+        XCTAssertEqual(payload.threads.filter { $0.thread.parentMessage == nil }.count, 1)
     }
 
     func test_thread_decoding() throws {
         let url = XCTestCase.mockData(fromJSONFile: "Thread")
         let payload = try JSONDecoder.default.decode(ThreadPayload.self, from: url)
-        XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:4AB11F2F-4")
+        XCTAssertEqual(payload.thread.channel?.cid.rawValue, "messaging:4AB11F2F-4")
         XCTAssertEqual(payload.parentMessageId, "488bba2a-193d-48d2-95ae-3aa4b8e34960")
-        XCTAssertEqual(payload.parentMessage?.id, "488bba2a-193d-48d2-95ae-3aa4b8e34960")
-        XCTAssertEqual(payload.parentMessage?.text, "msg: 24")
-        XCTAssertEqual(payload.createdBy?.id, "han_solo")
-        XCTAssertEqual(payload.replyCount, 60)
-        XCTAssertEqual(payload.participantCount, 3)
-        XCTAssertEqual(payload.activeParticipantCount, 2)
-        XCTAssertEqual(payload.threadParticipants?.count, 3)
-        XCTAssertEqual(payload.lastMessageAt, "2024-03-26T12:25:07.25741Z".toDate())
-        XCTAssertEqual(payload.createdAt, "2024-03-26T12:14:10.87779Z".toDate())
-        XCTAssertEqual(payload.updatedAt, "2024-03-26T12:25:07.25741Z".toDate())
-        XCTAssertEqual(payload.title, "msg: 24")
+        XCTAssertEqual(payload.thread.parentMessage?.id, "488bba2a-193d-48d2-95ae-3aa4b8e34960")
+        XCTAssertEqual(payload.thread.parentMessage?.text, "msg: 24")
+        XCTAssertEqual(payload.thread.createdBy?.id, "han_solo")
+        XCTAssertEqual(payload.thread.replyCount, 60)
+        XCTAssertEqual(payload.thread.participantCount, 3)
+        XCTAssertEqual(payload.thread.activeParticipantCount, 2)
+        XCTAssertEqual(payload.thread.threadParticipants?.count, 3)
+        XCTAssertEqual(payload.thread.lastMessageAt, "2024-03-26T12:25:07.25741Z".toDate())
+        XCTAssertEqual(payload.thread.createdAt, "2024-03-26T12:14:10.87779Z".toDate())
+        XCTAssertEqual(payload.thread.updatedAt, "2024-03-26T12:25:07.25741Z".toDate())
+        XCTAssertEqual(payload.thread.title, "msg: 24")
         XCTAssertEqual(payload.latestReplies.count, 2)
         XCTAssertEqual(payload.read?.count, 3)
-        XCTAssertEqual(payload.custom["custom_test"]?.numberValue, 10)
+        XCTAssertEqual(payload.thread.custom["custom_test"]?.numberValue, 10)
     }
 
     func test_thread_dropsArrayElementsThatFailDecoding() throws {
@@ -54,7 +54,7 @@ final class ThreadListPayload_Tests: XCTestCase {
 
         XCTAssertEqual(payload.latestReplies.count, latestReplies.count)
         XCTAssertEqual(payload.read?.count, read.count)
-        XCTAssertEqual(payload.threadParticipants?.count, threadParticipants.count)
+        XCTAssertEqual(payload.thread.threadParticipants?.count, threadParticipants.count)
     }
 
     func test_thread_latestRepliesDefaultToEmptyWhenMissing() throws {

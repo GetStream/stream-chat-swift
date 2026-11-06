@@ -247,7 +247,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         wait(for: [completionCalled], timeout: defaultTimeout)
 
         let currentUser = try database.readSynchronously { try XCTUnwrap($0.currentUser?.asModel()) }
-        XCTAssertEqual(currentUser.name, updatedUser.name)
+        XCTAssertEqual(currentUser.name, updatedUser.user.name)
         XCTAssertEqual(currentUser.totalUnreadCountByTeam, ["ios": 3])
         XCTAssertEqual(currentUser.pushPreference?.level, .allMentions)
     }
