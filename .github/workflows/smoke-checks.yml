@@ -528,4 +528,4 @@ jobs:
     - uses: ./.github/actions/xcode-cache
     - name: Build LLC for tvOS
       run: bundle exec fastlane build_tvos ${{ env.VERBOSE }}
-      timeout-minutes: 25
+      timeout-minutes: 40
