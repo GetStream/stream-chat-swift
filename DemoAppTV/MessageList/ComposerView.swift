@@ -26,7 +26,7 @@ struct ComposerView: View {
         let text = trimmedText
         guard !text.isEmpty else { return }
         self.text = ""
-        Task { @concurrent [chat] in
+        Task {
             try? await chat.sendMessage(with: text)
         }
     }
