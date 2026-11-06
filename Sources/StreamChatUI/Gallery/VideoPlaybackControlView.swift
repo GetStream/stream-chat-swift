@@ -53,6 +53,10 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     private var playerStatusObserver: NSKeyValueObservation?
     private var playerItemObserver: NSKeyValueObservation?
     private var itemDurationObserver: NSKeyValueObservation?
+    private var itemStatusObserver: NSKeyValueObservation?
+    private weak var observedItem: AVPlayerItem?
+    // Kept independent of `Content.VideoState` so existing exhaustive switches stay compatible.
+    private var hasPlaybackFailed = false
 
     /// Whether the timeline is being scrubbed, so periodic time updates do not move it back.
     open private(set) var isScrubbing = false
@@ -71,6 +75,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
             guard oldValue != player else { return }
 
             unsubscribeFromPlayerNotifications(oldValue)
+            clearPlaybackFailure()
             content = .initial
             subscribeToPlayerNotifications()
 
@@ -107,6 +112,14 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     /// A slider used to show a timeline.
     open private(set) lazy var timeSlider: UISlider = UISlider()
         .withoutAutoresizingMaskConstraints
+
+    /// A label shown when the current video cannot be played.
+    open private(set) lazy var errorLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
+        .withNumberOfLines(0)
+        .withAccessibilityIdentifier(identifier: "errorLabel")
 
     /// A container for playback button and time labels.
     open private(set) lazy var rootContainer: ContainerStackView = ContainerStackView(axis: .vertical)
@@ -156,6 +169,10 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
 
         addSubview(loadingIndicator)
         loadingIndicator.pin(anchors: [.centerX, .centerY], to: playPauseButton)
+
+        addSubview(errorLabel)
+        errorLabel.pin(anchors: [.leading, .trailing], to: layoutMarginsGuide)
+        errorLabel.pin(anchors: [.centerY], to: playPauseButton)
     }
 
     override open func setUpAppearance() {
@@ -169,6 +186,14 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         playPauseButton.accessibilityLabel = L10n.Gallery.Playback.play
         timestampLabel.isAccessibilityElement = false
         durationLabel.isAccessibilityElement = false
+        errorLabel.font = appearance.fonts.footnote
+        errorLabel.textColor = appearance.colorPalette.accentError
+        errorLabel.textAlignment = .center
+        errorLabel.text = L10n.Gallery.Playback.error
+        errorLabel.accessibilityLabel = L10n.Gallery.Playback.error
+        errorLabel.accessibilityTraits = .staticText
+        errorLabel.isHidden = true
+        errorLabel.isAccessibilityElement = false
     }
 
     override open func updateContent() {
@@ -178,6 +203,19 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         timestampLabel.text = videoDurationFormatter.format(content.currentTime)
         durationLabel.text = videoDurationFormatter.format(content.videoDuration)
         timeSlider.accessibilityValue = videoDurationFormatter.format(content.currentTime)
+
+        if hasPlaybackFailed {
+            presentFailureContent()
+            return
+        }
+
+        errorLabel.isHidden = true
+        errorLabel.isAccessibilityElement = false
+        timeSlider.isHidden = false
+        timeSlider.isEnabled = true
+        timestampLabel.isHidden = false
+        durationLabel.isHidden = false
+        playPauseButton.isEnabled = true
 
         switch content.videoState {
         case .playing:
@@ -202,8 +240,17 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         }
     }
 
+    func setPlaybackFailure(_ error: Error?) {
+        if let error {
+            presentPlaybackFailure(error)
+        } else {
+            clearPlaybackFailure()
+        }
+    }
+
     /// Called when the user starts dragging the timeline.
     @objc open func timeSliderEditingDidBegin(_ sender: UISlider) {
+        guard !hasPlaybackFailed else { return }
         isScrubbing = true
         wasPlayingBeforeScrubbing = player?.timeControlStatus == .playing
         player?.pause()
@@ -226,6 +273,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
 
     /// Seeks the player to the given timeline progress, a value between 0 and 1.
     open func seekPlayer(toProgress progress: Float) {
+        guard !hasPlaybackFailed else { return }
         let progress = min(max(progress, 0), 1)
         let duration: TimeInterval
         if content.videoDuration.isFinite, content.videoDuration > 0 {
@@ -243,11 +291,24 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
 
     /// Is invoked when current track reached the end.
     @objc open func handleItemDidPlayToEndTime(_ notification: NSNotification) {
+        guard !hasPlaybackFailed else { return }
+        guard notification.object as AnyObject? === player?.currentItem else { return }
         player?.seek(to: .zero)
+    }
+
+    /// Is invoked when the current item fails to play to the end.
+    @objc open func handleItemFailedToPlayToEndTime(_ notification: NSNotification) {
+        StreamConcurrency.onMain { [weak self] in
+            guard let self else { return }
+            guard notification.object as AnyObject? === self.player?.currentItem else { return }
+            let error = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error
+            self.presentPlaybackFailure(error)
+        }
     }
 
     /// Starts playback so video audio is heard even when the ringer switch is off.
     open func playPlayer() {
+        guard !hasPlaybackFailed else { return }
         activatePlaybackAudioSession()
         player?.play()
     }
@@ -273,6 +334,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
 
     /// Is invoked when playback button is touched up inide.
     @objc open func handleTapOnPlayPauseButton() {
+        guard !hasPlaybackFailed else { return }
         switch player?.timeControlStatus {
         case .paused:
             playPlayer()
@@ -295,8 +357,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         playerItemObserver?.invalidate()
         playerItemObserver = nil
 
-        itemDurationObserver?.invalidate()
-        itemDurationObserver = nil
+        unobservePlayerItem()
     }
 
     /// Unsubscribes to current player notifications.
@@ -307,7 +368,8 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         let interval = CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         playerTimeChangesObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
             StreamConcurrency.onMain {
-                guard let self, !self.isScrubbing, let currentItem = self.player?.currentItem else { return }
+                guard let self, !self.hasPlaybackFailed, !self.isScrubbing else { return }
+                guard player === self.player, let currentItem = self.player?.currentItem else { return }
 
                 if time.isNumeric && currentItem.duration.isNumeric {
                     self.content.playingProgress = time.seconds / currentItem.duration.seconds
@@ -320,6 +382,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         playerStatusObserver = player.observe(\.timeControlStatus, options: [.new, .initial]) { [weak self] player, _ in
             guard let self = self else { return }
             StreamConcurrency.onMain {
+                guard player === self.player, !self.hasPlaybackFailed else { return }
                 switch player.timeControlStatus {
                 case .playing:
                     self.content.videoState = .playing
@@ -331,24 +394,14 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
             }
         }
 
-        playerItemObserver = player.observe(\.currentItem, options: [.new, .initial]) { [weak self] player, _ in
+        playerItemObserver = player.observe(\.currentItem, options: [.new]) { [weak self] player, _ in
             guard let self = self else { return }
             StreamConcurrency.onMain {
-                self.content.videoDuration = 0
-                self.itemDurationObserver = player.currentItem?.observe(\.duration, options: [.new, .initial]) { [weak self] item, _ in
-                    StreamConcurrency.onMain { [weak self] in
-                        self?.content.videoDuration = item.duration.isNumeric ? item.duration.seconds : 0
-                    }
-                }
-                
-                NotificationCenter.default.addObserver(
-                    self,
-                    selector: #selector(self.handleItemDidPlayToEndTime),
-                    name: .AVPlayerItemDidPlayToEndTime,
-                    object: player.currentItem
-                )
+                guard player === self.player else { return }
+                self.handleCurrentItemChange(player.currentItem)
             }
         }
+        handleCurrentItemChange(player.currentItem)
     }
 
     // This is a workaround to overcome the Swift 6 warning
@@ -359,5 +412,107 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         StreamConcurrency.onMain {
             unsubscribeFromPlayerNotifications(_currentPlayer)
         }
+    }
+
+    private func presentFailureContent() {
+        errorLabel.text = L10n.Gallery.Playback.error
+        errorLabel.accessibilityLabel = L10n.Gallery.Playback.error
+        errorLabel.isHidden = false
+        errorLabel.isAccessibilityElement = true
+        playPauseButton.isHidden = true
+        playPauseButton.isEnabled = false
+        timeSlider.isHidden = true
+        timeSlider.isEnabled = false
+        timestampLabel.isHidden = true
+        durationLabel.isHidden = true
+        if loadingIndicator.isVisible {
+            loadingIndicator.isVisible = false
+        }
+    }
+
+    private func presentPlaybackFailure(_ error: Error?) {
+        if let error {
+            log.error("Gallery video playback failed: \(error)")
+        }
+        hasPlaybackFailed = true
+        isScrubbing = false
+        wasPlayingBeforeScrubbing = false
+        player?.pause()
+        updateContentIfNeeded()
+    }
+
+    private func clearPlaybackFailure() {
+        guard hasPlaybackFailed else { return }
+        hasPlaybackFailed = false
+        updateContentIfNeeded()
+    }
+
+    private func handleCurrentItemChange(_ item: AVPlayerItem?) {
+        let itemChanged = item !== observedItem
+        unobservePlayerItem()
+        clearPlaybackFailure()
+        content.videoDuration = 0
+        content.playingProgress = 0
+        observePlayerItem(item)
+
+        if item == nil {
+            content.videoState = .loading
+        } else if itemChanged, item?.status != .failed, !hasPlaybackFailed {
+            playPlayer()
+        }
+    }
+
+    private func observePlayerItem(_ item: AVPlayerItem?) {
+        guard let item else { return }
+
+        observedItem = item
+
+        itemDurationObserver = item.observe(\.duration, options: [.new, .initial]) { [weak self] item, _ in
+            StreamConcurrency.onMain { [weak self] in
+                guard let self, !self.hasPlaybackFailed, item === self.player?.currentItem else { return }
+                self.content.videoDuration = item.duration.isNumeric ? item.duration.seconds : 0
+            }
+        }
+
+        itemStatusObserver = item.observe(\.status, options: [.new, .initial]) { [weak self] item, _ in
+            StreamConcurrency.onMain { [weak self] in
+                guard let self, item === self.player?.currentItem else { return }
+                if item.status == .failed {
+                    self.presentPlaybackFailure(item.error)
+                }
+            }
+        }
+        if item.status == .failed {
+            presentPlaybackFailure(item.error)
+        }
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleItemDidPlayToEndTime),
+            name: .AVPlayerItemDidPlayToEndTime,
+            object: item
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleItemFailedToPlayToEndTime),
+            name: .AVPlayerItemFailedToPlayToEndTime,
+            object: item
+        )
+    }
+
+    private func unobservePlayerItem() {
+        // KVO keeps `observedItem` alive; remove its notifications before invalidating.
+        if let observedItem {
+            NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: observedItem)
+            NotificationCenter.default.removeObserver(self, name: .AVPlayerItemFailedToPlayToEndTime, object: observedItem)
+        }
+
+        itemDurationObserver?.invalidate()
+        itemDurationObserver = nil
+
+        itemStatusObserver?.invalidate()
+        itemStatusObserver = nil
+
+        observedItem = nil
     }
 }

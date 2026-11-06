@@ -191,6 +191,8 @@
 "gallery.playback.pause" = "Pause";
 /// VoiceOver label for the video timeline slider in the gallery.
 "gallery.playback.timeline" = "Playback";
+/// Shown in the gallery playback bar when a video cannot be played.
+"gallery.playback.error" = "Unable to play this video.";
 
 /// Text shown when the user was last seen seconds ago.
 "dates.time-ago-seconds-plural" = "last seen %d seconds ago";
