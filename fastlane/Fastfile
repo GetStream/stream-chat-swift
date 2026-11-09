@@ -891,6 +891,24 @@ lane :spm_integration do
   )
 end
 
+desc 'Builds StreamChat for tvOS'
+lane :build_tvos do
+  next unless is_check_required(sources: @impact[:tvos][:sources], force_check: @force_check, required_checks: @impact[:tvos][:checks])
+
+  sh('xcrun simctl list runtimes | grep -q "tvOS $(xcrun --sdk appletvsimulator --show-sdk-version)" || xcodebuild -downloadPlatform tvOS') if is_ci
+  gym(
+    project: xcode_project,
+    scheme: 'StreamChat',
+    skip_package_ipa: true,
+    skip_archive: true,
+    clean: is_localhost,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    destination: 'generic/platform=tvOS Simulator',
+    xcodebuild_formatter: xcodebuild_formatter
+  )
+end
+
 private_lane :update_testplan_on_ci do |options|
   update_testplan(path: options[:path], env_vars: { key: 'CI', value: 'TRUE' }) if is_ci
 end
@@ -942,6 +960,10 @@ lane :impact_analysis do
     llc: {
       sources: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', 'Package.swift'],
       checks: ['Test LLC (Debug)', 'Build SDKs (Old Xcode)']
+    },
+    tvos: {
+      sources: ['Sources/StreamChat', 'Package.swift', 'StreamChat.xcodeproj'],
+      checks: ['Build LLC (tvOS)']
     },
     ui: {
       sources: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', 'Package.swift'],

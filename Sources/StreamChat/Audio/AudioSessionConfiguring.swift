@@ -154,6 +154,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
     /// - Note: The activation of the `AVAudioSession` is performed asynchronously, so this method
     /// won't report activation failures. Prefer `activateRecordingSession(completion:)` to get
     /// informed about them.
+    /// - Throws: An error when no audio input is available, for example on an Apple TV without a microphone.
     open func activateRecordingSession() throws {
         try activateRecordingSession(completion: nil)
     }
@@ -164,7 +165,11 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
     /// - Parameter completion: The closure to call with the activation's error or `nil` if the
     /// activation completed successfully.
     /// - Note: This method is using the `.playAndRecord` category with the `.spokenAudio` mode.
+    /// - Throws: An error when no audio input is available, for example on an Apple TV without a microphone.
     open func activateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        guard audioSession.isInputAvailable else {
+            throw AudioSessionConfiguratorError.noAvailableInputsFound()
+        }
         try audioSession.setCategory(
             .playAndRecord,
             mode: .spokenAudio,
@@ -194,9 +199,10 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
         setSessionActive(false, completion: completion)
     }
 
-    /// Calling this method should activate the provided `AVAudioSession` for playback and record.
+    /// Calling this method should activate the provided `AVAudioSession` for playback (and record on iOS).
     ///
-    /// - Note: This method uses the `.playAndRecord` category with `.default` mode and policy.
+    /// - Note: This method uses the `.playAndRecord` category with `.default` mode and policy. On tvOS it uses
+    /// the `.playback` category.
     /// - Note: The activation of the `AVAudioSession` is performed asynchronously, so this method
     /// won't report activation failures. Prefer `activatePlaybackSession(completion:)` to get
     /// informed about them.
@@ -204,13 +210,22 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
         try activatePlaybackSession(completion: nil)
     }
 
-    /// Calling this method should activate the provided `AVAudioSession` for playback and record and
+    /// Calling this method should activate the provided `AVAudioSession` for playback (and record on iOS) and
     /// call the provided completion handler once the activation has been completed.
     ///
     /// - Parameter completion: The closure to call with the activation's error or `nil` if the
     /// activation completed successfully.
-    /// - Note: This method uses the `.playAndRecord` category with `.default` mode and policy.
+    /// - Note: This method uses the `.playAndRecord` category with `.default` mode and policy. On tvOS it uses
+    /// the `.playback` category.
     open func activatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        #if os(tvOS)
+        try audioSession.setCategory(
+            .playback,
+            mode: .default,
+            policy: .default,
+            options: []
+        )
+        #else
         try audioSession.setCategory(
             .playAndRecord,
             mode: .default,
@@ -220,6 +235,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
                 .allowBluetoothDevice
             ]
         )
+        #endif
         setSessionActive(true, completion: completion)
     }
 
@@ -248,12 +264,23 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
     ///     - completionHandler: The closure to call on the the `AVAudioSession` request returns
     ///     with a response.
     ///     - Note: The closure's invocation will be dispatched on the MainThread.
+    ///     - Note: On tvOS, recording requires tvOS 17 or later, so earlier versions report `false`.
     open func requestRecordPermission(
         _ completionHandler: @escaping @Sendable (Bool) -> Void
     ) {
+        #if os(tvOS)
+        guard #available(tvOS 17.0, *) else {
+            handleRecordPermissionResponse(false, completionHandler: completionHandler)
+            return
+        }
+        AVAudioApplication.requestRecordPermission { [weak self] in
+            self?.handleRecordPermissionResponse($0, completionHandler: completionHandler)
+        }
+        #else
         audioSession.requestRecordPermission { [weak self] in
             self?.handleRecordPermissionResponse($0, completionHandler: completionHandler)
         }
+        #endif
     }
 
     // MARK: - Helpers
@@ -316,9 +343,14 @@ final class AudioSessionConfiguratorError: ClientError, @unchecked Sendable {
 // MARK: -
 
 extension AVAudioSession.CategoryOptions {
-    #if compiler(>=6.2)
-    static let allowBluetoothDevice: AVAudioSession.CategoryOptions = .allowBluetoothHFP
-    #else
-    static let allowBluetoothDevice: AVAudioSession.CategoryOptions = .allowBluetooth
-    #endif
+    static var allowBluetoothDevice: AVAudioSession.CategoryOptions {
+        #if os(tvOS)
+        guard #available(tvOS 17.0, *) else { return [] }
+        #endif
+        #if compiler(>=6.2)
+        return .allowBluetoothHFP
+        #else
+        return .allowBluetooth
+        #endif
+    }
 }

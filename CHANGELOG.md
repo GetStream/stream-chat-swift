@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add quiet hours for push notifications with `CurrentChatUserController.setQuietHours(_:)` and `removeQuietHours()` [#4383](https://github.com/GetStream/stream-chat-swift/pull/4383)
 - Add `ChatClientConfig.webSocketEventProtocol` to opt in to WebSocket event protocol v3, which leaves the members out of the events of channels with more than 100 members to reduce bandwidth [#4382](https://github.com/GetStream/stream-chat-swift/pull/4382)
+- Add tvOS 15 support, with audio recording on tvOS 17 [#4386](https://github.com/GetStream/stream-chat-swift/pull/4386)
+### 🐞 Fixed
+- Fix downloaded attachments staying downloaded after their file was removed [#4386](https://github.com/GetStream/stream-chat-swift/pull/4386)
 
 # [5.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.16.0)
 _November 04, 2026_
