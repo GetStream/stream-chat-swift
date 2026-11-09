@@ -398,7 +398,6 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     private func setUp() {
         appStateObserver.subscribe(self)
         #if os(tvOS)
-        // tvOS doesn't have the `AVAudioRecorderDelegate` interruption methods.
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleAudioSessionInterruption(_:)),
