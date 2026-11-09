@@ -9,11 +9,16 @@ import UIKit
 open class PollCommentListSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
     public struct Content {
         public var comment: PollVote
+        /// The language to show the comment in, when it has a translation to it.
+        /// If `nil`, the original comment is shown.
+        public var translationLanguage: TranslationLanguage?
 
         public init(
-            comment: PollVote
+            comment: PollVote,
+            translationLanguage: TranslationLanguage? = nil
         ) {
             self.comment = comment
+            self.translationLanguage = translationLanguage
         }
     }
 
@@ -53,6 +58,6 @@ open class PollCommentListSectionHeaderView: _TableHeaderFooterView, ThemeProvid
     override open func updateContent() {
         super.updateContent()
 
-        commentLabel.text = content?.comment.answerText
+        commentLabel.text = content.flatMap { $0.comment.answerText(in: $0.translationLanguage) }
     }
 }

@@ -9,9 +9,13 @@ import UIKit
 open class PollResultsTableHeaderView: _View, ThemeProvider {
     public struct Content {
         public var poll: Poll
+        /// The language to show the poll name in, when it has a translation to it.
+        /// If `nil`, the original name is shown.
+        public var translationLanguage: TranslationLanguage?
 
-        public init(poll: Poll) {
+        public init(poll: Poll, translationLanguage: TranslationLanguage? = nil) {
             self.poll = poll
+            self.translationLanguage = translationLanguage
         }
     }
 
@@ -67,6 +71,6 @@ open class PollResultsTableHeaderView: _View, ThemeProvider {
     override open func updateContent() {
         super.updateContent()
 
-        titleLabel.text = content?.poll.name
+        titleLabel.text = content.map { $0.poll.name(in: $0.translationLanguage) }
     }
 }

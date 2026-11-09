@@ -10,10 +10,14 @@ open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
     public struct Content {
         public var option: PollOption
         public var poll: Poll
+        /// The language to show the option text in, when it has a translation to it.
+        /// If `nil`, the original text is shown.
+        public var translationLanguage: TranslationLanguage?
 
-        public init(option: PollOption, poll: Poll) {
+        public init(option: PollOption, poll: Poll, translationLanguage: TranslationLanguage? = nil) {
             self.option = option
             self.poll = poll
+            self.translationLanguage = translationLanguage
         }
     }
 
@@ -78,7 +82,7 @@ open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
 
         guard let content = self.content else { return }
 
-        optionNameLabel.text = content.option.text
+        optionNameLabel.text = content.option.text(in: content.translationLanguage)
         let voteCount = content.poll.voteCount(for: content.option)
         votesLabel.text = L10n.Polls.votes(voteCount)
         pollWinnerIconView.isHidden = !content.poll.isOptionWinner(content.option)

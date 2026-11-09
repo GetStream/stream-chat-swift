@@ -551,8 +551,12 @@ open class ChatChannelListItemView: _View, ThemeProvider {
                 components.append(L10n.Message.Preview.pollSomeoneCreated(creator.name ?? creator.id))
             }
         }
-        if !poll.name.isEmpty {
-            components.append(poll.name)
+        let translationLanguage = self.components.messageAutoTranslationEnabled
+            ? content?.channel.membership?.language
+            : nil
+        let pollName = poll.name(in: translationLanguage)
+        if !pollName.isEmpty {
+            components.append(pollName)
         }
         return components.joined(separator: " ")
     }

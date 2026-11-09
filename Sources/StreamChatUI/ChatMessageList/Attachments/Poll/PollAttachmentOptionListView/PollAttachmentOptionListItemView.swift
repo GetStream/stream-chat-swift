@@ -12,10 +12,14 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         public var option: PollOption
         /// The poll that this option belongs.
         public var poll: Poll
-        
-        public init(option: PollOption, poll: Poll) {
+        /// The language to show the option text in, when it has a translation to it.
+        /// If `nil`, the original text is shown.
+        public var translationLanguage: TranslationLanguage?
+
+        public init(option: PollOption, poll: Poll, translationLanguage: TranslationLanguage? = nil) {
             self.option = option
             self.poll = poll
+            self.translationLanguage = translationLanguage
         }
 
         /// Whether the current option has been voted by the current user.
@@ -129,7 +133,7 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
             return
         }
 
-        optionNameLabel.text = content.option.text
+        optionNameLabel.text = content.option.text(in: content.translationLanguage)
         votesCountLabel.text = "\(content.voteCount)"
         
         latestVotesAuthorsView.content = .init(users: latestVotesAuthors)

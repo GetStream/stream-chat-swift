@@ -18,6 +18,10 @@ open class PollCommentListVC:
     /// The controller to handle actions on the Poll.
     public var pollController: PollController
 
+    /// The language to show the poll texts in, when they have a translation to it.
+    /// By default, the current user's language when `Components.messageAutoTranslationEnabled` is `true`.
+    open lazy var translationLanguage: TranslationLanguage? = pollController.translationLanguage(components: components)
+
     public required init(
         pollController: PollController,
         commentsController: PollVoteListController
@@ -166,7 +170,7 @@ open class PollCommentListVC:
         }
 
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollCommentListSectionHeaderView)
-        view.content = .init(comment: comment)
+        view.content = .init(comment: comment, translationLanguage: translationLanguage)
         style(sectionHeaderView: view, contentView: view.container, isEmptySection: false)
         return view
     }
