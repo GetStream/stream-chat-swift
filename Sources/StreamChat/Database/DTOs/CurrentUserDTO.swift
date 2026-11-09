@@ -94,7 +94,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         invalidateCurrentUserCache()
         
         let dto = CurrentUserDTO.loadOrCreate(context: self)
-        dto.user = try saveUser(ownResponse: payload)
+        dto.user = try saveUser(payload: payload.user)
 
         // Save push preference
         if let pushPreference = payload.pushPreferences {
@@ -104,7 +104,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.totalUnreadCountByTeam = payload.totalUnreadCountByTeam
 
         try saveCurrentUserCommonFields(
-            blockedUserIds: payload.blockedUserIds ?? [],
+            blockedUserIds: payload.user.blockedUserIds ?? [],
             channelMutes: payload.channelMutes,
             devices: payload.devices,
             dto: dto,

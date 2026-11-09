@@ -54,11 +54,7 @@ args:
       shadowed: "false"
       silent: "false"
     OwnUserResponse:
-      banned: "false"
-      custom: "[:]"
       invisible: "false"
-      language: "\"\""
-      teams: "[]"
       unreadThreads: "0"
     ThreadParticipantPayload:
       custom: "[:]"
@@ -74,6 +70,7 @@ args:
       teams: "[]"
   # Nested models, decoded from the same decoder as the model holding them.
   embedded:
+    OwnUserResponse: user
     ThreadStateResponse: thread
   # Arrays where an element that fails to decode is logged and dropped instead of failing the whole payload.
   lossyArrays:

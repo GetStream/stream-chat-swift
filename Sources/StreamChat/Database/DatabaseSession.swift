@@ -28,11 +28,6 @@ protocol UserDatabaseSession {
     @discardableResult
     func saveUser(payload: UserPayload, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
 
-    /// Saves the provided response to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
-    /// if the save fails.
-    @discardableResult
-    func saveUser(ownResponse: OwnUserResponse) throws -> UserDTO
-
     /// Saves the provided payload to the DB. Return's the matching `UserDTO`s  if the save was successful. Ignores unsaved elements.
     @discardableResult
     func saveUsers(payload: QueryUsersResponse, query: UserListQuery?) -> [UserDTO]

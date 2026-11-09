@@ -8,15 +8,15 @@ import Foundation
 typealias CurrentUserPayload = OwnUserResponse
 
 extension OwnUserResponse {
-    var extraData: [String: RawJSON] { custom }
+    var extraData: [String: RawJSON] { user.custom }
 
-    var imageURL: URL? { image.flatMap(URL.init(string:)) }
+    var imageURL: URL? { user.image.flatMap(URL.init(string:)) }
 
-    var isBanned: Bool { banned }
+    var isBanned: Bool { user.banned }
 
-    var isOnline: Bool { online }
+    var isOnline: Bool { user.online }
 
-    var lastActiveAt: Date? { lastActive }
+    var lastActiveAt: Date? { user.lastActive }
 }
 
 extension OwnUserResponse {
@@ -46,31 +46,33 @@ extension OwnUserResponse {
         pushPreference: PushPreference?
     ) {
         self.init(
-            banned: isBanned,
-            blockedUserIds: Array(blockedUserIds),
+            user: UserPayload(
+                banned: isBanned,
+                blockedUserIds: Array(blockedUserIds),
+                createdAt: createdAt,
+                custom: extraData,
+                deactivatedAt: deactivatedAt,
+                id: id,
+                image: imageURL?.absoluteString,
+                language: language ?? "",
+                lastActive: lastActiveAt,
+                name: name,
+                online: isOnline,
+                role: role.rawValue,
+                teams: teams,
+                teamsRole: teamsRole?.mapValues(\.rawValue),
+                updatedAt: updatedAt
+            ),
             channelMutes: mutedChannels,
-            createdAt: createdAt,
-            custom: extraData,
-            deactivatedAt: deactivatedAt,
             devices: devices,
-            id: id,
-            image: imageURL?.absoluteString,
             invisible: isInvisible,
-            language: language ?? "",
-            lastActive: lastActiveAt,
             mutes: mutedUsers,
-            name: name,
-            online: isOnline,
             privacySettings: privacySettings,
             pushPreferences: pushPreference,
-            role: role.rawValue,
-            teams: teams,
-            teamsRole: teamsRole?.mapValues(\.rawValue),
             totalUnreadCount: unreadCount?.messages ?? 0,
             totalUnreadCountByTeam: totalUnreadCountByTeam,
             unreadChannels: unreadCount?.channels ?? 0,
-            unreadThreads: unreadCount?.threads ?? 0,
-            updatedAt: updatedAt
+            unreadThreads: unreadCount?.threads ?? 0
         )
     }
 
