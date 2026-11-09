@@ -41,4 +41,8 @@ enum GroupedChannelKey {
     /// `ChatChannel.extraData` field that carries the channel's group membership.
     static let group = "group"
     static let touchedAt = "touched_at"
+
+    static func queryTimestamp(createdAt: Date, lastMessageAt: Date?, touchedAt: Date?) -> Date {
+        max(createdAt, lastMessageAt ?? .distantPast, touchedAt ?? .distantPast)
+    }
 }
