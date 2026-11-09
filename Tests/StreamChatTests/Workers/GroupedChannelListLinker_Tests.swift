@@ -184,6 +184,8 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         }
         XCTAssertEqual(["expired": 1], unreadChannelCountsByGroup())
 
+        // The middleware clears the membership before observers are notified.
+        try database.writeSynchronously { session in session.channel(cid: cid)?.membership = nil }
         try process(NotificationRemovedFromChannelEvent(user: .unique, cid: cid, member: .mock(id: currentUserId), createdAt: .unique))
 
         XCTAssertEqual(false, isLinked(cid))
@@ -249,12 +251,40 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         XCTAssertEqual(false, isLinked(cid))
     }
 
+    func test_notificationMessageNew_whenChannelHasMembership_linksChannel() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup()
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isLinked: false)
+
+        try process(notificationMessageNewEvent(cid: cid, isMember: true))
+
+        XCTAssertEqual(true, isLinked(cid))
+    }
+
+    func test_notificationMessageNew_whenChannelHasNoMembership_watchesAndLinksChannel() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup(watch: true)
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isMember: false, isLinked: false)
+
+        try process(notificationMessageNewEvent(cid: cid, isMember: false))
+        XCTAssertEqual([cid], channelWatcherHandler.attemptToWatch_channelIds)
+        XCTAssertEqual(false, isLinked(cid))
+
+        // Watching saves the channel with its membership before the completion runs.
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isLinked: false)
+        channelWatcherHandler.attemptToWatch_completion?(nil)
+        try database.writeSynchronously { _ in }
+
+        XCTAssertEqual(true, isLinked(cid))
+        XCTAssertEqual(1, channelWatcherHandler.attemptToWatch_callCount)
+    }
+
     func test_channelPartialUpdated_whenStoredChannelEntersTheGroup_linksChannel() throws {
         let cid = ChannelId.unique
         try saveFilteredGroup()
         try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isLinked: false)
 
-        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", isStored: true))
+        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", hasMembership: true))
 
         XCTAssertEqual(true, isLinked(cid))
     }
@@ -263,7 +293,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         let cid = ChannelId.unique
         try saveFilteredGroup(watch: true)
 
-        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", isStored: false))
+        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", hasMembership: false))
         XCTAssertEqual([cid], channelWatcherHandler.attemptToWatch_channelIds)
         XCTAssertEqual(false, isLinked(cid))
 
@@ -280,7 +310,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         let cid = ChannelId.unique
         try saveFilteredGroup(watch: false)
 
-        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", isStored: false))
+        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", hasMembership: false))
 
         XCTAssertEqual(0, channelWatcherHandler.attemptToWatch_callCount)
     }
@@ -289,7 +319,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         let cid = ChannelId.unique
         try saveFilteredGroup()
 
-        try process(channelPartialUpdatedEvent(cid: cid, group: "ended", isStored: false))
+        try process(channelPartialUpdatedEvent(cid: cid, group: "ended", hasMembership: false))
 
         XCTAssertEqual(0, channelWatcherHandler.attemptToWatch_callCount)
     }
@@ -300,7 +330,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         try saveChannel(cid: .unique, lastMessageAt: daysBeforeNow(2), isLinked: true)
         try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(5), isLinked: false)
 
-        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", isStored: true))
+        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", hasMembership: true))
 
         XCTAssertEqual(false, isLinked(cid))
     }
@@ -311,7 +341,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         try saveChannel(cid: .unique, lastMessageAt: daysBeforeNow(2), isLinked: true)
         try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(1), isLinked: false)
 
-        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", isStored: true))
+        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", hasMembership: true))
 
         XCTAssertEqual(true, isLinked(cid))
     }
@@ -395,11 +425,25 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         )
     }
 
-    private func channelPartialUpdatedEvent(cid: ChannelId, group: String, isStored: Bool) -> NotificationChannelPartialUpdatedEvent {
+    private func notificationMessageNewEvent(cid: ChannelId, isMember: Bool) -> NotificationMessageNewEvent {
+        NotificationMessageNewEvent(
+            channel: .mock(
+                cid: cid,
+                membership: isMember ? .mock(id: currentUserId) : nil,
+                extraData: [GroupedChannelKey.group: .string("expired")]
+            ),
+            message: .mock(cid: cid),
+            queryTimestamp: .unique,
+            createdAt: .unique,
+            unreadCount: nil
+        )
+    }
+
+    private func channelPartialUpdatedEvent(cid: ChannelId, group: String, hasMembership: Bool) -> NotificationChannelPartialUpdatedEvent {
         NotificationChannelPartialUpdatedEvent(
             cid: cid,
             group: group,
-            isChannelStored: isStored,
+            hasMembership: hasMembership,
             queryTimestamp: .unique,
             createdAt: .unique
         )

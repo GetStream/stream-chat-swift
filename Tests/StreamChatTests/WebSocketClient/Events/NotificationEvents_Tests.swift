@@ -220,8 +220,9 @@ final class NotificationsEvents_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, cid: cid)
         let unreadCount = UnreadCountPayload(channels: .unique, messages: .unique, threads: .unique)
+        let lastMessageAt = Date(timeIntervalSince1970: 1_760_000_000)
         let eventPayload = NotificationNewMessageEventDTO(
-            channel: .dummy(cid: cid),
+            channel: .dummy(cid: cid, lastMessageAt: lastMessageAt, createdAt: lastMessageAt.addingTimeInterval(-60)),
             createdAt: .unique,
             message: message,
             totalUnreadCount: unreadCount.messages,
@@ -242,6 +243,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.message.id, eventPayload.message.id)
         XCTAssert(event.unreadCount?.isEqual(toPayload: unreadCount) == true)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.queryTimestamp, lastMessageAt)
     }
 
     func test_notificationMarkAllReadEventDTO_toDomainEvent() throws {
@@ -586,13 +588,19 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(notStoredEvent.cid, cid)
         XCTAssertEqual(notStoredEvent.createdAt, eventPayload.createdAt)
         XCTAssertEqual(notStoredEvent.group, "new")
-        XCTAssertFalse(notStoredEvent.isChannelStored)
+        XCTAssertFalse(notStoredEvent.hasMembership)
         XCTAssertEqual(notStoredEvent.queryTimestamp, lastMessageAt)
 
         try database.writeSynchronously { session in
             _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
         }
         let storedEvent = try XCTUnwrap(database.readSynchronously { eventPayload.toDomainEvent(session: $0) as? NotificationChannelPartialUpdatedEvent })
-        XCTAssertTrue(storedEvent.isChannelStored)
+        XCTAssertFalse(storedEvent.hasMembership)
+
+        try database.writeSynchronously { session in
+            _ = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid), membership: .dummy()), query: nil, cache: nil)
+        }
+        let memberEvent = try XCTUnwrap(database.readSynchronously { eventPayload.toDomainEvent(session: $0) as? NotificationChannelPartialUpdatedEvent })
+        XCTAssertTrue(memberEvent.hasMembership)
     }
 }
