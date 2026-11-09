@@ -81,35 +81,35 @@ final class ThreadStateResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        activeParticipantCount = try container.decodeIfPresent(
-            Int.self,
-            forKey: .activeParticipantCount
-        ) ?? 0
-        channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
-        channelCid = try container.decode(String.self, forKey: .channelCid)
-        createdAt = try container.decode(Date.self, forKey: .createdAt)
-        createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
-        createdByUserId = try container.decode(String.self, forKey: .createdByUserId)
-        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
-        lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
-        latestReplies = try container.decodeArrayIfPresentIgnoringFailures(
+        self.activeParticipantCount = try container.decode(Int.self, forKey: .activeParticipantCount)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.channelCid = try container.decode(String.self, forKey: .channelCid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
+        self.createdByUserId = try container.decode(String.self, forKey: .createdByUserId)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        self.draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
+        self.lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
+        self.latestReplies = try container.decodeArrayIgnoringFailures(
             [MessageResponse].self,
             forKey: .latestReplies
-        ) ?? []
-        parentMessage = try container.decodeIfPresent(MessageResponse.self, forKey: .parentMessage)
-        parentMessageId = try container.decode(String.self, forKey: .parentMessageId)
-        participantCount = try container.decode(Int.self, forKey: .participantCount)
-        read = try container.decodeArrayIfPresentIgnoringFailures(
+        )
+        self.parentMessage = try container.decodeIfPresent(
+            MessageResponse.self,
+            forKey: .parentMessage
+        )
+        self.parentMessageId = try container.decode(String.self, forKey: .parentMessageId)
+        self.participantCount = try container.decode(Int.self, forKey: .participantCount)
+        self.read = try container.decodeArrayIfPresentIgnoringFailures(
             [ReadStateResponse].self,
             forKey: .read
         )
-        replyCount = try container.decode(Int.self, forKey: .replyCount)
-        threadParticipants = try container.decodeArrayIfPresentIgnoringFailures(
+        self.replyCount = try container.decode(Int.self, forKey: .replyCount)
+        self.threadParticipants = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadParticipantPayload].self,
             forKey: .threadParticipants
         )
-        title = try container.decode(String.self, forKey: .title)
-        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.title = try container.decode(String.self, forKey: .title)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
 }
