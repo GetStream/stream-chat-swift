@@ -5,6 +5,7 @@
 import Foundation
 
 /// A renderer-to-agent message, as defined by `renderer_to_agent.json`.
+@available(iOS 15.0, macOS 12.0, *)
 enum RendererMessage: Equatable {
     /// Reports a user interaction with a component.
     case action(RendererAction)
@@ -64,6 +65,7 @@ enum RendererMessage: Equatable {
 }
 
 /// A user interaction reported to the agent.
+@available(iOS 15.0, macOS 12.0, *)
 struct RendererAction {
     /// The action name taken from the component's `action.event.name`.
     let name: String
@@ -146,6 +148,7 @@ struct RendererAction {
 }
 
 /// A renderer-initiated agent function call.
+@available(iOS 15.0, macOS 12.0, *)
 struct CallAgentFunctionMessage {
     /// The surface the call originated from.
     let surfaceId: String
@@ -195,6 +198,7 @@ struct CallAgentFunctionMessage {
 }
 
 /// A renderer-side error reported to the agent.
+@available(iOS 15.0, macOS 12.0, *)
 struct RendererError {
     /// Well-known error codes defined by the specification.
     enum Code {
@@ -297,6 +301,7 @@ struct RendererError {
 }
 
 /// ISO 8601 timestamp formatting shared by renderer-to-agent messages.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UITimestamp {
     /// Formats a date as an ISO 8601 string.
     /// Used for the `timestamp` field of action messages.

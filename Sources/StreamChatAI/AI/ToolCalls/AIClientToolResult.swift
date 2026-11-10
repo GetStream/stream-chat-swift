@@ -5,6 +5,7 @@
 import Foundation
 
 /// What a device reports for a call.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIClientToolResult: Equatable, Sendable {
     /// The result for the model, as a JSON object.
     public var output: Data?

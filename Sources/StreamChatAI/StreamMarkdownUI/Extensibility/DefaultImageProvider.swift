@@ -2,6 +2,7 @@
 import SwiftUI
 
 /// The default image provider, which loads images from the network.
+@available(iOS 15.0, macOS 12.0, *)
 struct DefaultImageProvider: ImageProvider {
   @MainActor func makeImage(url: URL?) -> some View {
     NetworkImage(url: url) { state in
@@ -18,6 +19,7 @@ struct DefaultImageProvider: ImageProvider {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension ImageProvider where Self == DefaultImageProvider {
   /// The default image provider, which loads images from the network.
   ///

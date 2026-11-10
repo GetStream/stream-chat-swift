@@ -5,6 +5,7 @@
 import StreamChatAI
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 extension Catalog {
     // The catalog with each of its components coming in as it shows, as StreamChatAI brings in
     // the parts of a reply's UI.
@@ -20,6 +21,7 @@ extension Catalog {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private extension ComponentDefinition {
     var withEntrance: ComponentDefinition {
         let builder = builder

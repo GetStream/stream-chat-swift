@@ -6,6 +6,7 @@ import simd
 
 // The layout matches `VoiceUniforms` in `VoiceVisualizationShaders.source` field for field, so
 // keep the two in step.
+@available(iOS 15.0, macOS 12.0, *)
 struct VoiceVisualizationUniforms {
     // The palette as HSV, hue a fraction of a turn. Slots past the palette repeat its first
     // color.

@@ -4,6 +4,7 @@
 
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 public struct ChatOption: Identifiable, Equatable {
     public let id: String
     public let title: String

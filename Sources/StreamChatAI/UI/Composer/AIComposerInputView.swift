@@ -18,6 +18,7 @@ import SwiftUI
 ///
 /// Override ``AIComposerViewFactory/makeComposerInputView(options:)`` to replace this
 /// view with your own implementation while keeping the rest of the composer intact.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIComposerInputView<TrailingView: View>: View {
     @ObservedObject var viewModel: AIComposerViewModel
     @ObservedObject var speechHandler: SpeechHandler
@@ -149,6 +150,7 @@ public struct AIComposerInputView<TrailingView: View>: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIComposerInputView where TrailingView == SpeechToTextButton {
     /// Creates the input with the default ``SpeechToTextButton`` inside the field.
     init(

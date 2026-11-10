@@ -54,6 +54,7 @@ import SwiftUI
 ///
 /// Place the composer below the list, or over it with `safeAreaInset(edge: .bottom)`, so the
 /// list knows how much of it is visible.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIConversationView<Message: Identifiable, MessageContent: View, Footer: View, EmptyContent: View>: View {
     // The rows and whether the agent is thinking, which can depend on the messages on their way.
     var content: (AIPendingMessageTracker) -> (messages: [Message], isThinking: Bool)

@@ -6,6 +6,7 @@ import Foundation
 
 /// A row of an ``AIConversationView`` of ``AIMessage``s: a message, or one the person sent that
 /// is on its way.
+@available(iOS 15.0, macOS 12.0, *)
 public final class AIConversationEntry<Message: AIMessage>: Identifiable {
     /// The message's id, or, for the copy of a message that was on its way, that message's.
     public let id: AnyHashable
@@ -40,6 +41,7 @@ public final class AIConversationEntry<Message: AIMessage>: Identifiable {
 
 // Matches the messages the person sent while they were on their way to the copies that
 // arrive, so each copy takes over its row.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class AIPendingMessageTracker {
     // The person's messages each pending message's copy cannot be: those there were when it

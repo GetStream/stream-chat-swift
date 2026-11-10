@@ -11,6 +11,7 @@ import Foundation
 /// where relative bindings resolve against the current item. A `DataContext`
 /// captures the active scope plus the iteration index that the `@index` system
 /// function reads.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 struct DataContext {
     /// The data model this context reads from and writes to.

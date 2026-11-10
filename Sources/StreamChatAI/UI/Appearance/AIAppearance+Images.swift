@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIAppearance {
     /// The icons the AI components render.
     @MainActor

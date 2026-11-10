@@ -15,6 +15,7 @@ import Foundation
 /// let runner = AIClientToolRunner(userID: me.id, clientID: AIClientIdentity.installID, tools: [LocationTool()])
 /// runner.run(parts) { call, result in try await backend.send(result, for: call, in: message) }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public final class AIClientToolRunner {
     public let userID: String

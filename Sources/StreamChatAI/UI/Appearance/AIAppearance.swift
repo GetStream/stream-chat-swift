@@ -20,6 +20,7 @@ import StreamCoreUI
 /// appearance.colors.reasoningRule = .systemPurple
 /// InjectedValues[\.aiAppearance] = appearance
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public final class AIAppearance {
     /// The instance the AI components use unless they are given another one.
@@ -55,10 +56,12 @@ public final class AIAppearance {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 enum AIAppearanceKey: InjectionKey {
     nonisolated(unsafe) static var currentValue = AIAppearance.shared
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension InjectedValues {
     /// Provides access to the design-system appearance of the AI components.
     public var aiAppearance: AIAppearance {

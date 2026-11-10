@@ -27,6 +27,7 @@ import SwiftUI
 /// ```
 ///
 /// ![](CustomTableBackground)
+@available(iOS 15.0, macOS 12.0, *)
 struct TableBackgroundStyle {
   let background: (_ row: Int, _ column: Int) -> AnyShapeStyle
 
@@ -40,6 +41,7 @@ struct TableBackgroundStyle {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension TableBackgroundStyle {
   /// A clear color table background style.
   static var clear: Self {

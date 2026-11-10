@@ -8,6 +8,7 @@ import Foundation
 //
 // These are authored keyframes rather than a spring. Like the web reference's animation, the
 // ease-out curve times the whole run and the keyframes are linear between their stops.
+@available(iOS 15.0, macOS 12.0, *)
 struct VoiceVisualizationBounce {
     static let duration: Float = 0.34
 

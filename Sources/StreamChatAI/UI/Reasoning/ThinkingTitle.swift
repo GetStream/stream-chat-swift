@@ -6,6 +6,7 @@ import SwiftUI
 
 /// The header while the model thinks, counting the seconds. A view opened midway counts
 /// from how long the model had already thought, or from `since`, when the thinking began.
+@available(iOS 15.0, macOS 12.0, *)
 struct ThinkingTitle: View {
     var duration: TimeInterval?
     var since: Date?

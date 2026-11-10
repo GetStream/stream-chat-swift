@@ -6,10 +6,12 @@ import Foundation
 
 /// Dictionary alias for JSON objects.
 /// Uses `String: any Sendable` to represent loosely typed JSON values.
+@available(iOS 15.0, macOS 12.0, *)
 typealias JsonMap = [String: any Sendable]
 
 /// Array alias for JSON arrays.
 /// Elements are loosely typed JSON values.
+@available(iOS 15.0, macOS 12.0, *)
 typealias JsonArray = [any Sendable]
 
 /// Helpers for reading, coercing, and encoding loosely typed JSON values.
@@ -17,6 +19,7 @@ typealias JsonArray = [any Sendable]
 /// A2UI payloads arrive as untyped JSON, so the renderer needs a single place
 /// that defines how values are coerced. The coercion rules implemented here
 /// follow the "Type conversion" section of the A2UI v1.0 specification.
+@available(iOS 15.0, macOS 12.0, *)
 enum Json {
     /// Returns the value with JSON `null` normalized to `nil`.
     /// Use this before storing or comparing decoded values.

@@ -5,6 +5,7 @@
 import StreamCore
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 public struct SuggestionsView: View {
     var suggestions: [String]
     var height: CGFloat

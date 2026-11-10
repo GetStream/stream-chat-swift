@@ -5,6 +5,7 @@
 import SwiftUI
 
 /// The composite container components of the A2UI basic catalog.
+@available(iOS 15.0, macOS 12.0, *)
 enum ContainerComponents {
     /// All container components, in catalog order.
     static var all: [ComponentDefinition] {
@@ -100,6 +101,7 @@ enum ContainerComponents {
 }
 
 /// One entry of an A2UI `Tabs` component.
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UITab: Identifiable {
     let title: String
     let childId: String
@@ -111,6 +113,7 @@ private struct A2UITab: Identifiable {
 ///
 /// A custom header is used instead of `TabView` so that tabs compose inside
 /// scrollable agent-driven layouts.
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UITabsView: View {
     let tabs: [A2UITab]
     let context: ComponentRenderContext
@@ -152,6 +155,7 @@ private struct A2UITabsView: View {
 
 // Buttons in the trigger open the modal from their own action, so VoiceOver, keyboard and pointer
 // activation all open it. Any other trigger is made a button for assistive technologies.
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UIModalView: View {
     let trigger: AnyView
     let content: AnyView
@@ -205,14 +209,17 @@ private struct A2UIModalView: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIModalPresenter {
     let present: @MainActor () -> Void
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UIModalPresenterKey: EnvironmentKey {
     static var defaultValue: A2UIModalPresenter? { nil }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension EnvironmentValues {
     var a2uiModalPresenter: A2UIModalPresenter? {
         get { self[A2UIModalPresenterKey.self] }

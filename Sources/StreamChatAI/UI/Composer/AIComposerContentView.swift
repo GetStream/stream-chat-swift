@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 
 // What an AIComposerView shows, which follows the view model it is given.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIComposerContentView<ComposerFactory: AIComposerViewFactory>: View {
     let viewFactory: ComposerFactory
     @ObservedObject var viewModel: AIComposerViewModel

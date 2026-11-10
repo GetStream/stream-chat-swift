@@ -5,6 +5,7 @@
 import StreamCoreUI
 import UIKit
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIAppearance {
     /// Colors of the AI components, derived from the shared ``DesignSystemTokens``.
     ///
@@ -148,6 +149,7 @@ extension AIAppearance {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private extension UIColor {
     // Syntax colors have no design token, so they keep a light and a dark variant here.
     static func code(light: UInt32, dark: UInt32) -> UIColor {

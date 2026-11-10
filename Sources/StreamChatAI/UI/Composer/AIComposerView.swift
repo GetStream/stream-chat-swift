@@ -41,6 +41,7 @@ import SwiftUI
 ///
 /// - Note: Before iOS 16 the text field is a single line, the attachment sheet opens at full
 ///   height, and the sheet has no button that browses the whole photo library.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIComposerView<ComposerFactory: AIComposerViewFactory>: View {
     private let viewFactory: ComposerFactory
 

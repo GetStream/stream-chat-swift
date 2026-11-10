@@ -7,6 +7,7 @@ import ImageIO
 import SwiftUI
 
 // An image the agent linked to, loaded through the shared loader.
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIRemoteImage<Content: View, Placeholder: View>: View {
     let url: URL
     @ViewBuilder let content: (Image) -> Content
@@ -39,6 +40,7 @@ struct A2UIRemoteImage<Content: View, Placeholder: View>: View {
 // Loads the images a reply links to: one download per URL, which stops once it would pass
 // `maxBytes`, decoded off the main thread at no more than `maxPixelSize`, and kept in a cache
 // that lets go of images under memory pressure.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class A2UIImageLoader {
     typealias Fetch = @Sendable (_ url: URL, _ maxBytes: Int) async throws -> Data

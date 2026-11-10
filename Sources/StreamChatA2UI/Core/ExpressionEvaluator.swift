@@ -10,6 +10,7 @@ import Foundation
 /// component tree is not registered locally, the renderer sends a
 /// `callAgentFunction` message and renders a pending state until the agent
 /// answers.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 protocol RemoteFunctionRouter: AnyObject {
     /// Returns the agent's answer for a call, dispatching it when needed.
@@ -36,6 +37,7 @@ protocol RemoteFunctionRouter: AnyObject {
 /// the surface's default catalog. Evaluation is synchronous: local functions run
 /// immediately, while agent-routed functions return `nil` until their result
 /// arrives.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class ExpressionEvaluator {
     /// The catalogs available for function resolution.

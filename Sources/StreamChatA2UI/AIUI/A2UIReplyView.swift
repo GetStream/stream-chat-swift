@@ -6,6 +6,7 @@ import StreamChatAI
 import SwiftUI
 
 /// A reply's UI: its surfaces, which follow its messages as the agent writes them.
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIReplyView: View {
     @ObservedObject var reply: A2UIReply
     let source: String

@@ -10,6 +10,7 @@ import SwiftUI
 /// they read their value from the bound path and write back immediately as the
 /// user interacts, without contacting the agent. The updated state reaches the
 /// agent when an action is dispatched.
+@available(iOS 15.0, macOS 12.0, *)
 enum InputComponents {
     /// All input components, in catalog order.
     static var all: [ComponentDefinition] {
@@ -227,6 +228,7 @@ enum InputComponents {
 // MARK: - Views
 
 /// Renders an A2UI `TextField`, including its validation state.
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UICheckBoxView: View {
     let context: ComponentRenderContext
 
@@ -255,6 +257,7 @@ private struct A2UICheckBoxView: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UITextFieldView: View {
     let context: ComponentRenderContext
 
@@ -309,6 +312,7 @@ private struct A2UITextFieldView: View {
 }
 
 /// Renders an A2UI `ChoicePicker` in checkbox or chip style.
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UIChoicePickerView: View {
     let context: ComponentRenderContext
 
@@ -428,6 +432,7 @@ private struct A2UIChoicePickerView: View {
 }
 
 /// Renders an A2UI `Slider`, snapping to discrete steps when requested.
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UISliderView: View {
     let context: ComponentRenderContext
 
@@ -493,6 +498,7 @@ struct A2UISliderView: View {
 }
 
 /// Renders an A2UI `DateTimeInput` and writes ISO 8601 values back.
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UIDateTimeInputView: View {
     let context: ComponentRenderContext
 

@@ -30,16 +30,19 @@ update_splash: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/Splash Sources/StreamChatAI/StreamSplash Sources/Splash
 	./Scripts/removePublicDeclarations.sh Sources/StreamChatAI/StreamSplash
 
-# MarkdownUI's Swift sources go into StreamChatAI, and its cmark-gfm C sources into their own target
+# MarkdownUI's Swift sources go into StreamChatAI, and its cmark-gfm C sources into their own target.
+# StreamChatAI requires iOS 15, above the package's minimum, so its vendored declarations get an @available attribute.
 update_markdownui: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/MarkdownUI Sources/StreamChatAI/StreamMarkdownUI Sources/MarkdownUI
 	./Scripts/updateDependency.sh $(version) Dependencies/MarkdownUI Sources/StreamChatAICMark Sources/cmark-gfm
 	./Scripts/removePublicDeclarations.sh Sources/StreamChatAI/StreamMarkdownUI
 	./Scripts/prefixCSymbols.sh stream_ Sources/StreamChatAICMark Sources/StreamChatAI/StreamMarkdownUI
+	./Scripts/addAvailability.py "iOS 15.0, macOS 12.0, *" Sources/StreamChatAI/StreamMarkdownUI
 
 update_networkimage: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/NetworkImage Sources/StreamChatAI/StreamNetworkImage Sources/NetworkImage
 	./Scripts/removePublicDeclarations.sh Sources/StreamChatAI/StreamNetworkImage
+	./Scripts/addAvailability.py "iOS 15.0, macOS 12.0, *" Sources/StreamChatAI/StreamNetworkImage
 
 check_version_parameter:
 	@if [ "$(version)" = "" ]; then\

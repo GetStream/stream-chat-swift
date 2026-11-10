@@ -9,6 +9,7 @@ import UIKit
 
 /// Opens a page in a web authentication session and returns the URL the page hands back to its
 /// callback scheme. It works from iOS 13, where SwiftUI's `webAuthenticationSession` needs 16.4.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class AIWebAuthentication: NSObject {
     /// The session couldn't be opened.
@@ -48,6 +49,7 @@ final class AIWebAuthentication: NSObject {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIWebAuthentication: ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
         #if canImport(UIKit)

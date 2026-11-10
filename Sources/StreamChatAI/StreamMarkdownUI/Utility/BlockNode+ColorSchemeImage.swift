@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 extension Sequence where Element == BlockNode {
   func filterImagesMatching(colorScheme: ColorScheme) -> [BlockNode] {
     self.rewrite { inline in
@@ -16,6 +17,7 @@ extension Sequence where Element == BlockNode {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension URL {
   fileprivate func matchesColorScheme(_ colorScheme: ColorScheme) -> Bool {
     guard let fragment = self.fragment?.lowercased() else {

@@ -5,7 +5,7 @@
 import StreamCore
 import SwiftUI
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 13.0, *)
 struct USpecChartView: View {
     let spec: USpec
     init(spec: USpec) { self.spec = spec }

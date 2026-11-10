@@ -10,6 +10,7 @@ import Foundation
 /// ```swift
 /// feed.update(activity: AIAgentActivity(state: .init(rawValue: event.state.rawValue), text: event.aiMessage))
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIAgentActivity: Hashable, Sendable {
     /// What the agent is doing. It is an open set: compare against the states you know. Their
     /// raw values are those of Stream Chat's AI indicator.

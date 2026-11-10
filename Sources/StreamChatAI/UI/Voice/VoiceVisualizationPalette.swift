@@ -7,6 +7,7 @@ import UIKit
 
 // Turns colors into the HSV the shaders read, keeping their full hue, saturation and value so
 // muted and pastel brand colors render true.
+@available(iOS 15.0, macOS 12.0, *)
 enum VoiceVisualizationPalette {
     static let maximumCount = 5
 

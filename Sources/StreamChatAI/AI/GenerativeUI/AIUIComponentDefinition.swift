@@ -25,6 +25,7 @@ import StreamCore
 ///   "events": [{ "name": "ask_about", "description": "The person asks about the place." }]
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIUIComponentDefinition: Codable, Equatable, Sendable {
     /// Something a component reports when the person uses it, such as tapping a place.
     public struct Event: Equatable, Sendable {

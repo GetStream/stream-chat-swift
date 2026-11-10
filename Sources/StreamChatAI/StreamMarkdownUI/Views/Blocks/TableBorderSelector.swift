@@ -3,10 +3,12 @@ import SwiftUI
 /// A type that selects the visible borders on a Markdown table.
 ///
 /// You use a table border selector to select the visible borders when creating a ``TableBorderStyle``.
+@available(iOS 15.0, macOS 12.0, *)
 struct TableBorderSelector {
   var rectangles: (_ tableBounds: TableBounds, _ borderWidth: CGFloat) -> [CGRect]
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension TableBorderSelector {
   /// A table border selector that selects the outside borders of a table.
   static var outsideBorders: TableBorderSelector {
@@ -74,6 +76,7 @@ extension TableBorderSelector {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension TableBorderSelector {
   fileprivate static var outsideHorizontalBorders: TableBorderSelector {
     TableBorderSelector { tableBounds, borderWidth in

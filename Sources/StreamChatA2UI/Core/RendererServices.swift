@@ -15,6 +15,7 @@ import AppKit
 /// and side effecting functions such as `openUrl` deterministic in tests, and
 /// lets an app override behaviour (for example to open links in an in-app
 /// browser).
+@available(iOS 15.0, macOS 12.0, *)
 struct RendererServices: Sendable {
     /// Opens a URL outside of the surface, subject to user activation.
     var openUrl: @MainActor @Sendable (URL) -> Void

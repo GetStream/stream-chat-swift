@@ -1,9 +1,11 @@
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 struct HTMLTag {
   let name: String
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension HTMLTag {
   private enum Constants {
     static let tagExpression = try! NSRegularExpression(pattern: "<\\/?([a-zA-Z0-9]+)[^>]*>")

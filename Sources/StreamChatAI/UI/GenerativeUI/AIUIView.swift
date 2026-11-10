@@ -11,6 +11,7 @@ import SwiftUI
 /// ``AIConversationView`` shows it in place of a reply's text when it is given the host. Showing a
 /// reply yourself, show it after ``AIAssistantMessageView`` given no text when ``canShow``, and
 /// the reply's text otherwise.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIUIView<Renderers: AIUIRendererList>: View {
     let content: Renderers.Content?
     let isStreaming: Bool
@@ -33,6 +34,7 @@ public struct AIUIView<Renderers: AIUIRendererList>: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension View {
     // A reply's generated UI, as wide as the reply, coming in as it first shows while the agent
     // writes it, and being written while its document is.

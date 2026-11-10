@@ -6,6 +6,7 @@ import Foundation
 /// you declare in any closure with the `@ListContentBuilder` attribute. In particular, you rely on this
 /// behavior when you declare the `content` inside a list element initializer such as
 /// ``NumberedList/init(tight:start:items:)``.
+@available(iOS 15.0, macOS 12.0, *)
 @resultBuilder enum ListContentBuilder {
   static func buildBlock(_ components: [ListItem]...) -> [ListItem] {
     components.flatMap { $0 }

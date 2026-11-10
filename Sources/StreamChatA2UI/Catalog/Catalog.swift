@@ -7,6 +7,7 @@ import SwiftUI
 
 /// Builds the SwiftUI view for one component instance.
 /// The context exposes the component's resolved properties and children.
+@available(iOS 15.0, macOS 12.0, *)
 public typealias ComponentViewBuilder = @MainActor @Sendable (ComponentRenderContext) -> AnyView
 
 /// A component type the renderer knows how to build.
@@ -17,6 +18,7 @@ public typealias ComponentViewBuilder = @MainActor @Sendable (ComponentRenderCon
 /// Add your app's own components as StreamChatAI `AIUIComponent`s, which every renderer can
 /// place. To change how one of the basic catalog's components looks, replace its view with
 /// ``Catalog/replacingView(of:with:)``.
+@available(iOS 15.0, macOS 12.0, *)
 public struct ComponentDefinition: Sendable {
     /// The component type name, used as the `component` discriminator.
     public let name: String
@@ -84,6 +86,7 @@ public struct ComponentDefinition: Sendable {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension ComponentDefinition {
     // The same component, shown by `builder`.
     func replacingView(with builder: @escaping ComponentViewBuilder) -> ComponentDefinition {
@@ -154,6 +157,7 @@ extension ComponentDefinition {
 }
 
 /// A function the renderer can evaluate, or that the agent may invoke.
+@available(iOS 15.0, macOS 12.0, *)
 struct FunctionDefinition: Sendable {
     /// The type of value a function returns.
     enum ReturnType: String, Sendable {
@@ -256,6 +260,7 @@ struct FunctionDefinition: Sendable {
 ///
 /// The catalog id is an opaque identifier that renderer and agent must agree
 /// on. It is conventionally a URI, but it is never resolved over the network.
+@available(iOS 15.0, macOS 12.0, *)
 public struct Catalog: Sendable {
     /// The unique identifier of this catalog.
     public let catalogId: String
@@ -401,6 +406,7 @@ public struct Catalog: Sendable {
 /// Resolution follows the order defined by the specification: an explicit
 /// component or function level `catalogId` wins, then the surface default
 /// catalog. There is deliberately no fallback to "any supported catalog".
+@available(iOS 15.0, macOS 12.0, *)
 struct CatalogRegistry: Sendable {
     /// The catalogs available to the renderer, keyed by catalog id.
     let catalogs: [String: Catalog]

@@ -14,6 +14,7 @@ import FoundationModels
 /// It is a small model, good for short answers and for working with what is in the
 /// conversation. Its context holds a few thousand tokens, so the oldest turns of a long
 /// conversation are left out.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIOnDeviceModel: AILocalModel {
     /// The longest answer, in tokens.
     public var maximumResponseTokens: Int

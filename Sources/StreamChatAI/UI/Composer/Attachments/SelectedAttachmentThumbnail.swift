@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 import UIKit
 
+@available(iOS 15.0, macOS 12.0, *)
 struct SelectedAttachmentThumbnail: View {
     let url: URL
     let onRemove: () -> Void

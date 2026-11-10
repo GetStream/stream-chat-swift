@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 
 /// The attachments picked for the next message, each with a button that removes it.
+@available(iOS 15.0, macOS 12.0, *)
 struct SelectedAttachmentsRow: View {
     @ObservedObject var viewModel: AIComposerViewModel
 
