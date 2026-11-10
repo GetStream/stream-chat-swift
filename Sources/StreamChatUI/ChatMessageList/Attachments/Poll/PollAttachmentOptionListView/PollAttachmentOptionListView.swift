@@ -12,13 +12,18 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
     public struct Content: Equatable {
         public var poll: Poll
         public var maxNumberOfVisibleOptions: Int?
+        /// The language to show the poll texts in, when they have a translation to it.
+        /// If `nil`, the original texts are shown.
+        public var translationLanguage: TranslationLanguage?
 
         public init(
             poll: Poll,
-            maxNumberOfVisibleOptions: Int?
+            maxNumberOfVisibleOptions: Int?,
+            translationLanguage: TranslationLanguage? = nil
         ) {
             self.poll = poll
             self.maxNumberOfVisibleOptions = maxNumberOfVisibleOptions
+            self.translationLanguage = translationLanguage
         }
 
         var options: [PollOption] {
@@ -79,7 +84,8 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
         zip(itemViews, content.options).forEach { itemView, option in
             itemView.content = .init(
                 option: option,
-                poll: content.poll
+                poll: content.poll,
+                translationLanguage: content.translationLanguage
             )
             itemView.isHidden = false
         }

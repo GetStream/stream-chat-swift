@@ -407,7 +407,9 @@ extension XCTestCase {
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
         votingVisibility: VotingVisibility = .public,
-        user: UserPayload? = .dummy(userId: .unique)
+        user: UserPayload? = .dummy(userId: .unique),
+        nameI18n: [String: String]? = nil,
+        descriptionI18n: [String: String]? = nil
     ) -> PollPayload {
         .init(
             allowAnswers: allowAnswers,
@@ -418,6 +420,7 @@ extension XCTestCase {
             createdById: user?.id ?? createdById,
             custom: custom,
             description: description,
+            descriptionI18n: descriptionI18n,
             enforceUniqueVote: enforceUniqueVote,
             id: id,
             isClosed: isClosed,
@@ -425,6 +428,7 @@ extension XCTestCase {
             latestVotesByOption: latestVotesByOption,
             maxVotesAllowed: maxVotesAllowed,
             name: name,
+            nameI18n: nameI18n,
             options: options,
             ownVotes: ownVotes,
             updatedAt: updatedAt,
@@ -437,12 +441,14 @@ extension XCTestCase {
     func dummyPollOptionPayload(
         id: String = .unique,
         text: String = "Test Option",
-        custom: [String: RawJSON] = [:]
+        custom: [String: RawJSON] = [:],
+        textI18n: [String: String]? = nil
     ) -> PollOptionPayload {
         .init(
             custom: custom,
             id: id,
-            text: text
+            text: text,
+            textI18n: textI18n
         )
     }
     
@@ -455,10 +461,12 @@ extension XCTestCase {
         answerText: String? = nil,
         isAnswer: Bool? = false,
         userId: String? = .unique,
-        user: UserPayload? = .dummy(userId: .unique)
+        user: UserPayload? = .dummy(userId: .unique),
+        answerTextI18n: [String: String]? = nil
     ) -> PollVotePayload {
         .init(
             answerText: answerText,
+            answerTextI18n: answerTextI18n,
             createdAt: createdAt,
             id: id,
             isAnswer: isAnswer,

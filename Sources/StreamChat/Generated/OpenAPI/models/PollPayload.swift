@@ -14,6 +14,7 @@ final class PollPayload: Sendable, Decodable {
     let createdById: String
     let custom: [String: RawJSON]
     let description: String
+    let descriptionI18n: [String: String]?
     let enforceUniqueVote: Bool
     let id: String
     let isClosed: Bool?
@@ -21,6 +22,7 @@ final class PollPayload: Sendable, Decodable {
     let latestVotesByOption: [String: [PollVotePayload]]
     let maxVotesAllowed: Int?
     let name: String
+    let nameI18n: [String: String]?
     let options: [PollOptionPayload]
     let ownVotes: [PollVotePayload]
     let updatedAt: Date
@@ -38,6 +40,7 @@ final class PollPayload: Sendable, Decodable {
         createdById: String,
         custom: [String: RawJSON],
         description: String,
+        descriptionI18n: [String: String]? = nil,
         enforceUniqueVote: Bool,
         id: String,
         isClosed: Bool? = nil,
@@ -45,6 +48,7 @@ final class PollPayload: Sendable, Decodable {
         latestVotesByOption: [String: [PollVotePayload]],
         maxVotesAllowed: Int? = nil,
         name: String,
+        nameI18n: [String: String]? = nil,
         options: [PollOptionPayload],
         ownVotes: [PollVotePayload],
         updatedAt: Date,
@@ -60,6 +64,7 @@ final class PollPayload: Sendable, Decodable {
         self.createdById = createdById
         self.custom = custom
         self.description = description
+        self.descriptionI18n = descriptionI18n
         self.enforceUniqueVote = enforceUniqueVote
         self.id = id
         self.isClosed = isClosed
@@ -67,6 +72,7 @@ final class PollPayload: Sendable, Decodable {
         self.latestVotesByOption = latestVotesByOption
         self.maxVotesAllowed = maxVotesAllowed
         self.name = name
+        self.nameI18n = nameI18n
         self.options = options
         self.ownVotes = ownVotes
         self.updatedAt = updatedAt
@@ -88,6 +94,10 @@ final class PollPayload: Sendable, Decodable {
         self.createdById = try container.decode(String.self, forKey: .createdById)
         self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
         self.description = try container.decode(String.self, forKey: .description)
+        self.descriptionI18n = try container.decodeIfPresent(
+            [String: String].self,
+            forKey: .descriptionI18n
+        )
         self.enforceUniqueVote = try container.decode(Bool.self, forKey: .enforceUniqueVote)
         self.id = try container.decode(String.self, forKey: .id)
         self.isClosed = try container.decodeIfPresent(Bool.self, forKey: .isClosed)
@@ -98,6 +108,7 @@ final class PollPayload: Sendable, Decodable {
         )
         self.maxVotesAllowed = try container.decodeIfPresent(Int.self, forKey: .maxVotesAllowed)
         self.name = try container.decode(String.self, forKey: .name)
+        self.nameI18n = try container.decodeIfPresent([String: String].self, forKey: .nameI18n)
         self.options = try container.decode([PollOptionPayload].self, forKey: .options)
         self.ownVotes = try container.decode([PollVotePayload].self, forKey: .ownVotes)
         self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)

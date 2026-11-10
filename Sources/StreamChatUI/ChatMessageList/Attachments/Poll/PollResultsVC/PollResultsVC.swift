@@ -15,6 +15,10 @@ open class PollResultsVC:
     /// The controller that manages the poll data.
     public var pollController: PollController
 
+    /// The language to show the poll texts in, when they have a translation to it.
+    /// By default, the current user's language when `Components.messageAutoTranslationEnabled` is `true`.
+    open lazy var translationLanguage: TranslationLanguage? = pollController.translationLanguage(components: components)
+
     public required init(pollController: PollController) {
         self.pollController = pollController
         super.init(nibName: nil, bundle: nil)
@@ -133,7 +137,7 @@ open class PollResultsVC:
             return
         }
 
-        headerView.content = .init(poll: poll)
+        headerView.content = .init(poll: poll, translationLanguage: translationLanguage)
 
         var snapshot = NSDiffableDataSourceSnapshot<PollOption, PollVote>()
         snapshot.appendSections(poll.options)
@@ -176,7 +180,7 @@ open class PollResultsVC:
             return nil
         }
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionHeaderView)
-        view.content = .init(option: option, poll: poll)
+        view.content = .init(option: option, poll: poll, translationLanguage: translationLanguage)
         let isEmptySection = option.latestVotes.isEmpty || poll.votingVisibility == .anonymous
         style(sectionHeaderView: view, contentView: view.container, isEmptySection: isEmptySection)
         return view
@@ -232,6 +236,7 @@ open class PollResultsVC:
             poll: poll,
             option: option
         )
+        viewController.translationLanguage = translationLanguage
         navigationController?.pushViewController(viewController, animated: true)
     }
 }

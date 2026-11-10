@@ -865,12 +865,9 @@ remove_property PaginationParams idGt idGte idLt idLte
 remove_property PendingMessageResponse channel user
 remove_property PollClosedEventDTO activityId cid custom messageId receivedAt
 remove_property PollDeletedEventDTO activityId cid custom messageId receivedAt
-remove_property PollOptionPayload textI18n
-remove_property PollPayload descriptionI18n nameI18n
 remove_property PollUpdatedEventDTO activityId cid custom messageId receivedAt
 remove_property PollVoteCastedEventDTO activityId cid custom messageId receivedAt
 remove_property PollVoteChangedEventDTO activityId cid custom messageId receivedAt
-remove_property PollVotePayload answerTextI18n
 remove_property PollVoteRemovedEventDTO activityId cid custom messageId receivedAt
 remove_property PushPreference callLevel chatPreferences feedsLevel feedsPreferences schedule
 remove_property PushPreferenceInput callLevel chatPreferences feedsLevel feedsPreferences removeSchedule schedule userId

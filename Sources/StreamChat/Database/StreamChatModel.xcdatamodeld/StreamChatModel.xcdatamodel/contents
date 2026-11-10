@@ -458,11 +458,15 @@
         <attribute name="answersCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="custom" optional="YES" attributeType="Binary"/>
+        <attribute name="descriptionOriginalLanguage" optional="YES" attributeType="String"/>
+        <attribute name="descriptionTranslations" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="enforceUniqueVote" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="isClosed" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="maxVotesAllowed" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
+        <attribute name="nameTranslations" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="originalLanguage" optional="YES" attributeType="String"/>
         <attribute name="pollDescription" optional="YES" attributeType="String"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="voteCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -482,7 +486,9 @@
     <entity name="PollOptionDTO" representedClassName="PollOptionDTO" syncable="YES">
         <attribute name="custom" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
+        <attribute name="originalLanguage" optional="YES" attributeType="String"/>
         <attribute name="text" attributeType="String"/>
+        <attribute name="translations" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <relationship name="latestVotes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollVoteDTO" inverseName="option" inverseEntity="PollVoteDTO"/>
         <relationship name="poll" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollDTO" inverseName="options" inverseEntity="PollDTO"/>
         <relationship name="pollLatestVotes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollDTO" inverseName="latestVotesByOption" inverseEntity="PollDTO"/>
@@ -494,10 +500,12 @@
     </entity>
     <entity name="PollVoteDTO" representedClassName="PollVoteDTO" syncable="YES">
         <attribute name="answerText" optional="YES" attributeType="String"/>
+        <attribute name="answerTextTranslations" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="isAnswer" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="optionId" optional="YES" attributeType="String"/>
+        <attribute name="originalLanguage" optional="YES" attributeType="String"/>
         <attribute name="pollId" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="option" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollOptionDTO" inverseName="latestVotes" inverseEntity="PollOptionDTO"/>

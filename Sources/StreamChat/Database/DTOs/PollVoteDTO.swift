@@ -14,6 +14,8 @@ class PollVoteDTO: NSManagedObject {
     @NSManaged var optionId: String?
     @NSManaged var isAnswer: Bool
     @NSManaged var answerText: String?
+    @NSManaged var answerTextTranslations: [String: String]?
+    @NSManaged var originalLanguage: String?
     @NSManaged var option: PollOptionDTO?
     @NSManaged var poll: PollDTO?
     @NSManaged var user: UserDTO?
@@ -88,7 +90,9 @@ extension PollVoteDTO {
             optionId: optionId,
             isAnswer: isAnswer,
             answerText: answerText,
-            user: user?.asModel()
+            user: user?.asModel(),
+            answerTextTranslations: answerTextTranslations?.mapKeys { TranslationLanguage(languageCode: $0) },
+            originalLanguage: originalLanguage.map { TranslationLanguage(languageCode: $0) }
         )
     }
 }
@@ -142,6 +146,8 @@ extension NSManagedObjectContext {
         dto.pollId = payload.pollId
         dto.isAnswer = payload.isAnswer ?? false
         dto.answerText = payload.answerText
+        dto.answerTextTranslations = I18n.translations(from: payload.answerTextI18n)?.mapKeys(\.languageCode)
+        dto.originalLanguage = I18n.originalLanguage(from: payload.answerTextI18n)
         dto.optionId = option?.id
         
         if let query = query {
