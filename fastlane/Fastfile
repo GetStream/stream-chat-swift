@@ -193,6 +193,8 @@ lane :test do |options|
       derived_data_path: derived_data_path,
       cloned_source_packages_path: source_packages_path,
       devices: options[:device],
+      destination: options[:destination],
+      skip_detect_devices: !options[:destination].nil?,
       build_for_testing: options[:build_for_testing],
       skip_build: options[:skip_build],
       xcodebuild_formatter: xcodebuild_formatter
@@ -210,6 +212,8 @@ lane :test do |options|
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     devices: options[:device],
+    destination: options[:destination],
+    skip_detect_devices: !options[:destination].nil?,
     skip_build: true,
     xcodebuild_formatter: xcodebuild_formatter
   }
@@ -671,6 +675,8 @@ lane :test_ui do |options|
       skip_build: options[:skip_build],
       result_bundle: true,
       devices: options[:device],
+      destination: options[:destination],
+      skip_detect_devices: !options[:destination].nil?,
       fail_build: !record_mode,
       xcodebuild_formatter: xcodebuild_formatter
     },
@@ -714,6 +720,8 @@ lane :test_common_ui do |options|
       skip_build: options[:skip_build],
       result_bundle: true,
       devices: options[:device],
+      destination: options[:destination],
+      skip_detect_devices: !options[:destination].nil?,
       xcodebuild_formatter: xcodebuild_formatter
     },
     retries: options[:cron] ? 3 : 2
@@ -739,6 +747,8 @@ lane :test_ai do |options|
       skip_build: options[:skip_build],
       result_bundle: true,
       devices: options[:device],
+      destination: options[:destination],
+      skip_detect_devices: !options[:destination].nil?,
       xcodebuild_formatter: xcodebuild_formatter
     },
     retries: options[:cron] ? 3 : 2
@@ -764,6 +774,8 @@ lane :test_a2ui do |options|
       skip_build: options[:skip_build],
       result_bundle: true,
       devices: options[:device],
+      destination: options[:destination],
+      skip_detect_devices: !options[:destination].nil?,
       xcodebuild_formatter: xcodebuild_formatter
     },
     retries: options[:cron] ? 3 : 2
@@ -789,6 +801,8 @@ lane :test_openui do |options|
       skip_build: options[:skip_build],
       result_bundle: true,
       devices: options[:device],
+      destination: options[:destination],
+      skip_detect_devices: !options[:destination].nil?,
       xcodebuild_formatter: xcodebuild_formatter
     },
     retries: options[:cron] ? 3 : 2
