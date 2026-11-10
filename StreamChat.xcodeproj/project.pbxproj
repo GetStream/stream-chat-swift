@@ -5683,8 +5683,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.17.0;
+				branch = "add-i18n-parsing";
+				kind = branch;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {

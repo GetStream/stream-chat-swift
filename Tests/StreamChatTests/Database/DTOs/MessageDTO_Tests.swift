@@ -623,7 +623,7 @@ final class MessageDTO_Tests: XCTestCase {
             Set(messagePayload.attachmentIDs(cid: channelId)),
             loadedMessage.flatMap { Set($0.attachments.compactMap(\.attachmentID)) }
         )
-        XCTAssertEqual(messagePayload.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
+        XCTAssertEqual(messagePayload.translations, loadedMessage?.translations)
         XCTAssertEqual("es", loadedMessage?.originalLanguage)
 
         // Reaction Groups
