@@ -103,7 +103,7 @@ jobs:
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
     env:
-      XCODE_VERSION: "16.1"
+      XCODE_VERSION: "16.4"
     steps:
     - uses: actions/checkout@v7
     - uses: ./.github/actions/xcode-cache

@@ -328,7 +328,7 @@ jobs:
     if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main' }}
     runs-on: macos-15
     env:
-      XCODE_VERSION: "16.1"
+      XCODE_VERSION: "16.4"
     steps:
     - name: Connect Bot
       uses: webfactory/ssh-agent@v0.10.0
