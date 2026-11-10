@@ -376,12 +376,11 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
     }
 
-    func test_resetEphemeralValues_clearsDownloadedAttachmentsWithMissingFiles() throws {
+    func test_resetEphemeralValues_keepsDownloadedAttachments_whenDownloadsFolderExists() throws {
         let container = DatabaseContainer_Spy(kind: .inMemory)
         let cid = ChannelId.unique
         let messageId = MessageId.unique
-        let missingFileAttachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
-        let existingFileAttachmentId = AttachmentId(cid: cid, messageId: messageId, index: 1)
+        let existingFileAttachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
         let existingFilePath = "\(String.unique)-file.txt"
         let existingFileURL = URL.streamAttachmentLocalStorageURL(forRelativePath: existingFilePath)
         try FileManager.default.createDirectory(at: existingFileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
@@ -395,9 +394,6 @@ final class DatabaseContainer_Tests: XCTestCase {
                     messages: [.dummy(messageId: messageId)]
                 )
             )
-            let missingFileDTO = try session.saveAttachment(payload: .image(), id: missingFileAttachmentId)
-            missingFileDTO.localDownloadState = .downloaded
-            missingFileDTO.localRelativePath = "\(String.unique)-file.txt"
             let existingFileDTO = try session.saveAttachment(payload: .image(), id: existingFileAttachmentId)
             existingFileDTO.localDownloadState = .downloaded
             existingFileDTO.localRelativePath = existingFilePath
@@ -406,12 +402,45 @@ final class DatabaseContainer_Tests: XCTestCase {
         container.resetEphemeralValues()
 
         try container.readSynchronously { session in
-            let missingFileDTO = try XCTUnwrap(session.attachment(id: missingFileAttachmentId))
-            XCTAssertEqual(nil, missingFileDTO.localDownloadState)
-            XCTAssertEqual(nil, missingFileDTO.localRelativePath)
             let existingFileDTO = try XCTUnwrap(session.attachment(id: existingFileAttachmentId))
             XCTAssertEqual(LocalAttachmentDownloadState.downloaded, existingFileDTO.localDownloadState)
             XCTAssertEqual(existingFilePath, existingFileDTO.localRelativePath)
+        }
+    }
+
+    func test_resetEphemeralValues_clearsAllDownloadedAttachments_whenDownloadsFolderIsMissing() throws {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.localAttachmentDownloadsFolderURL = URL.newTemporaryDirectoryURL()
+        let container = DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config)
+        let cid = ChannelId.unique
+        let messageId = MessageId.unique
+        let firstAttachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
+        let secondAttachmentId = AttachmentId(cid: cid, messageId: messageId, index: 1)
+        try container.createCurrentUser()
+        try container.writeSynchronously { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    channel: .dummy(cid: cid),
+                    messages: [.dummy(messageId: messageId)]
+                )
+            )
+            let firstDTO = try session.saveAttachment(payload: .image(), id: firstAttachmentId)
+            firstDTO.localDownloadState = .downloaded
+            firstDTO.localRelativePath = "\(String.unique)-file.txt"
+            let secondDTO = try session.saveAttachment(payload: .image(), id: secondAttachmentId)
+            secondDTO.localDownloadState = .downloaded
+            secondDTO.localRelativePath = "\(String.unique)-file.txt"
+        }
+
+        container.resetEphemeralValues()
+
+        try container.readSynchronously { session in
+            let firstDTO = try XCTUnwrap(session.attachment(id: firstAttachmentId))
+            XCTAssertEqual(nil, firstDTO.localDownloadState)
+            XCTAssertEqual(nil, firstDTO.localRelativePath)
+            let secondDTO = try XCTUnwrap(session.attachment(id: secondAttachmentId))
+            XCTAssertEqual(nil, secondDTO.localDownloadState)
+            XCTAssertEqual(nil, secondDTO.localRelativePath)
         }
     }
 

@@ -139,11 +139,9 @@ extension AttachmentDTO: EphemeralValuesContainer {
     static func resetEphemeralRelationshipValues(in context: NSManagedObjectContext) {
         // The system can purge downloads stored in Caches while the app isn't running.
         let baseURL = context.chatClientConfig?.localAttachmentDownloadsFolderURL
+        let downloadsFolderURL = URL.streamAttachmentDownloadsDirectory(baseURL: baseURL)
+        guard !FileManager.default.fileExists(atPath: downloadsFolderURL.path) else { return }
         for attachment in loadAllDownloadedAttachments(context: context) {
-            if let localRelativePath = attachment.localRelativePath {
-                let localFileURL = URL.streamAttachmentLocalStorageURL(forRelativePath: localRelativePath, baseURL: baseURL)
-                guard !FileManager.default.fileExists(atPath: localFileURL.path) else { continue }
-            }
             attachment.localDownloadState = nil
             attachment.localRelativePath = nil
         }
