@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Show translated poll questions, options and answers when `Components.messageAutoTranslationEnabled` is `true` [#4390](https://github.com/GetStream/stream-chat-swift/pull/4390)
 
+## StreamChatA2UI
+### 🐞 Fixed
+- Fix a reply's A2UI staying empty after it finishes streaming in [#4393](https://github.com/GetStream/stream-chat-swift/pull/4393)
+
 # [5.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.16.0)
 _November 04, 2026_
 
