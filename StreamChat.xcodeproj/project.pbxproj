@@ -5686,8 +5686,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
-				branch = "add/tvos-support";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.18.0;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
