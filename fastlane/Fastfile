@@ -211,6 +211,7 @@ lane :test do |options|
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     devices: options[:device],
+    destination: options[:destination],
     skip_build: true,
     xcodebuild_formatter: xcodebuild_formatter
   }
