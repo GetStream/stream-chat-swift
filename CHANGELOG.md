@@ -13,6 +13,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Show translated poll questions, options and answers when `Components.messageAutoTranslationEnabled` is `true` [#4390](https://github.com/GetStream/stream-chat-swift/pull/4390)
 
+## StreamChatAI
+### 🐞 Fixed
+- Fix building with Xcode 26 and older through Swift Package Manager [#4394](https://github.com/GetStream/stream-chat-swift/pull/4394)
+
+## StreamChatA2UI
+### 🐞 Fixed
+- Fix building with Xcode 26 and older through Swift Package Manager [#4394](https://github.com/GetStream/stream-chat-swift/pull/4394)
+
+## StreamChatOpenUI
+### 🐞 Fixed
+- Fix building with Xcode 26 and older through Swift Package Manager [#4394](https://github.com/GetStream/stream-chat-swift/pull/4394)
+
 # [5.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.16.0)
 _November 04, 2026_
 
