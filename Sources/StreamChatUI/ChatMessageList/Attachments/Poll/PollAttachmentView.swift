@@ -11,10 +11,14 @@ open class PollAttachmentView: _View, ThemeProvider {
     public struct Content {
         public var poll: Poll
         public var currentUserId: UserId
+        /// The language to show the poll texts in, when they have a translation to it.
+        /// If `nil`, the original texts are shown.
+        public var translationLanguage: TranslationLanguage?
 
-        public init(poll: Poll, currentUserId: UserId) {
+        public init(poll: Poll, currentUserId: UserId, translationLanguage: TranslationLanguage? = nil) {
             self.poll = poll
             self.currentUserId = currentUserId
+            self.translationLanguage = translationLanguage
         }
     }
 
@@ -182,7 +186,7 @@ open class PollAttachmentView: _View, ThemeProvider {
             return
         }
 
-        pollTitleLabel.text = content.poll.name
+        pollTitleLabel.text = content.poll.name(in: content.translationLanguage)
         pollSubtitleLabel.text = subtitleText
 
         pollResultsButton.setTitle(L10n.Polls.Button.viewResults, for: .normal)
@@ -202,7 +206,8 @@ open class PollAttachmentView: _View, ThemeProvider {
         optionListView.onOptionTap = onOptionTap
         optionListView.content = .init(
             poll: content.poll,
-            maxNumberOfVisibleOptions: maxNumberOfVisibleOptions
+            maxNumberOfVisibleOptions: maxNumberOfVisibleOptions,
+            translationLanguage: content.translationLanguage
         )
 
         let numberOfOptions = content.poll.options.count

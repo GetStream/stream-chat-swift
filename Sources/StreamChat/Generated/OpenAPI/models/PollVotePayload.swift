@@ -6,6 +6,7 @@ import Foundation
 
 final class PollVotePayload: Sendable, Decodable {
     let answerText: String?
+    let answerTextI18n: [String: String]?
     let createdAt: Date
     let id: String
     let isAnswer: Bool?
@@ -18,6 +19,7 @@ final class PollVotePayload: Sendable, Decodable {
 
     init(
         answerText: String? = nil,
+        answerTextI18n: [String: String]? = nil,
         createdAt: Date,
         id: String,
         isAnswer: Bool? = nil,
@@ -28,6 +30,7 @@ final class PollVotePayload: Sendable, Decodable {
         userId: String? = nil
     ) {
         self.answerText = answerText
+        self.answerTextI18n = answerTextI18n
         self.createdAt = createdAt
         self.id = id
         self.isAnswer = isAnswer
@@ -41,6 +44,10 @@ final class PollVotePayload: Sendable, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.answerText = try container.decodeIfPresent(String.self, forKey: .answerText)
+        self.answerTextI18n = try container.decodeIfPresent(
+            [String: String].self,
+            forKey: .answerTextI18n
+        )
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
         self.id = try container.decode(String.self, forKey: .id)
         self.isAnswer = try container.decodeIfPresent(Bool.self, forKey: .isAnswer)

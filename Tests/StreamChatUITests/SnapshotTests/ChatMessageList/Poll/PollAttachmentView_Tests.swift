@@ -96,6 +96,52 @@ import XCTest
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
+    func test_translation_whenAutoTranslationEnabled_showsTranslatedTexts() throws {
+        let view = makeMessageView(
+            for: makeTranslatedPoll(),
+            components: translationComponents(),
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .spanish))
+        )
+        let pollView = try pollAttachmentView(in: view)
+
+        XCTAssertEqual(pollView.content?.translationLanguage, .spanish)
+        XCTAssertEqual(pollView.pollTitleLabel.text, "¿Qué hay de almuerzo?")
+        XCTAssertEqual(
+            pollView.optionListView.itemViews.map(\.optionNameLabel.text),
+            ["Sopa", "Pizza", "Ensalada"]
+        )
+    }
+
+    func test_translation_whenAutoTranslationDisabled_showsOriginalTexts() throws {
+        let view = makeMessageView(
+            for: makeTranslatedPoll(),
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .spanish))
+        )
+        let pollView = try pollAttachmentView(in: view)
+
+        XCTAssertNil(pollView.content?.translationLanguage)
+        XCTAssertEqual(pollView.pollTitleLabel.text, "What's for lunch?")
+        XCTAssertEqual(
+            pollView.optionListView.itemViews.map(\.optionNameLabel.text),
+            ["Soup", "Pizza", "Salad"]
+        )
+    }
+
+    func test_translation_whenUserLanguageHasNoTranslation_showsOriginalTexts() throws {
+        let view = makeMessageView(
+            for: makeTranslatedPoll(),
+            components: translationComponents(),
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .french))
+        )
+        let pollView = try pollAttachmentView(in: view)
+
+        XCTAssertEqual(pollView.pollTitleLabel.text, "What's for lunch?")
+        XCTAssertEqual(
+            pollView.optionListView.itemViews.map(\.optionNameLabel.text),
+            ["Soup", "Pizza", "Salad"]
+        )
+    }
+
     func test_subtitleText() {
         let pollAttachmentView = PollAttachmentView()
         let pollDefault = pollFactory.makePoll(isClosed: false)
@@ -120,14 +166,43 @@ import XCTest
 // MARK: - Factory Helpers
 
 extension PollAttachmentView_Tests {
+    private func pollAttachmentView(in messageView: ChatMessageContentView) throws -> PollAttachmentView {
+        let container = UIView()
+        container.addSubview(messageView)
+        messageView.updateContent()
+        messageView.layoutIfNeeded()
+        return try XCTUnwrap((messageView.attachmentViewInjector as? PollAttachmentViewInjector)?.pollAttachmentView)
+    }
+
+    private func translationComponents() -> Components {
+        var components = Components.mock
+        components.messageAutoTranslationEnabled = true
+        return components
+    }
+
+    private func makeTranslatedPoll() -> Poll {
+        Poll.mock(
+            name: "What's for lunch?",
+            voteCountsByOption: ["soup": 2, "pizza": 1],
+            options: [
+                .init(id: "soup", text: "Soup", translations: [.spanish: "Sopa"], originalLanguage: .english),
+                .init(id: "pizza", text: "Pizza", translations: [.spanish: "Pizza"], originalLanguage: .english),
+                .init(id: "salad", text: "Salad", translations: [.spanish: "Ensalada"], originalLanguage: .english)
+            ],
+            nameTranslations: [.english: "What's for lunch?", .spanish: "¿Qué hay de almuerzo?"],
+            originalLanguage: .english
+        )
+    }
+
     private func makeMessageView(
         for poll: Poll,
         appearance: Appearance? = nil,
-        components: Components? = nil
+        components: Components? = nil,
+        channel: ChatChannel? = nil
     ) -> ChatMessageContentView {
         let appearance = appearance ?? .default
         let components = components ?? .mock
-        let channel = ChatChannel.mock(cid: .unique)
+        let channel = channel ?? ChatChannel.mock(cid: .unique)
         let message = ChatMessage.mock(text: "", poll: poll)
         let layoutOptions = components.messageLayoutOptionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),

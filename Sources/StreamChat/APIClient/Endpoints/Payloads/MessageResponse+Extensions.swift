@@ -13,16 +13,10 @@ extension MessageResponse {
     var args: String? { custom[Self.argsKey]?.stringValue }
 
     var translations: [TranslationLanguage: String]? {
-        guard let i18n, !i18n.isEmpty else { return nil }
-        let translatedSuffix = "_text"
-        var translated = [TranslationLanguage: String]()
-        for (key, value) in i18n where key.hasSuffix(translatedSuffix) {
-            translated[TranslationLanguage(languageCode: String(key.dropLast(translatedSuffix.count)))] = value
-        }
-        return translated.isEmpty ? nil : translated
+        I18n.translations(from: i18n)
     }
 
     var originalLanguage: String? {
-        i18n?["language"]
+        I18n.originalLanguage(from: i18n)
     }
 }

@@ -10,10 +10,14 @@ open class PollAllOptionsListItemCell: _TableViewCell, ThemeProvider {
     public struct Content {
         public var option: PollOption
         public var poll: Poll
+        /// The language to show the option text in, when it has a translation to it.
+        /// If `nil`, the original text is shown.
+        public var translationLanguage: TranslationLanguage?
 
-        public init(option: PollOption, poll: Poll) {
+        public init(option: PollOption, poll: Poll, translationLanguage: TranslationLanguage? = nil) {
             self.option = option
             self.poll = poll
+            self.translationLanguage = translationLanguage
         }
     }
 
@@ -67,7 +71,7 @@ open class PollAllOptionsListItemCell: _TableViewCell, ThemeProvider {
 
         let option = content.option
         let poll = content.poll
-        optionNameLabel.text = option.text
+        optionNameLabel.text = option.text(in: content.translationLanguage)
         votesCountLabel.text = "\(poll.voteCount(for: option))"
 
         if poll.hasCurrentUserVoted(for: option) {
