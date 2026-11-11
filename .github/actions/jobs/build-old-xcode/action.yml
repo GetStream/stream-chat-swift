@@ -1,0 +1,61 @@
+name: Build SDKs (Old Xcode)
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v7
+      env:
+        XCODE_VERSION: "16.4"
+    - uses: ./.github/actions/xcode-cache
+      env:
+        XCODE_VERSION: "16.4"
+    - uses: ./.github/actions/ruby-cache
+      env:
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+        XCODE_VERSION: "16.4"
+    - name: List Xcode versions
+      shell: bash
+      run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
+      env:
+        XCODE_VERSION: "16.4"
+    - name: Build LLC
+      shell: bash
+      run: bundle exec fastlane test destination:"generic/platform=iOS Simulator" build_for_testing:true $VERBOSE
+      timeout-minutes: 25
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        XCODE_VERSION: "16.4"
+    - name: Build UI
+      shell: bash
+      run: bundle exec fastlane test_ui destination:"generic/platform=iOS Simulator" build_for_testing:true $VERBOSE
+      timeout-minutes: 25
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        XCODE_VERSION: "16.4"
+    - name: Build Common UI
+      shell: bash
+      run: bundle exec fastlane test_common_ui destination:"generic/platform=iOS Simulator" build_for_testing:true $VERBOSE
+      timeout-minutes: 25
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        XCODE_VERSION: "16.4"
+    - name: Build AI
+      shell: bash
+      run: bundle exec fastlane test_ai destination:"generic/platform=iOS Simulator" build_for_testing:true $VERBOSE
+      timeout-minutes: 25
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        XCODE_VERSION: "16.4"
+    - name: Build A2UI
+      shell: bash
+      run: bundle exec fastlane test_a2ui destination:"generic/platform=iOS Simulator" build_for_testing:true $VERBOSE
+      timeout-minutes: 25
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        XCODE_VERSION: "16.4"
+    - name: Build OpenUI
+      shell: bash
+      run: bundle exec fastlane test_openui destination:"generic/platform=iOS Simulator" build_for_testing:true $VERBOSE
+      timeout-minutes: 25
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        XCODE_VERSION: "16.4"

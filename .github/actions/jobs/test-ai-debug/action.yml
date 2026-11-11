@@ -1,0 +1,46 @@
+name: Run AI Tests (Debug)
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v7
+    - uses: ./.github/actions/bootstrap
+      env:
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+        IOS_SIMULATOR_DEVICE: "iPhone 17 Pro (26.2)"
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        INSTALL_YEETD: true
+        SKIP_SWIFT_BOOTSTRAP: true
+    - name: Run AI Tests (Debug)
+      shell: bash
+      run: bundle exec fastlane test_ai device:"$IOS_SIMULATOR_DEVICE" $VERBOSE
+      timeout-minutes: 60
+      env:
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+        IOS_SIMULATOR_DEVICE: "iPhone 17 Pro (26.2)"
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+    - name: Upload raw Xcode logs
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: xcode-logs-test-ai-debug-${{ github.run_attempt }}
+        path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
+    - name: Parse xcresult
+      if: failure()
+      shell: bash
+      run: |
+        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
+          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
+        fi
+        xcparse logs fastlane/test_output/StreamChatAI.xcresult fastlane/test_output/logs/
+      env:
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+        IOS_SIMULATOR_DEVICE: "iPhone 17 Pro (26.2)"
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+    - uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: Test Data AI
+        path: |
+          fastlane/test_output/logs/*/Diagnostics/**/*.txt
+          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*

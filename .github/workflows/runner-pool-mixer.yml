@@ -1,0 +1,135 @@
+name: Runner pool mixer
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: Check name. The graph group uses it.
+        required: true
+        type: string
+      claim:
+        description: Unique id for this race. One ref per claim.
+        required: true
+        type: string
+      hosts:
+        description: JSON array of runner labels. One cell starts for each label.
+        required: true
+        type: string
+      work:
+        description: Path of the composite that runs on the winning machine.
+        required: true
+        type: string
+      work_with:
+        description: YAML mapping passed to the work composite.
+        required: false
+        type: string
+        default: ""
+    outputs:
+      payload:
+        description: Text the winning work wrote to runner-pool-payload.txt.
+        value: ${{ jobs.run.outputs.payload }}
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  run:
+    name: ${{ inputs.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJSON(inputs.hosts) }}
+    # stream-macos is a runner group. Other values are runner labels.
+    runs-on: ${{ matrix.host == 'stream-macos' && fromJSON('{"group":"stream-macos"}') || matrix.host }}
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+      STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
+      DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+      GH_TOKEN: ${{ github.token }}
+    outputs:
+      payload: ${{ steps.payload.outputs.payload }}
+    steps:
+      - id: claim
+        env:
+          TOKEN: ${{ github.token }}
+          CLAIM: ${{ inputs.claim }}
+        run: |
+          set -euo pipefail
+          claim=$(printf '%s' "$CLAIM" | tr -c 'A-Za-z0-9._-' '-')
+          if [ -z "$claim" ]; then
+            echo "Claim id is empty" >&2
+            exit 1
+          fi
+          if [ "${{ github.event.pull_request.head.repo.fork }}" = "true" ]; then
+            echo "won=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          code=$(curl -sS -o /tmp/race.json -w "%{http_code}" \
+            -X POST \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs" \
+            -d "{\"ref\":\"refs/gha-race/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${claim}\",\"sha\":\"${GITHUB_SHA}\"}")
+          if [ "$code" = "201" ]; then
+            echo "won=true" >> "$GITHUB_OUTPUT"
+          elif [ "$code" = "422" ]; then
+            echo "won=false" >> "$GITHUB_OUTPUT"
+          else
+            cat /tmp/race.json
+            exit 1
+          fi
+
+      - if: steps.claim.outputs.won == 'true'
+        uses: actions/checkout@v7
+
+      - id: invoke
+        if: steps.claim.outputs.won == 'true'
+        uses: ./.github/actions/invoke-action
+        with:
+          action: ${{ inputs.work }}
+          with: ${{ inputs.work_with }}
+
+      - id: payload
+        if: always() && steps.claim.outputs.won == 'true'
+        run: |
+          set -euo pipefail
+          if [ -f "$GITHUB_WORKSPACE/runner-pool-payload.txt" ]; then
+            {
+              echo 'payload<<EOF'
+              cat "$GITHUB_WORKSPACE/runner-pool-payload.txt"
+              echo
+              echo EOF
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "payload=" >> "$GITHUB_OUTPUT"
+          fi
+
+  result:
+    name: Result
+    needs: run
+    if: ${{ always() && !cancelled() && needs.run.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete the claim
+        env:
+          TOKEN: ${{ github.token }}
+          CLAIM: ${{ inputs.claim }}
+        run: |
+          set -euo pipefail
+          claim=$(printf '%s' "$CLAIM" | tr -c 'A-Za-z0-9._-' '-')
+          code=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -X DELETE \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/gha-race/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${claim}")
+          case "$code" in
+            204|404|422) ;;
+            *) exit 1 ;;
+          esac
+
+      - name: Require the winner to succeed
+        run: test "${{ needs.run.result }}" = "success"

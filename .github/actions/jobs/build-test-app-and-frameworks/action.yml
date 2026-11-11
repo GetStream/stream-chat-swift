@@ -1,0 +1,38 @@
+name: Build Test App and Frameworks
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 2 # the PR merge commit and its base, to diff them
+    - uses: ./.github/actions/ruby-cache
+      env:
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    - uses: ./.github/actions/xcode-cache
+    - name: Build
+      shell: bash
+      run: bundle exec fastlane build_test_app_and_frameworks $VERBOSE
+      timeout-minutes: 60
+      env:
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+    - name: Select E2E Tests
+      id: select_e2e_tests
+      shell: bash
+      run: bundle exec fastlane select_e2e_tests $VERBOSE
+      env:
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+    - shell: bash
+      env:
+        PAYLOAD: ${{ steps.select_e2e_tests.outputs.e2e_batches }}
+      run: printf '%s' "$PAYLOAD" > "$GITHUB_WORKSPACE/runner-pool-payload.txt"
+    - uses: actions/upload-artifact@v7
+      if: success()
+      with:
+        name: cache-derived-data
+        path: |
+          derived_data/Build/**/*.app
+          derived_data/Build/**/*.xctestrun
+          derived_data/Build/**/*.framework
+          derived_data/Build/e2e_selection.json

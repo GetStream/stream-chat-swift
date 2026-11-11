@@ -1,0 +1,44 @@
+name: Build Demo App + Example Apps
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v7
+    - uses: ./.github/actions/ruby-cache
+      env:
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    - uses: ./.github/actions/xcode-cache
+    - name: Build Demo App
+      shell: bash
+      run: bundle exec fastlane build_demo $VERBOSE
+      timeout-minutes: 10
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    - name: Build iMessageClone App
+      shell: bash
+      run: bundle exec fastlane build_imessage_clone $VERBOSE
+      timeout-minutes: 10
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    - name: Build SlackClone App
+      shell: bash
+      run: bundle exec fastlane build_slack_clone $VERBOSE
+      timeout-minutes: 10
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    - name: Build MessengerClone App
+      shell: bash
+      run: bundle exec fastlane build_messenger_clone $VERBOSE
+      timeout-minutes: 10
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    - name: Build YouTubeClone App
+      shell: bash
+      run: bundle exec fastlane build_youtube_clone $VERBOSE
+      timeout-minutes: 10
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"

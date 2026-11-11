@@ -51,414 +51,193 @@ jobs:
 
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     needs: guard
-    outputs:
-      e2e_batches: ${{ steps.select_e2e_tests.outputs.e2e_batches }}
-    steps:
-    - uses: actions/checkout@v7
-      with:
-        fetch-depth: 2 # the PR merge commit and its base, to diff them
-    - uses: ./.github/actions/ruby-cache
-    - uses: ./.github/actions/xcode-cache
-    - name: Build
-      run: bundle exec fastlane build_test_app_and_frameworks ${{ env.VERBOSE }}
-      timeout-minutes: 60
-    - name: Select E2E Tests
-      id: select_e2e_tests
-      run: bundle exec fastlane select_e2e_tests ${{ env.VERBOSE }}
-    - uses: actions/upload-artifact@v7
-      if: success()
-      with:
-        name: cache-derived-data
-        path: |
-          derived_data/Build/**/*.app
-          derived_data/Build/**/*.xctestrun
-          derived_data/Build/**/*.framework
-          derived_data/Build/e2e_selection.json
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Build Test App and Frameworks
+      claim: build-test-app-and-frameworks
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/build-test-app-and-frameworks
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     needs: guard
-    env:
-      XCODE_VERSION: "16.1"
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/bootstrap
-        env:
-          INSTALL_INTERFACE_ANALYZER: true
-      - run: bundle exec fastlane lint_pr
-      - run: bundle exec fastlane rubocop
-      - run: bundle exec fastlane run_swift_format strict:true
-      - run: bundle exec fastlane validate_public_interface
-      - run: bundle exec fastlane validate_generated_code
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Automated Code Review
+      claim: automated-code-review
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/automated-code-review
 
   build-old-xcode:
     name: Build SDKs (Old Xcode)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
-    env:
-      XCODE_VERSION: "16.4"
-    steps:
-    - uses: actions/checkout@v7
-    - uses: ./.github/actions/xcode-cache
-    - uses: ./.github/actions/ruby-cache
-    - name: List Xcode versions
-      run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
-    - name: Build LLC
-      run: bundle exec fastlane test destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
-      timeout-minutes: 25
-    - name: Build UI
-      run: bundle exec fastlane test_ui destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
-      timeout-minutes: 25
-    - name: Build Common UI
-      run: bundle exec fastlane test_common_ui destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
-      timeout-minutes: 25
-    - name: Build AI
-      run: bundle exec fastlane test_ai destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
-      timeout-minutes: 25
-    - name: Build A2UI
-      run: bundle exec fastlane test_a2ui destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
-      timeout-minutes: 25
-    - name: Build OpenUI
-      run: bundle exec fastlane test_openui destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
-      timeout-minutes: 25
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Build SDKs (Old Xcode)
+      claim: build-old-xcode
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/build-old-xcode
 
   test-llc-debug:
     name: Test LLC (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
-    steps:
-    - uses: actions/checkout@v7
-      with:
-        fetch-depth: 100
-    - uses: ./.github/actions/bootstrap
-      env:
-        INSTALL_YEETD: true
-        INSTALL_SONAR: true
-    - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}" ${{ env.VERBOSE }}
-      timeout-minutes: 60
-    - name: Run Sonar analysis
-      run: bundle exec fastlane sonar_upload
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        PR_NUMBER: ${{ github.event.number }}
-    - name: Upload raw Xcode logs
-      if: always()
-      uses: actions/upload-artifact@v7
-      with:
-        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
-        path: ~/Library/Logs/scan/*.log
-        if-no-files-found: ignore
-    - name: Parse xcresult
-      if: failure()
-      run: |
-        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
-          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
-        fi
-        xcparse logs fastlane/test_output/StreamChat.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v7
-      if: failure()
-      with:
-        name: Test Data LLC
-        path: |
-          fastlane/test_output/logs/*/Diagnostics/**/*.txt
-          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
-    - name: Upload Test Coverage
-      uses: actions/upload-artifact@v7
-      with:
-        name: test-coverage-${{ github.event.pull_request.number }}
-        path: reports/sonarqube-generic-coverage.xml
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Test LLC (Debug)
+      claim: test-llc-debug
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/test-llc-debug
 
   test-ui-debug:
     name: Test UI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     needs:
       - guard
       - build-test-app-and-frameworks
     permissions:
-      contents: write # to push the snapshots branch
+      contents: write
       pull-requests: write
-    steps:
-    - uses: actions/checkout@v7
-    - uses: actions/download-artifact@v8
-      with:
-        name: cache-derived-data
-        path: derived_data/Build/
-    - uses: ./.github/actions/bootstrap
-      env:
-        INSTALL_YEETD: true
-        SKIP_SWIFT_BOOTSTRAP: true
-    - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true record:"${{ github.event.inputs.record_snapshots }}" ${{ env.VERBOSE }}
-      timeout-minutes: 120
-      env:
-        GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }} # to open a PR
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # to use github cli
-    - name: Upload raw Xcode logs
-      if: always()
-      uses: actions/upload-artifact@v7
-      with:
-        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
-        path: ~/Library/Logs/scan/*.log
-        if-no-files-found: ignore
-    - name: Parse xcresult
-      if: failure()
-      run: |
-        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
-          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
-        fi
-        xcparse screenshots fastlane/test_output/StreamChatUI.xcresult fastlane/test_output/snapshots --test
-    - uses: actions/upload-artifact@v7
-      if: failure()
-      with:
-        name: Test Data UIKit
-        path: |
-          fastlane/test_output/snapshots
-
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Test UI (Debug)
+      claim: test-ui-debug
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/test-ui-debug
 
   test-common-ui-debug:
     name: Test Common UI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     needs:
       - guard
       - build-test-app-and-frameworks
-    steps:
-    - uses: actions/checkout@v7
-    - uses: actions/download-artifact@v8
-      with:
-        name: cache-derived-data
-        path: derived_data/Build/
-    - uses: ./.github/actions/bootstrap
-      env:
-        INSTALL_YEETD: true
-        SKIP_SWIFT_BOOTSTRAP: true
-    - name: Run Common UI Tests (Debug)
-      run: bundle exec fastlane test_common_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true ${{ env.VERBOSE }}
-      timeout-minutes: 60
-    - name: Upload raw Xcode logs
-      if: always()
-      uses: actions/upload-artifact@v7
-      with:
-        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
-        path: ~/Library/Logs/scan/*.log
-        if-no-files-found: ignore
-    - name: Parse xcresult
-      if: failure()
-      run: |
-        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
-          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
-        fi
-        xcparse logs fastlane/test_output/StreamChatCommonUI.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v7
-      if: failure()
-      with:
-        name: Test Data Common UI
-        path: |
-          fastlane/test_output/logs/*/Diagnostics/**/*.txt
-          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Test Common UI (Debug)
+      claim: test-common-ui-debug
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/test-common-ui-debug
 
   test-ai-debug:
     name: Test AI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
-    steps:
-    - uses: actions/checkout@v7
-    - uses: ./.github/actions/bootstrap
-      env:
-        INSTALL_YEETD: true
-        SKIP_SWIFT_BOOTSTRAP: true
-    - name: Run AI Tests (Debug)
-      run: bundle exec fastlane test_ai device:"${{ env.IOS_SIMULATOR_DEVICE }}" ${{ env.VERBOSE }}
-      timeout-minutes: 60
-    - name: Upload raw Xcode logs
-      if: always()
-      uses: actions/upload-artifact@v7
-      with:
-        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
-        path: ~/Library/Logs/scan/*.log
-        if-no-files-found: ignore
-    - name: Parse xcresult
-      if: failure()
-      run: |
-        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
-          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
-        fi
-        xcparse logs fastlane/test_output/StreamChatAI.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v7
-      if: failure()
-      with:
-        name: Test Data AI
-        path: |
-          fastlane/test_output/logs/*/Diagnostics/**/*.txt
-          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Test AI (Debug)
+      claim: test-ai-debug
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/test-ai-debug
 
   test-a2ui-debug:
     name: Test A2UI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
-    steps:
-    - uses: actions/checkout@v7
-    - uses: ./.github/actions/bootstrap
-      env:
-        INSTALL_YEETD: true
-        SKIP_SWIFT_BOOTSTRAP: true
-    - name: Run A2UI Tests (Debug)
-      run: bundle exec fastlane test_a2ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" ${{ env.VERBOSE }}
-      timeout-minutes: 60
-    - name: Upload raw Xcode logs
-      if: always()
-      uses: actions/upload-artifact@v7
-      with:
-        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
-        path: ~/Library/Logs/scan/*.log
-        if-no-files-found: ignore
-    - name: Parse xcresult
-      if: failure()
-      run: |
-        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
-          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
-        fi
-        xcparse logs fastlane/test_output/StreamChatA2UI.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v7
-      if: failure()
-      with:
-        name: Test Data A2UI
-        path: |
-          fastlane/test_output/logs/*/Diagnostics/**/*.txt
-          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Test A2UI (Debug)
+      claim: test-a2ui-debug
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/test-a2ui-debug
 
   test-openui-debug:
     name: Test OpenUI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
-    steps:
-    - uses: actions/checkout@v7
-    - uses: ./.github/actions/bootstrap
-      env:
-        INSTALL_YEETD: true
-        SKIP_SWIFT_BOOTSTRAP: true
-    - name: Run OpenUI Tests (Debug)
-      run: bundle exec fastlane test_openui device:"${{ env.IOS_SIMULATOR_DEVICE }}" ${{ env.VERBOSE }}
-      timeout-minutes: 60
-    - name: Upload raw Xcode logs
-      if: always()
-      uses: actions/upload-artifact@v7
-      with:
-        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
-        path: ~/Library/Logs/scan/*.log
-        if-no-files-found: ignore
-    - name: Parse xcresult
-      if: failure()
-      run: |
-        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
-          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
-        fi
-        xcparse logs fastlane/test_output/StreamChatOpenUI.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v7
-      if: failure()
-      with:
-        name: Test Data OpenUI
-        path: |
-          fastlane/test_output/logs/*/Diagnostics/**/*.txt
-          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Test OpenUI (Debug)
+      claim: test-openui-debug
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/test-openui-debug
 
   allure_testops_launch:
     name: Launch Allure TestOps
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' }}
     needs:
       - guard
       - build-test-app-and-frameworks
-    outputs:
-      launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
-    steps:
-    - uses: actions/checkout@v7
-    - uses: ./.github/actions/ruby-cache
-    - name: Launch Allure TestOps
-      run: bundle exec fastlane allure_launch
-      env:
-        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
-    - id: get_launch_id
-      run: echo "launch_id=$LAUNCH_ID" >> "$GITHUB_OUTPUT"
-      if: env.LAUNCH_ID != ''
+    if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.payload != '[]' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Launch Allure TestOps
+      claim: allure-testops-launch
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/allure-testops-launch
 
   test-e2e-debug:
     name: Test E2E UI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' }}
     needs:
       - guard
       - allure_testops_launch
       - build-test-app-and-frameworks
-    env:
-      LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.payload != '[]' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
     strategy:
-      matrix:
-        batch: ${{ fromJson(needs.build-test-app-and-frameworks.outputs.e2e_batches) }}
       fail-fast: false
-    steps:
-    - uses: actions/checkout@v7
-    - uses: actions/download-artifact@v8
-      with:
-        name: cache-derived-data
-        path: derived_data/Build/
-    - uses: ./.github/actions/bootstrap
-      env:
-        INSTALL_ALLURE: true
-        INSTALL_YEETD: true
-        SKIP_SWIFT_BOOTSTRAP: true
-    - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}' test_without_building:true ${{ env.VERBOSE }}
-      timeout-minutes: 100
-      env:
-        MATRIX_SIZE: ${{ strategy.job-total }}
-        STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
-    - name: Allure TestOps Upload
-      if: env.LAUNCH_ID != '' && (success() || failure())
-      run: bundle exec fastlane allure_upload launch_id:"$LAUNCH_ID"
-      env:
-        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-    - name: Allure TestOps Launch Removal
-      if: env.LAUNCH_ID != '' && cancelled()
-      run: bundle exec fastlane allure_launch_removal launch_id:"$LAUNCH_ID"
-      env:
-        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-    - name: Upload raw Xcode logs
-      if: always()
-      uses: actions/upload-artifact@v7
-      with:
-        name: xcode-logs-${{ github.job }}-${{ strategy.job-index }}-${{ github.run_attempt }}
-        path: ~/Library/Logs/scan/*.log
-        if-no-files-found: ignore
-    - name: Parse xcresult
-      if: failure()
-      run: |
-        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
-          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
-        fi
-        xcparse logs fastlane/test_output/StreamChatUITestsApp.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v7
-      if: failure()
-      with:
-        name: Test Data E2E ${{ matrix.batch }}
-        path: |
-          fastlane/recordings
-          fastlane/stream-chat-test-mock-server/logs/*
-          fastlane/test_output/logs/*/Diagnostics/**/*.txt
-          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
+      matrix:
+        batch: ${{ fromJson(needs.build-test-app-and-frameworks.outputs.payload) }}
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Test E2E UI (Debug)
+      claim: test-e2e-${{ matrix.batch }}
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/test-e2e-debug
+      work_with: |
+        batch: ${{ matrix.batch }}
+        launch_id: ${{ needs.allure_testops_launch.outputs.payload }}
+        matrix_size: ${{ strategy.job-total }}
 
   # The number of E2E batches depends on the PR, so branch protection requires this job instead of each batch.
   test-e2e-debug-result:
@@ -481,51 +260,48 @@ jobs:
 
   build-apps:
     name: Build Demo App + Example Apps
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
-    steps:
-    - uses: actions/checkout@v7
-    - uses: ./.github/actions/ruby-cache
-    - uses: ./.github/actions/xcode-cache
-    - name: Build Demo App
-      run: bundle exec fastlane build_demo ${{ env.VERBOSE }}
-      timeout-minutes: 10
-    - name: Build iMessageClone App
-      run: bundle exec fastlane build_imessage_clone ${{ env.VERBOSE }}
-      timeout-minutes: 10
-    - name: Build SlackClone App
-      run: bundle exec fastlane build_slack_clone ${{ env.VERBOSE }}
-      timeout-minutes: 10
-    - name: Build MessengerClone App
-      run: bundle exec fastlane build_messenger_clone ${{ env.VERBOSE }}
-      timeout-minutes: 10
-    - name: Build YouTubeClone App
-      run: bundle exec fastlane build_youtube_clone ${{ env.VERBOSE }}
-      timeout-minutes: 10
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Build Demo App + Example Apps
+      claim: build-apps
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/build-apps
 
   test-integration:
     name: Test Integration
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
-    steps:
-    - uses: actions/checkout@v7
-    - uses: ./.github/actions/ruby-cache
-    - uses: ./.github/actions/xcode-cache
-    - name: Test SPM Integration
-      run: bundle exec fastlane spm_integration ${{ env.VERBOSE }}
-      timeout-minutes: 25
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Test Integration
+      claim: test-integration
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/test-integration
 
   build-tvos:
     name: Build LLC (tvOS)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
-    steps:
-    - uses: actions/checkout@v7
-    - uses: ./.github/actions/ruby-cache
-    - uses: ./.github/actions/xcode-cache
-    - name: Build LLC for tvOS
-      run: bundle exec fastlane build_tvos ${{ env.VERBOSE }}
-      timeout-minutes: 40
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    secrets: inherit
+    uses: ./.github/workflows/runner-pool-mixer.yml
+    with:
+      name: Build LLC (tvOS)
+      claim: build-tvos
+      hosts: ${{ github.event.pull_request.head.repo.fork == true && '["macos-15"]' || '["macos-15","stream-macos"]' }}
+      work: ./.github/actions/jobs/build-tvos

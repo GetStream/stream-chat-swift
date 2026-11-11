@@ -1,0 +1,16 @@
+name: Test Integration
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v7
+    - uses: ./.github/actions/ruby-cache
+      env:
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    - uses: ./.github/actions/xcode-cache
+    - name: Test SPM Integration
+      shell: bash
+      run: bundle exec fastlane spm_integration $VERBOSE
+      timeout-minutes: 25
+      env:
+        VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"

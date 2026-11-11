@@ -1,0 +1,47 @@
+name: Invoke action
+description: Run one local composite chosen by an input.
+inputs:
+  action:
+    description: Path under ./.github/actions/jobs/.
+    required: true
+  with:
+    description: YAML mapping passed to that composite.
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        ACTION: ${{ inputs.action }}
+        ACTION_WITH: ${{ inputs.with }}
+      run: |
+        set -euo pipefail
+        case "$ACTION" in
+          ./.github/actions/jobs/*) ;;
+          *)
+            echo "Refused action path: $ACTION" >&2
+            exit 1
+            ;;
+        esac
+        case "$ACTION" in
+          *..*)
+            echo "Refused action path: $ACTION" >&2
+            exit 1
+            ;;
+        esac
+        dir="$GITHUB_ACTION_PATH/generated"
+        rm -rf "$dir"
+        mkdir -p "$dir"
+        {
+          echo "name: Generated"
+          echo "runs:"
+          echo "  using: composite"
+          echo "  steps:"
+          echo "    - uses: $ACTION"
+          if [ -n "${ACTION_WITH//[[:space:]]/}" ]; then
+            echo "      with:"
+            printf '%s\n' "$ACTION_WITH" | sed 's/^/        /'
+          fi
+        } > "$dir/action.yml"
+    - uses: ./generated

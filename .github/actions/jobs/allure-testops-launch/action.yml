@@ -1,0 +1,24 @@
+name: Launch Allure TestOps
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v7
+    - uses: ./.github/actions/ruby-cache
+      env:
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    - name: Launch Allure TestOps
+      shell: bash
+      run: bundle exec fastlane allure_launch
+      env:
+        ALLURE_TOKEN: ${{ env.ALLURE_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+        HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    - id: get_launch_id
+      if: env.LAUNCH_ID != ''
+      shell: bash
+      run: echo "launch_id=$LAUNCH_ID" >> "$GITHUB_OUTPUT"
+    - if: steps.get_launch_id.outputs.launch_id != ''
+      shell: bash
+      env:
+        PAYLOAD: ${{ steps.get_launch_id.outputs.launch_id }}
+      run: printf '%s' "$PAYLOAD" > "$GITHUB_WORKSPACE/runner-pool-payload.txt"
