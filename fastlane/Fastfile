@@ -313,10 +313,18 @@ lane :xcmetrics do |options|
   expected_performance = performance_benchmarks['benchmark']
   actual_performance = xcmetrics_log_parser(log: xcodebuild_output)
 
+  two_frames_ms = 2 * 1000.0 / 120 # The Firebase device runs at 120 Hz
+
   table_header = '## SDK Performance'
   markdown_table = "#{table_header}\n| `target` | `metric` | `benchmark` | `branch` | `performance` | `status` |\n| - | - | - | - | - | - |\n"
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
     next if test_name == 'testChannelListScrollTime' # Delete this line and return the test to the testplan as soon as PBE-5666 is solved
+
+    min_hitch_tolerance = {
+      'hitches_total_duration' => two_frames_ms,
+      'hitch_time_ratio' => two_frames_ms / expected_performance[test_name]['duration']['value'],
+      'number_of_hitches' => 2
+    }
 
     index = 0
     ['hitches_total_duration', 'duration', 'hitch_time_ratio', 'frame_rate', 'number_of_hitches'].each do |metric|
@@ -324,7 +332,8 @@ lane :xcmetrics do |options|
       benchmark_value = expected_performance[test_name][metric]['value']
       branch_value = actual_performance[test_name][metric]['value']
       value_extension = actual_performance[test_name][metric]['ext']
-      max_tolerance = benchmark_value * 0.1 # Default Xcode Max Tolerance is 10%
+      # Hitches are whole dropped frames, so 10% of a few hitches is less than one frame: allow at least two
+      max_tolerance = [benchmark_value * 0.1, min_hitch_tolerance.fetch(metric, 0)].max
 
       benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
       diff = is_frame_rate ? branch_value - benchmark_value : benchmark_value - branch_value
@@ -383,48 +392,27 @@ end
 private_lane :xcmetrics_log_parser do |options|
   log = options[:log]
   method = 'Scroll_DraggingAndDeceleration'
+  metrics_definitions = {
+    'hitches_total_duration' => { 'name' => 'Hitches Total Duration', 'unit' => 'ms' },
+    'duration' => { 'name' => 'Duration', 'unit' => 's' },
+    'hitch_time_ratio' => { 'name' => 'Hitch Time Ratio', 'unit' => 'ms per s' },
+    'frame_rate' => { 'name' => 'Frame Rate', 'unit' => 'fps' },
+    'number_of_hitches' => { 'name' => 'Number of Hitches', 'unit' => 'hitches', 'ext' => '' }
+  }
   metrics = {}
 
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
     next if test_name == 'testChannelListScrollTime' # Delete this line and return the test to the testplan as soon as PBE-5666 is solved
 
-    hitches_total_duration = log.match(/#{test_name}\]' measured \[Hitches Total Duration \(#{method}\), ms\] average: (\d+\.\d+)/)
-    UI.user_error!("Hitches Total Duration not found for #{test_name}") if hitches_total_duration.nil?
+    metrics[test_name] = metrics_definitions.to_h do |metric, definition|
+      # One slow iteration skews the average, so compare the median of all iterations instead
+      match = log.match(/#{test_name}\]' measured \[#{definition['name']} \(#{method}\), #{definition['unit']}\] average: [\d.]+, relative standard deviation: [\d.]+%, values: \[([^\]]+)\]/)
+      UI.user_error!("#{definition['name']} not found for #{test_name}") if match.nil?
 
-    duration = log.match(/#{test_name}\]' measured \[Duration \(#{method}\), s\] average: (\d+\.\d+)/)
-    UI.user_error!("Duration not found for #{test_name}") if duration.nil?
-
-    hitch_time_ratio = log.match(/#{test_name}\]' measured \[Hitch Time Ratio \(#{method}\), ms per s\] average: (\d+\.\d+)/)
-    UI.user_error!("Hitch Time Ratio not found for #{test_name}") if hitch_time_ratio.nil?
-
-    frame_rate = log.match(/#{test_name}\]' measured \[Frame Rate \(#{method}\), fps\] average: (\d+\.\d+)/)
-    UI.user_error!("Frame Rate not found for #{test_name}") if frame_rate.nil?
-
-    number_of_hitches = log.match(/#{test_name}\]' measured \[Number of Hitches \(#{method}\), hitches\] average: (\d+\.\d+)/)
-    UI.user_error!("Number of Hitches not found for #{test_name}") if number_of_hitches.nil?
-
-    metrics[test_name] = {
-      'hitches_total_duration' => {
-        'value' => hitches_total_duration[1].to_f.round(2),
-        'ext' => 'ms'
-      },
-      'duration' => {
-        'value' => duration[1].to_f.round(2),
-        'ext' => 's'
-      },
-      'hitch_time_ratio' => {
-        'value' => hitch_time_ratio[1].to_f.round(2),
-        'ext' => 'ms per s'
-      },
-      'frame_rate' => {
-        'value' => frame_rate[1].to_f.round(2),
-        'ext' => 'fps'
-      },
-      'number_of_hitches' => {
-        'value' => number_of_hitches[1].to_f.round(2),
-        'ext' => ''
-      }
-    }
+      values = match[1].split(',').map(&:to_f).sort
+      median = values.size.odd? ? values[values.size / 2] : (values[(values.size / 2) - 1] + values[values.size / 2]) / 2.0
+      [metric, { 'value' => median.round(2), 'ext' => definition.fetch('ext', definition['unit']) }]
+    end
   end
 
   metrics
