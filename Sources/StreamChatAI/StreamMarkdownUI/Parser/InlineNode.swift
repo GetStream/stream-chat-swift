@@ -1,5 +1,6 @@
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 enum InlineNode: Hashable, Sendable {
   case text(String)
   case softBreak
@@ -13,6 +14,7 @@ enum InlineNode: Hashable, Sendable {
   case image(source: String, children: [InlineNode])
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension InlineNode {
   var children: [InlineNode] {
     get {

@@ -12,6 +12,7 @@ import Foundation
 ///
 /// Instances are not thread-safe. The renderer always mutates them from the
 /// main actor, which is also where SwiftUI reads them.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class DataModel {
     /// A change to the data model, reported to observers.
@@ -208,6 +209,7 @@ final class DataModel {
 }
 
 /// A data model write that could not be applied.
+@available(iOS 15.0, macOS 12.0, *)
 enum DataModelError: Error, Equatable, CustomStringConvertible {
     /// The path descends through a value that is neither an object nor an array.
     case notAContainer(DataPath)

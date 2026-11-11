@@ -6,6 +6,7 @@ import Foundation
 
 /// What the person asks of the agent, which an ``AIConversation`` hands to its
 /// ``AIConversationTransport``.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIConversationRequest<Message: AIMessage> {
     /// What the person asks for.
     public typealias Kind = AIConversationRequestKind
@@ -43,6 +44,7 @@ public struct AIConversationRequest<Message: AIMessage> {
 
 /// What the person asks for in an ``AIConversationRequest``. It is an open set: compare against the
 /// kinds you know, and treat the rest as a new message.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIConversationRequestKind: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
     public let rawValue: String
 

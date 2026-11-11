@@ -1,6 +1,7 @@
 import Foundation
 
 /// A text style that sets whether the font should be styled with a normal or italic face from its font family.
+@available(iOS 15.0, macOS 12.0, *)
 struct FontStyle: TextStyle {
   private let style: FontProperties.Style
 

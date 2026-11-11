@@ -7,6 +7,7 @@ import SwiftUI
 /// The reasoning, one paragraph at a time. It grows with the text up to `maxHeight`, then
 /// scrolls, fading at the top so it reads as continuing above. While the reasoning is live,
 /// new text is revealed smoothly and the newest stays in view unless the reader scrolls up.
+@available(iOS 15.0, macOS 12.0, *)
 struct ReasoningPanel: View {
     let text: String
     let isLive: Bool
@@ -61,6 +62,7 @@ struct ReasoningPanel: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct ReasoningHeightKey: PreferenceKey {
     static let defaultValue: CGFloat = 0
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
@@ -71,6 +73,7 @@ private struct ReasoningHeightKey: PreferenceKey {
 /// Stops following new text while the reader has scrolled up, and resumes once they are
 /// back at the end. Only the reader's own scrolling counts: the panel growing, or the
 /// list around it moving, never stops it following. Earlier systems always follow.
+@available(iOS 15.0, macOS 12.0, *)
 private struct FollowsReader: ViewModifier {
     @Binding var following: Bool
 

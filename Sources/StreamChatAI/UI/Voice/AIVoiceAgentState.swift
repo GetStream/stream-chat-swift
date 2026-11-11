@@ -9,6 +9,7 @@ import Foundation
 ///
 /// The states differ only in how a visualization moves, never in its colors, and changing the
 /// state eases from one motion into the next.
+@available(iOS 15.0, macOS 12.0, *)
 public enum AIVoiceAgentState: String, CaseIterable, Sendable {
     /// Waiting to be spoken to: a calm, barely-there shimmer.
     case idle
@@ -22,6 +23,7 @@ public enum AIVoiceAgentState: String, CaseIterable, Sendable {
     case speaking
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIVoiceAgentState {
     // `load`, `flow` and `react` each select a motion pattern, one per state, so easing between
     // states crossfades the patterns.

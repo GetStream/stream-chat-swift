@@ -28,6 +28,7 @@ import Foundation
 ///   }
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 struct InlineLink: InlineContentProtocol {
   var _inlineContent: InlineContent {
     .init(inlines: [.link(destination: self.destination, children: self.content.inlines)])

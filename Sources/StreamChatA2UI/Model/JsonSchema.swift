@@ -10,6 +10,7 @@ import Foundation
 /// the shared definitions in `common_types.json`. These helpers keep catalog
 /// declarations readable while producing spec-compliant output that can be sent
 /// to an agent as an inline catalog or embedded in a prompt.
+@available(iOS 15.0, macOS 12.0, *)
 enum JsonSchema {
     /// The base URI of the shared A2UI common type definitions.
     static let commonTypesUri = "https://a2ui.org/specification/v1_0/common_types.json"
@@ -177,6 +178,7 @@ enum JsonSchema {
 
 // The subset of JSON Schema that function arguments use. Agent calls are checked once resolved;
 // a component's calls when they arrive, where a binding or call can stand in for any value.
+@available(iOS 15.0, macOS 12.0, *)
 enum JsonSchemaValidator {
     struct Violation: Equatable {
         let pointer: String

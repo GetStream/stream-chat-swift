@@ -9,6 +9,7 @@ import Foundation
 ///
 /// An agent's instructions show it A2UI to write, which should render as it is: a broken example
 /// teaches the model to write broken UI.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIProgram {
     /// The problems of the messages in `text`, or none when they render as written.
     static func problems(in text: String, catalog: Catalog) -> [String] {

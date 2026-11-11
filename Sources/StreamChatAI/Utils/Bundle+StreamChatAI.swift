@@ -4,6 +4,7 @@
 
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 extension Bundle {
     /// The bundle with the AI components' resources, such as their strings.
     static let streamChatAI: Bundle = {
@@ -15,4 +16,5 @@ extension Bundle {
     }()
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private final class BundleToken {}

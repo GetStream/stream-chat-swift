@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor final class NetworkImageModel: ObservableObject {
   @Published private(set) var source: ImageSource?
   @Published private(set) var image: NetworkImageState = .empty

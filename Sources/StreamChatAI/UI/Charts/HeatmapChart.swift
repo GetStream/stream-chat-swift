@@ -6,7 +6,7 @@ import Charts
 import SwiftUI
 
 // Heatmap (x category, y series.name or y extracted from point.x if encoded)
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 13.0, *)
 struct HeatmapChart: View {
     let spec: USpec
     var body: some View {

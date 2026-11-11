@@ -15,6 +15,7 @@ import Foundation
 ///                   "required": ["title"] },
 ///   "events": [{ "name": "ask_about", "description": "Tapping it asks about the place." }] }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 enum PortableComponent {
     /// The A2UI type of a portable component, named as the basic catalog names its own:
     /// `place_card` is `PlaceCard`.
@@ -72,6 +73,7 @@ enum PortableComponent {
 }
 
 /// A portable component definition A2UI can't read.
+@available(iOS 15.0, macOS 12.0, *)
 struct PortableComponentError: Error, LocalizedError, Sendable {
     let message: String
 

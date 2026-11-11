@@ -6,6 +6,7 @@ import SwiftUI
 
 // Whether a reply's answer is still being written out on screen, which goes on after the
 // agent finishes it. `nil` when nothing in the reply's view says, such as an app's own view.
+@available(iOS 15.0, macOS 12.0, *)
 struct AnswerWritingKey: PreferenceKey {
     static let defaultValue: Bool? = nil
 

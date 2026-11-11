@@ -6,7 +6,7 @@ import Charts
 import SwiftUI
 
 /// Line, bar, area and scatter charts.
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 13.0, *)
 struct CartesianChart: View {
     let spec: USpec
 

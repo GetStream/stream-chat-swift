@@ -4,6 +4,7 @@
 
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 enum L10n {
     enum Composer {
         static var placeholderAskAnything: String {

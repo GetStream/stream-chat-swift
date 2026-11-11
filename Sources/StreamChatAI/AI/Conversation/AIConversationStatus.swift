@@ -6,6 +6,7 @@ import Foundation
 
 /// Where an ``AIConversation``'s latest exchange with the agent is. It is an open set: compare
 /// against the statuses you know.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIConversationStatus: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
     public let rawValue: String
 

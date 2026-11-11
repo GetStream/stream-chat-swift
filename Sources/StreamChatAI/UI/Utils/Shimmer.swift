@@ -6,6 +6,7 @@ import SwiftUI
 
 /// A highlight sweeping across the content while something is in progress. It stays
 /// still when Reduce Motion is on.
+@available(iOS 15.0, macOS 12.0, *)
 struct Shimmer: ViewModifier {
     let isActive: Bool
     let highlight: Color

@@ -6,6 +6,7 @@ import Foundation
 /// you declare in any closure with the `@TaskListContentBuilder` attribute. In particular, you rely on
 /// this behavior when you declare the `content` inside a list element initializer such as
 /// ``TaskList/init(tight:items:)``.
+@available(iOS 15.0, macOS 12.0, *)
 @resultBuilder enum TaskListContentBuilder {
   static func buildBlock(_ components: [TaskListItem]...) -> [TaskListItem] {
     components.flatMap { $0 }

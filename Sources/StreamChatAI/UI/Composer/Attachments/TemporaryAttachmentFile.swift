@@ -6,6 +6,7 @@ import Foundation
 import StreamCore
 import UIKit
 
+@available(iOS 15.0, macOS 12.0, *)
 func writeAttachmentDataToTemporaryURL(_ data: Data) -> URL? {
     let fileManager = FileManager.default
     let fileURL = fileManager.temporaryDirectory.appendingPathComponent(

@@ -188,6 +188,7 @@ import SwiftUI
 ///   }
 /// )
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 struct Markdown: View {
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.theme.text) private var text
@@ -226,6 +227,7 @@ struct Markdown: View {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension Markdown {
   /// Creates a Markdown view from a Markdown-formatted string.
   /// - Parameters:
@@ -284,6 +286,7 @@ extension Markdown {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct ScaledFontSizeModifier: ViewModifier {
   @ScaledMetric private var size: CGFloat
 

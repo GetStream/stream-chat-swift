@@ -5,6 +5,7 @@
 import CoreGraphics
 import simd
 
+@available(iOS 15.0, macOS 12.0, *)
 enum VoiceVisualizationStyle: CaseIterable, Hashable, Sendable {
     case glow
     case wave

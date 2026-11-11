@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 struct TableBackgroundView: View {
   @Environment(\.tableBackgroundStyle) private var tableBackgroundStyle
 

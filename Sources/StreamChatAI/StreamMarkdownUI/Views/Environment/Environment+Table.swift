@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 extension View {
   /// Sets the table border style for the Markdown tables in a view hierarchy.
   ///
@@ -24,6 +25,7 @@ extension View {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension EnvironmentValues {
   var tableBorderStyle: TableBorderStyle {
     get { self[TableBorderStyleKey.self] }
@@ -36,10 +38,12 @@ extension EnvironmentValues {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct TableBorderStyleKey: EnvironmentKey {
   static var defaultValue: TableBorderStyle { TableBorderStyle(color: .secondary) }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct TableBackgroundStyleKey: EnvironmentKey {
   static var defaultValue: TableBackgroundStyle { .clear }
 }

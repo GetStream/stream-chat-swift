@@ -7,6 +7,7 @@ import Combine
 import SwiftUI
 
 /// The media components of the A2UI basic catalog.
+@available(iOS 15.0, macOS 12.0, *)
 enum MediaComponents {
     /// All media components, in catalog order.
     static var all: [ComponentDefinition] {
@@ -130,6 +131,7 @@ enum MediaComponents {
 /// derived from its height, which would make a header image wider than its
 /// container and stretch the whole surface; an overlay cannot affect the
 /// layout of the box it fills.
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIImageView: View {
     let source: String
     let accessibilityText: String?
@@ -212,6 +214,7 @@ struct A2UIImageView: View {
 /// The footprint deliberately never depends on the loaded image: a resizable
 /// image with `aspectRatio(.fill)` derives its intrinsic width from its height,
 /// which would let a header image push its surface wider than the screen.
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIImageLayout: Equatable {
     /// The fixed width, or `nil` when the image spans its container.
     let width: CGFloat?
@@ -258,6 +261,7 @@ struct A2UIImageLayout: Equatable {
 }
 
 /// A type-erased shape, so image clipping can vary by variant on iOS 15.
+@available(iOS 15.0, macOS 12.0, *)
 private struct AnyShape2: Shape {
     private let pathBuilder: @Sendable (CGRect) -> Path
 
@@ -272,6 +276,7 @@ private struct AnyShape2: Shape {
 
 // Nothing loads until the person plays it: the poster, or a placeholder, covers the player
 // until then, the way HTML's `poster` does, so a list of clips doesn't open a connection each.
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UIMediaPlayerView: View {
     let url: URL?
     let posterUrl: URL?
@@ -345,6 +350,7 @@ private struct A2UIMediaPlayerView: View {
 
 // Keeps the URL of a clip and makes its player only when the person plays it. A bound URL that
 // changes lets go of the player, and so does the view leaving the screen.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class A2UIMediaPlayerModel: ObservableObject {
     @Published private(set) var player: AVPlayer?

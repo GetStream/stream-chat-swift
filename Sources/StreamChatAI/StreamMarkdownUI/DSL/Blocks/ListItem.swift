@@ -23,6 +23,7 @@ import Foundation
 /// ```
 ///
 /// ![](ListItem)
+@available(iOS 15.0, macOS 12.0, *)
 struct ListItem: Hashable {
   let children: [BlockNode]
 

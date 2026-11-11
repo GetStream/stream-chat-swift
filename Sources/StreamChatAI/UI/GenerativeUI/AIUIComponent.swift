@@ -33,6 +33,7 @@ import SwiftUI
 ///     }
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public protocol AIUIComponent: Sendable {
     /// What the agent fills in, decoded from the JSON it writes.
@@ -48,6 +49,7 @@ public protocol AIUIComponent: Sendable {
     @ViewBuilder func body(arguments: Arguments, context: AIUIComponentContext) -> Body
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIUIComponent {
     /// The name the agent places it by.
     var name: String { definition.name }

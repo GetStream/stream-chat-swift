@@ -4,6 +4,7 @@ import SwiftUI
 ///
 /// To configure the current code syntax highlighter for a view hierarchy, use the
 /// `markdownCodeSyntaxHighlighter(_:)` modifier.
+@available(iOS 15.0, macOS 12.0, *)
 protocol CodeSyntaxHighlighter {
   /// Returns a text view configured with the syntax highlighted code.
   /// - Parameters:
@@ -13,6 +14,7 @@ protocol CodeSyntaxHighlighter {
 }
 
 /// A code syntax highlighter that returns unstyled code blocks.
+@available(iOS 15.0, macOS 12.0, *)
 struct PlainTextCodeSyntaxHighlighter: CodeSyntaxHighlighter {
   /// Creates a plain text code syntax highlighter.
   init() {}
@@ -22,6 +24,7 @@ struct PlainTextCodeSyntaxHighlighter: CodeSyntaxHighlighter {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension CodeSyntaxHighlighter where Self == PlainTextCodeSyntaxHighlighter {
   /// A code syntax highlighter that returns unstyled code blocks.
   static var plainText: Self {

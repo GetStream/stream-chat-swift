@@ -10,6 +10,7 @@ import Foundation
 /// data model. Paths without a leading slash are relative and resolve against
 /// the current evaluation scope, which is how A2UI list templates address the
 /// item they were instantiated for.
+@available(iOS 15.0, macOS 12.0, *)
 struct DataPath: Hashable, CustomStringConvertible, Sendable {
     /// The unescaped path segments, in order.
     let segments: [String]

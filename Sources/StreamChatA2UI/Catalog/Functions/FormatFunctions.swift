@@ -8,6 +8,7 @@ import Foundation
 ///
 /// A2UI has no operators, so agents use these functions for string
 /// interpolation, number, currency and date formatting.
+@available(iOS 15.0, macOS 12.0, *)
 enum FormatFunctions {
     /// All formatting functions, in catalog order.
     static var all: [FunctionDefinition] {
@@ -198,6 +199,7 @@ enum FormatFunctions {
 }
 
 /// Parses the date representations accepted by A2UI payloads.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIDateParser {
     private static let patterns = [
         "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",

@@ -5,6 +5,7 @@
 import SwiftUI
 
 /// The brain, pulsing while the model thinks (on systems that animate symbols).
+@available(iOS 15.0, macOS 12.0, *)
 struct ThinkingIcon: View {
     var image: Image
     var isActive: Bool

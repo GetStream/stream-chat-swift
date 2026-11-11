@@ -3,6 +3,7 @@ import Foundation
 import ImageIO
 
 /// A type that loads and caches images.
+@available(iOS 15.0, macOS 12.0, *)
 protocol NetworkImageLoader: AnyObject, Sendable {
   /// Loads and returns the image from a given URL.
   func image(from url: URL) async throws -> CGImage
@@ -11,6 +12,7 @@ protocol NetworkImageLoader: AnyObject, Sendable {
 // MARK: - DefaultNetworkImageLoader
 
 /// The default network image loader.
+@available(iOS 15.0, macOS 12.0, *)
 actor DefaultNetworkImageLoader {
   private enum Constants {
     static let memoryCapacity = 10 * 1024 * 1024
@@ -54,6 +56,7 @@ actor DefaultNetworkImageLoader {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension DefaultNetworkImageLoader: NetworkImageLoader {
   func image(from url: URL) async throws -> CGImage {
     if let image = self.cache.image(for: url) {
@@ -99,6 +102,7 @@ extension DefaultNetworkImageLoader: NetworkImageLoader {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension NetworkImageLoader where Self == DefaultNetworkImageLoader {
   /// The shared default network image loader.
   static var `default`: Self {

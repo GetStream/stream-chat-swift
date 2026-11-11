@@ -10,6 +10,7 @@ import SwiftUI
 ///
 /// A file on this device opens in a preview, and one on the web through the `openURL`
 /// environment action, which the app can set to open it its own way.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIMessageAttachmentView: View {
     var attachment: AIMessageAttachment
     var imageSize: CGFloat

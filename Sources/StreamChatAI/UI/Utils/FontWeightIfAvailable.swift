@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 extension View {
     // Before iOS 16 a view can't change its font's weight, so it keeps the weight it has.
     @ViewBuilder

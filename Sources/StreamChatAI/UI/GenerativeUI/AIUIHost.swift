@@ -9,6 +9,7 @@ import UIKit
 /// What a reply's UI can do in its conversation: place the app's components, tell the agent what
 /// the person did, run the app's tools, open links and keep its state. The conversation's
 /// ``AIUIHost`` does it for renderers and components.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public protocol AIUIHosting: AnyObject, Sendable {
     /// The app's components, which every renderer can place.
@@ -28,6 +29,7 @@ public protocol AIUIHosting: AnyObject, Sendable {
     func setState(_ state: RawJSON?, for messageID: String)
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIUIHosting {
     /// The app's component the agent places by `name`.
     func component(named name: String) -> (any AIUIComponent)? {
@@ -53,6 +55,7 @@ public extension AIUIHosting {
 ///
 /// AIConversationView(messages: messages, ui: ui)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, ObservableObject {
     /// The renderers of the formats it reads, the first one listed asked first.
@@ -211,14 +214,17 @@ public final class AIUIHost<Renderers: AIUIRendererList>: AIUIHosting, Observabl
 }
 
 // What tells whether a reply's UI shows, such as a conversation's host.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 protocol AIUIDocumentReader {
     func canShow(_ document: AIUIDocument) -> Bool
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIUIHost: AIUIDocumentReader {}
 
 // The links a reply's UI opens unless the app opens them itself.
+@available(iOS 15.0, macOS 12.0, *)
 enum AIUILinks {
     static let schemes: Set<String> = ["http", "https", "mailto"]
 
@@ -236,6 +242,7 @@ enum AIUILinks {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 struct AIUIToolError: LocalizedError {
     let message: String
 
