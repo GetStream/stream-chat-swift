@@ -9,11 +9,19 @@ struct ChannelView: View {
     let client: ChatClient
     let cid: ChannelId
     @State private var chat: Chat?
+    @State private var errorMessage: String?
 
     var body: some View {
         Group {
             if let chat {
-                ChannelContentView(chat: chat, currentUserId: client.currentUserId)
+                VStack(alignment: .leading, spacing: 32) {
+                    if let errorMessage {
+                        LoadErrorBanner(message: errorMessage) {
+                            Task { await load(chat) }
+                        }
+                    }
+                    ChannelContentView(chat: chat, currentUserId: client.currentUserId)
+                }
             } else {
                 ProgressView()
             }
@@ -22,7 +30,29 @@ struct ChannelView: View {
             guard chat == nil else { return }
             let chat = client.makeChat(for: cid, messageOrdering: .bottomToTop)
             self.chat = chat
-            try? await chat.get(watch: true)
+            await load(chat)
+        }
+    }
+
+    private func load(_ chat: Chat) async {
+        errorMessage = nil
+        do {
+            try await chat.get(watch: true)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+}
+
+private struct LoadErrorBanner: View {
+    let message: String
+    let retry: () -> Void
+
+    var body: some View {
+        HStack(spacing: 24) {
+            Label(message, systemImage: "exclamationmark.triangle")
+                .foregroundStyle(.red)
+            Button("Retry", action: retry)
         }
     }
 }

@@ -10,6 +10,7 @@ struct ChannelListView: View {
     let channelList: ChannelList
     @ObservedObject private var state: ChannelListState
     @State private var isLoadingMoreChannels = false
+    @State private var errorMessage: String?
 
     init(client: ChatClient, channelList: ChannelList) {
         self.client = client
@@ -37,9 +38,31 @@ struct ChannelListView: View {
             .navigationDestination(for: ChannelId.self) { cid in
                 ChannelView(client: client, cid: cid)
             }
-            .task {
-                try? await channelList.get()
+            .overlay {
+                if state.channels.isEmpty, let errorMessage {
+                    ContentUnavailableView {
+                        Label("Couldn't Load Channels", systemImage: "exclamationmark.triangle")
+                    } description: {
+                        Text(errorMessage)
+                    } actions: {
+                        Button("Retry") {
+                            Task { await loadChannels() }
+                        }
+                    }
+                }
             }
+            .task {
+                await loadChannels()
+            }
+        }
+    }
+
+    private func loadChannels() async {
+        errorMessage = nil
+        do {
+            try await channelList.get()
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 
