@@ -11,24 +11,43 @@ struct MessageListView: View {
     @FocusState private var focusedMessageId: MessageId?
     @State private var isLoadingOlderMessages = false
     @State private var olderMessagesAnchorId: MessageId?
+    @State private var photosMessage: ChatMessage?
 
     var body: some View {
+        let dayStartIds = dayStartIds
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 16) {
                     ForEach(messages, id: \.id) { message in
-                        MessageRow(
-                            authorName: message.author.name ?? message.author.id,
-                            text: message.text,
-                            isFailed: message.localState == .sendingFailed,
-                            isFocused: focusedMessageId == message.id
-                        )
-                        // Focusable rows let the remote move through, and scroll, the message history.
-                        .focusable()
-                        .focused($focusedMessageId, equals: message.id)
-                        .id(message.id)
+                        let photos = message.imageAttachments
+                        VStack(spacing: 16) {
+                            if dayStartIds.contains(message.id) {
+                                Text(Self.dayFormatter.string(from: message.createdAt))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            MessageRow(
+                                authorName: message.author.name ?? message.author.id,
+                                createdAt: message.createdAt,
+                                text: message.text,
+                                photos: photos,
+                                isFailed: message.localState == .sendingFailed,
+                                isFocused: focusedMessageId == message.id
+                            )
+                            // Focusable rows let the remote move through, and scroll, the message history.
+                            .focusable()
+                            .focused($focusedMessageId, equals: message.id)
+                            .onTapGesture {
+                                if !photos.isEmpty { photosMessage = message }
+                            }
+                            .accessibilityAddTraits(photos.isEmpty ? [] : .isButton)
+                            .id(message.id)
+                        }
                     }
                 }
+            }
+            .fullScreenCover(item: $photosMessage) { message in
+                PhotoViewer(photos: message.imageAttachments)
             }
             .defaultScrollAnchor(.bottom)
             // Without it, the focus engine focuses and scrolls to a row near the top.
@@ -62,20 +81,46 @@ struct MessageListView: View {
             try? await chat.loadOlderMessages()
         }
     }
+
+    private var dayStartIds: Set<MessageId> {
+        var ids = Set(messages.prefix(1).map(\.id))
+        for (previous, message) in zip(messages, messages.dropFirst())
+            where !Calendar.current.isDate(previous.createdAt, inSameDayAs: message.createdAt) {
+            ids.insert(message.id)
+        }
+        return ids
+    }
+
+    private static let dayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.doesRelativeDateFormatting = true
+        return formatter
+    }()
 }
 
 private struct MessageRow: View {
     let authorName: String
+    let createdAt: Date
     let text: String
+    let photos: [ChatMessageImageAttachment]
     let isFailed: Bool
     let isFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(authorName)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(text)
+            HStack(spacing: 16) {
+                Text(authorName)
+                Text(createdAt, style: .time)
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            if !photos.isEmpty {
+                MessagePhotosView(photos: photos)
+            }
+            if !text.isEmpty {
+                Text(text)
+            }
             if isFailed {
                 Text("Failed to send")
                     .font(.caption)
