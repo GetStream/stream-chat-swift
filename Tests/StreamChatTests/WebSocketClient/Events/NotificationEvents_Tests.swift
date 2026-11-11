@@ -172,6 +172,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         )
         XCTAssertEqual(event?.totalUnreadCount, 790)
         XCTAssertEqual(event?.unreadChannels, 9)
+        XCTAssertEqual(event?.groupedUnreadChannels, ["direct": 3, "team": 6])
     }
 
     func test_notificationAddedToChannelEventDTO_withMissingFields() throws {
