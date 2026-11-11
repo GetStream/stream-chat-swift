@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatA2UI
 ### 🐞 Fixed
-- Fix building with Xcode 26 and older through Swift Package Manager [#4394](https://github.com/GetStream/stream-chat-swift/pull/4394)
+- Fix building with Xcode 26 [#4394](https://github.com/GetStream/stream-chat-swift/pull/4394)
 
 ## StreamChatOpenUI
 ### 🐞 Fixed
