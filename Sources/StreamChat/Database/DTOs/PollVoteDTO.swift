@@ -146,7 +146,7 @@ extension NSManagedObjectContext {
         dto.pollId = payload.pollId
         dto.isAnswer = payload.isAnswer ?? false
         dto.answerText = payload.answerText
-        dto.answerTextTranslations = I18n.translations(from: payload.answerTextI18n)?.mapKeys(\.languageCode)
+        dto.answerTextTranslations = I18n.translations(from: payload.answerTextI18n)
         dto.originalLanguage = I18n.originalLanguage(from: payload.answerTextI18n)
         dto.optionId = option?.id
         
