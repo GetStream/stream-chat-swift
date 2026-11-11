@@ -7,7 +7,7 @@ let package = Package(
     name: "StreamChat",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v13), .macOS(.v11)
+        .iOS(.v13), .macOS(.v11), .tvOS(.v15)
     ],
     products: [
         .library(
