@@ -6,6 +6,7 @@ import CoreData
 import Foundation
 import UserNotifications
 
+#if !os(tvOS)
 public class MessageNotificationContent {
     public let message: ChatMessage
     public let channel: ChatChannel?
@@ -219,3 +220,4 @@ public class ChatRemoteNotificationHandler {
         }
     }
 }
+#endif

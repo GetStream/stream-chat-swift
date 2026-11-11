@@ -304,7 +304,7 @@ private final class AttachmentStorage: @unchecked Sendable {
 
     private let fileManager: FileManager
     private lazy var baseURL: URL = {
-        let base = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first ?? fileManager.temporaryDirectory
+        let base = fileManager.streamStorageDirectory ?? fileManager.temporaryDirectory
         return base.appendingPathComponent(Constants.path)
     }()
 

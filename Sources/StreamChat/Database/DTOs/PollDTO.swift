@@ -161,8 +161,8 @@ extension NSManagedObjectContext {
         pollDto.pollDescription = payload.description
         pollDto.enforceUniqueVote = payload.enforceUniqueVote
         pollDto.name = payload.name
-        pollDto.nameTranslations = I18n.translations(from: payload.nameI18n)?.mapKeys(\.languageCode)
-        pollDto.descriptionTranslations = I18n.translations(from: payload.descriptionI18n)?.mapKeys(\.languageCode)
+        pollDto.nameTranslations = I18n.translations(from: payload.nameI18n)
+        pollDto.descriptionTranslations = I18n.translations(from: payload.descriptionI18n)
         pollDto.originalLanguage = I18n.originalLanguage(from: payload.nameI18n)
         pollDto.descriptionOriginalLanguage = I18n.originalLanguage(from: payload.descriptionI18n)
         pollDto.updatedAt = payload.updatedAt.bridgeDate

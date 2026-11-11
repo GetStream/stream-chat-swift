@@ -136,7 +136,16 @@ class AttachmentDTO: NSManagedObject {
 // MARK: - Reset Ephemeral Values
 
 extension AttachmentDTO: EphemeralValuesContainer {
-    static func resetEphemeralRelationshipValues(in context: NSManagedObjectContext) {}
+    static func resetEphemeralRelationshipValues(in context: NSManagedObjectContext) {
+        // The system can purge downloads stored in Caches while the app isn't running.
+        let baseURL = context.chatClientConfig?.localAttachmentDownloadsFolderURL
+        let downloadsFolderURL = URL.streamAttachmentDownloadsDirectory(baseURL: baseURL)
+        guard !FileManager.default.fileExists(atPath: downloadsFolderURL.path) else { return }
+        for attachment in loadAllDownloadedAttachments(context: context) {
+            attachment.localDownloadState = nil
+            attachment.localRelativePath = nil
+        }
+    }
     
     static func resetEphemeralValuesBatchRequests() -> [NSBatchUpdateRequest] {
         let request = NSBatchUpdateRequest(entityName: AttachmentDTO.entityName)
