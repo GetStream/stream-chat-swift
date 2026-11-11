@@ -221,10 +221,10 @@ extension URL {
     /// The directory URL for attachment downloads.
     ///
     /// - Parameter baseURL: The base folder the downloads directory is created within. When `nil`, the user's
-    ///   `Documents` directory is used.
+    ///   `Documents` directory is used (`Library/Caches` on tvOS).
     static func streamAttachmentDownloadsDirectory(baseURL: URL? = nil) -> URL {
         let base = baseURL
-            ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+            ?? FileManager.default.streamStorageDirectory
             ?? FileManager.default.temporaryDirectory
         return base.appendingPathComponent("StreamAttachmentDownloads", isDirectory: true)
     }

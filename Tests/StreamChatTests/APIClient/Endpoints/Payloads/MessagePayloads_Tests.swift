@@ -246,7 +246,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.pinExpires, "2021-05-15T06:43:08.776911Z".toDate())
         XCTAssertEqual(payload.pinnedBy?.id, "broken-waterfall-5")
         XCTAssertEqual(payload.quotedMessageId, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
-        XCTAssertEqual(payload.translations, [.italian: "si sono qui", .dutch: "ja ik ben hier"])
+        XCTAssertEqual(payload.translations, ["it": "si sono qui", "nl": "ja ik ben hier"])
         XCTAssertEqual(payload.originalLanguage, "it")
         XCTAssertEqual(payload.moderation?.action, "bounce")
         XCTAssertEqual(payload.moderation?.originalText, "The message original text")
@@ -437,7 +437,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.pinExpires, "2021-05-15T06:43:08.776911Z".toDate())
         XCTAssertEqual(payload.pinnedBy?.id, "broken-waterfall-5")
         XCTAssertEqual(payload.quotedMessageId, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
-        XCTAssertEqual(payload.translations, [.italian: "si sono qui", .dutch: "ja ik ben hier"])
+        XCTAssertEqual(payload.translations, ["it": "si sono qui", "nl": "ja ik ben hier"])
     }
     
     // MARK: - MessagePayload.asModel() Tests

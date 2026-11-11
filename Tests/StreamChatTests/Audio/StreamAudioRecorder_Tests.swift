@@ -362,6 +362,24 @@ import XCTest
 
     /* No-op */
 
+    // MARK: - handleAudioSessionInterruption(_:)
+
+    func test_handleAudioSessionInterruption_began_stoppedWasCalledOnRecorder() {
+        simulateIsRecording()
+
+        subject.handleAudioSessionInterruption(makeInterruptionNotification(.began))
+
+        XCTAssertTrue(stubAVAudioRecorder.stopWasCalled)
+    }
+
+    func test_handleAudioSessionInterruption_ended_stopWasNotCalledOnRecorder() {
+        simulateIsRecording()
+
+        subject.handleAudioSessionInterruption(makeInterruptionNotification(.ended))
+
+        XCTAssertFalse(stubAVAudioRecorder.stopWasCalled)
+    }
+
     // MARK: - audioRecorderEncodeErrorDidOccur(_:error:)
 
     func test_audioRecorderEncodeErrorDidOccur_withError_callsDidFailOnDelegate() {
@@ -389,6 +407,14 @@ import XCTest
     }
 
     // MARK: - Private Helpers
+
+    private func makeInterruptionNotification(_ type: AVAudioSession.InterruptionType) -> Notification {
+        Notification(
+            name: AVAudioSession.interruptionNotification,
+            object: nil,
+            userInfo: [AVAudioSessionInterruptionTypeKey: type.rawValue]
+        )
+    }
 
     private func setAudioRecorder(
         _ configuration: StreamAudioRecorder.Configuration = .default,
