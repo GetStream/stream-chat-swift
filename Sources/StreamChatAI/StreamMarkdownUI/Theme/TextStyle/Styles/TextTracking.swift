@@ -1,6 +1,7 @@
 import Foundation
 
 /// A text style that sets the tracking of the text.
+@available(iOS 15.0, macOS 12.0, *)
 struct TextTracking: TextStyle {
   private let tracking: CGFloat?
 

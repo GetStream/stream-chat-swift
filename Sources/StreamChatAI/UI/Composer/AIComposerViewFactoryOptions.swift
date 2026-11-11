@@ -5,6 +5,7 @@
 import Foundation
 
 /// Configuration passed to ``AIComposerViewFactory/makeLeadingComposerView(options:)``.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIComposerLeadingViewOptions {
     /// Called when the user taps the leading button to open the attachment picker.
     public var onTap: () -> Void
@@ -17,11 +18,13 @@ public struct AIComposerLeadingViewOptions {
 /// Configuration passed to ``AIComposerViewFactory/makeTrailingComposerView(options:)``.
 ///
 /// Currently empty; reserved for future additions.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIComposerTrailingViewOptions {
     public init() {}
 }
 
 /// Configuration passed to ``AIComposerViewFactory/makeComposerInputView(options:)``.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIComposerInputViewOptions {
     /// The shared view model that holds text, attachments, and chat-option state.
     public var viewModel: AIComposerViewModel
@@ -49,6 +52,7 @@ public struct AIComposerInputViewOptions {
 }
 
 /// Configuration passed to ``AIComposerViewFactory/makeComposerInputTrailingView(options:)``.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIComposerInputTrailingViewOptions {
     /// The shared view model; the default dictation button writes its transcript to `text`.
     public var viewModel: AIComposerViewModel
@@ -62,6 +66,7 @@ public struct AIComposerInputTrailingViewOptions {
 }
 
 /// Configuration passed to ``AIComposerViewFactory/makeComposerPickerView(options:)``.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIComposerPickerViewOptions {
     /// The shared view model used to read and write attachment and chat-option state.
     public var viewModel: AIComposerViewModel

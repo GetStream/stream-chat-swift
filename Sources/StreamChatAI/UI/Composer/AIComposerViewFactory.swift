@@ -44,6 +44,7 @@ import SwiftUI
 /// All five `make*` methods have default implementations provided by the protocol
 /// extension on `AIComposerViewFactory`, so conforming types are free to override none,
 /// some, or all of them.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public protocol AIComposerViewFactory {
     /// The view type returned by ``makeLeadingComposerView(options:)``.
@@ -95,6 +96,7 @@ public protocol AIComposerViewFactory {
     func makeComposerPickerView(options: AIComposerPickerViewOptions) -> ComposerPickerViewType
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIComposerViewFactory {
     func makeLeadingComposerView(options: AIComposerLeadingViewOptions) -> some View {
         AddAttachmentsButton {
@@ -140,6 +142,7 @@ public extension AIComposerViewFactory {
 /// producing the standard Stream AI composer appearance. Pass `DefaultAIComposerViewFactory.shared`
 /// explicitly or omit the `viewFactory` argument on ``AIComposerView`` — both are
 /// equivalent.
+@available(iOS 15.0, macOS 12.0, *)
 public final class DefaultAIComposerViewFactory: AIComposerViewFactory {
     public static let shared = DefaultAIComposerViewFactory()
 }

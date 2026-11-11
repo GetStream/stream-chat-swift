@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 public struct AITypingIndicatorView: View {
     @State private var animate = false
     

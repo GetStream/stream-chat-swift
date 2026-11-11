@@ -11,6 +11,7 @@ import Foundation
 /// reports `UNALLOWED_PARENT` or `UNALLOWED_CHILD` to the agent, pointing at
 /// the component, or the child slot, of the message that broke the rule. The
 /// renderer doesn't render a component placed where it isn't allowed.
+@available(iOS 15.0, macOS 12.0, *)
 enum CompositionValidator {
     /// Whether `child` may be placed inside `parent`.
     /// Pass `nil` for the surface root, whose parent is the reserved `Surface` container.

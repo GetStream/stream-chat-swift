@@ -1,6 +1,7 @@
 import Foundation
 
 /// A text style that sets the font size.
+@available(iOS 15.0, macOS 12.0, *)
 struct FontSize: TextStyle {
   private enum Size {
     case points(CGFloat)

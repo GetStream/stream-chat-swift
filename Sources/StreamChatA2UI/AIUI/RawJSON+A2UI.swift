@@ -5,6 +5,7 @@
 import Foundation
 import StreamChatAI
 
+@available(iOS 15.0, macOS 12.0, *)
 extension RawJSON {
     /// A value of A2UI's data model or of a resolved property, as JSON.
     init(a2ui value: (any Sendable)?) {

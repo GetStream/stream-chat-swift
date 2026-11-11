@@ -6,6 +6,7 @@ import Foundation
 
 /// The language a reply's generated UI is written in, such as OpenUI. It is an open set: each
 /// renderer says which one it reads.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIUIFormat: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
     public let rawValue: String
 

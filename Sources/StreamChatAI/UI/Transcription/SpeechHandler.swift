@@ -8,6 +8,7 @@ import Foundation
 import Speech
 import StreamCore
 
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public final class SpeechHandler: NSObject, ObservableObject {
     // Public state for SwiftUI

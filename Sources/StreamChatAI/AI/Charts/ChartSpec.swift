@@ -4,10 +4,12 @@
 
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 enum ChartKind: String {
     case line, bar, area, scatter, bubble, pie, heatmap, histogram
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 struct UPoint: Identifiable, Hashable {
     var id: String { "\(x)|\(y)|\(size ?? -1)|\(z ?? -1)" }
     let x: String // category or stringified number/date
@@ -19,6 +21,7 @@ struct UPoint: Identifiable, Hashable {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 final class USeries: Identifiable {
     let id = UUID()
     let name: String
@@ -26,6 +29,7 @@ final class USeries: Identifiable {
     init(name: String, points: [UPoint]) { self.name = name; self.points = points }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 final class USpec {
     let title: String?
     let kind: ChartKind

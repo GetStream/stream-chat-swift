@@ -55,6 +55,7 @@ import Foundation
 /// ```
 ///
 /// ![](ListItem)
+@available(iOS 15.0, macOS 12.0, *)
 struct NumberedList: MarkdownContentProtocol {
   var _markdownContent: MarkdownContent {
     .init(blocks: [.numberedList(isTight: self.tight, start: self.start, items: self.items)])

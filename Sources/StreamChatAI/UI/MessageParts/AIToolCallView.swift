@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 
 /// One tool call: what it is doing, where it runs, and how it went.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolCallView: View {
     var part: AIToolCallPart
     var font: Font?

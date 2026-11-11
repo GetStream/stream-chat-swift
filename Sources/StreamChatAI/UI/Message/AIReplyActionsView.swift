@@ -8,6 +8,7 @@ import UIKit
 
 /// The buttons under a finished reply: copy and share while it has text, then regenerate and rate
 /// when the app handles them.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIReplyActionsView: View {
     var text: String
     var actions: AIReplyActions

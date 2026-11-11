@@ -15,6 +15,7 @@ import SwiftUI
 ///     ProgressView()
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UISurface<Placeholder: View>: View {
     private let host: A2UIHost
     private let placeholder: Placeholder
@@ -53,6 +54,7 @@ struct A2UISurface<Placeholder: View>: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension A2UISurface where Placeholder == EmptyView {
     /// Creates a surface view that shows nothing while the surface is empty.
     init(host: A2UIHost, surfaceId: String) {

@@ -8,9 +8,11 @@ import Foundation
 ///
 /// Implementations receive already-resolved arguments, so nested bindings and
 /// function calls have been evaluated before the function runs.
+@available(iOS 15.0, macOS 12.0, *)
 typealias A2UIFunctionImplementation = @MainActor @Sendable (FunctionInvocation) throws -> (any Sendable)?
 
 /// The arguments and environment of a single function invocation.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 struct FunctionInvocation {
     /// The name of the invoked function.
@@ -105,6 +107,7 @@ struct FunctionInvocation {
 }
 
 /// Errors raised by renderer-side function implementations.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIFunctionError: Error, Equatable, CustomStringConvertible {
     /// A required argument was not provided.
     case missingArgument(String, function: String)

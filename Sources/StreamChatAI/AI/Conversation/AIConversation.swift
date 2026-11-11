@@ -31,6 +31,7 @@ import StreamCore
 /// What the person sends shows straight away, and the agent thinks until its reply starts. While
 /// a reply is written again, or a message the person edited is answered again, the messages it
 /// replaces are left out of ``messages`` until the new reply starts.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public final class AIConversation<Message: AIMessage>: ObservableObject {
     /// The conversation as it shows, oldest message first.

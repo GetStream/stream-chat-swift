@@ -6,6 +6,7 @@ import Foundation
 
 // A message the person sent, and the replies after it. Messages before the person's first
 // one, such as a greeting, make a turn of their own.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIMessageTurn<Message: Identifiable>: Identifiable {
     var messages: [Message]
 

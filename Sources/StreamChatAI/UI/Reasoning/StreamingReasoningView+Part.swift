@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension StreamingReasoningView {
     /// Shows a reasoning step: its live `text` when the app has it, otherwise the step's
     /// preview, with its summary beside "Thought for 12s" once it is done.

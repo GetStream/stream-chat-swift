@@ -8,6 +8,7 @@ import Foundation
 ///
 /// See the specification at
 /// https://github.com/a2ui-project/a2ui/tree/main/specification/v1_0.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIProtocol {
     /// The protocol version string carried by every wire message.
     static let version = "1.0"
@@ -38,7 +39,9 @@ enum A2UIProtocol {
 }
 
 /// The wire key that identifies a surface in A2UI messages.
+@available(iOS 15.0, macOS 12.0, *)
 let surfaceIdKey = "surfaceId"
 
 /// The catalog id of the A2UI v1.0 basic catalog.
+@available(iOS 15.0, macOS 12.0, *)
 let basicCatalogId = "https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json"

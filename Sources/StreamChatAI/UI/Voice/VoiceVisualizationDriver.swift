@@ -8,6 +8,7 @@ import simd
 // The web reference eases each value by a fixed fraction per frame, which settles twice as
 // fast at 120 Hz as at 60 Hz. Here each fraction is converted to time, so the motion is the
 // reference's at 60 Hz on any display.
+@available(iOS 15.0, macOS 12.0, *)
 struct VoiceVisualizationDriver {
     struct Input: Equatable {
         var state: AIVoiceAgentState

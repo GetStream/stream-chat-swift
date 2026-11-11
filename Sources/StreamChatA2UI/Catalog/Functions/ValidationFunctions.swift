@@ -8,6 +8,7 @@ import Foundation
 ///
 /// Every function returns a ``ValidationResult`` payload so that components can
 /// show a message and, in the case of `Button`, disable themselves.
+@available(iOS 15.0, macOS 12.0, *)
 enum ValidationFunctions {
     /// All validation functions, in catalog order.
     static var all: [FunctionDefinition] {

@@ -10,6 +10,7 @@ import Foundation
 /// `DynamicBoolean`, `DynamicStringList` or `DynamicValue` accept one of three
 /// shapes: a literal, a data binding (`{"@path": "/a/b"}`) or a function call
 /// (`{"@call": "formatString", "args": {...}}`).
+@available(iOS 15.0, macOS 12.0, *)
 enum DynamicValue: Equatable, Sendable {
     /// A literal JSON value.
     case literal(any Sendable)
@@ -214,6 +215,7 @@ enum DynamicValue: Equatable, Sendable {
 /// Functions are resolved against the catalog identified by `catalogId`, or the
 /// surface default catalog when the call does not declare one. Names starting
 /// with `@` are universal system functions.
+@available(iOS 15.0, macOS 12.0, *)
 struct FunctionCall: Equatable, Sendable {
     /// The name of the function to call.
     let name: String
@@ -266,6 +268,7 @@ struct FunctionCall: Equatable, Sendable {
 ///
 /// A2UI containers either list their children explicitly or declare a template
 /// that is instantiated once per item of a bound collection.
+@available(iOS 15.0, macOS 12.0, *)
 enum ChildList: Equatable, Sendable {
     /// A static list of component ids.
     case ids([String])
@@ -307,6 +310,7 @@ enum ChildList: Equatable, Sendable {
 ///
 /// An action either dispatches a named event to the agent or executes a
 /// function locally on the renderer.
+@available(iOS 15.0, macOS 12.0, *)
 enum ActionDefinition: Equatable, Sendable {
     /// Dispatches an event to the agent.
     case event(EventAction)
@@ -331,6 +335,7 @@ enum ActionDefinition: Equatable, Sendable {
 }
 
 /// An agent-bound event dispatched by a component.
+@available(iOS 15.0, macOS 12.0, *)
 struct EventAction: Equatable, Sendable {
     /// The event name reported to the agent.
     let name: String
@@ -360,6 +365,7 @@ struct EventAction: Equatable, Sendable {
 }
 
 /// A single renderer-side validation rule.
+@available(iOS 15.0, macOS 12.0, *)
 struct CheckRule: Equatable, Sendable {
     /// A binding or function call evaluating to a ``ValidationResult``.
     let condition: DynamicValue
@@ -394,6 +400,7 @@ struct CheckRule: Equatable, Sendable {
 }
 
 /// The outcome of a renderer-side validation rule.
+@available(iOS 15.0, macOS 12.0, *)
 struct ValidationResult: Equatable, Sendable {
     /// How serious a failed check is.
     enum Severity: String, Sendable {
@@ -469,6 +476,7 @@ struct ValidationResult: Equatable, Sendable {
 ///
 /// These values are mapped onto the platform accessibility APIs and override
 /// the semantics inferred from the component's visible content.
+@available(iOS 15.0, macOS 12.0, *)
 struct AccessibilityAttributes: Equatable, Sendable {
     /// How dynamic updates should be announced.
     enum Live: String, Sendable {

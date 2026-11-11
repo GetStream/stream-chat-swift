@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 struct SplashCodeSyntaxHighlighter: CodeSyntaxHighlighter {
     private let syntaxHighlighter: SyntaxHighlighter<TextOutputFormat>
     
@@ -20,6 +21,7 @@ struct SplashCodeSyntaxHighlighter: CodeSyntaxHighlighter {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension CodeSyntaxHighlighter where Self == SplashCodeSyntaxHighlighter {
     static func splash(theme: SplashTheme) -> Self {
         SplashCodeSyntaxHighlighter(theme: theme)

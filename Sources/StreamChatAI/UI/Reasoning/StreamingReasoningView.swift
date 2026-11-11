@@ -20,6 +20,7 @@ import SwiftUI
 /// ```swift
 /// StreamingReasoningView(text: reasoning, isThinking: answer.isEmpty, duration: 12)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct StreamingReasoningView: View {
     var text: String
     var isThinking: Bool
@@ -271,6 +272,7 @@ public struct StreamingReasoningView: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension StreamingReasoningView {
     // Thinking that shows nothing of itself yet, counting from `start`.
     init(thinkingSince start: Date?) {

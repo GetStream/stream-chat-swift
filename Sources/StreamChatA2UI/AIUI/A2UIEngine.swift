@@ -7,6 +7,7 @@ import StreamChatAI
 import SwiftUI
 
 /// The A2UI replies of one conversation, each with a message processor of its own.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class A2UIEngine: AIUIEngine {
     private weak var host: (any AIUIHosting)?

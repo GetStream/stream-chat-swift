@@ -8,6 +8,7 @@ import Photos
 import StreamCore
 import UIKit
 
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class PhotoLibraryService: ObservableObject {
     @Published private(set) var recentAssets: [PHAsset] = []

@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 
 /// A step from a newer SDK: say that something happened without guessing what.
+@available(iOS 15.0, macOS 12.0, *)
 struct UnsupportedPartView: View {
     var font: Font
 

@@ -6,6 +6,7 @@ import Foundation
 
 /// The agent couldn't answer: it said so, such as with an ``AIAgentActivity`` in the error state,
 /// or its reply didn't start in time.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIAgentError: LocalizedError, Hashable, Sendable {
     /// What the agent said about it, if anything.
     public let message: String?

@@ -7,7 +7,7 @@ import Foundation
 import UniformTypeIdentifiers
 
 // A photo picked in the photo library, copied into a temporary file.
-@available(iOS 16, *)
+@available(iOS 16.0, macOS 13.0, *)
 struct PickedPhotoFile: Transferable {
     let url: URL
 

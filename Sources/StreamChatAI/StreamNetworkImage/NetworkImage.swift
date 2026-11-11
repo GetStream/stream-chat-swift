@@ -71,6 +71,7 @@ import SwiftUI
 /// .background(Color.secondary.opacity(0.25))
 /// .clipped()
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 struct NetworkImage<Content>: View where Content: View {
   @Environment(\.networkImageLoader) private var imageLoader
   @StateObject private var model = NetworkImageModel()
@@ -183,6 +184,7 @@ struct NetworkImage<Content>: View where Content: View {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 struct _OptionalContent<Content>: View where Content: View {
   private let image: Image?
   private let content: (Image) -> Content
@@ -203,12 +205,14 @@ struct _OptionalContent<Content>: View where Content: View {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension _OptionalContent where Content == Image {
   init(_ image: Image?) {
     self.init(image, content: { $0 })
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension Image {
   fileprivate static var empty: Image {
     #if canImport(UIKit)

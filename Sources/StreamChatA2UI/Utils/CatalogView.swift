@@ -10,6 +10,7 @@ import SwiftUI
 /// This is a development tool: it exercises each component with a small,
 /// self-contained A2UI message stream, which makes it easy to check rendering
 /// and interaction without an agent.
+@available(iOS 15.0, macOS 12.0, *)
 public struct DebugCatalogView: View {
     @StateObject private var model: DebugCatalogModel
 
@@ -44,6 +45,7 @@ public struct DebugCatalogView: View {
 }
 
 /// Loads catalog examples into a message processor for the debug gallery.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class DebugCatalogModel: ObservableObject {
     let processor: A2UIMessageProcessor

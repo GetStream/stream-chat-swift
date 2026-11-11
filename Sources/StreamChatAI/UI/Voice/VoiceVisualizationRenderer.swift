@@ -7,6 +7,7 @@ import StreamCore
 
 // Draws a voice visualization's shader over a whole render target. All visualizations share
 // one. The shaders compile once, asynchronously, and nothing is drawn until they have.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class VoiceVisualizationRenderer {
     static let pixelFormat = MTLPixelFormat.bgra8Unorm

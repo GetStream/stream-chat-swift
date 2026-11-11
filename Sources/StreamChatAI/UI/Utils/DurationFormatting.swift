@@ -4,6 +4,7 @@
 
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 enum DurationFormatting {
     static func minutesAndSeconds(_ seconds: Int, locale: Locale = .autoupdatingCurrent) -> String {
         if #available(iOS 16.0, *) {

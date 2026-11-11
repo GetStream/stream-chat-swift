@@ -7,6 +7,7 @@ import Foundation
 import StreamChatAI
 
 /// One reply's surfaces, which follow its messages as the agent writes them.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class A2UIReply: ObservableObject {
     let processor: A2UIMessageProcessor

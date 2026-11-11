@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 
 // Says the person is editing a message they sent, with a button that cancels it.
+@available(iOS 15.0, macOS 12.0, *)
 struct EditingMessageChip: View {
     let onCancel: () -> Void
 

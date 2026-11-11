@@ -8,6 +8,7 @@ import StreamCore
 /// Decodes the arguments an agent wrote for a component into the component's own type: keys in
 /// snake_case, and dates as a day (`2026-11-14`, from its start in this device's time zone) or a
 /// moment.
+@available(iOS 15.0, macOS 12.0, *)
 enum AIUIArguments {
     static func decode<Value: Decodable>(_ type: Value.Type, from arguments: [String: RawJSON]) throws -> Value {
         try decoder.decode(Value.self, from: JSONEncoder.streamCore.encode(arguments))

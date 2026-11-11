@@ -15,6 +15,7 @@ import SwiftUI
 /// ```swift
 /// AIAssistantMessageView(text: reply.text, isGenerating: reply.isGenerating, parts: reply.parts)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIAssistantMessageView<Factory: AIConversationViewFactory>: View {
     var viewFactory: Factory
     var text: String

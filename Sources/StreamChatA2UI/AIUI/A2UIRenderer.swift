@@ -27,6 +27,7 @@ import SwiftUI
 ///
 /// An app component named like one of the catalog's, such as `card` for `Card`, would replace
 /// it, so the agent doesn't get it and it is logged.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public final class A2UIRenderer: AIUIRenderer {
     /// The version of A2UI it reads.

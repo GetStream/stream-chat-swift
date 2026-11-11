@@ -7,6 +7,7 @@ import Foundation
 // Where the list scrolls when its last turn changes. A turn added after the previous last
 // one was just sent, so it goes to the top. Otherwise the conversation loaded or was
 // replaced, and it opens at its end.
+@available(iOS 15.0, macOS 12.0, *)
 enum AIConversationScroll: Equatable {
     case toTop(AnyHashable)
     case toEnd

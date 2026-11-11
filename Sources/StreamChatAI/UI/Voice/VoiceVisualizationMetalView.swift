@@ -6,6 +6,7 @@ import MetalKit
 import UIKit
 
 // Touches outside the shape pass through to whatever is behind the view.
+@available(iOS 15.0, macOS 12.0, *)
 final class VoiceVisualizationMetalView: MTKView {
     let style: VoiceVisualizationStyle
 

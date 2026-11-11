@@ -6,15 +6,17 @@ import Charts
 import StreamCore
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 struct PieDatum: Identifiable { let id = UUID(); let label: String; let value: Double; let pct: Double }
 
+@available(iOS 15.0, macOS 12.0, *)
 func pieData(from spec: USpec) -> [PieDatum] {
     let pts = spec.series.first?.points ?? []
     let total = max(pts.reduce(0) { $0 + $1.y }, 0.000001)
     return pts.map { PieDatum(label: $0.x, value: $0.y, pct: $0.y / total) }
 }
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 13.0, *)
 struct PieChart: View {
     let spec: USpec
 

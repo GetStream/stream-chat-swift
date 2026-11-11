@@ -7,6 +7,7 @@ import StreamCore
 import SwiftUI
 import UniformTypeIdentifiers
 
+@available(iOS 15.0, macOS 12.0, *)
 struct AIFileAttachmentView: View {
     var attachment: AIMessageAttachment
 

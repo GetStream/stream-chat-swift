@@ -12,6 +12,7 @@ import SwiftUI
 /// }
 /// .markdownImageProvider(.asset)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 struct AssetImageProvider: ImageProvider {
   private let name: @Sendable (URL) -> String
   private let bundle: Bundle?
@@ -50,6 +51,7 @@ struct AssetImageProvider: ImageProvider {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension ImageProvider where Self == AssetImageProvider {
   /// An image provider that loads images from resources located in an app or a module.
   ///
@@ -60,11 +62,14 @@ extension ImageProvider where Self == AssetImageProvider {
 }
 
 #if canImport(UIKit)
+  @available(iOS 15.0, macOS 12.0, *)
   private typealias PlatformImage = UIImage
 #elseif canImport(AppKit)
+  @available(iOS 15.0, macOS 12.0, *)
   private typealias PlatformImage = NSImage
 #endif
 
+@available(iOS 15.0, macOS 12.0, *)
 extension Image {
   fileprivate init(platformImage: PlatformImage) {
     #if canImport(UIKit)

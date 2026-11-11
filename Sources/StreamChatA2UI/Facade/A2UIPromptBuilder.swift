@@ -9,6 +9,7 @@ import Foundation
 /// Use this when an agent drives a model directly instead of relying on an
 /// A2UI SDK: the prompt describes the message envelope, embeds the catalogs the
 /// renderer supports, and states the rules that keep generated trees valid.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIPromptBuilder {
     /// Builds a system prompt for the given catalogs.
     ///

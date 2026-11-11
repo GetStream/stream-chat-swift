@@ -6,12 +6,14 @@ import Combine
 import Foundation
 
 /// A change to the set of rendered surfaces.
+@available(iOS 15.0, macOS 12.0, *)
 protocol A2UIUpdate {
     /// The surface the update refers to.
     var surfaceId: String { get }
 }
 
 /// Emitted when an agent creates a surface.
+@available(iOS 15.0, macOS 12.0, *)
 struct SurfaceAdded: A2UIUpdate {
     /// The surface that was created.
     let surfaceId: String
@@ -28,6 +30,7 @@ struct SurfaceAdded: A2UIUpdate {
 }
 
 /// Emitted when a surface's components or data change.
+@available(iOS 15.0, macOS 12.0, *)
 struct SurfaceUpdated: A2UIUpdate {
     /// The surface that changed.
     let surfaceId: String
@@ -43,6 +46,7 @@ struct SurfaceUpdated: A2UIUpdate {
 }
 
 /// Emitted when a surface is deleted.
+@available(iOS 15.0, macOS 12.0, *)
 struct SurfaceRemoved: A2UIUpdate {
     /// The surface that was removed.
     let surfaceId: String
@@ -57,6 +61,7 @@ struct SurfaceRemoved: A2UIUpdate {
 ///
 /// The host owns surface state, resolves catalogs and receives the events a
 /// surface produces. ``A2UIMessageProcessor`` is the default implementation.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 protocol A2UIHost: AnyObject {
     /// The catalogs this host can render.
@@ -81,6 +86,7 @@ protocol A2UIHost: AnyObject {
     func report(_ error: RendererError)
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension A2UIHost {
     /// Creates a renderer for a surface definition.
     ///
