@@ -298,9 +298,11 @@ publicize_raw_representable() {
 }
 
 remove_properties() {
-  local model
-  for model in $(jq -r '.removedProperties | keys[]' "$ALLOWED_FILE"); do
-    remove_property "$model" $(jq -r --arg m "$model" '.removedProperties[$m][]' "$ALLOWED_FILE")
+  local model models props
+  models="$(jq -r '.removedProperties | keys[]' "$ALLOWED_FILE")"
+  for model in $models; do
+    props="$(jq -r --arg m "$model" '.removedProperties[$m][]' "$ALLOWED_FILE")"
+    remove_property "$model" $props
   done
 }
 

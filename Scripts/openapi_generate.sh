@@ -11,6 +11,7 @@ ALLOWED_FILE="$SCRIPT_DIR/openapi-allowed.json"
 source "$SCRIPT_DIR/openapi_generate_helpers.sh"
 
 command -v jq > /dev/null || { echo "jq not found (brew install jq)" >&2; exit 1; }
+jq -e . "$ALLOWED_FILE" > /dev/null || { echo "Invalid $ALLOWED_FILE" >&2; exit 1; }
 
 allowed_endpoints=($(jq -r '.allowedEndpoints[]' "$ALLOWED_FILE"))
 allowed_events=($(jq -r '.allowedEvents[]' "$ALLOWED_FILE"))
