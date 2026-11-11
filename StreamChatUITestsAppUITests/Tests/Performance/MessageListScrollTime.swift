@@ -19,7 +19,7 @@ class MessageListScrollTime: StreamTestCase {
             userRobot.login()
         }
         AND("user opens a channel with many messages") {
-            MessageListPage.cells.waitCount(10)
+            XCTAssertGreaterThanOrEqual(MessageListPage.cells.waitCount(10).count, 10)
         }
         THEN("user scrolls the message list") {
             let measureOptions = XCTMeasureOptions()

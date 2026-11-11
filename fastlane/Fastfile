@@ -313,7 +313,7 @@ lane :xcmetrics do |options|
   expected_performance = performance_benchmarks['benchmark']
   actual_performance = xcmetrics_log_parser(log: xcodebuild_output)
 
-  two_frames_ms = 2 * 1000.0 / 120 # The Firebase device runs at 120 Hz
+  two_frames_ms = (2 * 1000.0 / 120).ceil(1) # The Firebase device runs at 120 Hz; it logs a dropped frame as 8.34 ms
 
   table_header = '## SDK Performance'
   markdown_table = "#{table_header}\n| `target` | `metric` | `benchmark` | `branch` | `performance` | `status` |\n| - | - | - | - | - | - |\n"
@@ -348,7 +348,7 @@ lane :xcmetrics do |options|
 
       status_emoji =
         if is_frame_rate
-          if branch_value < benchmark_value && branch_value > benchmark_value - max_tolerance
+          if branch_value < benchmark_value && branch_value >= benchmark_value - max_tolerance
             warning_status
           elsif branch_value < benchmark_value
             fail_status
@@ -356,7 +356,7 @@ lane :xcmetrics do |options|
             success_status
           end
         else
-          if branch_value > benchmark_value && branch_value < benchmark_value + max_tolerance
+          if branch_value > benchmark_value && branch_value <= benchmark_value + max_tolerance
             warning_status
           elsif branch_value > benchmark_value
             fail_status
