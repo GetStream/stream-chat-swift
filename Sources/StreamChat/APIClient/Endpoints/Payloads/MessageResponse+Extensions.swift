@@ -12,7 +12,7 @@ extension MessageResponse {
     var campaignId: String? { custom["created_by_campaign_id"]?.stringValue }
     var args: String? { custom[Self.argsKey]?.stringValue }
 
-    var translations: [TranslationLanguage: String]? {
+    var translations: [String: String]? {
         I18n.translations(from: i18n)
     }
 

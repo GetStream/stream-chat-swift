@@ -97,7 +97,7 @@ extension NSManagedObjectContext {
             cache: cache
         )
         dto.text = payload.text
-        dto.translations = I18n.translations(from: payload.textI18n)?.mapKeys(\.languageCode)
+        dto.translations = I18n.translations(from: payload.textI18n)
         dto.originalLanguage = I18n.originalLanguage(from: payload.textI18n)
         if !payload.custom.isEmpty {
             dto.custom = try JSONEncoder.default.encode(payload.custom)

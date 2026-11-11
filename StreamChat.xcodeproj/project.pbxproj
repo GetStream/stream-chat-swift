@@ -5684,7 +5684,7 @@
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.17.0;
+				minimumVersion = 0.18.0;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {

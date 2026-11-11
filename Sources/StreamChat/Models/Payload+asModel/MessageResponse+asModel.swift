@@ -111,7 +111,7 @@ extension MessageResponse {
                 pinnedBy: pinnedBy?.asModel() ?? author,
                 expiresAt: pinExpires
             ) : nil,
-            translations: translations,
+            translations: translations?.mapKeys { TranslationLanguage(languageCode: $0) },
             originalLanguage: originalLanguage.flatMap { TranslationLanguage(languageCode: $0) },
             moderationDetails: moderation.map { .init(
                 originalText: $0.originalText,
