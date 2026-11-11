@@ -30,7 +30,7 @@ runs:
             exit 1
             ;;
         esac
-        dir="$GITHUB_ACTION_PATH/generated"
+        dir="$GITHUB_WORKSPACE/.github/actions/invoke-action/generated"
         rm -rf "$dir"
         mkdir -p "$dir"
         {
@@ -44,4 +44,4 @@ runs:
             printf '%s\n' "$ACTION_WITH" | sed 's/^/        /'
           fi
         } > "$dir/action.yml"
-    - uses: ./generated
+    - uses: ./.github/actions/invoke-action/generated
