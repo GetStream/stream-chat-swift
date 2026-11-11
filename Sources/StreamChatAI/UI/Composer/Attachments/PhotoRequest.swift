@@ -7,6 +7,7 @@ import StreamCore
 
 // Photos can call a request's handler several times, from any queue: the request resumes its
 // continuation once, and starts the full-size fallback once.
+@available(iOS 15.0, macOS 12.0, *)
 final class PhotoRequest<Value>: Sendable {
     private struct State {
         var continuation: CheckedContinuation<Value, Never>?

@@ -1,6 +1,7 @@
 import Foundation
 
 /// A text style that adjusts the font to use alternate glyphs for capital letters.
+@available(iOS 15.0, macOS 12.0, *)
 struct FontCapsVariant: TextStyle {
   private let capsVariant: FontProperties.CapsVariant
 

@@ -10,6 +10,7 @@ import Foundation
 /// ```swift
 /// AIConversation(transport: transport, actions: [.rate])
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIConversationActions: OptionSet, Hashable, Sendable {
     public let rawValue: Int
 

@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 struct StreamingMessageViewChangeListeners: ViewModifier {
     // Before iOS 17 `onChange` doesn't pass the old text, so the modifier keeps it. It starts
     // as the text the view appeared with, which the view has already queued.
@@ -50,6 +51,7 @@ struct StreamingMessageViewChangeListeners: ViewModifier {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension View {
     func addChangeListeners(
         content: String,

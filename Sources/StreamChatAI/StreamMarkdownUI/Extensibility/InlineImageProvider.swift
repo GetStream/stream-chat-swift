@@ -4,6 +4,7 @@ import SwiftUI
 ///
 /// To configure the current inline image provider for a view hierarchy,
 /// use the `markdownInlineImageProvider(_:)` modifier.
+@available(iOS 15.0, macOS 12.0, *)
 protocol InlineImageProvider: Sendable {
   /// Returns an image for the given URL.
   ///

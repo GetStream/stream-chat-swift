@@ -7,6 +7,7 @@ import Foundation
 
 /// Reveals new text a little at a time, so thoughts that arrive in bursts read as a steady
 /// stream. Text that does not carry on from what is shown replaces it at once.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class TextReveal: ObservableObject {
     @Published private(set) var shown = ""

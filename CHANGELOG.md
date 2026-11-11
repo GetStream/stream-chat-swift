@@ -16,9 +16,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Show translated poll questions, options and answers when `Components.messageAutoTranslationEnabled` is `true` [#4390](https://github.com/GetStream/stream-chat-swift/pull/4390)
 
+## StreamChatAI
+### 🐞 Fixed
+- Fix building with Xcode 26 [#4394](https://github.com/GetStream/stream-chat-swift/pull/4394)
+- Fix a reply's A2UI staying empty after it finishes streaming in [#4393](https://github.com/GetStream/stream-chat-swift/pull/4393)
+- 
 ## StreamChatA2UI
 ### 🐞 Fixed
-- Fix a reply's A2UI staying empty after it finishes streaming in [#4393](https://github.com/GetStream/stream-chat-swift/pull/4393)
+- Fix building with Xcode 26 [#4394](https://github.com/GetStream/stream-chat-swift/pull/4394)
+
+## StreamChatOpenUI
+### 🐞 Fixed
+- Fix building with Xcode 26 [#4394](https://github.com/GetStream/stream-chat-swift/pull/4394)
 
 # [5.16.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.16.0)
 _November 04, 2026_

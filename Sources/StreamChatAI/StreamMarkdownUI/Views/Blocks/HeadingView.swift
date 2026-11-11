@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 struct HeadingView: View {
   @Environment(\.theme.headings) private var headings
 

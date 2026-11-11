@@ -57,6 +57,7 @@ import Foundation
 /// ```
 ///
 /// ![](Table-Static)
+@available(iOS 15.0, macOS 12.0, *)
 struct TextTable: MarkdownContentProtocol {
   var _markdownContent: MarkdownContent {
     .init(blocks: [.table(columnAlignments: self.columnAlignments, rows: self.rows)])
@@ -111,6 +112,7 @@ struct TextTable: MarkdownContentProtocol {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension RawTableColumnAlignment {
   init(_ alignment: TextTableColumnAlignment?) {
     switch alignment {

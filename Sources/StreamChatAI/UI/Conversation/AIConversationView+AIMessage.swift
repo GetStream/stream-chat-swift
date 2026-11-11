@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIConversationView {
     /// Shows ``AIMessage``s with the views of `viewFactory`. A reply joins the list once it shows
     /// something; until then the list shows the agent thinking.
@@ -91,6 +92,7 @@ public extension AIConversationView {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIConversationView {
     /// Shows ``AIMessage``s with the views of `viewFactory`, and a reply's generated UI in place
     /// of its text, from the renderers of `ui`. A reply joins the list once it shows something;

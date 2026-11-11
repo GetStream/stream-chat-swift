@@ -24,6 +24,7 @@ import Foundation
 ///     else if part.kind == "ai_citation", let citation = try? part.decode(Citation.self) { … }
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public final class AIMessagePart: Identifiable, Equatable, Sendable {
     /// What kind of step a part is. It is an open set: compare against the kinds you know
     /// and give the rest a fallback.

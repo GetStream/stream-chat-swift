@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIConversationView {
     /// Shows an ``AIConversation`` with the views of `viewFactory`, and follows it as it changes.
     ///
@@ -73,6 +74,7 @@ public extension AIConversationView {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIConversationView {
     /// Shows an ``AIConversation`` with the views of `viewFactory`, and a reply's generated UI in
     /// place of its text, from the renderers of `ui`, and follows it as it changes.

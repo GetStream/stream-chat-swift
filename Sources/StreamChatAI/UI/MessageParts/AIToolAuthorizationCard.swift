@@ -7,6 +7,7 @@ import SwiftUI
 
 /// Asks for a tool call's sign-in, saying which provider it needs and what signing in means,
 /// with buttons to connect or to say not now.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolAuthorizationCard: View {
     var authorization: AIToolAuthorization
     var state: AIToolAuthorizationState

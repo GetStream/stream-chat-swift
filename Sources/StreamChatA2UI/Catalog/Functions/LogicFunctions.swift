@@ -9,6 +9,7 @@ import Foundation
 /// Logical functions accept booleans as well as ``ValidationResult`` payloads,
 /// so validation functions can be combined directly, as shown by the
 /// specification's button validation example.
+@available(iOS 15.0, macOS 12.0, *)
 enum LogicFunctions {
     /// All logical functions, in catalog order.
     static var all: [FunctionDefinition] {

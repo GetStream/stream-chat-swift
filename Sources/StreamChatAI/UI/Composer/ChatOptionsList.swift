@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 
 /// The chat options a message can be sent with, such as web search.
+@available(iOS 15.0, macOS 12.0, *)
 struct ChatOptionsList: View {
     let options: [ChatOption]
 

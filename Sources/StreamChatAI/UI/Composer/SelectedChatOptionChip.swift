@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 
 /// The chat option picked for the next message, with a button that removes it.
+@available(iOS 15.0, macOS 12.0, *)
 struct SelectedChatOptionChip: View {
     let option: ChatOption
     let onRemove: () -> Void

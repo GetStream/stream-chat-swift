@@ -7,6 +7,7 @@ import Foundation
 /// A stable identifier for this install, for addressing client tool calls to it. Put it in
 /// the custom data of the person's message (`client_id`) so the agent can copy it onto the
 /// calls it makes while answering.
+@available(iOS 15.0, macOS 12.0, *)
 public enum AIClientIdentity {
     private static let key = "io.getstream.ai.client-id"
 

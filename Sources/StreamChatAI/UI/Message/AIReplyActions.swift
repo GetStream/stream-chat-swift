@@ -5,6 +5,7 @@
 import Foundation
 
 /// How the person rated a reply.
+@available(iOS 15.0, macOS 12.0, *)
 public enum AIMessageRating: Hashable, Sendable {
     /// A good reply.
     case positive
@@ -13,6 +14,7 @@ public enum AIMessageRating: Hashable, Sendable {
 }
 
 /// What ``AIReplyActionsView`` offers besides copying and sharing a reply.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIReplyActions {
     /// How the person rated the reply, if they did.
     public var rating: AIMessageRating?

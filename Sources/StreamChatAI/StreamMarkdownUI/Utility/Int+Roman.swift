@@ -1,5 +1,6 @@
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 extension Int {
   var roman: String {
     guard self > 0, self < 4000 else {

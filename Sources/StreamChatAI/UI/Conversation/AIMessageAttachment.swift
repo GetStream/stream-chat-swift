@@ -21,6 +21,7 @@ import UniformTypeIdentifiers
 ///         + message.fileAttachments.map { .file($0.assetURL, name: $0.title, size: $0.file.size) }
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public final class AIMessageAttachment: Hashable, Sendable {
     /// What kind of attachment it is. It is an open set: compare against the kinds you know
     /// and give the rest a fallback.
@@ -125,6 +126,7 @@ public final class AIMessageAttachment: Hashable, Sendable {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIMessageAttachment {
     // The type of its content, from its media type or else its extension.
     var contentType: UTType? {

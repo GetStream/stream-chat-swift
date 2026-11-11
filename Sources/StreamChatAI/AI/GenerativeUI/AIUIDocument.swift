@@ -21,6 +21,7 @@ import StreamCore
 /// ```swift
 /// var uiDocument: AIUIDocument? { AIUIDocument(customData: message.extraData) }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIUIDocument: Equatable, Sendable {
     /// The custom field of a message that holds its document.
     public static let customDataKey = "ai_ui"

@@ -6,6 +6,7 @@ import SwiftUI
 
 /// One paragraph of reasoning. It is equatable so that only the paragraph still being
 /// written is rendered again as the reasoning grows.
+@available(iOS 15.0, macOS 12.0, *)
 struct ReasoningParagraphView: View, Equatable {
     let text: String
     let color: Color

@@ -8,6 +8,7 @@ import SwiftUI
 // What a row of an ``AIConversationView`` of ``AIMessage``s shows, made by its view factory: a
 // person's message, or a reply and the actions under it. A reply with generated UI shows it, in
 // its type, after its steps in place of its text.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory, Generated: View>: View {
     let entry: AIConversationEntry<Message>
     let factory: Factory

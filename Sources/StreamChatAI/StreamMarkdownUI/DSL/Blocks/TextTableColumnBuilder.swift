@@ -5,6 +5,7 @@ import Foundation
 /// You don't call the methods of the result builder directly. Instead, MarkdownUI annotates the `columns`
 /// parameter of the various ``TextTable`` initializers with the `@TextTableColumnBuilder` attribute,
 /// implicitly calling this builder for you.
+@available(iOS 15.0, macOS 12.0, *)
 @resultBuilder enum TextTableColumnBuilder<RowValue> {
   static func buildBlock(
     _ components: [TextTableColumn<RowValue>]...

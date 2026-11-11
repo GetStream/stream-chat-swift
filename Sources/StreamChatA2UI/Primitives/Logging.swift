@@ -5,6 +5,7 @@
 import Foundation
 
 /// How serious a message of the A2UI logger is.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UILogLevel: Sendable {
     case debug
     case info
@@ -14,6 +15,7 @@ enum A2UILogLevel: Sendable {
 
 /// Where the renderer's messages go. Without a handler they go nowhere: `A2UIRenderer` sends
 /// them to StreamCore's logger, with the rest of the SDK's.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class A2UILogger {
     var handler: ((A2UILogLevel, String) -> Void)?
@@ -28,9 +30,11 @@ final class A2UILogger {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor let a2uiLogger = A2UILogger()
 
 /// Formats errors for logs and for the messages sent back to agents.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIErrorFormatter {
     /// Returns the most useful description available for an error.
     ///

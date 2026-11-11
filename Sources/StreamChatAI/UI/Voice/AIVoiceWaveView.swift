@@ -18,6 +18,7 @@ import SwiftUI
 /// AIVoiceWaveView(state: .listening)
 ///     .frame(width: 320, height: 320)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIVoiceWaveView: View {
     private let state: AIVoiceAgentState
     private let colors: [Color]?

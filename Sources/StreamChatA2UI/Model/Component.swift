@@ -10,6 +10,7 @@ import Foundation
 /// `id`, a `component` type discriminator and its type-specific properties
 /// inline. Parent-child relationships are expressed with id references, so the
 /// renderer rebuilds the tree at render time.
+@available(iOS 15.0, macOS 12.0, *)
 struct Component: Equatable, Sendable {
     /// Wire keys that belong to the component envelope rather than the catalog schema.
     static let envelopeKeys: Set<String> = ["id", "component", "catalogId", "accessibility", "metadata"]
@@ -111,6 +112,7 @@ struct Component: Equatable, Sendable {
 }
 
 // Surface and component metadata hold only `extensions`, whose keys are Unicode identifiers (UAX #31).
+@available(iOS 15.0, macOS 12.0, *)
 enum ExtensionMetadata {
     static func violation(in metadata: JsonMap) -> (pointer: String, reason: String)? {
         for key in metadata.keys.sorted() where key != "extensions" {
@@ -132,6 +134,7 @@ enum ExtensionMetadata {
 }
 
 // The spec's naming rule for extension keys and catalog names: UAX #31 identifiers, which may start with `_`.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIIdentifier {
     static func isValid(_ name: String) -> Bool {
         guard let first = name.unicodeScalars.first else { return false }

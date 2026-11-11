@@ -6,6 +6,7 @@ import Foundation
 import StreamCore
 
 /// How a client tool is described to the agent, for your backend to register it.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIClientToolRegistration: Encodable, Equatable, Sendable {
     /// The unique name of the tool. This is how the agent identifies it.
     public let name: String

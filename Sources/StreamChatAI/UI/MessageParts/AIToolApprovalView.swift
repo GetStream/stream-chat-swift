@@ -22,6 +22,7 @@ import SwiftUI
 ///     MyApprovalCard(title: approval.title, busy: state.isSending, onAllow: { decide(true) }, onDecline: { decide(false) })
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolApprovalView<Content: View>: View {
     var call: AIToolCallPart
     var approver: AIToolApprover
@@ -63,6 +64,7 @@ public struct AIToolApprovalView<Content: View>: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIToolApprovalView where Content == AIToolApprovalCard {
     /// Asks with `AIToolApprovalCard`.
     init(call: AIToolCallPart, approver: AIToolApprover, font: Font? = nil) {

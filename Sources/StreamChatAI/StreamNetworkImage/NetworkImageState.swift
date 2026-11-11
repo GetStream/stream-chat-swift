@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// The state of a network image loading operation.
+@available(iOS 15.0, macOS 12.0, *)
 enum NetworkImageState: Equatable {
   /// No image is loaded.
   case empty

@@ -8,6 +8,7 @@ import UIKit
 
 /// A message the person sent: its attachments, then its text in a bubble, at the trailing edge.
 /// Pressing the bubble offers to copy the text, and to edit it given `onEdit`.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIUserMessageView<Factory: AIConversationViewFactory>: View {
     var viewFactory: Factory
     var text: String

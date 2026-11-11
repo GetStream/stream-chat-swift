@@ -1,5 +1,6 @@
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 extension Sequence where Element == BlockNode {
   func rewrite(_ r: (BlockNode) throws -> [BlockNode]) rethrows -> [BlockNode] {
     try self.flatMap { try $0.rewrite(r) }
@@ -10,6 +11,7 @@ extension Sequence where Element == BlockNode {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension BlockNode {
   func rewrite(_ r: (BlockNode) throws -> [BlockNode]) rethrows -> [BlockNode] {
     switch self {

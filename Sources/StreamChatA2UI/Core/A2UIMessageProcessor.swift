@@ -15,6 +15,7 @@ import Foundation
 ///
 /// All members must be used from the main thread; the transport delivers
 /// messages there.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     /// The catalogs this renderer supports.

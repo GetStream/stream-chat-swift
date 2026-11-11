@@ -25,6 +25,7 @@ import Foundation
 /// ```
 ///
 /// ![](CodeBlock)
+@available(iOS 15.0, macOS 12.0, *)
 struct CodeBlock: MarkdownContentProtocol {
   var _markdownContent: MarkdownContent {
     .init(blocks: [.codeBlock(fenceInfo: self.language, content: self.content)])

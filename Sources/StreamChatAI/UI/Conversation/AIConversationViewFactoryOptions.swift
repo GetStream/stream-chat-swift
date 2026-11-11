@@ -5,6 +5,7 @@
 import Foundation
 
 /// What ``AIConversationViewFactory/makeUserMessageView(options:)`` shows.
+@available(iOS 15.0, macOS 12.0, *)
 public final class AIUserMessageViewOptions {
     /// The message, which is one of the app's own: cast it to read what else it holds. Nil
     /// while the message is on its way.
@@ -32,6 +33,7 @@ public final class AIUserMessageViewOptions {
 }
 
 /// What ``AIConversationViewFactory/makeAssistantMessageView(options:)`` shows.
+@available(iOS 15.0, macOS 12.0, *)
 public final class AIAssistantMessageViewOptions {
     /// The reply, which is one of the app's own messages: cast it to read what else it holds.
     public let message: any AIMessage
@@ -68,6 +70,7 @@ public final class AIAssistantMessageViewOptions {
 }
 
 /// What ``AIConversationViewFactory/makeReplyActionsView(options:)`` shows actions for.
+@available(iOS 15.0, macOS 12.0, *)
 public final class AIReplyActionsViewOptions {
     /// The reply, which is one of the app's own messages: cast it to act on it.
     public let message: any AIMessage
@@ -91,6 +94,7 @@ public final class AIReplyActionsViewOptions {
 }
 
 /// What ``AIConversationViewFactory/makeAttachmentView(options:)`` shows.
+@available(iOS 15.0, macOS 12.0, *)
 public final class AIMessageAttachmentViewOptions {
     /// The attachment.
     public let attachment: AIMessageAttachment
@@ -104,6 +108,7 @@ public final class AIMessageAttachmentViewOptions {
 }
 
 /// What ``AIConversationViewFactory/makeToolAuthorizationView(options:)`` asks the person.
+@available(iOS 15.0, macOS 12.0, *)
 public final class AIToolAuthorizationViewOptions {
     /// The tool call that waits for the sign-in.
     public let call: AIToolCallPart

@@ -7,6 +7,7 @@ import SwiftUI
 
 /// A tool call's question: what it asks, the agent's reason and what allowing it shares, and
 /// buttons to allow or decline it.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolApprovalCard: View {
     var approval: AIToolApproval
     var state: AIToolApprovalState

@@ -4,6 +4,7 @@
 
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 struct ReasoningParagraph: Identifiable, Equatable {
     let id: Int
     let text: String
