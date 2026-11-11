@@ -48,8 +48,18 @@ final class ViewController: UIViewController {
     private func startChat() {
         // Setup chat client
         streamChat.setUpChat()
+        #if TESTS
+        if PerformanceFixture.isEnabled {
+            PerformanceFixture.install(currentUserId: loggedInUserCredentials.id)
+        }
+        #endif
         streamChat.connectUser(completion: { _ in })
         showChannelList()
+        #if TESTS
+        if PerformanceFixture.isEnabled {
+            router?.showChannel(for: PerformanceFixture.cid)
+        }
+        #endif
     }
 
     @objc func didTapConnectGuest() {
