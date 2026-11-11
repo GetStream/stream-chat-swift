@@ -294,7 +294,7 @@ Adding an endpoint:
 3. Rename new models onto the SDK names they replace with `rename_generated` (the model file and its references) or `rename_generated_type` (references only). Point unused responses at `EmptyResponse`.
 4. Classify every retained model, under its post-rename name, into exactly one of `encodableOnlyModels`, `decodableOnlyModels`, or `codableModels`. The script fails on any model that is unclassified or classified twice. Add the model to `allowedHashableModels` only if it needs `Hashable`.
 5. Add any new WebSocket events to `allowedEvents`.
-6. Drop properties the SDK never reads by adding them to `removedProperties`.
+6. Drop properties the SDK never reads by adding them to `removedProperties`. Each entry is `{ "<property>": "<reason>" }` with a short reason: Unused, Never set by the backend, Server-side only, Video only, Feeds only, or Deprecated (name the replacement). The script fails when an entry lacks a reason.
 7. To expose a model publicly, use `publicize_model` or `publicize_raw_representable`.
 
 Rules:

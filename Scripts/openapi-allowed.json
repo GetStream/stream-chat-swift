@@ -565,798 +565,798 @@
   ],
   "removedProperties": {
     "AIIndicatorClearEventDTO": [
-      "channelId",
-      "channelType",
-      "custom",
-      "receivedAt"
+      { "channelId": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "AIIndicatorStopEventDTO": [
-      "channelId",
-      "channelType",
-      "custom",
-      "receivedAt"
+      { "channelId": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "AIIndicatorUpdateEventDTO": [
-      "channelId",
-      "channelType",
-      "custom",
-      "receivedAt"
+      { "channelId": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "BanRequest": [
-      "banFromFutureChannels",
-      "deleteMessages",
-      "deleteReactions",
-      "ipBan"
+      { "banFromFutureChannels": "Unused" },
+      { "deleteMessages": "Unused" },
+      { "deleteReactions": "Unused" },
+      { "ipBan": "Unused" }
     ],
     "ChannelDeletedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "cid",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "ChannelDetailPayload": [
-      "hideMessagesBefore",
-      "muteExpiresAt",
-      "muted"
+      { "hideMessagesBefore": "Never set by the backend" },
+      { "muteExpiresAt": "Unused" },
+      { "muted": "Unused" }
     ],
     "ChannelGetOrCreateRequest": [
-      "hideForCreator",
-      "memberCustomInclude",
-      "threadUnreadCounts"
+      { "hideForCreator": "Server-side only" },
+      { "memberCustomInclude": "Unused" },
+      { "threadUnreadCounts": "Unused" }
     ],
     "ChannelHiddenEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "ChannelInput": [
-      "autoTranslationEnabled",
-      "autoTranslationLanguage",
-      "configOverrides",
-      "createdBy",
-      "createdById",
-      "disabled",
-      "frozen",
-      "truncatedById"
+      { "autoTranslationEnabled": "Server-side only" },
+      { "autoTranslationLanguage": "Unused" },
+      { "configOverrides": "Server-side only" },
+      { "createdBy": "Server-side only" },
+      { "createdById": "Server-side only" },
+      { "disabled": "Server-side only" },
+      { "frozen": "Unused" },
+      { "truncatedById": "Unused" }
     ],
     "ChannelInputRequest": [
-      "configOverrides",
-      "createdBy"
+      { "configOverrides": "Server-side only" },
+      { "createdBy": "Server-side only" }
     ],
     "ChannelMemberRequest": [
-      "user"
+      { "user": "Unused" }
     ],
     "ChannelPartialUpdateResponse": [
-      "id",
-      "type"
+      { "id": "Unused" },
+      { "type": "Unused" }
     ],
     "ChannelStateResponse": [
-      "cooldownRemainingMs",
-      "hideMessagesBefore"
+      { "cooldownRemainingMs": "Unused" },
+      { "hideMessagesBefore": "Unused" }
     ],
     "ChannelTruncatedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelType",
-      "cid",
-      "custom",
-      "messageId",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelType": "Unused" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "ChannelUpdatedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelType",
-      "cid",
-      "custom",
-      "messageId",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelType": "Unused" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "ChannelVisibleEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "CreatePollRequestBody": [
-      "id",
-      "isClosed",
-      "team"
+      { "id": "Unused" },
+      { "isClosed": "Unused" },
+      { "team": "Unused" }
     ],
     "CreateReminderRequest": [
-      "expiresAt"
+      { "expiresAt": "Unused" }
     ],
     "DraftDeletedEventDTO": [
-      "custom",
-      "parentId",
-      "receivedAt"
+      { "custom": "Unused" },
+      { "parentId": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "DraftMessagePayload": [
-      "html",
-      "mml"
+      { "html": "Unused" },
+      { "mml": "Deprecated" }
     ],
     "DraftUpdatedEventDTO": [
-      "custom",
-      "parentId",
-      "receivedAt"
+      { "custom": "Unused" },
+      { "parentId": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "FlagRequest": [
-      "entityCreatorId",
-      "moderationPayload"
+      { "entityCreatorId": "Unused" },
+      { "moderationPayload": "Unused" }
     ],
     "FullUserResponse": [
-      "banExpires",
-      "deletedAt",
-      "latestHiddenChannels",
-      "revokeTokensIssuedBefore",
-      "unreadCount"
+      { "banExpires": "Unused" },
+      { "deletedAt": "Unused" },
+      { "latestHiddenChannels": "Unused" },
+      { "revokeTokensIssuedBefore": "Server-side only" },
+      { "unreadCount": "Deprecated, use totalUnreadCount" }
     ],
     "GetOGResponse": [
-      "actions",
-      "authorIcon",
-      "authorLink",
-      "color",
-      "fallback",
-      "fields",
-      "footer",
-      "footerIcon",
-      "giphy",
-      "originalHeight",
-      "originalWidth",
-      "pretext",
-      "type"
+      { "actions": "Unused" },
+      { "authorIcon": "Unused" },
+      { "authorLink": "Unused" },
+      { "color": "Unused" },
+      { "fallback": "Unused" },
+      { "fields": "Unused" },
+      { "footer": "Unused" },
+      { "footerIcon": "Unused" },
+      { "giphy": "Unused" },
+      { "originalHeight": "Unused" },
+      { "originalWidth": "Unused" },
+      { "pretext": "Unused" },
+      { "type": "Unused" }
     ],
     "HealthCheckEventDTO": [
-      "cid",
-      "custom",
-      "receivedAt"
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "ImageUploadResponse": [
-      "uploadSizes"
+      { "uploadSizes": "Unused" }
     ],
     "MarkChannelsReadRequest": [
-      "readByChannel"
+      { "readByChannel": "Unused" }
     ],
     "MarkReadRequest": [
-      "messageId"
+      { "messageId": "Unused" }
     ],
     "MemberAddedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "MemberPayload": [
-      "banFromFutureChannels",
-      "deletedMessages",
-      "futureChannelBanExpires",
-      "isModerator",
-      "role"
+      { "banFromFutureChannels": "Unused" },
+      { "deletedMessages": "Unused" },
+      { "futureChannelBanExpires": "Unused" },
+      { "isModerator": "Deprecated, use channelRole" },
+      { "role": "Deprecated, use channelRole" }
     ],
     "MemberRemovedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "member",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "member": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "MemberUpdatedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "MessageDeletedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelType",
-      "custom",
-      "messageId",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "MessageDeliveredEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "MessageModerationDetailsPayload": [
-      "blocklistMatched"
+      { "blocklistMatched": "Deprecated, use blocklistsMatched" }
     ],
     "MessageNewEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelType",
-      "custom",
-      "messageId",
-      "parentAuthor",
-      "receivedAt",
-      "team",
-      "threadParticipants",
-      "unreadCount"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "parentAuthor": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" },
+      { "threadParticipants": "Unused" },
+      { "unreadCount": "Deprecated, use totalUnreadCount" }
     ],
     "MessagePaginationParams": [
-      "createdAtAfter",
-      "createdAtAfterOrEqual",
-      "createdAtAround",
-      "createdAtBefore",
-      "createdAtBeforeOrEqual"
+      { "createdAtAfter": "Unused" },
+      { "createdAtAfterOrEqual": "Unused" },
+      { "createdAtAround": "Unused" },
+      { "createdAtBefore": "Unused" },
+      { "createdAtBeforeOrEqual": "Unused" }
     ],
     "MessageReactionGroupPayload": [
-      "latestReactionsBy"
+      { "latestReactionsBy": "Unused" }
     ],
     "MessageReadEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "lastReadMessageId",
-      "receivedAt"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "lastReadMessageId": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "MessageRequest": [
-      "mml",
-      "pinnedAt"
+      { "mml": "Deprecated" },
+      { "pinnedAt": "Unused" }
     ],
     "MessageResponse": [
-      "html",
-      "imageLabels",
-      "mml"
+      { "html": "Unused" },
+      { "imageLabels": "Deprecated" },
+      { "mml": "Deprecated" }
     ],
     "MessageUpdatedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelType",
-      "custom",
-      "messageId",
-      "messageUpdate",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "messageUpdate": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "MutedChannelPayloadResponse": [
-      "channelMutes",
-      "ownUser"
+      { "channelMutes": "Unused" },
+      { "ownUser": "Unused" }
     ],
     "MutedUserPayload": [
-      "user"
+      { "user": "Unused" }
     ],
     "NotificationAddedToChannelEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "cid",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "NotificationChannelDeletedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "team",
-      "unreadCount"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" },
+      { "unreadCount": "Deprecated, use totalUnreadCount" }
     ],
     "NotificationChannelMutesUpdatedEventDTO": [
-      "custom",
-      "receivedAt"
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "NotificationChannelPartialUpdatedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "cid",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "NotificationInviteAcceptedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "cid",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "NotificationInviteRejectedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "cid",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "NotificationInvitedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "NotificationMarkReadEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "team",
-      "threadId",
-      "unreadCount",
-      "unreadThreadMessages"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" },
+      { "threadId": "Unused" },
+      { "unreadCount": "Deprecated, use totalUnreadCount" },
+      { "unreadThreadMessages": "Unused" }
     ],
     "NotificationMarkUnreadEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "team",
-      "threadId",
-      "unreadCount",
-      "unreadThreadMessages"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" },
+      { "threadId": "Unused" },
+      { "unreadCount": "Deprecated, use totalUnreadCount" },
+      { "unreadThreadMessages": "Unused" }
     ],
     "NotificationMutesUpdatedEventDTO": [
-      "custom",
-      "receivedAt"
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "NotificationNewMessageEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelType",
-      "cid",
-      "custom",
-      "messageId",
-      "parentAuthor",
-      "receivedAt",
-      "team",
-      "threadParticipants",
-      "unreadCount",
-      "watcherCount"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelType": "Unused" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "parentAuthor": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" },
+      { "threadParticipants": "Unused" },
+      { "unreadCount": "Deprecated, use totalUnreadCount" },
+      { "watcherCount": "Unused" }
     ],
     "NotificationRemovedFromChannelEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "NotificationThreadMessageNewEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelType",
-      "custom",
-      "messageId",
-      "parentAuthor",
-      "receivedAt",
-      "team",
-      "threadId",
-      "threadParticipants",
-      "unreadThreadMessages",
-      "watcherCount"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "parentAuthor": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" },
+      { "threadId": "Unused" },
+      { "threadParticipants": "Unused" },
+      { "unreadThreadMessages": "Unused" },
+      { "watcherCount": "Unused" }
     ],
     "OwnUserResponse": [
-      "deletedAt",
-      "latestHiddenChannels",
-      "revokeTokensIssuedBefore",
-      "unreadCount"
+      { "deletedAt": "Unused" },
+      { "latestHiddenChannels": "Unused" },
+      { "revokeTokensIssuedBefore": "Server-side only" },
+      { "unreadCount": "Deprecated, use totalUnreadCount" }
     ],
     "PaginationParams": [
-      "idGt",
-      "idGte",
-      "idLt",
-      "idLte"
+      { "idGt": "Unused" },
+      { "idGte": "Unused" },
+      { "idLt": "Unused" },
+      { "idLte": "Unused" }
     ],
     "PendingMessageResponse": [
-      "channel",
-      "user"
+      { "channel": "Unused" },
+      { "user": "Unused" }
     ],
     "PollClosedEventDTO": [
-      "activityId",
-      "cid",
-      "custom",
-      "messageId",
-      "receivedAt"
+      { "activityId": "Feeds only" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "PollDeletedEventDTO": [
-      "activityId",
-      "cid",
-      "custom",
-      "messageId",
-      "receivedAt"
+      { "activityId": "Feeds only" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "PollUpdatedEventDTO": [
-      "activityId",
-      "cid",
-      "custom",
-      "messageId",
-      "receivedAt"
+      { "activityId": "Feeds only" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "PollVoteCastedEventDTO": [
-      "activityId",
-      "cid",
-      "custom",
-      "messageId",
-      "receivedAt"
+      { "activityId": "Feeds only" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "PollVoteChangedEventDTO": [
-      "activityId",
-      "cid",
-      "custom",
-      "messageId",
-      "receivedAt"
+      { "activityId": "Feeds only" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "PollVoteRemovedEventDTO": [
-      "activityId",
-      "cid",
-      "custom",
-      "messageId",
-      "receivedAt"
+      { "activityId": "Feeds only" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "PushPreference": [
-      "callLevel",
-      "chatPreferences",
-      "feedsLevel",
-      "feedsPreferences"
+      { "callLevel": "Video only" },
+      { "chatPreferences": "Unused" },
+      { "feedsLevel": "Feeds only" },
+      { "feedsPreferences": "Feeds only" }
     ],
     "PushPreferenceInput": [
-      "callLevel",
-      "chatPreferences",
-      "feedsLevel",
-      "feedsPreferences",
-      "userId"
+      { "callLevel": "Video only" },
+      { "chatPreferences": "Unused" },
+      { "feedsLevel": "Feeds only" },
+      { "feedsPreferences": "Feeds only" },
+      { "userId": "Unused" }
     ],
     "QueryBannedUsersPayload": [
-      "createdAtAfter",
-      "createdAtAfterOrEqual",
-      "createdAtBefore",
-      "createdAtBeforeOrEqual"
+      { "createdAtAfter": "Unused" },
+      { "createdAtAfterOrEqual": "Unused" },
+      { "createdAtBefore": "Unused" },
+      { "createdAtBeforeOrEqual": "Unused" }
     ],
     "QueryChannelsRequest": [
-      "memberCustomInclude"
+      { "memberCustomInclude": "Unused" }
     ],
     "QueryMembersPayload": [
-      "createdAtAfter",
-      "createdAtAfterOrEqual",
-      "createdAtBefore",
-      "createdAtBeforeOrEqual",
-      "members",
-      "userIdGt",
-      "userIdGte",
-      "userIdLt",
-      "userIdLte"
+      { "createdAtAfter": "Unused" },
+      { "createdAtAfterOrEqual": "Unused" },
+      { "createdAtBefore": "Unused" },
+      { "createdAtBeforeOrEqual": "Unused" },
+      { "members": "Unused" },
+      { "userIdGt": "Unused" },
+      { "userIdGte": "Unused" },
+      { "userIdLt": "Unused" },
+      { "userIdLte": "Unused" }
     ],
     "QueryUsersPayload": [
-      "idGt",
-      "idGte",
-      "idLt",
-      "idLte",
-      "includeDeactivatedUsers"
+      { "idGt": "Unused" },
+      { "idGte": "Unused" },
+      { "idLt": "Unused" },
+      { "idLte": "Unused" },
+      { "includeDeactivatedUsers": "Unused" }
     ],
     "ReactionDeletedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelType",
-      "custom",
-      "messageId",
-      "receivedAt",
-      "team",
-      "threadParticipants"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" },
+      { "threadParticipants": "Unused" }
     ],
     "ReactionNewEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelType",
-      "custom",
-      "messageId",
-      "receivedAt",
-      "team",
-      "threadParticipants"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" },
+      { "threadParticipants": "Unused" }
     ],
     "ReactionRequest": [
-      "createdAt",
-      "updatedAt"
+      { "createdAt": "Unused" },
+      { "updatedAt": "Unused" }
     ],
     "ReactionUpdatedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelType",
-      "custom",
-      "messageId",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "messageId": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "ReminderCreatedEventDTO": [
-      "cid",
-      "custom",
-      "parentId",
-      "receivedAt",
-      "userId"
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "parentId": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "userId": "Unused" }
     ],
     "ReminderDeletedEventDTO": [
-      "cid",
-      "custom",
-      "parentId",
-      "receivedAt",
-      "userId"
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "parentId": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "userId": "Unused" }
     ],
     "ReminderNotificationEventDTO": [
-      "cid",
-      "custom",
-      "parentId",
-      "receivedAt",
-      "userId"
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "parentId": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "userId": "Unused" }
     ],
     "ReminderPayload": [
-      "expiresAt",
-      "user"
+      { "expiresAt": "Unused" },
+      { "user": "Unused" }
     ],
     "ReminderUpdatedEventDTO": [
-      "cid",
-      "custom",
-      "parentId",
-      "receivedAt",
-      "userId"
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "parentId": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "userId": "Unused" }
     ],
     "ScheduledMessageContentResponse": [
-      "html",
-      "mml",
-      "sharedLocation"
+      { "html": "Unused" },
+      { "mml": "Deprecated" },
+      { "sharedLocation": "Unused" }
     ],
     "ScheduledMessageCreatedEventDTO": [
-      "cid",
-      "custom",
-      "receivedAt",
-      "user"
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "user": "Unused" }
     ],
     "ScheduledMessageDeletedEventDTO": [
-      "cid",
-      "custom",
-      "receivedAt",
-      "user"
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "user": "Unused" }
     ],
     "ScheduledMessageFailedEventDTO": [
-      "cid",
-      "custom",
-      "receivedAt",
-      "user"
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "user": "Unused" }
     ],
     "ScheduledMessageSentEventDTO": [
-      "cid",
-      "custom",
-      "receivedAt",
-      "user"
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "user": "Unused" }
     ],
     "ScheduledMessageUpdatedEventDTO": [
-      "cid",
-      "custom",
-      "receivedAt",
-      "user"
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "user": "Unused" }
     ],
     "SearchPayload": [
-      "forceDefaultSearch",
-      "forceSqlV2Backend",
-      "messageOptions",
-      "query"
+      { "forceDefaultSearch": "Unused" },
+      { "forceSqlV2Backend": "Unused" },
+      { "messageOptions": "Unused" },
+      { "query": "Unused" }
     ],
     "SearchResponse": [
-      "previous",
-      "resultsWarning"
+      { "previous": "Unused" },
+      { "resultsWarning": "Unused" }
     ],
     "SearchResultMessage": [
-      "html",
-      "imageLabels",
-      "mml"
+      { "html": "Unused" },
+      { "imageLabels": "Deprecated" },
+      { "mml": "Deprecated" }
     ],
     "SendMessageRequest": [
-      "includeChannelContext",
-      "includeMentionedMembers",
-      "keepChannelHidden"
+      { "includeChannelContext": "Unused" },
+      { "includeMentionedMembers": "Unused" },
+      { "keepChannelHidden": "Unused" }
     ],
     "SendMessageResponsePayload": [
-      "channelContext",
-      "mentionedMembers"
+      { "channelContext": "Unused" },
+      { "mentionedMembers": "Unused" }
     ],
     "SharedLocation": [
-      "channel",
-      "message"
+      { "channel": "Unused" },
+      { "message": "Unused" }
     ],
     "SyncResponse": [
-      "inaccessibleCids"
+      { "inaccessibleCids": "Unused" }
     ],
     "ThreadParticipantPayload": [
-      "lastThreadMessageAt",
-      "leftThreadAt",
-      "userId"
+      { "lastThreadMessageAt": "Unused" },
+      { "leftThreadAt": "Unused" },
+      { "userId": "Unused" }
     ],
     "ThreadResponse": [
-      "deletedAt",
-      "threadParticipants"
+      { "deletedAt": "Unused" },
+      { "threadParticipants": "Unused" }
     ],
     "ThreadStateResponse": [
-      "deletedAt"
+      { "deletedAt": "Unused" }
     ],
     "ThreadUpdatedEventDTO": [
-      "channelId",
-      "channelType",
-      "cid",
-      "custom",
-      "receivedAt"
+      { "channelId": "Unused" },
+      { "channelType": "Unused" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "TruncateChannelRequest": [
-      "memberIds",
-      "truncatedAt"
+      { "memberIds": "Unused" },
+      { "truncatedAt": "Unused" }
     ],
     "TypingStartEventDTO": [
-      "channelId",
-      "channelType",
-      "custom",
-      "receivedAt"
+      { "channelId": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "TypingStopEventDTO": [
-      "channelId",
-      "channelType",
-      "custom",
-      "receivedAt"
+      { "channelId": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "UnmuteChannelRequest": [
-      "expiration"
+      { "expiration": "Unused" }
     ],
     "UpdateChannelRequest": [
-      "cooldown",
-      "removeFilterTags",
-      "skipPush"
+      { "cooldown": "Unused" },
+      { "removeFilterTags": "Unused" },
+      { "skipPush": "Unused" }
     ],
     "UpdateMessagePartialRequest": [
-      "skipEnrichUrl",
-      "skipPush"
+      { "skipEnrichUrl": "Unused" },
+      { "skipPush": "Unused" }
     ],
     "UpdateReminderRequest": [
-      "expiresAt"
+      { "expiresAt": "Unused" }
     ],
     "UpdateUsersResponse": [
-      "membershipDeletionTaskId"
+      { "membershipDeletionTaskId": "Deprecated" }
     ],
     "UploadChannelFileResponse": [
-      "moderationAction"
+      { "moderationAction": "Unused" }
     ],
     "UploadChannelResponse": [
-      "moderationAction",
-      "uploadSizes"
+      { "moderationAction": "Unused" },
+      { "uploadSizes": "Unused" }
     ],
     "UserBannedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "custom",
-      "receivedAt",
-      "reviewQueueItemId",
-      "team",
-      "totalBans"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "reviewQueueItemId": "Unused" },
+      { "team": "Unused" },
+      { "totalBans": "Unused" }
     ],
     "UserGroupMember": [
-      "appPk"
+      { "appPk": "Unused" }
     ],
     "UserMessagesDeletedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "cid",
-      "custom",
-      "receivedAt",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "cid": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "team": "Unused" }
     ],
     "UserPayload": [
-      "blockedUserIds",
-      "deletedAt",
-      "revokeTokensIssuedBefore"
+      { "blockedUserIds": "Unused" },
+      { "deletedAt": "Unused" },
+      { "revokeTokensIssuedBefore": "Server-side only" }
     ],
     "UserPresenceChangedEventDTO": [
-      "custom",
-      "receivedAt"
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "UserRequest": [
-      "invisible",
-      "language",
-      "privacySettings"
+      { "invisible": "Unused" },
+      { "language": "Unused" },
+      { "privacySettings": "Unused" }
     ],
     "UserUnbannedEventDTO": [
-      "channelCustom",
-      "channelId",
-      "channelMemberCount",
-      "channelMessageCount",
-      "channelType",
-      "createdBy",
-      "custom",
-      "receivedAt",
-      "shadow",
-      "team"
+      { "channelCustom": "Unused" },
+      { "channelId": "Unused" },
+      { "channelMemberCount": "Unused" },
+      { "channelMessageCount": "Unused" },
+      { "channelType": "Unused" },
+      { "createdBy": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" },
+      { "shadow": "Unused" },
+      { "team": "Unused" }
     ],
     "UserUpdatedEventDTO": [
-      "custom",
-      "receivedAt"
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "UserWatchingStartEventDTO": [
-      "channelId",
-      "channelType",
-      "custom",
-      "receivedAt"
+      { "channelId": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ],
     "UserWatchingStopEventDTO": [
-      "channelId",
-      "channelType",
-      "custom",
-      "receivedAt"
+      { "channelId": "Unused" },
+      { "channelType": "Unused" },
+      { "custom": "Unused" },
+      { "receivedAt": "Never set by the backend" }
     ]
   }
 }
