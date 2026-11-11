@@ -37,6 +37,7 @@ public protocol AudioRecording {
 // MARK: - Implementation
 
 /// Definition of a class to handle audio recording
+@available(tvOS 17.0, *)
 open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegate, AppStateObserverDelegate, @unchecked Sendable {
     /// Contains the configuration properties required by the AudioRecorder
     public struct Configuration {
@@ -331,6 +332,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         }
     }
 
+    #if !os(tvOS)
     open func audioRecorderBeginInterruption(
         _ recorder: AVAudioRecorder
     ) {
@@ -348,6 +350,17 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         /// - Note: As we don't currently support pause/resume on recording this is a No-Op call
         /* No-op */
     }
+    #endif
+
+    #if os(iOS) || os(tvOS)
+    @objc func handleAudioSessionInterruption(_ notification: Notification) {
+        guard
+            let rawType = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
+            AVAudioSession.InterruptionType(rawValue: rawType) == .began
+        else { return }
+        stopRecording()
+    }
+    #endif
 
     open func audioRecorderEncodeErrorDidOccur(
         _ recorder: AVAudioRecorder,
@@ -384,6 +397,14 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
     private func setUp() {
         appStateObserver.subscribe(self)
+        #if os(tvOS)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAudioSessionInterruption(_:)),
+            name: AVAudioSession.interruptionNotification,
+            object: nil
+        )
+        #endif
     }
 
     private func notifyDelegatesForError(_ error: Error) {

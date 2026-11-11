@@ -9,6 +9,8 @@ import AVFoundation
 protocol AudioSessionProtocol {
     var category: AVAudioSession.Category { get }
 
+    var isInputAvailable: Bool { get }
+
     func setCategory(
         _ category: AVAudioSession.Category,
         mode: AVAudioSession.Mode,
@@ -21,7 +23,9 @@ protocol AudioSessionProtocol {
         options: AVAudioSession.SetActiveOptions
     ) throws
 
+    #if !os(tvOS)
     func requestRecordPermission(_ response: @escaping (Bool) -> Void)
+    #endif
 
     func overrideOutputAudioPort(_ portOverride: AVAudioSession.PortOverride) throws
 }
