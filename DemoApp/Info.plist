@@ -43,7 +43,7 @@
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>We need speech recognition to turn your voice into a message.</string>
 	<key>PushNotification-Configuration</key>
-	<string>APN-Configuration</string>
+	<string>APN-UIKit</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
