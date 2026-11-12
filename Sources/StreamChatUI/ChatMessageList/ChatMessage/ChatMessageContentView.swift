@@ -626,11 +626,12 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
         // Translated text
         if layoutOptions?.contains(.translation) == true,
-           let currentUserLang = channel?.membership?.language,
-           let translatedText = content?.translatedText(for: currentUserLang) {
-            text = translatedText
+           let currentUserLang = channel?.membership?.language {
+            let translatedText = content?.translatedText(for: currentUserLang)
+            text = translatedText ?? text
 
-            if let languageText = Locale.current.localizedString(forLanguageCode: currentUserLang.languageCode) {
+            if translatedText != nil || content?.poll?.hasTranslation(for: currentUserLang) == true,
+               let languageText = Locale.current.localizedString(forLanguageCode: currentUserLang.languageCode) {
                 translationLabel?.text = L10n.Message.translatedTo(languageText)
             }
         }

@@ -110,6 +110,7 @@ import XCTest
             pollView.optionListView.itemViews.map(\.optionNameLabel.text),
             ["Sopa", "Pizza", "Ensalada"]
         )
+        XCTAssertEqual(view.translationLabel?.text, "Translated to Spanish")
     }
 
     func test_translation_whenAutoTranslationDisabled_showsOriginalTexts() throws {
@@ -125,6 +126,7 @@ import XCTest
             pollView.optionListView.itemViews.map(\.optionNameLabel.text),
             ["Soup", "Pizza", "Salad"]
         )
+        XCTAssertNil(view.translationLabel)
     }
 
     func test_translation_whenUserLanguageHasNoTranslation_showsOriginalTexts() throws {
@@ -140,6 +142,17 @@ import XCTest
             pollView.optionListView.itemViews.map(\.optionNameLabel.text),
             ["Soup", "Pizza", "Salad"]
         )
+        XCTAssertNil(view.translationLabel)
+    }
+
+    func test_appearance_whenTranslated() {
+        let view = makeMessageView(
+            for: makeTranslatedPoll(),
+            components: translationComponents(),
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .spanish)),
+            width: 500
+        )
+        AssertSnapshot(view)
     }
 
     func test_subtitleText() {
@@ -198,21 +211,23 @@ extension PollAttachmentView_Tests {
         for poll: Poll,
         appearance: Appearance? = nil,
         components: Components? = nil,
-        channel: ChatChannel? = nil
+        channel: ChatChannel? = nil,
+        width: CGFloat = 360
     ) -> ChatMessageContentView {
         let appearance = appearance ?? .default
         let components = components ?? .mock
         let channel = channel ?? ChatChannel.mock(cid: .unique)
         let message = ChatMessage.mock(text: "", poll: poll)
+        components.messageLayoutOptionsResolver.components = components
         let layoutOptions = components.messageLayoutOptionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
-            in: .mock(cid: .unique),
+            in: channel,
             with: .init([message]),
             appearance: appearance
         )
 
         let view = ChatMessageContentView().withoutAutoresizingMaskConstraints
-        view.widthAnchor.constraint(equalToConstant: 360).isActive = true
+        view.widthAnchor.constraint(equalToConstant: width).isActive = true
         view.appearance = appearance
         view.components = components
         view.setUpLayoutIfNeeded(
