@@ -6,6 +6,7 @@ import Foundation
 
 // A request the person made, from when they make it until its reply starts or another request
 // takes its place.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIConversationExchange<Message: AIMessage> {
     // Where the request is: waiting for its reply, stopped by the person before it started, not
     // sent because the transport failed, or not answered by the agent.
@@ -96,6 +97,7 @@ struct AIConversationExchange<Message: AIMessage> {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private extension AIMessage {
     // Whether a reply is written again since it was `original`: it started anew, or it shows
     // something else.

@@ -6,7 +6,7 @@ import Charts
 import SwiftUI
 
 // Histogram: expects one series with raw values in y; we bin in 10 buckets
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 13.0, *)
 struct HistogramChart: View {
     let spec: USpec
     var body: some View {
@@ -18,8 +18,10 @@ struct HistogramChart: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 struct Bin: Identifiable { let id = UUID(); let label: String; let count: Int }
 
+@available(iOS 15.0, macOS 12.0, *)
 func makeBins(_ values: [Double], targetBins: Int) -> [Bin] {
     guard let minV = values.min(), let maxV = values.max(), maxV > minV else { return [] }
     let bins = max(targetBins, 1)

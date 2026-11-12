@@ -8,6 +8,7 @@ import SwiftUI
 /// views they show keep their types all the way into the conversation. ``AIUIHost`` puts its
 /// renderers together with ``AIUIRendererListBuilder``, and a single ``AIUIRenderer`` is a list
 /// of its own.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public protocol AIUIRendererList {
     /// The view of a document from one of them.
@@ -21,6 +22,7 @@ public protocol AIUIRendererList {
     func view(for document: AIUIDocument, messageID: String, in context: AIUIRenderingContext) -> Content?
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIUIRendererList {
     func reads(_ document: AIUIDocument) -> Bool {
         all.contains { $0.format == document.format && $0.supports(version: document.version) }
@@ -42,6 +44,7 @@ extension AIUIRendererList {
 
 /// Two lists of renderers, the first one asked first, which ``AIUIRendererListBuilder`` puts
 /// together.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public struct AIUIRendererPair<First: AIUIRendererList, Second: AIUIRendererList>: AIUIRendererList {
     /// The view of a document from either list.
@@ -84,6 +87,7 @@ public struct AIUIRendererPair<First: AIUIRendererList, Second: AIUIRendererList
 ///     try await chat.sendMessage(with: action.label, extraData: action.customData)
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 @resultBuilder
 public enum AIUIRendererListBuilder {
@@ -101,6 +105,7 @@ public enum AIUIRendererListBuilder {
 
 /// Where renderers show a reply's document: the conversation's host, and the engines its
 /// renderers made, which the host keeps for as long as it is kept.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public struct AIUIRenderingContext {
     let host: any AIUIHosting
@@ -124,6 +129,7 @@ public struct AIUIRenderingContext {
 }
 
 // The engines a host's renderers made, by each renderer's position among them.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class AIUIEngines {
     var made: [Int: any AIUIEngine] = [:]

@@ -14,6 +14,7 @@ import SwiftUI
 /// theme.accent = .orange
 /// A2UIRenderer(theme: theme)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct A2UITheme: Sendable {
     /// The color of primary buttons, selected options and the controls' active parts.
     public var accent: Color
@@ -112,10 +113,12 @@ public struct A2UITheme: Sendable {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIThemeKey: EnvironmentKey {
     static let defaultValue = A2UITheme()
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension EnvironmentValues {
     var a2uiTheme: A2UITheme {
         get { self[A2UIThemeKey.self] }

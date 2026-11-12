@@ -11,6 +11,7 @@ import Foundation
 /// The sign-in opens in a web authentication session, which the sign-in page hands back to
 /// `callbackScheme` once the provider has answered. Your backend then updates the call's step,
 /// and the call goes on.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolAuthorizer: Sendable {
     /// Your app's own URL scheme, such as `com.example.app`. It is the scheme of the return URL
     /// your sessions give their sign-ins, which the sign-in page goes back to, with

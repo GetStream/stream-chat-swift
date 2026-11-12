@@ -9,6 +9,7 @@ import Foundation
 /// A definition is created by a `createSurface` message and then refined by any
 /// number of `updateComponents` messages. Components are stored by id so that
 /// out-of-order and partial updates can be applied while streaming.
+@available(iOS 15.0, macOS 12.0, *)
 struct SurfaceDefinition: Equatable {
     /// The id of the surface this definition belongs to.
     let surfaceId: String

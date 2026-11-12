@@ -10,6 +10,7 @@ import Foundation
 /// call on its reply as an `ai_tool_call` step with `executor: client` and
 /// `status: awaiting_client`, addressed to one person and one install. An
 /// `AIClientToolRunner` on that install runs it and sends the result back.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public protocol AIClientTool: AnyObject {
     /// The tool's name, description and argument schema, as the agent sees them.
@@ -23,6 +24,7 @@ public protocol AIClientTool: AnyObject {
     func run(_ call: AIToolCallPart) async -> AIClientToolResult
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIClientTool {
     /// The tool's name, as the agent declared it.
     var name: String { definition.name }

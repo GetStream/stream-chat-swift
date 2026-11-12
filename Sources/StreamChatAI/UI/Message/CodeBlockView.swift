@@ -8,6 +8,7 @@ import UIKit
 
 /// A code block in a message: its language and a copy button over the highlighted code,
 /// which scrolls sideways.
+@available(iOS 15.0, macOS 12.0, *)
 struct CodeBlockView: View {
     let configuration: CodeBlockConfiguration
 

@@ -17,6 +17,7 @@
 //
 // Colors arrive as HSV, hue a fraction of a turn, and leave premultiplied, so the halo melts
 // into whatever is behind the view.
+@available(iOS 15.0, macOS 12.0, *)
 enum VoiceVisualizationShaders {
     static let source = """
     #include <metal_stdlib>

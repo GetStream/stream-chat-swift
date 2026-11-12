@@ -5,6 +5,7 @@
 import SwiftUI
 
 /// The layout components of the A2UI basic catalog.
+@available(iOS 15.0, macOS 12.0, *)
 enum LayoutComponents {
     /// All layout components, in catalog order.
     static var all: [ComponentDefinition] {
@@ -219,6 +220,7 @@ enum LayoutComponents {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UICardView: View {
     let context: ComponentRenderContext
 
@@ -233,6 +235,7 @@ private struct A2UICardView: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UIDividerView: View {
     let isVertical: Bool
 

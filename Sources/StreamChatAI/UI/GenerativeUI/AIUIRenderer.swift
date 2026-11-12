@@ -11,6 +11,7 @@ import SwiftUI
 /// A renderer places the host's components by name, among the ones its format has. The view its
 /// engine makes is the one the conversation shows, with its type, so SwiftUI updates it as it
 /// does any other view.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public protocol AIUIRenderer: AIUIRendererList where Content == Engine.Content {
     /// What shows the documents of one conversation.
@@ -29,6 +30,7 @@ public protocol AIUIRenderer: AIUIRendererList where Content == Engine.Content {
     func makeEngine(host: any AIUIHosting) -> Engine
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIUIRenderer {
     func supports(version: String?) -> Bool { true }
     func capabilities(components: [any AIUIComponent], tools: [AIClientToolDefinition]) -> [String: RawJSON] { [:] }
@@ -41,6 +43,7 @@ public extension AIUIRenderer {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIUIRenderer {
     // Gives a reply's document to its engine, the one in `context`.
     func deliver(_ document: AIUIDocument, messageID: String, in context: AIUIRenderingContext) {
@@ -56,6 +59,7 @@ extension AIUIRenderer {
 /// Shows the documents of one renderer in one conversation. The host makes one per renderer and
 /// keeps it while it is kept, so an engine can hold each reply's state, and a format whose
 /// later replies change an earlier one's UI can follow the conversation.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public protocol AIUIEngine: AnyObject {
     /// The view of a reply's document.
@@ -79,6 +83,7 @@ public protocol AIUIEngine: AnyObject {
     func view(for document: AIUIDocument, messageID: String) -> Content?
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIUIEngine {
     func receive(_ document: AIUIDocument, messageID: String) { /* Each reply's UI is its own. */ }
     func remove(messageID: String) { /* Nothing kept for the reply. */ }

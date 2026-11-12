@@ -8,6 +8,7 @@ import SwiftUI
 ///
 /// Rows are equal when what they show is, so a finished message is not laid out again each
 /// time a reply streams a little more.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversationViewFactory>: View, Equatable {
     let entry: AIConversationEntry<Message>
     let factory: Factory
@@ -43,6 +44,7 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
 
 // What a row shows, including each reasoning step's whole thinking, which can grow while the
 // message stays the same, and what its conversation offers to do with it.
+@available(iOS 15.0, macOS 12.0, *)
 final class AIConversationEntrySnapshot: Equatable, Sendable {
     let isPending: Bool
     let role: AIMessageRole

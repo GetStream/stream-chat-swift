@@ -8,6 +8,7 @@ import StreamCore
 /// Reads the chart a code block describes, in the formats models write charts in: Chart.js,
 /// Plotly heatmaps, ECharts, Highcharts, a subset of Vega-Lite, a custom schema and a flat
 /// pie schema.
+@available(iOS 15.0, macOS 12.0, *)
 enum ChartSpecParser {
     private enum ParseError: Error {
         /// The JSON is no chart this SDK can draw.

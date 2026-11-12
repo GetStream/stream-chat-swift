@@ -4,6 +4,7 @@
 
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 public struct MessageData {
     public let text: String
     public let attachments: [URL]

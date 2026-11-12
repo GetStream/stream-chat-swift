@@ -18,6 +18,7 @@ import SwiftUI
 /// AIVoiceGlowView(state: .speaking)
 ///     .frame(width: 320, height: 320)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIVoiceGlowView: View {
     private let state: AIVoiceAgentState
     private let colors: [Color]?

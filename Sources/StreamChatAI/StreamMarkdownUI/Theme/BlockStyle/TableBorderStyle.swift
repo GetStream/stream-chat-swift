@@ -30,6 +30,7 @@ import SwiftUI
 /// ```
 ///
 /// ![](CustomTableBorders)
+@available(iOS 15.0, macOS 12.0, *)
 struct TableBorderStyle {
   /// The visible table borders.
   var visibleBorders: TableBorderSelector

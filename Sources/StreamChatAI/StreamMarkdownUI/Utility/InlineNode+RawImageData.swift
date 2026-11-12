@@ -1,11 +1,13 @@
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 struct RawImageData: Hashable {
   var source: String
   var alt: String
   var destination: String?
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension InlineNode {
   var imageData: RawImageData? {
     switch self {

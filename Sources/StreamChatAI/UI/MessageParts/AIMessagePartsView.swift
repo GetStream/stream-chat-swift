@@ -28,6 +28,7 @@ import SwiftUI
 ///     }
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIMessagePartsView<Content: View>: View {
     var parts: [AIMessagePart]
     var content: (AIMessagePart) -> Content
@@ -47,6 +48,7 @@ public struct AIMessagePartsView<Content: View>: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIMessagePartsView where Content == AIMessagePartView<DefaultAIConversationViewFactory> {
     /// Shows every step with `AIMessagePartView`.
     /// - Parameter approver: Who answers calls' questions on this device, to ask them.

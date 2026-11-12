@@ -5,6 +5,7 @@
 import Foundation
 
 /// Where the person's answer to a question is.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolApprovalState: Equatable, Sendable {
     /// The answer is on its way, or arrived and the call's step hasn't changed yet.
     public var isSending = false

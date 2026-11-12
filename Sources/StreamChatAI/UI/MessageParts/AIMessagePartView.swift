@@ -8,6 +8,7 @@ import SwiftUI
 /// One step of a reply: a round of reasoning with its preview, a tool call (with its
 /// question or its sign-in, when it waits for the approver), or a neutral placeholder for a
 /// step this SDK doesn't know.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIMessagePartView<Factory: AIConversationViewFactory>: View {
     var viewFactory: Factory
     var part: AIMessagePart

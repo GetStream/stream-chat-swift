@@ -10,6 +10,7 @@ import SwiftUI
 /// when the question was asked, and the reply's first reasoning step takes its place as
 /// "Thought for 8s". Anywhere else it counts from `since`, or from when it appears. Its header
 /// is in `AIAppearance.fonts.messagePart`, as reasoning steps are.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIThinkingView: View {
     var since: Date?
 

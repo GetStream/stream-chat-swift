@@ -29,6 +29,7 @@ import SwiftUI
 ///
 /// AIConversationView(messages: messages, viewFactory: MyFactory(chat: chat))
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public protocol AIConversationViewFactory {
     /// The view type returned by ``makeUserMessageView(options:)``.
@@ -68,6 +69,7 @@ public protocol AIConversationViewFactory {
     func makeToolAuthorizationView(options: AIToolAuthorizationViewOptions) -> ToolAuthorizationViewType
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIConversationViewFactory {
     func makeUserMessageView(options: AIUserMessageViewOptions) -> some View {
         AIUserMessageView(viewFactory: self, text: options.text, attachments: options.attachments, onEdit: options.onEdit)
@@ -107,6 +109,7 @@ public extension AIConversationViewFactory {
 }
 
 /// The views ``AIConversationView`` shows ``AIMessage``s with when it is given no factory.
+@available(iOS 15.0, macOS 12.0, *)
 public final class DefaultAIConversationViewFactory: AIConversationViewFactory {
     public static let shared = DefaultAIConversationViewFactory()
 }

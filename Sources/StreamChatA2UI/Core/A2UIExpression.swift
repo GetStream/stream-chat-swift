@@ -9,6 +9,7 @@ import Foundation
 /// The A2UI `formatString` function interpolates data model paths and renderer
 /// side function calls into a string. This type is the parsed form of one such
 /// expression, ready to be evaluated by ``ExpressionEvaluator``.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIExpression: Equatable {
     /// A data model path, absolute or relative to the current scope.
     case path(DataPath)
@@ -36,6 +37,7 @@ enum A2UIExpression: Equatable {
 }
 
 /// One piece of a parsed `formatString` template.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UITemplateSegment: Equatable {
     /// Literal text copied verbatim into the output.
     case text(String)
@@ -45,6 +47,7 @@ enum A2UITemplateSegment: Equatable {
 }
 
 /// A `formatString` template that does not parse.
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIExpressionError: Error, Equatable, CustomStringConvertible {
     /// What is wrong with the template.
     let message: String
@@ -69,6 +72,7 @@ struct A2UIExpressionError: Error, Equatable, CustomStringConvertible {
 ///   Arguments are named; values are quoted strings, numbers, `true`, `false`,
 ///   `null`, paths, calls or nested `${...}` expressions.
 /// * A literal `${` is written as `\${`.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIExpressionParser {
     /// The deepest nesting of interpolations and calls an expression may use.
     static let maxNestingDepth = 100
@@ -385,6 +389,7 @@ enum A2UIExpressionParser {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private extension Character {
     var isASCIIDigit: Bool {
         isASCII && isNumber

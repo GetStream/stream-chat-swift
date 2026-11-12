@@ -2,6 +2,7 @@ import CoreGraphics
 import Foundation
 
 /// A type that temporarily stores images in memory, keyed by the URL from which they were loaded.
+@available(iOS 15.0, macOS 12.0, *)
 protocol NetworkImageCache: AnyObject {
   /// Returns the image associated with a given URL.
   func image(for url: URL) -> CGImage?
@@ -13,6 +14,7 @@ protocol NetworkImageCache: AnyObject {
 // MARK: - DefaultNetworkImageCache
 
 /// The default network image cache.
+@available(iOS 15.0, macOS 12.0, *)
 class DefaultNetworkImageCache {
   private enum Constants {
     static let defaultCountLimit = 100
@@ -31,6 +33,7 @@ class DefaultNetworkImageCache {
   static let shared = DefaultNetworkImageCache(countLimit: Constants.defaultCountLimit)
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension DefaultNetworkImageCache: NetworkImageCache, @unchecked Sendable {
   func image(for url: URL) -> CGImage? {
     self.cache.object(forKey: url as NSURL)
@@ -41,6 +44,7 @@ extension DefaultNetworkImageCache: NetworkImageCache, @unchecked Sendable {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension NetworkImageCache where Self == DefaultNetworkImageCache {
   /// The shared default network image cache.
   static var `default`: Self {

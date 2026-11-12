@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension View {
     /// Brings a part of a reply's generated UI in when it shows, such as when the agent writes
     /// it: the part fades in, rising into place and coming into focus, after the parts that came
@@ -17,6 +18,7 @@ public extension View {
 }
 
 // A part of a reply's generated UI, which comes in when it shows after the part around it.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIUIEntrance: ViewModifier {
     @State private var hasShown = false
 
@@ -42,6 +44,7 @@ struct AIUIEntrance: ViewModifier {
 
 // A reply's generated UI as a whole. It comes in when it first shows while the agent writes it,
 // and what shows with it comes in with it. A part that shows after it comes in on its own.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIUIEntranceStage: ViewModifier {
     let isStreaming: Bool
 
@@ -69,6 +72,7 @@ struct AIUIEntranceStage: ViewModifier {
 
 // How a part looks on its way in: clear, a little lower and smaller, and out of focus. With
 // motion reduced it only fades.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIUIEntranceEffect: ViewModifier {
     let isHidden: Bool
     let reduceMotion: Bool
@@ -89,6 +93,7 @@ struct AIUIEntranceEffect: ViewModifier {
 
 // How the parts of a reply's generated UI come in: whether one shows together with a part
 // around it, which brings it in, and the cascade the parts that come in on their own follow.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIUIStage: Equatable {
     var isCarried: Bool
     let cascade: AIUICascade
@@ -103,10 +108,12 @@ struct AIUIStage: Equatable {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct AIUIStageKey: EnvironmentKey {
     static let defaultValue: AIUIStage? = nil
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension EnvironmentValues {
     var aiUIStage: AIUIStage? {
         get { self[AIUIStageKey.self] }
@@ -116,6 +123,7 @@ extension EnvironmentValues {
 
 // Spaces out the parts of a reply's generated UI that come in at once, so they follow one
 // another, without keeping any of them waiting long.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class AIUICascade {
     static let step: TimeInterval = 0.1

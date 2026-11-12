@@ -16,6 +16,9 @@
 		792E3D9725C9BCF30040B0C2 /* StreamChat in Frameworks */ = {isa = PBXBuildFile; productRef = 792E3D9625C9BCF30040B0C2 /* StreamChat */; };
 		792E3D9925C9BCF30040B0C2 /* StreamChatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 792E3D9825C9BCF30040B0C2 /* StreamChatUI */; };
 		AD557EEB2EFAFB960003AD07 /* StreamChatCommonUI in Frameworks */ = {isa = PBXBuildFile; productRef = AD557EEA2EFAFB960003AD07 /* StreamChatCommonUI */; };
+		E9BB7950CDB49319BD68996F /* StreamChatAI in Frameworks */ = {isa = PBXBuildFile; productRef = CE68D0069F1E8155F5CEB824 /* StreamChatAI */; };
+		FE0C5E9A7C8A4511A84FEBB3 /* StreamChatA2UI in Frameworks */ = {isa = PBXBuildFile; productRef = C31AC044532EC94B8C861D29 /* StreamChatA2UI */; };
+		FA89E68FC3182C5B80C2DDCC /* StreamChatOpenUI in Frameworks */ = {isa = PBXBuildFile; productRef = B989F65D74CE4624DDA1D5D9 /* StreamChatOpenUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +41,9 @@
 				792E3D9925C9BCF30040B0C2 /* StreamChatUI in Frameworks */,
 				792E3D9725C9BCF30040B0C2 /* StreamChat in Frameworks */,
 				AD557EEB2EFAFB960003AD07 /* StreamChatCommonUI in Frameworks */,
+				E9BB7950CDB49319BD68996F /* StreamChatAI in Frameworks */,
+				FE0C5E9A7C8A4511A84FEBB3 /* StreamChatA2UI in Frameworks */,
+				FA89E68FC3182C5B80C2DDCC /* StreamChatOpenUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +109,9 @@
 				792E3D9625C9BCF30040B0C2 /* StreamChat */,
 				792E3D9825C9BCF30040B0C2 /* StreamChatUI */,
 				AD557EEA2EFAFB960003AD07 /* StreamChatCommonUI */,
+				CE68D0069F1E8155F5CEB824 /* StreamChatAI */,
+				C31AC044532EC94B8C861D29 /* StreamChatA2UI */,
+				B989F65D74CE4624DDA1D5D9 /* StreamChatOpenUI */,
 			);
 			productName = SPM_Tests;
 			productReference = 792E3D7B25C97F6D0040B0C2 /* SwiftPackageManager.app */;
@@ -375,6 +384,18 @@
 		AD557EEA2EFAFB960003AD07 /* StreamChatCommonUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StreamChatCommonUI;
+		};
+		CE68D0069F1E8155F5CEB824 /* StreamChatAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StreamChatAI;
+		};
+		C31AC044532EC94B8C861D29 /* StreamChatA2UI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StreamChatA2UI;
+		};
+		B989F65D74CE4624DDA1D5D9 /* StreamChatOpenUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StreamChatOpenUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

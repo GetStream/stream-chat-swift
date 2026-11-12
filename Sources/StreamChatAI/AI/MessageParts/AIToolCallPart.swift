@@ -5,6 +5,7 @@
 import Foundation
 
 /// A tool the agent called, run by the agent's backend or by a person's device.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolCallPart: Identifiable, Equatable, Sendable {
     /// Where a tool call is. An open set: compare against the statuses you know, and treat
     /// the rest as still in progress.

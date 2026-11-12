@@ -6,6 +6,7 @@ import Foundation
 
 /// What an agent is told so that its model writes replies' UI in A2UI: how a reply carries the
 /// UI, the protocol, the catalog it writes with, the app's own components, and examples.
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIInstructions {
     /// The catalog the model writes with, the app's components among its own.
     var catalog: Catalog

@@ -18,6 +18,7 @@ import SwiftUI
 ///     ChatView()
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct SidebarView<Menu: View, Content: View>: View {
     @Binding var isOpen: Bool
     var splitWidthRatio: CGFloat

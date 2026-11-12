@@ -14,6 +14,7 @@ import StreamCore
 /// ```swift
 /// try await chat.sendMessage(with: action.label, extraData: action.customData)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIUIAction: Equatable, Sendable {
     /// The custom field of the person's message that holds the action.
     public static let customDataKey = "ai_ui_action"

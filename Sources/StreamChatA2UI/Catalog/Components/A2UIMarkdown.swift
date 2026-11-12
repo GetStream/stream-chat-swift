@@ -9,6 +9,7 @@ import SwiftUI
 /// The basic catalog only exposes `caption` and `body` text variants, so agents
 /// express emphasis and hierarchy with Markdown. HTML, images and links are not
 /// part of the supported subset.
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIMarkdownText: View {
     let text: String
     let isCaption: Bool
@@ -40,6 +41,7 @@ struct A2UIMarkdownText: View {
 }
 
 /// A minimal block-level Markdown parser for `Text` components.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIMarkdown {
     /// One block of parsed Markdown content.
     enum Block {

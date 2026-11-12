@@ -8,6 +8,7 @@ import Foundation
 /// offline, or the agent reached its usage limit.
 ///
 /// `AIOnDeviceModel` is Apple's on-device model. Conform a type of your own to use another.
+@available(iOS 15.0, macOS 12.0, *)
 public protocol AILocalModel: Sendable {
     /// Whether the model can answer now.
     var isAvailable: Bool { get }

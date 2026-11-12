@@ -7,7 +7,7 @@ import StreamCore
 import SwiftUI
 
 /// Opens the full photo library to pick up to ten photos.
-@available(iOS 16, *)
+@available(iOS 16.0, macOS 13.0, *)
 struct AllPhotosButton: View {
     let onPick: ([PhotosPickerItem]) -> Void
 

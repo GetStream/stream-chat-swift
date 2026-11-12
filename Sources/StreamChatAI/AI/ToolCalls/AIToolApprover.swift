@@ -6,6 +6,7 @@ import Foundation
 
 /// The person answering tool calls' questions on this device, and how their answer reaches
 /// your backend, which holds each call until it gets one.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolApprover {
     /// The person signed in, matched against a call's `target_user_id`.
     public var userID: String

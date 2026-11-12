@@ -5,6 +5,7 @@
 import Foundation
 
 /// The side effecting functions of the A2UI basic catalog.
+@available(iOS 15.0, macOS 12.0, *)
 enum ActionFunctions {
     /// All action functions, in catalog order.
     static var all: [FunctionDefinition] {

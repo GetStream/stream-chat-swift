@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 
 /// One chat option: its icon, title and description. Tapping it runs its action.
+@available(iOS 15.0, macOS 12.0, *)
 struct ChatOptionRow: View {
     let option: ChatOption
 

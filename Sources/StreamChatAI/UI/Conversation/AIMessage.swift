@@ -16,6 +16,7 @@ import Foundation
 ///     var isGenerating = false
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public protocol AIMessage: Identifiable, Sendable {
     /// Who wrote it.
     var role: AIMessageRole { get }
@@ -39,6 +40,7 @@ public protocol AIMessage: Identifiable, Sendable {
     func reasoningText(for step: AIReasoningPart) -> String?
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIMessage {
     var isGenerating: Bool { false }
     var parts: [AIMessagePart] { [] }
@@ -49,6 +51,7 @@ public extension AIMessage {
 }
 
 /// Who wrote a message. It is an open set: compare against the roles you know.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIMessageRole: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
     public let rawValue: String
 
@@ -62,6 +65,7 @@ public struct AIMessageRole: RawRepresentable, Hashable, Sendable, ExpressibleBy
     public static let assistant: AIMessageRole = "assistant"
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIMessage {
     // A reply the agent has started with no text, steps or attachments yet. Its generated UI can
     // still show, when the conversation's host reads it.

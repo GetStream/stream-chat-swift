@@ -16,6 +16,7 @@ import Foundation
 /// }
 /// A2UIRenderer(catalog: catalog)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public enum BasicCatalog {
     /// The catalog id agents use to target the basic catalog.
     public static let catalogId = basicCatalogId
