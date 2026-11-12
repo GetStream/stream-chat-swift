@@ -1880,6 +1880,58 @@ import XCTest
         XCTAssertFalse(layoutOptions.contains(.translation))
     }
 
+    func test_optionsForMessage_whenPollIsTranslated_thenIncludesTranslationOption() {
+        let sut = createOptionsResolver()
+        sut.components = .mock
+        sut.components?.messageAutoTranslationEnabled = true
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            membership: .mock(id: .unique, language: .spanish)
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            text: "",
+            poll: .mock(name: "Lunch", nameTranslations: [.spanish: "Almuerzo"], originalLanguage: .english)
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertTrue(layoutOptions.contains(.translation))
+    }
+
+    func test_optionsForMessage_whenPollHasNoTranslationToUserLanguage_thenDoesNotIncludeTranslationOption() {
+        let sut = createOptionsResolver()
+        sut.components = .mock
+        sut.components?.messageAutoTranslationEnabled = true
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            membership: .mock(id: .unique, language: .french)
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            text: "",
+            poll: .mock(name: "Lunch", nameTranslations: [.spanish: "Almuerzo"], originalLanguage: .english)
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertFalse(layoutOptions.contains(.translation))
+    }
+
     func test_optionsForMessage_whenShouldRenderTranslation_whenMessageIsDeleted_thenDoesNotIncludeTranslationOption() {
         let sut = createOptionsResolver()
         sut.components = .mock

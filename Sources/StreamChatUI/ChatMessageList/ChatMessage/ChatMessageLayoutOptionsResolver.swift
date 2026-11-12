@@ -250,5 +250,6 @@ private extension ChatMessageLayoutOptionsResolver {
         }
 
         return message.translatedText(for: currentUserLang) != nil
+            || message.poll?.hasTranslation(for: currentUserLang) == true
     }
 }

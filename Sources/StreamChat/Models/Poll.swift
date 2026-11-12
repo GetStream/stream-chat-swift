@@ -203,6 +203,14 @@ public extension Poll {
     }
 }
 
+extension Poll {
+    /// Whether the poll name or any of its options has a valid translation to the given language.
+    public func hasTranslation(for language: TranslationLanguage) -> Bool {
+        translatedName(for: language) != nil
+            || options.contains { $0.translatedText(for: language) != nil }
+    }
+}
+
 /// Poll domain logic helpers.
 public extension Poll {
     /// The value of the option with the most votes.
