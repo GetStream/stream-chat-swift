@@ -243,6 +243,8 @@ public enum L10n {
       public static var accessibility: String { L10n.tr("Localizable", "gallery.close.accessibility") }
     }
     public enum Playback {
+      /// Unable to play this video.
+      public static var error: String { L10n.tr("Localizable", "gallery.playback.error") }
       /// Pause
       public static var pause: String { L10n.tr("Localizable", "gallery.playback.pause") }
       /// Play

@@ -330,6 +330,7 @@ open class GalleryVC: _ViewController,
             at: .centeredHorizontally,
             animated: false
         )
+        bindVideoPlaybackBar()
     }
 
     override open func viewWillDisappear(_ animated: Bool) {
@@ -361,13 +362,7 @@ open class GalleryVC: _ViewController,
 
         currentPhotoLabel.text = L10n.currentSelection(content.currentPage + 1, items.count)
 
-        let videoCell = attachmentsCollectionView.cellForItem(
-            at: currentItemIndexPath
-        ) as? VideoAttachmentGalleryCell
-
-        videoPlaybackBar.player = videoCell?.player
-        videoPlaybackBar.isHidden = videoPlaybackBar.player == nil
-        updateAttachmentsBottomConstraint()
+        bindVideoPlaybackBar()
     }
 
     /// Lets the video timeline and other controls keep their own gestures.
@@ -505,6 +500,19 @@ open class GalleryVC: _ViewController,
         )
     }
 
+    open func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        // The current page's cell can be created after the bar was bound (for example before the
+        // first layout pass), so bind the bar to it once it shows up.
+        guard indexPath == currentItemIndexPath,
+              let videoCell = cell as? VideoAttachmentGalleryCell,
+              videoCell !== boundVideoCell else { return }
+        bindVideoPlaybackBar(to: videoCell)
+    }
+
     open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         updateCurrentPage()
     }
@@ -535,6 +543,39 @@ open class GalleryVC: _ViewController,
     open var currentItem: AnyChatMessageAttachment {
         items.assertIndexIsPresent(currentItemIndexPath.item)
         return items[currentItemIndexPath.item]
+    }
+
+    private weak var boundVideoCell: VideoAttachmentGalleryCell?
+
+    private func bindVideoPlaybackBar() {
+        bindVideoPlaybackBar(
+            to: attachmentsCollectionView.cellForItem(at: currentItemIndexPath) as? VideoAttachmentGalleryCell
+        )
+    }
+
+    private func bindVideoPlaybackBar(to videoCell: VideoAttachmentGalleryCell?) {
+        if boundVideoCell !== videoCell {
+            boundVideoCell?.onAssetLoadingErrorChange = nil
+            boundVideoCell = videoCell
+        }
+
+        videoPlaybackBar.player = videoCell?.player
+        videoPlaybackBar.isHidden = videoPlaybackBar.player == nil
+        updateAttachmentsBottomConstraint()
+
+        guard let videoCell else { return }
+
+        if let error = videoCell.currentAssetLoadingError {
+            videoPlaybackBar.setPlaybackFailure(error)
+        } else if videoCell.player.currentItem == nil {
+            // A failure on a live item belongs to that item, and the bar clears it when the item
+            // changes. A loading failure has no item, so nothing else clears it on a reused cell.
+            videoPlaybackBar.setPlaybackFailure(nil)
+        }
+        videoCell.onAssetLoadingErrorChange = { [weak self, weak videoCell] error in
+            guard let self, let videoCell, videoCell === self.boundVideoCell else { return }
+            self.videoPlaybackBar.setPlaybackFailure(error)
+        }
     }
 
     /// Returns a share item for the gallery item at given index path.
