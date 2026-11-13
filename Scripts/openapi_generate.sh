@@ -27,6 +27,7 @@ rm -rf "$OUTPUT_DIR_CHAT"
   ./build/openapi generate-client --language swift \
     --opt immutable_models=true --opt access_modifier=internal \
     --opt encodable_filter_conditions=true \
+    --opt nested_embedded_models=true \
     --opt raw_representable_over_enum=true \
     --opt string_coding_keys=true \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
@@ -125,8 +126,7 @@ rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
 rename_generated_type ChannelPushPreferencesResponse PushPreference
-# CHA-5170
-rename_generated_type ChannelStateResponseFields ChannelStateResponse
+rename_generated_type ChannelStateResponse ChannelStateResponseFields
 rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type QueryReactionsResponse MessageReactionsPayload
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
@@ -196,12 +196,13 @@ optionalize_property MemberRemovedEventDTO channel
 optionalize_property MemberUpdatedEventDTO channel
 
 optionalize_property ThreadResponse createdByUserId
+optionalize_property UserPayload blockedUserIds
 
 # Will be changed on the generation side later
 # CHA-4621
 require_property ChannelDetailPayload config
 # CHA-5028
-require_property ChannelStateResponse channel
+require_property ChannelStateResponseFields channel
 # CHA-5105
 require_property SearchResult message
 # CHA-5607

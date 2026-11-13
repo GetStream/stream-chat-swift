@@ -13,23 +13,23 @@ final class CurrentUserPayload_Tests: XCTestCase {
     func test_currentUserJSON_customRoleIsDecodedCorrectly() throws {
         let json = XCTestCase.mockData(fromJSONFile: "CurrentUserCustomRole")
         let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: json)
-        XCTAssertEqual(payload.role, "banana-master")
+        XCTAssertEqual(payload.user.role, "banana-master")
     }
 
     func test_currentUserJSON_isDecodedCorrectly() throws {
         let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
-        XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
+        XCTAssertEqual(payload.user.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
-        XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
-        XCTAssertEqual(payload.name, "Broken Waterfall")
-        XCTAssertEqual(payload.teams.count, 3)
+        XCTAssertEqual(payload.user.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
+        XCTAssertEqual(payload.user.name, "Broken Waterfall")
+        XCTAssertEqual(payload.user.teams.count, 3)
         XCTAssertEqual(
             payload.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
-        XCTAssertEqual(payload.role, "user")
+        XCTAssertEqual(payload.user.role, "user")
         XCTAssertEqual(payload.isOnline, true)
         XCTAssertEqual(payload.devices.map(\.id), [
             "cjqZTUHaQIykfH-706Xefw:APA91bF0Ig0gi4ro6w3iPfmE8",

@@ -196,7 +196,7 @@
     "ChannelOwnCapability",
     "ChannelPartialUpdateResponse",
     "ChannelResponse",
-    "ChannelStateResponse",
+    "ChannelStateResponseFields",
     "CreateDraftRequest",
     "CreateDraftResponse",
     "CreateGuestRequest",
@@ -248,6 +248,7 @@
     "MessagePaginationParams",
     "MessageRequest",
     "MessageResponse",
+    "MessageWithChannelResponse",
     "ModerationV2Response",
     "MuteChannelRequest",
     "MuteChannelResponse",
@@ -386,7 +387,7 @@
     "BlockedUserResponse",
     "ChannelDetailPayload",
     "ChannelPartialUpdateResponse",
-    "ChannelStateResponse",
+    "ChannelStateResponseFields",
     "CreateDraftResponse",
     "CreateGuestResponse",
     "CreateReminderResponse",
@@ -419,6 +420,7 @@
     "MessageReactionPayload",
     "MessageReactionsPayload",
     "MessageResponse",
+    "MessageWithChannelResponse",
     "MutedChannelPayload",
     "MutedChannelPayloadResponse",
     "MutedUserPayload",
@@ -640,7 +642,7 @@
       { "id": "Unused" },
       { "type": "Unused" }
     ],
-    "ChannelStateResponse": [
+    "ChannelStateResponseFields": [
       { "cooldownRemainingMs": "Unused" },
       { "hideMessagesBefore": "Unused" }
     ],
@@ -704,9 +706,7 @@
     ],
     "FullUserResponse": [
       { "banExpires": "Unused" },
-      { "deletedAt": "Unused" },
       { "latestHiddenChannels": "Unused" },
-      { "revokeTokensIssuedBefore": "Server-side only" },
       { "unreadCount": "Deprecated, use totalUnreadCount" }
     ],
     "GetOGResponse": [
@@ -999,9 +999,7 @@
       { "watcherCount": "Unused" }
     ],
     "OwnUserResponse": [
-      { "deletedAt": "Unused" },
       { "latestHiddenChannels": "Unused" },
-      { "revokeTokensIssuedBefore": "Server-side only" },
       { "unreadCount": "Deprecated, use totalUnreadCount" }
     ],
     "PaginationParams": [
@@ -1209,11 +1207,6 @@
       { "previous": "Unused" },
       { "resultsWarning": "Unused" }
     ],
-    "SearchResultMessage": [
-      { "html": "Unused" },
-      { "imageLabels": "Deprecated" },
-      { "mml": "Deprecated" }
-    ],
     "SendMessageRequest": [
       { "includeChannelContext": "Unused" },
       { "includeMentionedMembers": "Unused" },
@@ -1236,10 +1229,6 @@
       { "userId": "Unused" }
     ],
     "ThreadResponse": [
-      { "deletedAt": "Unused" },
-      { "threadParticipants": "Unused" }
-    ],
-    "ThreadStateResponse": [
       { "deletedAt": "Unused" }
     ],
     "ThreadUpdatedEventDTO": [
@@ -1317,7 +1306,6 @@
       { "team": "Unused" }
     ],
     "UserPayload": [
-      { "blockedUserIds": "Unused" },
       { "deletedAt": "Unused" },
       { "revokeTokensIssuedBefore": "Server-side only" }
     ],

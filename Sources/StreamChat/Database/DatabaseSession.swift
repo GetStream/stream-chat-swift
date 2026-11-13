@@ -28,16 +28,6 @@ protocol UserDatabaseSession {
     @discardableResult
     func saveUser(payload: UserPayload, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
 
-    /// Saves the provided response to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
-    /// if the save fails.
-    @discardableResult
-    func saveUser(fullResponse: FullUserResponse, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
-
-    /// Saves the provided response to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
-    /// if the save fails.
-    @discardableResult
-    func saveUser(ownResponse: OwnUserResponse) throws -> UserDTO
-
     /// Saves the provided payload to the DB. Return's the matching `UserDTO`s  if the save was successful. Ignores unsaved elements.
     @discardableResult
     func saveUsers(payload: QueryUsersResponse, query: UserListQuery?) -> [UserDTO]
@@ -835,11 +825,6 @@ extension DatabaseSession {
     @discardableResult
     func saveUser(payload: UserPayload) throws -> UserDTO {
         try saveUser(payload: payload, query: nil, cache: nil)
-    }
-
-    @discardableResult
-    func saveUser(fullResponse: FullUserResponse) throws -> UserDTO {
-        try saveUser(fullResponse: fullResponse, query: nil, cache: nil)
     }
 
     @discardableResult
