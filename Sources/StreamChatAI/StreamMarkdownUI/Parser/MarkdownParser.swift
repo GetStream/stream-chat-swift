@@ -1,6 +1,7 @@
 import Foundation
 @preconcurrency internal import StreamChatAICMark
 
+@available(iOS 15.0, macOS 12.0, *)
 extension Array where Element == BlockNode {
   init(markdown: String) {
     let blocks = UnsafeNode.parseMarkdown(markdown) { document in
@@ -28,6 +29,7 @@ extension Array where Element == BlockNode {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension BlockNode {
   fileprivate init?(unsafeNode: UnsafeNode) {
     switch unsafeNode.nodeType {
@@ -81,6 +83,7 @@ extension BlockNode {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension RawListItem {
   fileprivate init(unsafeNode: UnsafeNode) {
     guard unsafeNode.nodeType == .item else {
@@ -90,6 +93,7 @@ extension RawListItem {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension RawTaskListItem {
   fileprivate init(unsafeNode: UnsafeNode) {
     guard unsafeNode.nodeType == .taskListItem || unsafeNode.nodeType == .item else {
@@ -102,6 +106,7 @@ extension RawTaskListItem {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension RawTableRow {
   fileprivate init(unsafeNode: UnsafeNode) {
     guard unsafeNode.nodeType == .tableRow || unsafeNode.nodeType == .tableHead else {
@@ -111,6 +116,7 @@ extension RawTableRow {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension RawTableCell {
   fileprivate init(unsafeNode: UnsafeNode) {
     guard unsafeNode.nodeType == .tableCell else {
@@ -120,6 +126,7 @@ extension RawTableCell {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension InlineNode {
   fileprivate init?(unsafeNode: UnsafeNode) {
     switch unsafeNode.nodeType {
@@ -156,8 +163,10 @@ extension InlineNode {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private typealias UnsafeNode = UnsafeMutablePointer<cmark_node>
 
+@available(iOS 15.0, macOS 12.0, *)
 extension UnsafeNode {
   fileprivate var nodeType: NodeType {
     let typeString = String(cString: stream_cmark_node_get_type_string(self))
@@ -420,6 +429,7 @@ extension UnsafeNode {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private enum NodeType: String {
   case document
   case blockquote = "block_quote"
@@ -455,6 +465,7 @@ private enum NodeType: String {
   case taskListItem = "tasklist"
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct UnsafeNodeSequence: Sequence {
   struct Iterator: IteratorProtocol {
     private var node: UnsafeNode?

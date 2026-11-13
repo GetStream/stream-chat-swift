@@ -7,6 +7,7 @@ import SwiftUI
 import UIKit
 
 /// A photo's tile: the photo once it has loaded, a warning if it couldn't, and a spinner until then.
+@available(iOS 15.0, macOS 12.0, *)
 struct ThumbnailTile: View {
     let image: UIImage?
     let didFail: Bool

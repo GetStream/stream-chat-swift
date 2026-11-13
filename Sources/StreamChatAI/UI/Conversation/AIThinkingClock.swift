@@ -8,6 +8,7 @@ import SwiftUI
 // a reply arrives and the reasoning step that takes its place read as one: "Thinking… 8s",
 // then "Thought for 8s". A model that sends its reasoning only with its answer sends a step
 // with no time of its own.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class AIThinkingClock {
     private final class Turn {
@@ -121,15 +122,18 @@ final class AIThinkingClock {
 }
 
 // The turn of a list a view is in, whose clock times its thinking.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIThinkingTurn {
     let clock: AIThinkingClock
     let key: Int
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct AIThinkingTurnKey: EnvironmentKey {
     static let defaultValue: AIThinkingTurn? = nil
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension EnvironmentValues {
     var aiThinkingTurn: AIThinkingTurn? {
         get { self[AIThinkingTurnKey.self] }

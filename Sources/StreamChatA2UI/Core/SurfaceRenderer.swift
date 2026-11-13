@@ -11,6 +11,7 @@ import SwiftUI
 /// `root` component, resolves each component against the surface catalogs, and
 /// applies the shared behaviour every component needs: composition validation,
 /// accessibility attributes and action dispatch.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class SurfaceRenderer {
     /// The maximum nesting depth.
@@ -234,6 +235,7 @@ final class SurfaceRenderer {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct AccessibilityAttributesModifier: ViewModifier {
     let label: String?
     let hint: String?
@@ -252,6 +254,7 @@ private struct AccessibilityAttributesModifier: ViewModifier {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private extension View {
     @ViewBuilder
     func a2uiAccessibilityLabel(_ label: String?) -> some View {

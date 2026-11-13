@@ -4,6 +4,7 @@
 
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 enum SpeechHandlerError: LocalizedError {
     case recognizerUnavailable
     var errorDescription: String? {

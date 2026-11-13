@@ -13,6 +13,7 @@ import SwiftUI
 /// }
 /// .markdownImageProvider(.asset)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 protocol ImageProvider: Sendable {
   /// A view that loads and displays an image.
   associatedtype Body: View
@@ -26,6 +27,7 @@ protocol ImageProvider: Sendable {
   @MainActor @ViewBuilder func makeImage(url: URL?) -> Body
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 struct AnyImageProvider: ImageProvider {
   private let _makeImage: @MainActor @Sendable (URL?) -> AnyView
 

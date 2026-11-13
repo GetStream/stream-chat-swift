@@ -14,6 +14,7 @@ import StreamCore
 /// ```swift
 /// let definition = try AIClientToolDefinition(encoding: mcpTool)
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIClientToolDefinition: Codable, Hashable, Sendable {
     /// The unique name of the tool.
     public var name: String

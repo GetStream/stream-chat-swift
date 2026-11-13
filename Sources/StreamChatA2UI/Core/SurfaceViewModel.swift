@@ -15,6 +15,7 @@ import Foundation
 ///
 /// Instances must be used from the main thread, which is where the message
 /// processor applies updates.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class SurfaceViewModel: ObservableObject {
     /// The surface this view model represents.

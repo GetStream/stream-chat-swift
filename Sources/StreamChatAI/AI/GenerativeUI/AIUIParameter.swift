@@ -6,6 +6,7 @@ import Foundation
 import StreamCore
 
 /// A parameter of a component: what the agent fills in when it places the component.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIUIParameter: Equatable, Sendable {
     /// The name the agent fills it in by, such as `title`.
     public var name: String
@@ -36,6 +37,7 @@ public struct AIUIParameter: Equatable, Sendable {
 
 /// The type of a component's parameter, as JSON Schema. It is an open set: use the static
 /// members, or any JSON Schema the formats you render can read.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIUIParameterType: Equatable, Sendable {
     /// The type as a JSON Schema object.
     public var schema: [String: RawJSON]
@@ -71,6 +73,7 @@ public struct AIUIParameterType: Equatable, Sendable {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIUIParameter {
     /// The key that keeps the order of an object's fields, which JSON objects don't have.
     static let orderKey = "x-order"

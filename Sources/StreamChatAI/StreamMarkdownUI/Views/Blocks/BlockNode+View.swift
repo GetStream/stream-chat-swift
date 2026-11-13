@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 extension BlockNode: View {
   var body: some View {
     switch self {

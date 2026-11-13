@@ -5,6 +5,7 @@ import Foundation
 /// Create instances of `TextTableRow` in the closure you provide to the `rows` parameter in
 /// the ``TextTable/init(columns:rows:)`` initializer. The table provides the value of a
 /// row to each column, which produces the cells for each row in the column.
+@available(iOS 15.0, macOS 12.0, *)
 struct TextTableRow<Value> {
   let value: Value
 

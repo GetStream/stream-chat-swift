@@ -5,6 +5,7 @@
 import Foundation
 
 /// A round of the model's reasoning.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIReasoningPart: Identifiable, Equatable, Sendable {
     /// Where a round of reasoning is. An open set: compare against the statuses you know.
     public struct Status: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {

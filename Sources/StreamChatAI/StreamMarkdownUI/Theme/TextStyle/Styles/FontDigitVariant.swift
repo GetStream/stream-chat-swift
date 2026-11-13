@@ -1,6 +1,7 @@
 import Foundation
 
 /// A text style that adjusts the font to use alternate glyphs for digits.
+@available(iOS 15.0, macOS 12.0, *)
 struct FontDigitVariant: TextStyle {
   private let digitVariant: FontProperties.DigitVariant
 

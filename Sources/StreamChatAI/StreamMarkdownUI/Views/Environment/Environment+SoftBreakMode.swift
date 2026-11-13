@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 extension View {
   /// Sets the soft break mode for inline texts in a view hierarchy.
   ///
@@ -11,6 +12,7 @@ extension View {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension EnvironmentValues {
   var softBreakMode: SoftBreak.Mode {
     get { self[SoftBreakModeKey.self] }
@@ -18,6 +20,7 @@ extension EnvironmentValues {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct SoftBreakModeKey: EnvironmentKey {
   static let defaultValue: SoftBreak.Mode = .space
 }

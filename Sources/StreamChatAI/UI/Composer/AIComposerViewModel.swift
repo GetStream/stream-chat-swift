@@ -6,6 +6,7 @@ import Combine
 import Foundation
 import StreamCore
 
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public class AIComposerViewModel: ObservableObject {
     @Published public var text = ""

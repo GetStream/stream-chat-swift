@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 struct InlineText: View {
   @Environment(\.inlineImageProvider) private var inlineImageProvider
   @Environment(\.baseURL) private var baseURL

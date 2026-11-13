@@ -10,6 +10,7 @@ import Foundation
 /// The agent's backend writes it on the call's `ai_tool_call` step, which waits with status
 /// `awaiting_approval`, and holds the call until the person answers. Allowed, the call goes
 /// on (a client tool then awaits the device); declined, it is cancelled and never runs.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolApproval: Equatable, Sendable {
     /// How the person answered. An open set: compare against the decisions you know.
     public struct Decision: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {

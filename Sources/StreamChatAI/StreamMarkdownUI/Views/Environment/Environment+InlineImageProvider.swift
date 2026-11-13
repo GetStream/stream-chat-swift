@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 extension View {
   /// Sets the inline image provider for the Markdown inline images in a view hierarchy.
   /// - Parameter inlineImageProvider: The inline image provider to set. Use one of the built-in values, like
@@ -12,6 +13,7 @@ extension View {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension EnvironmentValues {
   var inlineImageProvider: InlineImageProvider {
     get { self[InlineImageProviderKey.self] }
@@ -19,6 +21,7 @@ extension EnvironmentValues {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct InlineImageProviderKey: EnvironmentKey {
   static let defaultValue: InlineImageProvider = .default
 }

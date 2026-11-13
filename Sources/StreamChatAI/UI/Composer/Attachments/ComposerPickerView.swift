@@ -5,6 +5,7 @@
 import StreamCore
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 struct ComposerPickerView: View {
     @ObservedObject var viewModel: AIComposerViewModel
 

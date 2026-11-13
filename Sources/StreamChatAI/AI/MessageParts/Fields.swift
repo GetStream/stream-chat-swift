@@ -6,6 +6,7 @@ import Foundation
 import StreamCore
 
 /// Lenient reads from a JSON object: a field of the wrong type reads as missing.
+@available(iOS 15.0, macOS 12.0, *)
 struct Fields {
     let object: [String: Any]
 

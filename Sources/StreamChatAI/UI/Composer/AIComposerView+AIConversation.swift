@@ -4,6 +4,7 @@
 
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIComposerView {
     /// A composer for an ``AIConversation``. It shows the conversation's
     /// ``AIConversation/composerViewModel``, sends what the person writes to the conversation,

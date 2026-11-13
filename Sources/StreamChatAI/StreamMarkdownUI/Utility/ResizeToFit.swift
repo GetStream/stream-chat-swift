@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 struct ResizeToFit<Content>: View where Content: View {
   private let idealSize: CGSize
   private let content: Content
@@ -20,6 +21,7 @@ struct ResizeToFit<Content>: View where Content: View {
 
 // MARK: - Geometry reader based
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct ResizeToFit1<Content>: View where Content: View {
   @State private var size: CGSize?
 
@@ -49,6 +51,7 @@ private struct ResizeToFit1<Content>: View where Content: View {
   }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct SizePreference: PreferenceKey {
   static let defaultValue: CGSize? = nil
 

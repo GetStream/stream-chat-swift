@@ -7,6 +7,7 @@ import SwiftUI
 // Children with a weight, or every child under `justify: stretch`, share the free space in
 // proportion to their weights, like CSS `flex-grow`. SwiftUI stacks can only share it equally,
 // so those containers use `A2UIFlexLayout` where it is available, and the stacks on iOS 15.
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIFlexStack: View {
     let axis: Axis
     let justify: String
@@ -86,6 +87,7 @@ struct A2UIFlexStack: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UISpacers: View {
     let count: Int
 
@@ -184,6 +186,7 @@ struct A2UIFlexLayout: Layout {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIFlex {
     static func slots(natural: [CGFloat], weights: [Double], available: CGFloat?, spacing: CGFloat) -> [CGFloat] {
         guard let available else { return natural }

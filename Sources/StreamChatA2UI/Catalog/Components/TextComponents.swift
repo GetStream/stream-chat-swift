@@ -5,6 +5,7 @@
 import SwiftUI
 
 /// The text and icon components of the A2UI basic catalog.
+@available(iOS 15.0, macOS 12.0, *)
 enum TextComponents {
     /// All text components, in catalog order.
     static var all: [ComponentDefinition] {
@@ -94,6 +95,7 @@ enum TextComponents {
 /// The icon names defined by the A2UI basic catalog.
 ///
 /// Names are mapped onto SF Symbols so agent-provided icons look native.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIIcon: String, CaseIterable {
     case accountCircle
     case add

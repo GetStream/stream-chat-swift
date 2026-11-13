@@ -28,6 +28,7 @@ import Foundation
 ///     }
 /// }
 /// ```
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public protocol AIConversationTransport<Message> {
     /// The messages of the conversation.
@@ -67,6 +68,7 @@ public protocol AIConversationTransport<Message> {
     func rate(_ reply: Message, _ rating: AIMessageRating?) async throws
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension AIConversationTransport {
     func loadOlderMessages() async throws { /* No older messages to load. */ }
 
@@ -77,6 +79,7 @@ public extension AIConversationTransport {
 ///
 /// It holds the conversation weakly, so keep it for as long as the transport follows what the
 /// conversation holds: once the conversation is released, its updates go nowhere.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public struct AIConversationFeed<Message: AIMessage> {
     private weak var conversation: AIConversation<Message>?

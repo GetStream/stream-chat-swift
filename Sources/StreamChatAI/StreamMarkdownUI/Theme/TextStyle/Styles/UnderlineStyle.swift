@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// A text style that sets the underline line style of the text.
+@available(iOS 15.0, macOS 12.0, *)
 struct UnderlineStyle: TextStyle {
   private let lineStyle: Text.LineStyle?
 

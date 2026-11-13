@@ -8,6 +8,7 @@ import Foundation
 ///
 /// Every wire message is a JSON object carrying a `version` discriminator plus
 /// exactly one message key.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIMessage: Equatable, Sendable {
     /// Creates a surface and optionally seeds its components and data.
     case createSurface(CreateSurfaceMessage)
@@ -62,6 +63,7 @@ enum A2UIMessage: Equatable, Sendable {
 ///
 /// Creating a surface implicitly instantiates the reserved `Surface` container
 /// whose child is the component with id `root`.
+@available(iOS 15.0, macOS 12.0, *)
 struct CreateSurfaceMessage: Sendable {
     /// The globally unique id of the new surface.
     let surfaceId: String
@@ -136,6 +138,7 @@ struct CreateSurfaceMessage: Sendable {
 }
 
 /// Payload of an `updateComponents` message.
+@available(iOS 15.0, macOS 12.0, *)
 struct UpdateComponentsMessage: Sendable {
     /// The surface to update.
     let surfaceId: String
@@ -175,6 +178,7 @@ struct UpdateComponentsMessage: Sendable {
 ///
 /// Updates are upserts: existing paths are replaced, missing paths are created,
 /// and an explicit `null` value removes the entry.
+@available(iOS 15.0, macOS 12.0, *)
 struct UpdateDataModelMessage: Sendable {
     /// The surface whose data model is updated.
     let surfaceId: String
@@ -224,6 +228,7 @@ struct UpdateDataModelMessage: Sendable {
 }
 
 /// Payload of a `deleteSurface` message.
+@available(iOS 15.0, macOS 12.0, *)
 struct DeleteSurfaceMessage: Sendable {
     /// The surface to remove.
     let surfaceId: String
@@ -253,6 +258,7 @@ struct DeleteSurfaceMessage: Sendable {
 ///
 /// The renderer must always answer with a `rendererFunctionResponse` or an
 /// `error`, even for functions that return no value.
+@available(iOS 15.0, macOS 12.0, *)
 struct CallRendererFunctionMessage: Sendable {
     /// The id correlating this call with its response.
     let functionCallId: String
@@ -323,6 +329,7 @@ struct CallRendererFunctionMessage: Sendable {
 /// The result of a function call, in either direction.
 ///
 /// Exactly one of `value` and `error` is present.
+@available(iOS 15.0, macOS 12.0, *)
 struct FunctionResponse: Sendable {
     /// An error returned instead of a value.
     struct Failure: Equatable, Sendable {
@@ -413,6 +420,7 @@ struct FunctionResponse: Sendable {
 }
 
 /// Errors raised while decoding A2UI payloads.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIDecodingError: Error, Equatable, CustomStringConvertible, Sendable {
     /// The payload did not contain a known message key.
     case unknownMessageType([String])
@@ -492,6 +500,7 @@ enum A2UIDecodingError: Error, Equatable, CustomStringConvertible, Sendable {
 ///
 /// ``A2UIConversation`` reports these to the agent, so the agent can correct
 /// the message.
+@available(iOS 15.0, macOS 12.0, *)
 struct A2UIDecodingFailure: Error, CustomStringConvertible {
     /// Why decoding failed.
     let error: Error
@@ -517,6 +526,7 @@ struct A2UIDecodingFailure: Error, CustomStringConvertible {
 }
 
 /// Decodes agent-to-renderer messages from wire payloads.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UIMessageDecoder {
     /// Decodes a single A2UI message envelope.
     ///

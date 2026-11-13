@@ -5,6 +5,7 @@
 import StreamChatAI
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 public extension A2UITheme {
     /// The theme of StreamChatAI's `appearance`, so a reply's A2UI looks like the rest of its
     /// conversation: its accent, text and surface colors, its fonts and its corners.

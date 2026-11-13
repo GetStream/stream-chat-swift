@@ -5,6 +5,7 @@
 import Foundation
 
 /// One turn of a conversation, for a local model.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIConversationTurn: Equatable, Sendable {
     public enum Role: Sendable {
         case user
@@ -28,6 +29,7 @@ public struct AIConversationTurn: Equatable, Sendable {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIConversationTurn {
     /// The newest turns that fit `budget` tokens, oldest first, with consecutive turns of one
     /// role merged. The question is always kept. Tokens are estimated at three bytes of UTF-8

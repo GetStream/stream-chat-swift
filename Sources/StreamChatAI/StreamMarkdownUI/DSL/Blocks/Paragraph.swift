@@ -23,6 +23,7 @@ import Foundation
 /// ```
 ///
 /// ![](Paragraph)
+@available(iOS 15.0, macOS 12.0, *)
 struct Paragraph: MarkdownContentProtocol {
   var _markdownContent: MarkdownContent {
     .init(blocks: [.paragraph(content: self.content.inlines)])

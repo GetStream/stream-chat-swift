@@ -6,7 +6,7 @@ import PhotosUI
 import StreamCore
 import SwiftUI
 
-@available(iOS 16, *)
+@available(iOS 16.0, macOS 13.0, *)
 extension AIComposerViewModel {
     // Adds each photo that isn't attached yet. Returns false if some of them couldn't be loaded.
     func addPhotos(_ items: [PhotosPickerItem], from photoLibrary: PhotoLibraryService) async -> Bool {

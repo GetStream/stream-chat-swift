@@ -5,6 +5,7 @@
 import SwiftUI
 
 /// Shared layout and styling helpers for the basic catalog components.
+@available(iOS 15.0, macOS 12.0, *)
 enum A2UILayout {
     /// The spacing used between children of layout containers.
     static let spacing: CGFloat = 8
@@ -70,6 +71,7 @@ enum A2UILayout {
 // On iOS 15, where `A2UIFlexLayout` isn't available. A weighted child gets a lower layout priority
 // than its siblings, or a weighted label starves a short sibling such as a price into zero width.
 // Several weighted children share the remaining space equally.
+@available(iOS 15.0, macOS 12.0, *)
 struct WeightedChild: View {
     let child: ResolvedChild
     let content: AnyView
@@ -91,6 +93,7 @@ struct WeightedChild: View {
 }
 
 /// Displays the failing checks of an input component.
+@available(iOS 15.0, macOS 12.0, *)
 struct ValidationMessages: View {
     let results: [ValidationResult]
 

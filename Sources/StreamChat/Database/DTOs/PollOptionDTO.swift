@@ -10,6 +10,8 @@ class PollOptionDTO: NSManagedObject {
     @NSManaged var id: String
     @NSManaged var text: String
     @NSManaged var custom: Data?
+    @NSManaged var translations: [String: String]?
+    @NSManaged var originalLanguage: String?
     @NSManaged var poll: PollDTO?
     
     // It contains both latestAnswers and ownVotes, plus every other vote.
@@ -75,7 +77,9 @@ extension PollOptionDTO {
             latestVotes: try latestVotes
                 .map { try $0.asModel() }
                 .sorted(by: { $0.createdAt > $1.createdAt }),
-            extraData: extraData
+            extraData: extraData,
+            translations: translations?.mapKeys { TranslationLanguage(languageCode: $0) },
+            originalLanguage: originalLanguage.map { TranslationLanguage(languageCode: $0) }
         )
     }
 }
@@ -93,6 +97,8 @@ extension NSManagedObjectContext {
             cache: cache
         )
         dto.text = payload.text
+        dto.translations = I18n.translations(from: payload.textI18n)
+        dto.originalLanguage = I18n.originalLanguage(from: payload.textI18n)
         if !payload.custom.isEmpty {
             dto.custom = try JSONEncoder.default.encode(payload.custom)
         } else {

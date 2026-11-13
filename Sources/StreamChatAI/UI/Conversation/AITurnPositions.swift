@@ -6,6 +6,7 @@ import SwiftUI
 
 // Where the turns in view are, for keeping the top one in place when something arrives above
 // it. They are read only then, so scrolling does not lay the list out again.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 final class AITurnPositions {
     struct Held {
@@ -63,6 +64,7 @@ final class AITurnPositions {
 }
 
 // The frames of the turns in view, with 0 at the top of what is visible.
+@available(iOS 15.0, macOS 12.0, *)
 struct AITurnFrames: PreferenceKey {
     static var defaultValue: [AnyHashable: CGRect] { [:] }
 

@@ -9,6 +9,7 @@ import SwiftUI
 ///
 /// Rows are equal when what they show is, so a finished message is not laid out again each
 /// time a reply streams a little more.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIUIConversationEntryView<
     Message: AIMessage,
     Factory: AIConversationViewFactory,

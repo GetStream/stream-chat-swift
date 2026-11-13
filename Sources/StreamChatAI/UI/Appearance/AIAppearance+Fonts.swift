@@ -5,6 +5,7 @@
 import StreamCoreUI
 import SwiftUI
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIAppearance {
     /// Fonts of the AI components, derived from the shared ``DesignSystemTokens``.
     ///

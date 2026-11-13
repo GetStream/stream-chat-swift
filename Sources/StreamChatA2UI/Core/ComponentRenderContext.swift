@@ -10,6 +10,7 @@ import SwiftUI
 /// Static child lists produce one entry per id. Templates produce one entry per
 /// item of the bound collection, each with its own collection scope so that
 /// relative bindings resolve against that item.
+@available(iOS 15.0, macOS 12.0, *)
 public struct ResolvedChild: Identifiable {
     /// A stable identity for SwiftUI list diffing.
     public let id: String
@@ -37,6 +38,7 @@ public struct ResolvedChild: Identifiable {
 ///
 /// The context resolves properties against the data model, builds child views
 /// and dispatches actions, so component implementations stay declarative.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public struct ComponentRenderContext {
     /// The component instance being rendered.

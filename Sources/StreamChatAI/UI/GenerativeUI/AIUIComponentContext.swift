@@ -7,6 +7,7 @@ import SwiftUI
 
 /// What a component gets besides its arguments: which reply it is in, and how it tells the
 /// agent what the person did.
+@available(iOS 15.0, macOS 12.0, *)
 @MainActor
 public struct AIUIComponentContext {
     /// The reply the component is in.

@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 
 // The spinner above the turns while older messages can load, which loads them.
+@available(iOS 15.0, macOS 12.0, *)
 struct OlderMessagesLoadingView: View {
     // Loading starts again when the first turn changes, once the older messages arrived.
     let firstTurnID: AnyHashable?

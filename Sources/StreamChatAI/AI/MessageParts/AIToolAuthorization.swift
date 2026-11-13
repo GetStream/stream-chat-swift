@@ -12,6 +12,7 @@ import Foundation
 /// the call is cancelled and never runs. The step holds no credential, since `url` is the
 /// agent's own sign-in page and the provider hands what it grants to the agent's backend, never
 /// to the app.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolAuthorization: Equatable, Sendable {
     /// How the person signs in.
     public struct Kind: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {

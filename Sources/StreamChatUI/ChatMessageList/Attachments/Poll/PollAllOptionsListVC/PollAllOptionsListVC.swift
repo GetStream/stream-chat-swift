@@ -15,6 +15,10 @@ open class PollAllOptionsListVC:
     /// The controller that manages the poll data.
     public var pollController: PollController
 
+    /// The language to show the poll texts in, when they have a translation to it.
+    /// By default, the current user's language when `Components.messageAutoTranslationEnabled` is `true`.
+    open lazy var translationLanguage: TranslationLanguage? = pollController.translationLanguage(components: components)
+
     public required init(pollController: PollController) {
         self.pollController = pollController
         super.init(nibName: nil, bundle: nil)
@@ -120,7 +124,7 @@ open class PollAllOptionsListVC:
             cell.selectionStyle = .none
             cell.backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
             cell.textLabel?.numberOfLines = 0
-            cell.textLabel?.text = pollController.poll?.name
+            cell.textLabel?.text = pollController.poll?.name(in: translationLanguage)
             cell.textLabel?.textColor = appearance.colorPalette.textPrimary
             return cell
         case .options:
@@ -128,7 +132,7 @@ open class PollAllOptionsListVC:
             let options = pollController.poll?.options ?? []
             let option = options[indexPath.item]
             if let poll = pollController.poll {
-                cell.content = .init(option: option, poll: poll)
+                cell.content = .init(option: option, poll: poll, translationLanguage: translationLanguage)
             }
             return cell
         default:

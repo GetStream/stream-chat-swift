@@ -6,6 +6,7 @@ import StreamCore
 import SwiftUI
 
 // What sits above the turns in view. When it changes, they would be pushed down or up.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIConversationAbove: Hashable {
     var firstTurnID: AnyHashable?
     var loadsOlder: Bool
@@ -14,6 +15,7 @@ struct AIConversationAbove: Hashable {
 // The scrolling of an AIConversationView, which does not depend on the type of its messages:
 // it brings a message the person sent to the top, keeps what is in view in place as older
 // messages arrive above it, opens a conversation at its end, and offers a button back to the end.
+@available(iOS 15.0, macOS 12.0, *)
 struct AIConversationScrollView<Content: View>: View {
     var turnIDs: [AnyHashable]
     var above: AIConversationAbove
@@ -132,11 +134,13 @@ struct AIConversationScrollView<Content: View>: View {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 enum AIConversationEnd {
     static let space = "AIConversationView.scroll"
 }
 
 // How far down the list's end is, from the top of what is visible.
+@available(iOS 15.0, macOS 12.0, *)
 private struct AIConversationEndOffset: PreferenceKey {
     static let defaultValue: CGFloat = 0
 
@@ -147,6 +151,7 @@ private struct AIConversationEndOffset: PreferenceKey {
 
 // Shows a conversation that is already there at its end from the first frame. Earlier
 // systems scroll there as the list appears.
+@available(iOS 15.0, macOS 12.0, *)
 private struct OpensAtEnd: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 18.0, *) {

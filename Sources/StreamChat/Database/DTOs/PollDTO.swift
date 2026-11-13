@@ -27,6 +27,10 @@ class PollDTO: NSManagedObject {
     @NSManaged var message: MessageDTO?
     @NSManaged var options: NSOrderedSet
     @NSManaged var latestVotesByOption: Set<PollOptionDTO>
+    @NSManaged var nameTranslations: [String: String]?
+    @NSManaged var descriptionTranslations: [String: String]?
+    @NSManaged var originalLanguage: String?
+    @NSManaged var descriptionOriginalLanguage: String?
 
     override func willSave() {
         super.willSave()
@@ -131,7 +135,11 @@ extension PollDTO {
                 .sorted(by: { $0.createdAt > $1.createdAt }),
             ownVotes: latestVotes
                 .filter { !$0.isAnswer && $0.user?.id == currentUserId }
-                .map { try $0.asModel() }
+                .map { try $0.asModel() },
+            nameTranslations: nameTranslations?.mapKeys { TranslationLanguage(languageCode: $0) },
+            descriptionTranslations: descriptionTranslations?.mapKeys { TranslationLanguage(languageCode: $0) },
+            originalLanguage: originalLanguage.map { TranslationLanguage(languageCode: $0) },
+            descriptionOriginalLanguage: descriptionOriginalLanguage.map { TranslationLanguage(languageCode: $0) }
         )
     }
     
@@ -153,6 +161,10 @@ extension NSManagedObjectContext {
         pollDto.pollDescription = payload.description
         pollDto.enforceUniqueVote = payload.enforceUniqueVote
         pollDto.name = payload.name
+        pollDto.nameTranslations = I18n.translations(from: payload.nameI18n)
+        pollDto.descriptionTranslations = I18n.translations(from: payload.descriptionI18n)
+        pollDto.originalLanguage = I18n.originalLanguage(from: payload.nameI18n)
+        pollDto.descriptionOriginalLanguage = I18n.originalLanguage(from: payload.descriptionI18n)
         pollDto.updatedAt = payload.updatedAt.bridgeDate
         pollDto.voteCount = payload.voteCount
         pollDto.voteCountsByOption = payload.voteCountsByOption

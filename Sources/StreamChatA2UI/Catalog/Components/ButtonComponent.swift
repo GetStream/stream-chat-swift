@@ -5,6 +5,7 @@
 import SwiftUI
 
 /// The button component of the A2UI basic catalog.
+@available(iOS 15.0, macOS 12.0, *)
 enum ButtonComponent {
     /// All button components, in catalog order.
     static var all: [ComponentDefinition] {
@@ -57,6 +58,7 @@ enum ButtonComponent {
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UIButtonView: View {
     let context: ComponentRenderContext
 
@@ -83,6 +85,7 @@ private struct A2UIButtonView: View {
 }
 
 /// Applies the visual style of an A2UI button variant.
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UIButtonLabelStyle: ViewModifier {
     let variant: String
 

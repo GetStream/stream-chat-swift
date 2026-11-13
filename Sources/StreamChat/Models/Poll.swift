@@ -75,6 +75,18 @@ public final class Poll: Identifiable, Sendable {
     /// The list of the current user votes.
     public let ownVotes: [PollVote]
 
+    /// The available automatic translations of the poll name.
+    public let nameTranslations: [TranslationLanguage: String]?
+
+    /// The available automatic translations of the poll description.
+    public let descriptionTranslations: [TranslationLanguage: String]?
+
+    /// The original language of the poll name.
+    public let originalLanguage: TranslationLanguage?
+
+    /// The original language of the poll description.
+    let descriptionOriginalLanguage: TranslationLanguage?
+
     init(
         allowAnswers: Bool,
         allowUserSuggestedOptions: Bool,
@@ -96,7 +108,11 @@ public final class Poll: Identifiable, Sendable {
         options: [PollOption],
         latestVotesByOption: [PollOption],
         latestVotes: [PollVote],
-        ownVotes: [PollVote]
+        ownVotes: [PollVote],
+        nameTranslations: [TranslationLanguage: String]? = nil,
+        descriptionTranslations: [TranslationLanguage: String]? = nil,
+        originalLanguage: TranslationLanguage? = nil,
+        descriptionOriginalLanguage: TranslationLanguage? = nil
     ) {
         self.allowAnswers = allowAnswers
         self.allowUserSuggestedOptions = allowUserSuggestedOptions
@@ -119,6 +135,10 @@ public final class Poll: Identifiable, Sendable {
         self.latestVotesByOption = latestVotesByOption
         self.latestVotes = latestVotes
         self.ownVotes = ownVotes
+        self.nameTranslations = nameTranslations
+        self.descriptionTranslations = descriptionTranslations
+        self.originalLanguage = originalLanguage
+        self.descriptionOriginalLanguage = descriptionOriginalLanguage
     }
 }
 
@@ -144,7 +164,50 @@ extension Poll: Equatable {
             lhs.options == rhs.options &&
             lhs.latestVotesByOption == rhs.latestVotesByOption &&
             lhs.latestVotes == rhs.latestVotes &&
-            lhs.ownVotes == rhs.ownVotes
+            lhs.ownVotes == rhs.ownVotes &&
+            lhs.nameTranslations == rhs.nameTranslations &&
+            lhs.descriptionTranslations == rhs.descriptionTranslations &&
+            lhs.originalLanguage == rhs.originalLanguage &&
+            lhs.descriptionOriginalLanguage == rhs.descriptionOriginalLanguage
+    }
+}
+
+/// Poll translation helpers.
+public extension Poll {
+    /// Gets the translated name of the poll given the desired language in case the translation is valid.
+    func translatedName(for language: TranslationLanguage) -> String? {
+        I18n.validTranslation(
+            of: name,
+            in: nameTranslations,
+            for: language,
+            originalLanguage: originalLanguage
+        )
+    }
+
+    /// The poll name in the given language, or the original name when there is no valid translation to it.
+    ///
+    /// - Parameter language: The language to show the name in. If `nil`, the original name is returned.
+    func name(in language: TranslationLanguage?) -> String {
+        language.flatMap(translatedName(for:)) ?? name
+    }
+
+    /// Gets the translated description of the poll given the desired language in case the translation is valid.
+    func translatedDescription(for language: TranslationLanguage) -> String? {
+        guard let pollDescription else { return nil }
+        return I18n.validTranslation(
+            of: pollDescription,
+            in: descriptionTranslations,
+            for: language,
+            originalLanguage: descriptionOriginalLanguage
+        )
+    }
+}
+
+extension Poll {
+    /// Whether the poll name or any of its options has a valid translation to the given language.
+    public func hasTranslation(for language: TranslationLanguage) -> Bool {
+        translatedName(for: language) != nil
+            || options.contains { $0.translatedText(for: language) != nil }
     }
 }
 

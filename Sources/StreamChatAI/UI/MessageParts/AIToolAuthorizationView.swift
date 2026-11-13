@@ -19,6 +19,7 @@ import SwiftUI
 /// It asks with the view factory's
 /// ``AIConversationViewFactory/makeToolAuthorizationView(options:)``, an
 /// ``AIToolAuthorizationCard`` by default. To ask in your own design, return yours there.
+@available(iOS 15.0, macOS 12.0, *)
 public struct AIToolAuthorizationView<Factory: AIConversationViewFactory>: View {
     var viewFactory: Factory
     var call: AIToolCallPart
@@ -97,6 +98,7 @@ public struct AIToolAuthorizationView<Factory: AIConversationViewFactory>: View 
     }
 }
 
+@available(iOS 15.0, macOS 12.0, *)
 extension AIToolApprover {
     /// The sign-in this person is asked for on `call` here. It is one the call waits for them
     /// to finish, of a kind this device opens, and only asked when they can sign in on it.
