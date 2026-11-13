@@ -5,8 +5,10 @@
 import Foundation
 
 /// An action that can be performed in a channel.
-public final class ChannelCapability: RawRepresentable, Codable, Hashable, Sendable {
+public final class ChannelCapability: RawRepresentable, Codable, CustomStringConvertible, Hashable, Sendable {
     public let rawValue: String
+
+    public var description: String { rawValue }
 
     public init(rawValue: String) {
         self.rawValue = rawValue

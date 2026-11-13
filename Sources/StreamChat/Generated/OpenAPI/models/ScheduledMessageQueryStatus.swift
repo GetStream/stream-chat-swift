@@ -5,8 +5,10 @@
 import Foundation
 
 /// Status filter for querying scheduled messages.
-final class ScheduledMessageQueryStatus: RawRepresentable, Encodable, Hashable, Sendable {
+final class ScheduledMessageQueryStatus: RawRepresentable, Encodable, CustomStringConvertible, Hashable, Sendable {
     let rawValue: String
+
+    var description: String { rawValue }
 
     init(rawValue: String) {
         self.rawValue = rawValue

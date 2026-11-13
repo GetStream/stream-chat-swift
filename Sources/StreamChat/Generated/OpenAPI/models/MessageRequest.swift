@@ -4,8 +4,10 @@
 
 import Foundation
 
-final class MessageRequestType: RawRepresentable, Codable, Hashable, Sendable {
+final class MessageRequestType: RawRepresentable, Codable, CustomStringConvertible, Hashable, Sendable {
     let rawValue: String
+
+    var description: String { rawValue }
 
     init(rawValue: String) {
         self.rawValue = rawValue

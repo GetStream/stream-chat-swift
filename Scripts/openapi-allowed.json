@@ -1307,6 +1307,7 @@
       { "uploadSizes": "Unused" }
     ],
     "UserBannedEventDTO": [
+      { "banFromFutureChannels": "Unused" },
       { "channelCustom": "Unused" },
       { "channelId": "Unused" },
       { "channelMemberCount": "Unused" },

@@ -1256,7 +1256,8 @@ extension SyncRepository_Tests {
         AnyEndpoint(Endpoint<SyncResponse>.sync(
             syncRequest: SyncRequest(channelCids: [], lastSyncAt: Date()),
             withInaccessibleCids: nil,
-            watch: watch ? true : nil
+            watch: watch ? true : nil,
+            maxEvents: nil
         )).queryItems
     }
 

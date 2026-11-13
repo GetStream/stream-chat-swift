@@ -387,6 +387,7 @@ class SyncRepository: @unchecked Sendable {
             syncRequest: SyncRequest(channelCids: channelIds.map(\.rawValue), lastSyncAt: date),
             withInaccessibleCids: nil,
             watch: watch ? true : nil,
+            maxEvents: nil,
             requiresConnectionId: watch
         )
         let requestCompletion: @Sendable (Result<SyncResponse, Error>) -> Void = { [weak self] result in

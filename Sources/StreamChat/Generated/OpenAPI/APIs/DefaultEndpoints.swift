@@ -1209,7 +1209,7 @@ extension Endpoint {
         )
     }
 
-    static func queryUsers(payload: QueryUsersPayload?, requiresConnectionId: Bool = false) -> Endpoint<QueryUsersResponse> {
+    static func queryUsers(payload: QueryUsersPayload?, requiresConnectionId: Bool = true) -> Endpoint<QueryUsersResponse> {
         return .init(
             path: .queryUsers,
             method: .get,
@@ -1391,6 +1391,7 @@ extension Endpoint {
         syncRequest: SyncRequest,
         withInaccessibleCids: Bool?,
         watch: Bool?,
+        maxEvents: Int?,
         requiresConnectionId: Bool = true
     ) -> Endpoint<SyncResponse> {
         return .init(
@@ -1398,7 +1399,8 @@ extension Endpoint {
             method: .post,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "with_inaccessible_cids": withInaccessibleCids,
-                "watch": watch
+                "watch": watch,
+                "max_events": maxEvents
             ]),
             requiresConnectionId: requiresConnectionId,
             body: syncRequest
@@ -1434,13 +1436,19 @@ extension Endpoint {
         )
     }
 
-    static func unban(targetUserId: String, channelCid: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+    static func unban(
+        targetUserId: String,
+        channelCid: String?,
+        removeFutureChannelsBan: Bool?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
         return .init(
             path: .unban,
             method: .post,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "target_user_id": targetUserId,
-                "channel_cid": channelCid
+                "channel_cid": channelCid,
+                "remove_future_channels_ban": removeFutureChannelsBan
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
