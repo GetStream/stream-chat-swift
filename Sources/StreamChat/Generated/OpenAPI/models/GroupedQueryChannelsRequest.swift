@@ -7,7 +7,7 @@ import Foundation
 final class GroupedQueryChannelsRequest: Sendable, Encodable, JSONEncodable {
     /// Groups to return, keyed by stored group name. Each entry can define limit, next, prev, and optional filter_conditions: date bounds for stored groups; all supports combined group/date branches or one group $ne exclusion. Cursors are only allowed when requesting exactly one group. Omitted or null filters preserve legacy grouping, including all.
     let groups: [String: GroupedChannelsGroupRequest]?
-    /// Default max channels per group (default 10)
+    /// Default max channels per group (default 10); values above 15 are capped at 15
     let limit: Int?
     /// Whether to subscribe to presence events for channel members
     let presence: Bool?

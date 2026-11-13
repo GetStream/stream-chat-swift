@@ -31,8 +31,7 @@ extension MemberAddedEventDTO: EventDTO {
         guard
             let user,
             let userDTO = session.user(id: user.id),
-            let memberUserId = member.memberId,
-            let memberDTO = session.member(userId: memberUserId, cid: cid)
+            let memberDTO = session.member(userId: member.userId, cid: cid)
         else { return nil }
 
         return try? MemberAddedEvent(
@@ -71,8 +70,7 @@ extension MemberUpdatedEventDTO: EventDTO {
         guard
             let user,
             let userDTO = session.user(id: user.id),
-            let memberUserId = member.memberId,
-            let memberDTO = session.member(userId: memberUserId, cid: cid)
+            let memberDTO = session.member(userId: member.userId, cid: cid)
         else { return nil }
 
         return try? MemberUpdatedEvent(

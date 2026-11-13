@@ -907,6 +907,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let endpoint = apiClient.request_endpoint
         XCTAssertEqual(endpoint?.path.value, "/api/v2/chat/unread")
         XCTAssertEqual(endpoint?.method, .get)
+        XCTAssertNil(endpoint?.queryItems)
 
         // Create test payload for the response
         let payload = CurrentUserUnreads(

@@ -31,7 +31,7 @@ final class MemberPayload: Sendable, Decodable {
     let updatedAt: Date
     /// User response object
     let user: UserPayload?
-    let userId: String?
+    let userId: String
 
     init(
         archivedAt: Date? = nil,
@@ -50,7 +50,7 @@ final class MemberPayload: Sendable, Decodable {
         status: String? = nil,
         updatedAt: Date,
         user: UserPayload? = nil,
-        userId: String? = nil
+        userId: String
     ) {
         self.archivedAt = archivedAt
         self.banExpires = banExpires
@@ -89,6 +89,6 @@ final class MemberPayload: Sendable, Decodable {
         status = try container.decodeIfPresent(String.self, forKey: .status)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
-        userId = try container.decodeIfPresent(String.self, forKey: .userId)
+        userId = try container.decode(String.self, forKey: .userId)
     }
 }

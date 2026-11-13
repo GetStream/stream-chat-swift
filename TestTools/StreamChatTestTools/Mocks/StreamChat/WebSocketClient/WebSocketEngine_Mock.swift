@@ -91,6 +91,7 @@ extension Dictionary {
             "me": [
                 "id": userId,
                 "banned": false,
+                "blocked_user_ids": [String](),
                 "unread_channels": 0,
                 "mutes": [String](),
                 "last_active": "2020-05-02T13:21:03.849219Z",

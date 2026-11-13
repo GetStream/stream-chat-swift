@@ -5,8 +5,10 @@
 import Foundation
 
 /// Status of a scheduled message.
-final class ScheduledMessageServerStatus: RawRepresentable, Decodable, Hashable, Sendable {
+final class ScheduledMessageServerStatus: RawRepresentable, Decodable, CustomStringConvertible, Hashable, Sendable {
     let rawValue: String
+
+    var description: String { rawValue }
 
     init(rawValue: String) {
         self.rawValue = rawValue

@@ -4,8 +4,10 @@
 
 import Foundation
 
-public final class TranslationLanguage: RawRepresentable, Codable, Hashable, Sendable {
+public final class TranslationLanguage: RawRepresentable, Codable, CustomStringConvertible, Hashable, Sendable {
     public let rawValue: String
+
+    public var description: String { rawValue }
 
     public init(rawValue: String) {
         self.rawValue = rawValue

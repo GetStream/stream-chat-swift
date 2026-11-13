@@ -364,6 +364,7 @@
     "UserRequest",
     "UserResponse",
     "VoteData",
+    "VotingVisibility",
     "WrappedUnreadCountsResponse",
     "WSEvent"
   ],
@@ -377,7 +378,8 @@
     "MessageAttachmentPayload",
     "Role",
     "SortParamRequest",
-    "UserPayload"
+    "UserPayload",
+    "VotingVisibility"
   ],
   "decodableOnlyModels": [
     "AppSettings",
@@ -568,19 +570,25 @@
       { "channelId": "Unused" },
       { "channelType": "Unused" },
       { "custom": "Unused" },
-      { "receivedAt": "Never set by the backend" }
+      { "receivedAt": "Never set by the backend" },
+      { "user": "Unused" }
     ],
     "AIIndicatorStopEventDTO": [
       { "channelId": "Unused" },
       { "channelType": "Unused" },
       { "custom": "Unused" },
-      { "receivedAt": "Never set by the backend" }
+      { "receivedAt": "Never set by the backend" },
+      { "user": "Unused" }
     ],
     "AIIndicatorUpdateEventDTO": [
       { "channelId": "Unused" },
       { "channelType": "Unused" },
       { "custom": "Unused" },
-      { "receivedAt": "Never set by the backend" }
+      { "receivedAt": "Never set by the backend" },
+      { "user": "Unused" }
+    ],
+    "AppSettings": [
+      { "defaults": "Unused" }
     ],
     "BanRequest": [
       { "banFromFutureChannels": "Unused" },
@@ -600,6 +608,7 @@
       { "team": "Unused" }
     ],
     "ChannelDetailPayload": [
+      { "fork": "Unused" },
       { "hideMessagesBefore": "Never set by the backend" },
       { "muteExpiresAt": "Unused" },
       { "muted": "Unused" }
@@ -868,7 +877,8 @@
       { "cid": "Unused" },
       { "custom": "Unused" },
       { "receivedAt": "Never set by the backend" },
-      { "team": "Unused" }
+      { "team": "Unused" },
+      { "unreadCount": "Deprecated, use totalUnreadCount" }
     ],
     "NotificationChannelDeletedEventDTO": [
       { "channelCustom": "Unused" },
@@ -1227,6 +1237,9 @@
       { "channel": "Unused" },
       { "message": "Unused" }
     ],
+    "SortParamRequest": [
+      { "type": "Unused" }
+    ],
     "SyncResponse": [
       { "inaccessibleCids": "Unused" }
     ],
@@ -1268,6 +1281,9 @@
     "UnmuteChannelRequest": [
       { "expiration": "Unused" }
     ],
+    "UnreadChannel": [
+      { "hasUnread": "Unused" }
+    ],
     "UpdateChannelRequest": [
       { "cooldown": "Unused" },
       { "removeFilterTags": "Unused" },
@@ -1291,6 +1307,7 @@
       { "uploadSizes": "Unused" }
     ],
     "UserBannedEventDTO": [
+      { "banFromFutureChannels": "Unused" },
       { "channelCustom": "Unused" },
       { "channelId": "Unused" },
       { "channelMemberCount": "Unused" },

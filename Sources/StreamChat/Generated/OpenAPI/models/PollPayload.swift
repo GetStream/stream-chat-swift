@@ -4,17 +4,6 @@
 
 import Foundation
 
-final class PollResponseDataVotingVisibility: RawRepresentable, Codable, Hashable, Sendable {
-    let rawValue: String
-
-    init(rawValue: String) {
-        self.rawValue = rawValue
-    }
-
-    static let `public` = PollResponseDataVotingVisibility(rawValue: "public")
-    static let anonymous = PollResponseDataVotingVisibility(rawValue: "anonymous")
-}
-
 final class PollPayload: Sendable, Decodable {
     let allowAnswers: Bool
     let allowUserSuggestedOptions: Bool
@@ -40,7 +29,7 @@ final class PollPayload: Sendable, Decodable {
     let voteCount: Int
     let voteCountsByOption: [String: Int]
     /// Voting visibility of the poll
-    let votingVisibility: PollResponseDataVotingVisibility
+    let votingVisibility: VotingVisibility
 
     init(
         allowAnswers: Bool,
@@ -65,7 +54,7 @@ final class PollPayload: Sendable, Decodable {
         updatedAt: Date,
         voteCount: Int,
         voteCountsByOption: [String: Int],
-        votingVisibility: PollResponseDataVotingVisibility
+        votingVisibility: VotingVisibility
     ) {
         self.allowAnswers = allowAnswers
         self.allowUserSuggestedOptions = allowUserSuggestedOptions
@@ -129,7 +118,7 @@ final class PollPayload: Sendable, Decodable {
             forKey: .voteCountsByOption
         )
         self.votingVisibility = try container.decode(
-            PollResponseDataVotingVisibility.self,
+            VotingVisibility.self,
             forKey: .votingVisibility
         )
     }

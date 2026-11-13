@@ -60,10 +60,9 @@ struct MemberEventMiddleware: EventMiddleware {
                     break
                 }
 
-                guard let memberUserId = event.member.memberId,
-                      let member = channel.members.first(where: { $0.user.id == memberUserId }) else {
+                guard let member = channel.members.first(where: { $0.user.id == event.member.userId }) else {
                     // No need to throw MemberNotFound error here
-                    log.debug("Member \(event.member.memberId ?? "") not found for NotificationRemovedFromChannelEventDTO")
+                    log.debug("Member \(event.member.userId) not found for NotificationRemovedFromChannelEventDTO")
                     break
                 }
 

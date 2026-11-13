@@ -5,8 +5,10 @@
 import Foundation
 
 /// Why sending a scheduled message failed.
-public final class ScheduledMessageFailureReason: RawRepresentable, Decodable, Hashable, Sendable {
+public final class ScheduledMessageFailureReason: RawRepresentable, Decodable, CustomStringConvertible, Hashable, Sendable {
     public let rawValue: String
+
+    public var description: String { rawValue }
 
     public init(rawValue: String) {
         self.rawValue = rawValue

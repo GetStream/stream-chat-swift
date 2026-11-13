@@ -14,6 +14,7 @@ _November 12, 2026_
 - Add `ChatClientConfig.webSocketEventProtocol` to opt in to WebSocket event protocol v3, which leaves the members out of the events of channels with more than 100 members to reduce bandwidth [#4382](https://github.com/GetStream/stream-chat-swift/pull/4382)
 - Add automatic translations of poll questions, options and answers [#4390](https://github.com/GetStream/stream-chat-swift/pull/4390)
 - Add tvOS 15 support, with audio recording on tvOS 17 [#4386](https://github.com/GetStream/stream-chat-swift/pull/4386)
+- Add `NotificationAddedToChannelEvent.unreadChannelCountsByGroup`, and update the current user's unread counts when they are added to a channel [#4379](https://github.com/GetStream/stream-chat-swift/pull/4379)
 ### 🐞 Fixed
 - Fix downloaded attachments staying downloaded after their file was removed [#4386](https://github.com/GetStream/stream-chat-swift/pull/4386)
 

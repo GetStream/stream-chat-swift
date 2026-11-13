@@ -292,6 +292,7 @@ publicize_raw_representable() {
       sub(/^    let /, "    public let ")
       sub(/^    init\(/, "    public init(")
       sub(/^    static let /, "    public static let ")
+      sub(/^    var description: /, "    public var description: ")
     }
     { print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"

@@ -17,6 +17,7 @@ final class SyncEndpoint_Tests: XCTestCase {
             syncRequest: request,
             withInaccessibleCids: nil,
             watch: nil,
+            maxEvents: nil,
             requiresConnectionId: false
         )
 

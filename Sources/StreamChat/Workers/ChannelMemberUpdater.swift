@@ -140,7 +140,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         in cid: ChannelId,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .unban(targetUserId: userId, channelCid: cid.rawValue)) {
+        apiClient.request(endpoint: .unban(targetUserId: userId, channelCid: cid.rawValue, removeFutureChannelsBan: nil)) {
             completion?($0.error)
         }
     }

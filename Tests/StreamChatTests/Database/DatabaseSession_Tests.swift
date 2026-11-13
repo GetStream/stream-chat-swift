@@ -53,12 +53,12 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // Try to load the saved member from DB
-        if let member = channelPayload.channel.members?.first, let memberId = member.memberId {
+        if let member = channelPayload.channel.members?.first {
             var loadedMember: ChatUser? {
-                try? database.viewContext.member(userId: memberId, cid: channelId)?.asModel()
+                try? database.viewContext.member(userId: member.userId, cid: channelId)?.asModel()
             }
 
-            AssertAsync.willBeEqual(loadedMember?.id, memberId)
+            AssertAsync.willBeEqual(loadedMember?.id, member.userId)
         }
     }
 
@@ -270,6 +270,29 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertEqual(Int64(unreadMessages), currentUser?.unreadMessagesCount)
         XCTAssertEqual(Int64(unreadChannels), currentUser?.unreadChannelsCount)
         XCTAssertEqual(Int64(unreadThreads), currentUser?.unreadThreadsCount)
+    }
+
+    func test_saveEvent_whenNotificationAddedToChannel_appliesUnreadCounts() throws {
+        let eventPayload = NotificationAddedToChannelEventDTO(
+            channel: .dummy(cid: .unique),
+            createdAt: .unique,
+            groupedUnreadChannels: ["direct": 1, "team": 4],
+            member: .dummy(),
+            totalUnreadCount: 12,
+            unreadChannels: 5
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
+            try session.saveEvent(event: .typeNotificationAddedToChannelEvent(eventPayload))
+        }
+
+        try database.readSynchronously { session in
+            let currentUser = try XCTUnwrap(session.currentUser)
+            XCTAssertEqual(currentUser.unreadMessagesCount, 12)
+            XCTAssertEqual(currentUser.unreadChannelsCount, 5)
+            XCTAssertEqual(currentUser.unreadChannelCountsByGroup, ["direct": 1, "team": 4])
+        }
     }
 
     func test_saveEvent_mergesUnreadChannelCountsByGroupIntoExistingValues() throws {

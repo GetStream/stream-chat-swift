@@ -6,12 +6,9 @@ import Foundation
 
 // Generated properties are slightly different from the previously hand-written ones.
 extension MemberPayload {
-    // `user_id` is omitted when the nested `user` object carries the id.
-    var memberId: String? { userId ?? user?.id }
-
     convenience init(
         user: UserPayload?,
-        userId: String?,
+        userId: String,
         role: MemberRole?,
         status: String? = nil,
         createdAt: Date,

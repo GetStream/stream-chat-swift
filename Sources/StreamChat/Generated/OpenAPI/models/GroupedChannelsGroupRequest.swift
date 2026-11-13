@@ -7,7 +7,7 @@ import Foundation
 final class GroupedChannelsGroupRequest: Sendable, Encodable, JSONEncodable {
     /// Optional query_timestamp $gte bound for a stored group, requiring query_timestamp sort; do not repeat its group name. For all, combine group equality/$in and date bounds with $or, or use one standalone group $ne exclusion. An empty object matches a stored group; omitted or null preserves legacy grouping.
     let filterConditions: (any Encodable & Sendable)?
-    /// Max channels for this group; omitted or zero uses the request limit
+    /// Max channels for this group; values above 15 are capped at 15. Omitted or zero uses the request limit
     let limit: Int?
     /// Cursor for the next page; only allowed when requesting one group
     let next: String?

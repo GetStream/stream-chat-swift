@@ -138,7 +138,6 @@ rename_generated_type UserResponseCommonFields UserPayload
 # Has isInvisible and privacySettings, but SDK never consumes these
 rename_generated_type UserResponsePrivacyFields UserPayload
 
-rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
@@ -251,10 +250,10 @@ publicize_model UserGroup
 publicize_model UserGroupMember
 
 publicize_raw_representable ChannelCapability
-publicize_raw_representable CreatePollRequestBody VotingVisibility
 publicize_raw_representable PushPreferenceInput PushPreferenceLevel
 publicize_raw_representable ScheduledMessageFailureReason
 publicize_raw_representable TranslateMessageRequest TranslationLanguage
+publicize_raw_representable VotingVisibility
 
 # 7. Coding conformances and cleanup.
 apply_directional_coding_conformances

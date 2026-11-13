@@ -406,7 +406,7 @@ extension XCTestCase {
         voteCountsByOption: [String: Int] = [:],
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
-        votingVisibility: PollResponseDataVotingVisibility = .public,
+        votingVisibility: VotingVisibility = .public,
         user: UserPayload? = .dummy(userId: .unique),
         nameI18n: [String: String]? = nil,
         descriptionI18n: [String: String]? = nil
