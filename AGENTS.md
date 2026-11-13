@@ -141,6 +141,7 @@ Tests/
   StreamChatAITests/       # Tests for StreamChatAI
   StreamChatA2UITests/     # Tests for StreamChatA2UI (Swift Testing; XCTest under AIUI/)
   StreamChatOpenUITests/   # Tests for StreamChatOpenUI (Swift Testing), with upstream conformance fixtures
+  StreamChatDocsSnippets/  # Compile-only copies of the Swift samples in the iOS chat docs
 StreamChatUITestsApp/      # Test harness app for E2E tests
 StreamChatUITestsAppUITests/ # E2E / UI automation tests
 Scripts/                   # Helper scripts (bootstrap, dependency updates)
@@ -327,6 +328,13 @@ Code documentation
 - Do not add doc comments to `internal`, `private`, or test code.
 - Keep doc comments concise: a one-line summary; add parameter/return docs only when they are not obvious from the signature.
 - Do not add inline comments narrating what the code or a change does; comment only non-obvious constraints or reasoning.
+
+Docs snippets
+
+- `Tests/StreamChatDocsSnippets/` holds every Swift sample from the iOS chat docs (https://getstream.io/chat/docs/ios-swift/), one `Snippets-*.swift` file per docs page with one method per sample. Nothing calls them. The `StreamChat` test plan builds the target, so a snippet that stops compiling fails CI.
+- The target imports StreamChat without `@testable` and enables MemberImportVisibility, so snippets can only use public API.
+- SwiftFormat skips the folder, so each method body stays a copy of its docs sample.
+- When an API change breaks a snippet, fix the snippet and the matching sample in the docs (`content/docs/chat/` in GetStream/getstream.io) the same way. New docs samples go into the snippet file first.
 
 A2UI
 

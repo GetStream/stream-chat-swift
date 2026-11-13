@@ -960,7 +960,7 @@ lane :impact_analysis do
       checks: ['Test E2E UI (Debug) Result']
     },
     llc: {
-      sources: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', 'Package.swift'],
+      sources: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/StreamChatDocsSnippets', 'Tests/Shared', 'TestTools/StreamChatTestTools', 'Package.swift'],
       checks: ['Test LLC (Debug)', 'Build SDKs (Old Xcode)']
     },
     tvos: {

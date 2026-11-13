@@ -123,8 +123,8 @@ public struct PushReactionInfo {
     }
 }
 
-public class ChatRemoteNotificationHandler {
-    var client: ChatClient
+public final class ChatRemoteNotificationHandler: @unchecked Sendable {
+    let client: ChatClient
     let content: UNNotificationContent
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let channelRepository: ChannelRepository
