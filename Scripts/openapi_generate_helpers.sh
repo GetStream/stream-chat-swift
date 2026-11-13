@@ -297,6 +297,19 @@ publicize_raw_representable() {
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
 
+# Drops model properties listed in removedProperties. Each entry is { "<property>": "<reason>" }.
+remove_properties() {
+  local model models props
+  jq -e '[.removedProperties[][] | to_entries | select(length != 1 or (.[0].value | type) != "string" or .[0].value == "")]
+    | length == 0' "$ALLOWED_FILE" > /dev/null \
+    || { echo "removedProperties entries need exactly one property with a reason" >&2; exit 1; }
+  models="$(jq -r '.removedProperties | keys[]' "$ALLOWED_FILE")"
+  for model in $models; do
+    props="$(jq -r --arg m "$model" '.removedProperties[$m][] | keys[]' "$ALLOWED_FILE")"
+    remove_property "$model" $props
+  done
+}
+
 # Remove generated properties (declaration, doc comment, init param, assignment,
 #     init(from:)/encode(to:) lines). A deprecated property is emitted as a
 #     private `_name` backing property plus a deprecated `name` accessor; both are removed.
