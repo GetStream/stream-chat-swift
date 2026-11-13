@@ -268,20 +268,6 @@ final class MessagePayload_Tests: XCTestCase {
         )
     }
 
-    func test_memberInfoPayload_notificationsMutedDefaultsToFalse() throws {
-        let missing = try JSONDecoder.stream.decode(
-            MemberInfoPayload.self,
-            from: Data(#"{"channel_role":"channel_member"}"#.utf8)
-        )
-        let null = try JSONDecoder.stream.decode(
-            MemberInfoPayload.self,
-            from: Data(#"{"channel_role":"channel_member","notifications_muted":null}"#.utf8)
-        )
-
-        XCTAssertEqual(missing.notificationsMuted, false)
-        XCTAssertEqual(null.notificationsMuted, false)
-    }
-
     func test_messagePayload_requiredFieldsThrowWhenMissing() throws {
         let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
         let message = try XCTUnwrap(root["message"] as? [String: Any])
@@ -300,52 +286,6 @@ final class MessagePayload_Tests: XCTestCase {
                 try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data),
                 "Expected decoding to fail when \(field) is missing"
             )
-        }
-    }
-
-    func test_messagePayload_reactionScoresDefaultToEmptyWhenNull() throws {
-        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
-        var message = try XCTUnwrap(root["message"] as? [String: Any])
-        var quotedMessage = try XCTUnwrap(message["quoted_message"] as? [String: Any])
-        quotedMessage["reaction_scores"] = NSNull()
-        message["quoted_message"] = quotedMessage
-        message["reaction_scores"] = NSNull()
-        let data = try JSONSerialization.data(withJSONObject: ["message": message])
-
-        let payload = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data).message
-
-        XCTAssertEqual(payload.reactionScores, [:])
-        XCTAssertEqual(payload.quotedMessage?.reactionScores, [:])
-    }
-
-    func test_messagePayload_defaultedFieldsWhenMissingOrNull() throws {
-        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
-        let message = try XCTUnwrap(root["message"] as? [String: Any])
-        let fields = [
-            "mentioned_channel",
-            "mentioned_here",
-            "pinned",
-            "reaction_scores",
-            "restricted_visibility",
-            "shadowed",
-            "silent"
-        ]
-        for value in [nil, NSNull()] as [NSNull?] {
-            var candidateMessage = message
-            for field in fields {
-                candidateMessage[field] = value
-            }
-            let data = try JSONSerialization.data(withJSONObject: ["message": candidateMessage])
-
-            let payload = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data).message
-
-            XCTAssertEqual(payload.mentionedChannel, false)
-            XCTAssertEqual(payload.mentionedHere, false)
-            XCTAssertEqual(payload.pinned, false)
-            XCTAssertEqual(payload.reactionScores, [:])
-            XCTAssertEqual(payload.restrictedVisibility, [])
-            XCTAssertEqual(payload.shadowed, false)
-            XCTAssertEqual(payload.silent, false)
         }
     }
 

@@ -73,22 +73,22 @@ final class MemberPayload: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
-        banExpires = try container.decodeIfPresent(Date.self, forKey: .banExpires)
-        banned = try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false
-        channelRole = try container.decodeIfPresent(String.self, forKey: .channelRole) ?? "channel_member"
-        createdAt = try container.decode(Date.self, forKey: .createdAt)
-        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
-        inviteAcceptedAt = try container.decodeIfPresent(Date.self, forKey: .inviteAcceptedAt)
-        inviteRejectedAt = try container.decodeIfPresent(Date.self, forKey: .inviteRejectedAt)
-        invited = try container.decodeIfPresent(Bool.self, forKey: .invited)
-        notificationsMuted = try container.decodeIfPresent(Bool.self, forKey: .notificationsMuted) ?? false
-        pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
-        shadowBanned = try container.decodeIfPresent(Bool.self, forKey: .shadowBanned) ?? false
-        status = try container.decodeIfPresent(String.self, forKey: .status)
-        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
-        user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
-        userId = try container.decodeIfPresent(String.self, forKey: .userId)
+        self.archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
+        self.banExpires = try container.decodeIfPresent(Date.self, forKey: .banExpires)
+        self.banned = try container.decode(Bool.self, forKey: .banned)
+        self.channelRole = try container.decode(String.self, forKey: .channelRole)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        self.deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
+        self.inviteAcceptedAt = try container.decodeIfPresent(Date.self, forKey: .inviteAcceptedAt)
+        self.inviteRejectedAt = try container.decodeIfPresent(Date.self, forKey: .inviteRejectedAt)
+        self.invited = try container.decodeIfPresent(Bool.self, forKey: .invited)
+        self.notificationsMuted = try container.decode(Bool.self, forKey: .notificationsMuted)
+        self.pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
+        self.shadowBanned = try container.decode(Bool.self, forKey: .shadowBanned)
+        self.status = try container.decodeIfPresent(String.self, forKey: .status)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
+        self.userId = try container.decodeIfPresent(String.self, forKey: .userId)
     }
 }
