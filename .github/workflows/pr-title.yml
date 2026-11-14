@@ -1,0 +1,31 @@
+name: PR Title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  pr-title:
+    name: PR Title
+    runs-on: ubuntu-latest
+    # Outside contributors (forks) have no Linear issue; release and bot PRs have generated titles.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !startsWith(github.head_ref, 'release/') &&
+      github.event.pull_request.user.type != 'Bot' &&
+      github.event.pull_request.user.login != 'Stream-SDK-Bot'
+    steps:
+      - name: Check the title starts with a Linear issue key
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if [[ ! "$TITLE" =~ ^\[[A-Z][A-Z0-9]{1,9}-[0-9]{1,6}\]\ [^[:space:]] ]]; then
+            echo "::error::PR title \"$TITLE\" must start with a Linear issue key in brackets, e.g. \"[IOS-1932] Fix empty search results\"."
+            exit 1
+          fi

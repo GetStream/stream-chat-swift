@@ -1,6 +1,8 @@
 ### 🔗 Issue Links
 
-_Provide all Linear and/or Github issues related to this PR, if applicable._
+_Provide the Linear issue for this PR (its key also starts the PR title, e.g. `[IOS-1932] Fix empty search results`) and any related GitHub issues. Contributors from forks can skip the Linear issue._
+
+- Linear: 
 
 ### 🎯 Goal
 

@@ -388,7 +388,7 @@ Compatibility & distribution
 
 - The default integration branch is `develop`. Feature branches are merged into `develop`.
 - Name branches with a type prefix and a short kebab-case description, e.g. `add/dynamic-search-debounce`, `fix/empty-search-results`, `docs/channel-search`.
-- Prefer prefixes that match the change type: `add/`, `fix/`, `docs/`, etc. Do **not** use personal name prefixes (e.g. `nuno/...`) or ticket IDs (e.g. `ios-1932`, `IOS-1932`) in branch names.
+- Prefer prefixes that match the change type: `add/`, `fix/`, `docs/`, etc. Do **not** use personal name prefixes (e.g. `nuno/...`) or ticket IDs (e.g. `ios-1932`, `IOS-1932`) in branch names, except for the branch name Linear generates for an issue (`<user>/<key>-<number>-<slug>`, e.g. `nuno/ios-1932-fix-empty-search-results`), which is also accepted.
 - Update `CHANGELOG.md` under the `# Upcoming` section when making client-facing changes (follow the Keep a Changelog format with the file's existing `### ✅ Added`, `### 🐞 Fixed`, `### 🔄 Changed` subsections).
 - The changelog has separate subsections for **StreamChat**, **StreamChatUI**, **StreamChatCommonUI**, **StreamChatAI**, **StreamChatA2UI**, and **StreamChatOpenUI**.
 - After a release, `# Upcoming` holds only an empty `### 🔄 Changed` placeholder. When adding the first entry, remove that empty placeholder, unless the new entry belongs under `### 🔄 Changed`.
@@ -406,6 +406,7 @@ Compatibility & distribution
 
 - Use the Github CLI to create a PR and use the Linear MCP to link the relevant issue assigned to me.
 - When creating a PR, the base branch should be the `develop` branch.
+- Start the PR title with the Linear issue key in brackets, e.g. `[IOS-1932] Fix empty search results`. The `PR Title` check enforces this; PRs from forks, release PRs and bot PRs are exempt.
 - Make sure that the PR respects the PR template in `.github/PULL_REQUEST_TEMPLATE.md`.
 - Make sure to fill the template with atomic information, do not mention things that were done and then reverted in this same PR.
 - Do not write "Made with Cursor" in the PR description.
