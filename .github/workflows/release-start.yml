@@ -31,14 +31,6 @@ jobs:
           repositories: ios-certificates
           permission-contents: read
 
-      - name: Pass the bot token to match
-        run: |
-          auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 | tr -d '\n')
-          echo "::add-mask::$auth"
-          echo "MATCH_GIT_BASIC_AUTHORIZATION=$auth" >> "$GITHUB_ENV"
-        env:
-          TOKEN: ${{ steps.bot-token.outputs.token }}
-
       - uses: ./.github/actions/ruby-cache
 
       - uses: ./.github/actions/xcode-cache
@@ -64,5 +56,6 @@ jobs:
         run: bundle exec fastlane release version:"${{ github.event.inputs.version }}" --verbose
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          MATCH_GIT_TOKEN: ${{ steps.bot-token.outputs.token }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}

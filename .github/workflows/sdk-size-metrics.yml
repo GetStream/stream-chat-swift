@@ -54,14 +54,6 @@ jobs:
           repositories: ios-certificates
           permission-contents: read
 
-      - name: Pass the bot token to match
-        run: |
-          auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 | tr -d '\n')
-          echo "::add-mask::$auth"
-          echo "MATCH_GIT_BASIC_AUTHORIZATION=$auth" >> "$GITHUB_ENV"
-        env:
-          TOKEN: ${{ steps.bot-token.outputs.token }}
-
       - uses: ./.github/actions/bootstrap
 
       # App tokens last 1 hour, so mint one right before each lane.
@@ -85,6 +77,7 @@ jobs:
         run: bundle exec fastlane show_frameworks_sizes
         timeout-minutes: 30
         env:
+          MATCH_GIT_TOKEN: ${{ steps.bot-token.outputs.token }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
 

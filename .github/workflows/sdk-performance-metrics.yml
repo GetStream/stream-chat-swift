@@ -55,14 +55,6 @@ jobs:
           repositories: ios-certificates
           permission-contents: read
 
-      - name: Pass the bot token to match
-        run: |
-          auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 | tr -d '\n')
-          echo "::add-mask::$auth"
-          echo "MATCH_GIT_BASIC_AUTHORIZATION=$auth" >> "$GITHUB_ENV"
-        env:
-          TOKEN: ${{ steps.bot-token.outputs.token }}
-
       - uses: actions/setup-python@v7
         with:
           python-version: 3.12 # gsutil requires Python version 3.8-3.12
@@ -94,6 +86,7 @@ jobs:
         timeout-minutes: 120
         env:
           GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+          MATCH_GIT_TOKEN: ${{ steps.bot-token.outputs.token }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
 
