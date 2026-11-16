@@ -59,8 +59,7 @@ jobs:
           client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          repositories: >-
-            ${{ github.event.repository.name }},stream-internal-metrics
+          repositories: ${{ github.event.repository.name }},stream-internal-metrics
           permission-contents: write
           permission-pull-requests: write
 
@@ -83,8 +82,7 @@ jobs:
           client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          repositories: >-
-            ${{ github.event.repository.name }},stream-internal-metrics
+          repositories: ${{ github.event.repository.name }},stream-internal-metrics
           permission-contents: write
           permission-pull-requests: write
 

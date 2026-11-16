@@ -37,8 +37,7 @@ jobs:
           client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          repositories: >-
-            ${{ github.event.repository.name }},apple-internal-testing-pipeline
+          repositories: ${{ github.event.repository.name }},apple-internal-testing-pipeline
           permission-contents: read
           permission-pull-requests: write
           permission-actions: write
