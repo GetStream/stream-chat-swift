@@ -31,10 +31,22 @@ jobs:
     runs-on: macos-15
     steps:
     - uses: actions/checkout@v7
-    - uses: ./.github/actions/connect-bot
+    - name: Generate bot token
+      id: bot-token
+      uses: actions/create-github-app-token@v3
       with:
         client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
         private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
+        owner: ${{ github.repository_owner }}
+        repositories: ios-certificates
+        permission-contents: read
+    - name: Pass the bot token to match
+      run: |
+        auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 | tr -d '\n')
+        echo "::add-mask::$auth"
+        echo "MATCH_GIT_BASIC_AUTHORIZATION=$auth" >> "$GITHUB_ENV"
+      env:
+        TOKEN: ${{ steps.bot-token.outputs.token }}
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - name: Deploy Demo app
