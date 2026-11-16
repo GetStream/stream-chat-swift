@@ -1,5 +1,5 @@
 name: Connect Bot
-description: Lets git reach ios-certificates (match) with a release bot token.
+description: Lets match read ios-certificates with a release bot token.
 
 inputs:
   client-id:
@@ -22,12 +22,12 @@ runs:
         repositories: ios-certificates
         permission-contents: read
 
-    - name: Send SSH git URLs over HTTPS
-      # Matchfile uses an SSH URL; this keeps it unchanged.
+    - name: Pass the token to match
       shell: bash
-      run: >-
-        git config --global
-        url."https://x-access-token:${TOKEN}@github.com/GetStream/".insteadOf
-        "git@github.com:GetStream/"
+      run: |
+        auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 | tr -d '\n')
+        # match may print its git command, so mask the encoded token too.
+        echo "::add-mask::$auth"
+        echo "MATCH_GIT_BASIC_AUTHORIZATION=$auth" >> "$GITHUB_ENV"
       env:
         TOKEN: ${{ steps.bot-token.outputs.token }}
