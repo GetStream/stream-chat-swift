@@ -49,7 +49,6 @@ jobs:
     env:
       GITHUB_EVENT: ${{ toJson(github.event) }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-      STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
       XCODE_VERSION: "26.2"
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
     steps:

@@ -33,11 +33,11 @@ jobs:
       - name: Integration Test
         run: gh workflow run test.yml --repo GetStream/apple-internal-testing-pipeline # reports to @support on failure
         env:
-          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
 
       - name: Create Release PR
         run: bundle exec fastlane release version:"${{ github.event.inputs.version }}" --verbose
         env:
-          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
