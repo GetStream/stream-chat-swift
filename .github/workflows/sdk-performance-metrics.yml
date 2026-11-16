@@ -57,10 +57,23 @@ jobs:
         env:
           TOKEN: ${{ steps.app-token.outputs.token }}
 
-      - name: Connect Bot
-        uses: webfactory/ssh-agent@v0.10.0
+      - name: Generate bot token
+        id: bot-token
+        uses: actions/create-github-app-token@v3
         with:
-          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
+          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ios-certificates,stream-internal-metrics
+
+      - name: Connect Bot
+        # Send SSH git URLs (match, metrics) over HTTPS with the token.
+        run: >-
+          git config --global
+          url."https://x-access-token:${TOKEN}@github.com/GetStream/".insteadOf
+          "git@github.com:GetStream/"
+        env:
+          TOKEN: ${{ steps.bot-token.outputs.token }}
 
       - uses: actions/setup-python@v7
         with:
