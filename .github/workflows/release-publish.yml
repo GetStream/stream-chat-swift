@@ -23,9 +23,19 @@ jobs:
 
       - uses: ./.github/actions/ruby-cache
 
+      - name: Generate release bot token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: >-
+            ${{ github.event.repository.name }},apple-internal-testing-pipeline
+
       - name: "Fastlane - Publish Release"
         env:
-          GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
         run: bundle exec fastlane publish_release --verbose
@@ -35,7 +45,7 @@ jobs:
           test -n "$RELEASE_VERSION"
           gh workflow run test.yml --repo GetStream/apple-internal-testing-pipeline --field sdk=stream-chat-swift --field version="$RELEASE_VERSION"
         env:
-          GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
   merge-main-to-develop:
     name: Merge main to develop
