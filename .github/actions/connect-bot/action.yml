@@ -1,0 +1,33 @@
+name: Connect Bot
+description: Lets git reach ios-certificates (match) with a release bot token.
+
+inputs:
+  client-id:
+    description: Release bot app client ID
+    required: true
+  private-key:
+    description: Release bot app private key
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Generate bot token
+      id: bot-token
+      uses: actions/create-github-app-token@v3
+      with:
+        client-id: ${{ inputs.client-id }}
+        private-key: ${{ inputs.private-key }}
+        owner: ${{ github.repository_owner }}
+        repositories: ios-certificates
+        permission-contents: read
+
+    - name: Send SSH git URLs over HTTPS
+      # Matchfile uses an SSH URL; this keeps it unchanged.
+      shell: bash
+      run: >-
+        git config --global
+        url."https://x-access-token:${TOKEN}@github.com/GetStream/".insteadOf
+        "git@github.com:GetStream/"
+      env:
+        TOKEN: ${{ steps.bot-token.outputs.token }}

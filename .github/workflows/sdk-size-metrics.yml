@@ -44,24 +44,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate bot token
-        id: bot-token
-        uses: actions/create-github-app-token@v3
+      - uses: ./.github/actions/connect-bot
         with:
           client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: ios-certificates
-          permission-contents: read
-
-      - name: Connect Bot
-        # Send SSH git URLs (match) over HTTPS with the token.
-        run: >-
-          git config --global
-          url."https://x-access-token:${TOKEN}@github.com/GetStream/".insteadOf
-          "git@github.com:GetStream/"
-        env:
-          TOKEN: ${{ steps.bot-token.outputs.token }}
 
       - uses: ./.github/actions/bootstrap
 
