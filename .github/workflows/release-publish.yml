@@ -20,9 +20,10 @@ jobs:
           private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: ios-certificates
+          permission-contents: read
 
       - name: Connect Bot
-        # Send SSH git URLs (match, metrics) over HTTPS with the token.
+        # Send SSH git URLs (match) over HTTPS with the token.
         run: >-
           git config --global
           url."https://x-access-token:${TOKEN}@github.com/GetStream/".insteadOf
@@ -45,6 +46,8 @@ jobs:
           owner: ${{ github.repository_owner }}
           repositories: >-
             ${{ github.event.repository.name }},apple-internal-testing-pipeline
+          permission-contents: write
+          permission-actions: write
 
       - name: "Fastlane - Publish Release"
         env:
@@ -71,6 +74,8 @@ jobs:
         with:
           client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-workflows: write
 
       - uses: actions/checkout@v7
         with:

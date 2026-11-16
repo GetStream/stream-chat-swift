@@ -44,18 +44,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate release bot token
-        id: app-token
-        uses: actions/create-github-app-token@v3
-        with:
-          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
-          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
-
-      - name: Use release bot token
-        run: echo "GITHUB_TOKEN=$TOKEN" >> "$GITHUB_ENV"
-        env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
-
       - name: Generate bot token
         id: bot-token
         uses: actions/create-github-app-token@v3
@@ -63,10 +51,11 @@ jobs:
           client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          repositories: ios-certificates,stream-internal-metrics
+          repositories: ios-certificates
+          permission-contents: read
 
       - name: Connect Bot
-        # Send SSH git URLs (match, metrics) over HTTPS with the token.
+        # Send SSH git URLs (match) over HTTPS with the token.
         run: >-
           git config --global
           url."https://x-access-token:${TOKEN}@github.com/GetStream/".insteadOf
@@ -76,12 +65,47 @@ jobs:
 
       - uses: ./.github/actions/bootstrap
 
+      # App tokens last 1 hour, so mint one right before each lane.
+      - name: Generate release bot token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: >-
+            ${{ github.event.repository.name }},stream-internal-metrics
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Use release bot token
+        run: echo "GITHUB_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+        env:
+          TOKEN: ${{ steps.app-token.outputs.token }}
+
       - name: Run General SDK Size Metrics
         run: bundle exec fastlane show_frameworks_sizes
         timeout-minutes: 30
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
+
+      - name: Generate release bot token
+        id: app-token-2
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: >-
+            ${{ github.event.repository.name }},stream-internal-metrics
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Use release bot token
+        run: echo "GITHUB_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+        env:
+          TOKEN: ${{ steps.app-token-2.outputs.token }}
 
       - name: Run Detailed SDK Size Metrics
         run: bundle exec fastlane size_analyze ${{ env.VERBOSE }}

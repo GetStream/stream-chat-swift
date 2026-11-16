@@ -45,18 +45,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate release bot token
-        id: app-token
-        uses: actions/create-github-app-token@v3
-        with:
-          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
-          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
-
-      - name: Use release bot token
-        run: echo "GITHUB_TOKEN=$TOKEN" >> "$GITHUB_ENV"
-        env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
-
       - name: Generate bot token
         id: bot-token
         uses: actions/create-github-app-token@v3
@@ -64,10 +52,11 @@ jobs:
           client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          repositories: ios-certificates,stream-internal-metrics
+          repositories: ios-certificates
+          permission-contents: read
 
       - name: Connect Bot
-        # Send SSH git URLs (match, metrics) over HTTPS with the token.
+        # Send SSH git URLs (match) over HTTPS with the token.
         run: >-
           git config --global
           url."https://x-access-token:${TOKEN}@github.com/GetStream/".insteadOf
@@ -83,6 +72,24 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           INSTALL_GCLOUD: true
+
+      # App tokens last 1 hour, so mint one right before each lane.
+      - name: Generate release bot token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: >-
+            ${{ github.event.repository.name }},stream-internal-metrics
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Use release bot token
+        run: echo "GITHUB_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+        env:
+          TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: Run XCMetrics
         run: bundle exec fastlane xcmetrics ${{ env.VERBOSE }}

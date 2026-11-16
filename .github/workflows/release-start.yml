@@ -25,9 +25,10 @@ jobs:
           private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: ios-certificates
+          permission-contents: read
 
       - name: Connect Bot
-        # Send SSH git URLs (match, metrics) over HTTPS with the token.
+        # Send SSH git URLs (match) over HTTPS with the token.
         run: >-
           git config --global
           url."https://x-access-token:${TOKEN}@github.com/GetStream/".insteadOf
@@ -52,6 +53,9 @@ jobs:
           owner: ${{ github.repository_owner }}
           repositories: >-
             ${{ github.event.repository.name }},apple-internal-testing-pipeline
+          permission-contents: read
+          permission-pull-requests: write
+          permission-actions: write
 
       - name: Integration Test
         run: gh workflow run test.yml --repo GetStream/apple-internal-testing-pipeline # reports to @support on failure
