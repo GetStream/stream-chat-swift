@@ -658,7 +658,6 @@ open class ComposerVC: _ViewController,
 
         // Note: The order of the calls is important.
         updateText()
-        updateKeystrokeEvents()
         updateTitleLabel()
         updateCommandsButtonVisibility()
         updateConfirmButtonVisibility()
@@ -1709,6 +1708,7 @@ open class ComposerVC: _ViewController,
         guard textView.text != content.text else { return }
 
         content.text = textView.text
+        updateKeystrokeEvents()
     }
 
     open func textView(
