@@ -103,7 +103,6 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     private let scheduledMessagesRepository: ScheduledMessagesRepository
     private let environment: Environment
     private var nextCursor: String?
-    private var loadedIds = Set<String>()
 
     /// Creates a new `ScheduledMessageListController`.
     ///
@@ -125,7 +124,6 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
             guard let self else { return }
             if let value = result.value {
                 self.nextCursor = value.next
-                self.loadedIds = Set(value.scheduledMessages.map(\.id))
                 self.hasLoadedAllScheduledMessages = value.next == nil
             }
             if let error = result.error {
@@ -164,20 +162,13 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     ) {
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
-        let cursor = nextCursor
-        updatedQuery.pagination = Pagination(pageSize: limit, cursor: cursor)
-        scheduledMessagesRepository.loadScheduledMessages(
-            query: updatedQuery,
-            previousPageIds: loadedIds
-        ) { [weak self] result in
+        updatedQuery.pagination = Pagination(pageSize: limit, cursor: nextCursor)
+        scheduledMessagesRepository.loadScheduledMessages(query: updatedQuery) { [weak self] result in
             switch result {
             case let .success(value):
                 self?.callback { [weak self] in
-                    guard let self else { return }
-                    let ids = value.scheduledMessages.map(\.id)
-                    self.nextCursor = value.next
-                    self.loadedIds = cursor == nil ? Set(ids) : self.loadedIds.union(ids)
-                    self.hasLoadedAllScheduledMessages = value.next == nil
+                    self?.nextCursor = value.next
+                    self?.hasLoadedAllScheduledMessages = value.next == nil
                     completion?(.success(value.scheduledMessages))
                 }
             case let .failure(error):

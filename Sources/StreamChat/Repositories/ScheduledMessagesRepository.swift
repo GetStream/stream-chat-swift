@@ -41,35 +41,20 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
 
     /// Loads scheduled messages and saves them to the database.
     ///
-    /// When the last page of the list is loaded, the scheduled messages missing from the list are removed from the
-    /// database, for example the ones that were sent while the app was offline. A channel filter limits that to the
-    /// channel, and a status filter turns it off, because the list is then only a part of the scheduled messages.
-    ///
-    /// - Parameters:
-    ///   - query: The query, with the cursor of the page to load.
-    ///   - previousPageIds: The ids of the scheduled messages on the pages before the cursor. Without them, a page
-    ///   other than the first one removes nothing.
-    ///   - completion: Called with the loaded page.
+    /// When the whole list is loaded, the scheduled messages missing from it are removed from the database,
+    /// for example the ones that were sent while the app was offline.
     func loadScheduledMessages(
         query: ScheduledMessageListQuery,
-        previousPageIds: Set<String>? = nil,
         completion: @escaping @Sendable (Result<ScheduledMessageListResponse, Error>) -> Void
     ) {
-        let request = query.toRequest()
         let endpoint: Endpoint<QueryScheduledMessagesResponse> = .queryScheduledMessages(
-            queryScheduledMessagesRequest: request
+            queryScheduledMessagesRequest: query.toRequest()
         )
-        let previousPageIds = query.pagination.cursor == nil ? [] : previousPageIds
-        let filteredCid = request.filter?.cid
-        let cid = filteredCid.flatMap { try? ChannelId(cid: $0) }
-        let coversAllStatuses = request.filter?.status == nil && (filteredCid == nil || cid != nil)
         apiClient.request(endpoint: endpoint) { [weak self] result in
             switch result {
             case let .success(response):
                 let next = response.next.flatMap { $0.isEmpty ? nil : $0 }
-                let loadedIds = next == nil && coversAllStatuses
-                    ? previousPageIds?.union(response.scheduledMessages.map(\.id))
-                    : nil
+                let isWholeList = query.filter == nil && query.pagination.cursor == nil && next == nil
                 self?.database.write(
                     converting: { session in
                         let messages = response.scheduledMessages.compactMap { payload in
@@ -80,8 +65,8 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                                 return nil
                             }
                         }
-                        if let loadedIds {
-                            session.deleteScheduledMessages(notIn: loadedIds, cid: cid)
+                        if isWholeList {
+                            session.deleteScheduledMessages(notIn: Set(response.scheduledMessages.map(\.id)), cid: nil)
                         }
                         return ScheduledMessageListResponse(scheduledMessages: messages, next: next)
                     },
@@ -495,12 +480,9 @@ extension ScheduledMessageListQuery {
 // MARK: - Async
 
 extension ScheduledMessagesRepository {
-    func loadScheduledMessages(
-        query: ScheduledMessageListQuery,
-        previousPageIds: Set<String>? = nil
-    ) async throws -> ScheduledMessageListResponse {
+    func loadScheduledMessages(query: ScheduledMessageListQuery) async throws -> ScheduledMessageListResponse {
         try await withCheckedThrowingContinuation { continuation in
-            loadScheduledMessages(query: query, previousPageIds: previousPageIds) { continuation.resume(with: $0) }
+            loadScheduledMessages(query: query) { continuation.resume(with: $0) }
         }
     }
 

@@ -9,7 +9,6 @@ import Foundation
 @MainActor public final class ScheduledMessageListState: ObservableObject {
     private let observer: Observer
     private(set) var nextCursor: String?
-    private(set) var loadedIds = Set<String>()
 
     init(query: ScheduledMessageListQuery, database: DatabaseContainer) {
         self.query = query
@@ -30,9 +29,8 @@ import Foundation
     /// A Boolean value that returns whether all the scheduled messages are loaded.
     @Published public private(set) var hasLoadedAllScheduledMessages = false
 
-    func didLoadPage(ids: [String], after cursor: String?, next: String?) {
-        loadedIds = cursor == nil ? Set(ids) : loadedIds.union(ids)
-        nextCursor = next
-        hasLoadedAllScheduledMessages = next == nil
+    func setNextCursor(_ cursor: String?) {
+        nextCursor = cursor
+        hasLoadedAllScheduledMessages = cursor == nil
     }
 }

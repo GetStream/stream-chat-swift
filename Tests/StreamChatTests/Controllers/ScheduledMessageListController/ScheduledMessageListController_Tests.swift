@@ -71,21 +71,6 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         XCTAssertEqual(Set(controller.scheduledMessages.map(\.id)), ["first", "second"])
     }
 
-    func test_loadMoreScheduledMessages_ofTheLastPage_removesTheMessagesMissingFromAllPages() throws {
-        try client.mockDatabaseContainer.writeSynchronously { session in
-            try session.saveScheduledMessage(payload: .dummy(id: "stale", cid: self.cid))
-        }
-        apiClient.test_mockResponseResult(.success(QueryScheduledMessagesResponse(next: "cursor", scheduledMessages: [.dummy(id: "first", cid: cid)])))
-        let controller = client.scheduledMessageListController(query: .init(pageSize: 1))
-        _ = try waitFor { controller.synchronize($0) }
-        XCTAssertEqual(Set(controller.scheduledMessages.map(\.id)), ["stale", "first"])
-        apiClient.test_mockResponseResult(.success(QueryScheduledMessagesResponse(scheduledMessages: [.dummy(id: "second", cid: cid)])))
-
-        _ = try waitFor { controller.loadMoreScheduledMessages(completion: $0) }.get()
-
-        XCTAssertEqual(Set(controller.scheduledMessages.map(\.id)), ["first", "second"])
-    }
-
     func test_synchronize_whenTheRequestFails_reportsTheError() throws {
         apiClient.test_mockResponseResult(Result<QueryScheduledMessagesResponse, Error>.failure(ClientError.ConnectionError()))
         let controller = client.scheduledMessageListController()

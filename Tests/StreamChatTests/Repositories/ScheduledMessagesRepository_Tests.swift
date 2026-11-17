@@ -1088,43 +1088,6 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(Set(try storedMessages().map(\.id)), ["first", "second"])
     }
 
-    func test_load_ofTheLastPage_removesTheMessagesMissingFromAllPages() throws {
-        try saveOnServer(id: "stale")
-        apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "first", cid: cid)], next: "cursor")))
-        let firstPage = try waitFor { repository.loadScheduledMessages(query: .init(pageSize: 1), completion: $0) }.get()
-        XCTAssertEqual(Set(try storedMessages().map(\.id)), ["stale", "first"])
-        apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "second", cid: cid)])))
-
-        _ = try waitFor {
-            repository.loadScheduledMessages(
-                query: .init(pageSize: 1, next: firstPage.next),
-                previousPageIds: ["first"],
-                completion: $0
-            )
-        }.get()
-
-        XCTAssertEqual(Set(try storedMessages().map(\.id)), ["first", "second"])
-    }
-
-    func test_load_ofTheLastPage_withoutThePreviousPages_removesNothing() throws {
-        try saveOnServer(id: "stale")
-        apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "second", cid: cid)])))
-
-        _ = try waitFor { repository.loadScheduledMessages(query: .init(pageSize: 1, next: "cursor"), completion: $0) }.get()
-
-        XCTAssertEqual(Set(try storedMessages().map(\.id)), ["stale", "second"])
-    }
-
-    func test_load_withAChannelFilter_replacesTheLocalListOfTheChannel() throws {
-        try saveOnServer(id: "stale")
-        _ = try XCTUnwrap(model(from: .dummy(id: "other-channel", cid: .unique, user: .dummy(userId: userId))))
-        apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "first", cid: cid)])))
-
-        _ = try waitFor { repository.loadScheduledMessages(query: .init(filter: .equal(.cid, to: cid)), completion: $0) }.get()
-
-        XCTAssertEqual(Set(try storedMessages().map(\.id)), ["first", "other-channel"])
-    }
-
     func test_load_whenTheRequestFails_fails() throws {
         apiClient.test_mockResponseResult(Result<QueryScheduledMessagesResponse, Error>.failure(ClientError.ConnectionError()))
 
