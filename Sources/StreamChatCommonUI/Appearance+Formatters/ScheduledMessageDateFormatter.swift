@@ -8,6 +8,8 @@ import Foundation
 public protocol ScheduledMessageDateFormatter {
     /// Formats the date and time a scheduled message is sent at, for example "Tomorrow at 09:00".
     func format(_ date: Date) -> String
+    /// Formats the date and time a scheduled message is sent at without relative days, for example "Wed, Oct 21 at 09:00".
+    func formatAbsolute(_ date: Date) -> String
     /// Formats a short name of the time zone, for example "GMT+3".
     func formatTimeZone(_ timeZone: TimeZone) -> String
 }
@@ -80,6 +82,10 @@ open class DefaultScheduledMessageDateFormatter: ScheduledMessageDateFormatter {
         L10n.ScheduledMessage.Date.dayAtTime(formatDay(date), timeFormatter.string(from: date))
     }
 
+    open func formatAbsolute(_ date: Date) -> String {
+        L10n.ScheduledMessage.Date.dayAtTime(formatAbsoluteDay(date), timeFormatter.string(from: date))
+    }
+
     open func formatTimeZone(_ timeZone: TimeZone) -> String {
         timeZoneFormatter.timeZone = timeZone
         return timeZoneFormatter.string(from: Date())
@@ -98,8 +104,12 @@ open class DefaultScheduledMessageDateFormatter: ScheduledMessageDateFormatter {
         case 2...6:
             return weekdayFormatter.string(from: date)
         default:
-            let isCurrentYear = calendar.isDate(date, equalTo: now, toGranularity: .year)
-            return (isCurrentYear ? dayFormatter : dayWithYearFormatter).string(from: date)
+            return formatAbsoluteDay(date)
         }
+    }
+
+    private func formatAbsoluteDay(_ date: Date) -> String {
+        let isCurrentYear = calendar.isDate(date, equalTo: Date(), toGranularity: .year)
+        return (isCurrentYear ? dayFormatter : dayWithYearFormatter).string(from: date)
     }
 }

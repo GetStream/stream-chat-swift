@@ -96,6 +96,19 @@ final class ScheduledMessageList_Tests: XCTestCase {
         XCTAssertEqual(["first", "second"], Set(scheduledMessageList.state.scheduledMessages.map(\.id)))
     }
 
+    @MainActor func test_loadMoreScheduledMessages_whenItIsTheLastPage_thenTheMessagesMissingFromAllPagesAreRemoved() async throws {
+        let stale = try await schedule()
+        setUpScheduledMessageList(query: .init(pageSize: 1))
+        apiClient.test_mockResponseResult(.success(QueryScheduledMessagesResponse(next: "cursor", scheduledMessages: [.dummy(id: "first", cid: cid)])))
+        try await scheduledMessageList.get()
+        XCTAssertEqual([stale.id, "first"], Set(scheduledMessageList.state.scheduledMessages.map(\.id)))
+        apiClient.test_mockResponseResult(.success(QueryScheduledMessagesResponse(scheduledMessages: [.dummy(id: "second", cid: cid)])))
+
+        try await scheduledMessageList.loadMoreScheduledMessages()
+
+        XCTAssertEqual(["first", "second"], Set(scheduledMessageList.state.scheduledMessages.map(\.id)))
+    }
+
     @MainActor func test_loadMoreScheduledMessages_whenAllAreLoaded_thenNothingIsRequested() async throws {
         setUpScheduledMessageList()
         apiClient.test_mockResponseResult(.success(QueryScheduledMessagesResponse(scheduledMessages: [.dummy(id: "first", cid: cid)])))

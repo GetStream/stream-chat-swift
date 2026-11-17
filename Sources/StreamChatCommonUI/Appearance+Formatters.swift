@@ -54,6 +54,9 @@ public extension Appearance {
         /// A formatter that converts the date a scheduled message is sent at to textual representation.
         public var scheduledMessageDate: ScheduledMessageDateFormatter = DefaultScheduledMessageDateFormatter()
 
+        /// A formatter that converts the failure of a scheduled message to textual representation.
+        public var scheduledMessageFailure: ScheduledMessageFailureFormatter = DefaultScheduledMessageFailureFormatter()
+
         /// A boolean value that determines whether Markdown is active for messages to be formatted.
         public var isMarkdownEnabled = true
 

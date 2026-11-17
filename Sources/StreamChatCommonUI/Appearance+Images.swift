@@ -663,6 +663,11 @@ public extension Appearance {
             config: UIImage.SymbolConfiguration(weight: .regular)
         )
 
+        public var exclamationTriangleFill: UIImage = loadSafely(
+            systemName: "exclamationmark.triangle.fill",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
         public var info: UIImage = loadSafely(
             systemName: "info.circle",
             config: UIImage.SymbolConfiguration(weight: .regular)
