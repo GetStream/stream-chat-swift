@@ -3,7 +3,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add `ChatChannelController.scheduledMessagesUsage(completion:)` and `Chat.scheduledMessagesUsage()` for comparing scheduled message counts with their limits [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
+- Add role, group, here and channel mentions, `silent` and `skipPush` to scheduling a message [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
+- Make the errors of the schedule calls public, for example `ClientError.ScheduledMessagesChannelLimitReached` [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
+### 🐞 Fixed
+- Fix scheduled messages of an open channel going stale after a reconnect [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
+
+## StreamChatCommonUI
+### ✅ Added
+- Add `ScheduledMessageDateFormatter` as `Appearance.formatters.scheduledMessageDate` [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
+- Add `clock`, `exclamationCircle`, `exclamationTriangle` and `info` icons to `Appearance.Images` [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
+- Add `accentPrimarySubtle`, `accentErrorSubtle` and `backgroundUtilityErrorSubtle` colors [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
+### 🎭 New Localizations
+- Add `scheduled-message.date.day-at-time` key [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
 
 # [5.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.17.0)
 _November 12, 2026_

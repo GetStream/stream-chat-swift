@@ -2505,6 +2505,29 @@ final class ChannelUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
+    func test_startWatching_whenScheduledMessagesAreIncluded_requestsAndSavesThem() throws {
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid), scheduledMessages: [.dummy(id: "stale", cid: cid)]))
+        }
+
+        let completionCalled = expectation(description: "Completion called")
+        channelUpdater.startWatching(cid: cid, includeScheduledMessages: true, isInRecoveryMode: false) { error in
+            XCTAssertNil(error)
+            completionCalled.fulfill()
+        }
+
+        let body = try XCTUnwrap(apiClient.request_endpoint).bodyAsDictionary()
+        XCTAssertEqual(body["include_scheduled_messages"] as? Bool, true)
+
+        let payload = ChannelPayload.dummy(channel: .dummy(cid: cid), scheduledMessages: [.dummy(id: "current", cid: cid)])
+        apiClient.test_simulateResponse(.success(payload))
+
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let ids = try database.readSynchronously { Set($0.channel(cid: cid)?.scheduledMessages.map(\.id) ?? []) }
+        XCTAssertEqual(ids, ["current"])
+    }
+
     // MARK: - Stop watching
 
     func test_stopWatching_makesCorrectAPICall() {

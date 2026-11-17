@@ -668,13 +668,29 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
     ///
     /// - Parameter cid: Channel id of the channel to be watched
+    /// - Parameter includeScheduledMessages: Whether the current user's scheduled messages in the channel are fetched and saved
     /// - Parameter isInRecoveryMode: Determines whether the SDK is in offline recovery mode
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: (@Sendable (Error?) -> Void)? = nil) {
+    func startWatching(
+        cid: ChannelId,
+        includeScheduledMessages: Bool = false,
+        isInRecoveryMode: Bool,
+        completion: (@Sendable (Error?) -> Void)? = nil
+    ) {
         var query = ChannelQuery(cid: cid)
+        query.includeScheduledMessages = includeScheduledMessages
         query.options = .all
         let endpoint = query.endpoint
-        let completion: @Sendable (Result<ChannelStateResponse, Error>) -> Void = { completion?($0.error) }
+        let completion: @Sendable (Result<ChannelStateResponse, Error>) -> Void = { [database] result in
+            // Scheduled messages are the only part of the response that is saved, since `/sync` does not replay their events.
+            guard let scheduledMessages = result.value?.scheduledMessages else {
+                completion?(result.error)
+                return
+            }
+            database.write({ session in
+                session.saveScheduledMessages(payload: scheduledMessages, cid: cid)
+            }, completion: { completion?($0) })
+        }
         if isInRecoveryMode {
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
         } else {
@@ -1215,9 +1231,9 @@ extension ChannelUpdater {
         }
     }
 
-    func startWatching(cid: ChannelId, isInRecoveryMode: Bool) async throws {
+    func startWatching(cid: ChannelId, includeScheduledMessages: Bool = false, isInRecoveryMode: Bool) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
+            startWatching(cid: cid, includeScheduledMessages: includeScheduledMessages, isInRecoveryMode: isInRecoveryMode) { error in
                 continuation.resume(with: error)
             }
         }

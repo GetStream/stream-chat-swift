@@ -67,6 +67,35 @@ class ChatMessageController_Mock: ChatMessageController, @unchecked Sendable {
         loadPageAroundReplyId_completion = completion
     }
 
+    var scheduleReplyCallCount = 0
+    var scheduleReply_text: String?
+    var scheduleReply_showReplyInChannel: Bool?
+    var scheduleReply_scheduledAt: Date?
+    var scheduleReply_completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)?
+    override func scheduleReply(
+        messageId: MessageId? = nil,
+        text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
+        showReplyInChannel: Bool = false,
+        silent: Bool = false,
+        quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
+        scheduledAt: Date,
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
+    ) {
+        scheduleReplyCallCount += 1
+        scheduleReply_text = text
+        scheduleReply_showReplyInChannel = showReplyInChannel
+        scheduleReply_scheduledAt = scheduledAt
+        scheduleReply_completion = completion
+    }
+
     var hasLoadedAllNextReplies_mock: Bool?
     override var hasLoadedAllNextReplies: Bool {
         hasLoadedAllNextReplies_mock ?? super.hasLoadedAllNextReplies

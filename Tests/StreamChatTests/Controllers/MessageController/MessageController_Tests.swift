@@ -2768,6 +2768,43 @@ final class MessageController_Tests: XCTestCase {
         // Then
         XCTAssertTrue(receivedError is ClientError.MessageLiveLocationAlreadyStopped)
     }
+
+    // MARK: - Scheduled Messages
+
+    func test_scheduleReply_savesTheMentionsSilentAndSkipPush() throws {
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+
+        let scheduledMessage = try waitFor {
+            controller.scheduleReply(
+                messageId: "scheduled-id",
+                text: "Later",
+                mentionedUserIds: ["user-id"],
+                mentionedHere: true,
+                mentionedChannel: true,
+                mentionedGroupIds: ["group-id"],
+                mentionedRoles: ["admin"],
+                showReplyInChannel: true,
+                silent: true,
+                skipPush: true,
+                scheduledAt: Date().addingTimeInterval(3600),
+                completion: $0
+            )
+        }.get()
+
+        XCTAssertEqual(scheduledMessage.cid, cid)
+        XCTAssertEqual(scheduledMessage.message.text, "Later")
+        XCTAssertEqual(scheduledMessage.message.parentMessageId, messageId)
+        XCTAssertTrue(scheduledMessage.message.showReplyInChannel)
+        XCTAssertTrue(scheduledMessage.message.isSilent)
+        XCTAssertTrue(scheduledMessage.message.mentionedHere)
+        XCTAssertTrue(scheduledMessage.message.mentionedChannel)
+        XCTAssertEqual(scheduledMessage.message.mentionedRoles, ["admin"])
+        let stored = try client.databaseContainer.readSynchronously { session in
+            let message = session.scheduledMessage(id: "scheduled-id")?.message
+            return [message?.mentionedUserIds == ["user-id"], message?.mentionedGroupIds == ["group-id"], message?.skipPush == true]
+        }
+        XCTAssertEqual(stored, [true, true, true])
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {

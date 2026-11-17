@@ -9,9 +9,15 @@ struct ScheduledMessageContent: Sendable {
     var text: String
     var attachments: [AnyAttachmentPayload]
     var mentionedUserIds: [UserId]
+    var mentionedHere = false
+    var mentionedChannel = false
+    var mentionedGroupIds: [String] = []
+    var mentionedRoles: [String] = []
     var quotedMessageId: MessageId?
     var parentId: MessageId?
     var showReplyInChannel: Bool
+    var isSilent = false
+    var skipPush = false
     var extraData: [String: RawJSON]
 }
 
@@ -70,6 +76,11 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 completion(.failure(error))
             }
         }
+    }
+
+    /// Counts the current user's scheduled messages saved locally, next to the limits in the config of the channel.
+    func usage(cid: ChannelId, completion: @escaping @Sendable (Result<ScheduledMessagesUsage, Error>) -> Void) {
+        database.read({ try $0.scheduledMessagesUsage(cid: cid) }, completion: completion)
     }
 
     /// Schedules a message locally.
@@ -197,7 +208,11 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             case .pendingSend:
                 message.localMessageState = .sending
                 let cid = try ChannelId(cid: dto.cid)
-                return .schedule(cid: cid, request: SendMessageRequest(message: message.asMessageRequest(), scheduledAt: scheduledAt))
+                return .schedule(cid: cid, request: SendMessageRequest(
+                    message: message.asMessageRequest(),
+                    scheduledAt: scheduledAt,
+                    skipPush: message.skipPush ? true : nil
+                ))
             case .pendingSync:
                 message.localMessageState = .syncing
                 // The backend ignores the id of the message.
@@ -354,25 +369,29 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
 }
 
 extension ClientError {
-    final class ScheduledMessageDoesNotExist: ClientError, @unchecked Sendable {
+    /// There is no scheduled message with the given id in the local database.
+    public final class ScheduledMessageDoesNotExist: ClientError, @unchecked Sendable {
         init(id: String) {
             super.init("There is no scheduled message with id: \(id).")
         }
     }
 
-    final class ScheduledMessageHasACommand: ClientError, @unchecked Sendable {
+    /// The message starts with a slash command, which cannot be scheduled.
+    public final class ScheduledMessageHasACommand: ClientError, @unchecked Sendable {
         init() {
             super.init("Slash commands cannot be scheduled.")
         }
     }
 
-    final class ScheduledMessageQuotesADeletedMessage: ClientError, @unchecked Sendable {
+    /// The scheduled message quotes a message that was deleted.
+    public final class ScheduledMessageQuotesADeletedMessage: ClientError, @unchecked Sendable {
         init() {
             super.init("The quoted message was deleted. Remove the quote and try again.")
         }
     }
 
-    final class ScheduledMessageIsTooFarAhead: ClientError, @unchecked Sendable {
+    /// The date is further ahead than the app allows.
+    public final class ScheduledMessageIsTooFarAhead: ClientError, @unchecked Sendable {
         init(maxLeadTime: TimeInterval) {
             let formatter = DateComponentsFormatter()
             formatter.allowedUnits = [.day, .hour, .minute]
@@ -383,19 +402,22 @@ extension ClientError {
         }
     }
 
-    final class ScheduledMessagesChannelLimitReached: ClientError, @unchecked Sendable {
+    /// The current user has as many pending scheduled messages in the channel as the app allows.
+    public final class ScheduledMessagesChannelLimitReached: ClientError, @unchecked Sendable {
         init(limit: Int) {
             super.init("You can have at most \(limit) scheduled messages in this channel.")
         }
     }
 
-    final class ScheduledMessagesUserLimitReached: ClientError, @unchecked Sendable {
+    /// The current user has as many pending scheduled messages as the app allows.
+    public final class ScheduledMessagesUserLimitReached: ClientError, @unchecked Sendable {
         init(limit: Int) {
             super.init("You can have at most \(limit) scheduled messages.")
         }
     }
 
-    final class ScheduledMessageHasNoPendingChanges: ClientError, @unchecked Sendable {
+    /// The scheduled message has no local changes to send to the server.
+    public final class ScheduledMessageHasNoPendingChanges: ClientError, @unchecked Sendable {
         init(id: String) {
             super.init("The scheduled message with id: \(id) has no changes to send to the server.")
         }
@@ -461,6 +483,12 @@ extension ScheduledMessagesRepository {
     func loadScheduledMessages(query: ScheduledMessageListQuery) async throws -> ScheduledMessageListResponse {
         try await withCheckedThrowingContinuation { continuation in
             loadScheduledMessages(query: query) { continuation.resume(with: $0) }
+        }
+    }
+
+    func usage(cid: ChannelId) async throws -> ScheduledMessagesUsage {
+        try await withCheckedThrowingContinuation { continuation in
+            usage(cid: cid) { continuation.resume(with: $0) }
         }
     }
 

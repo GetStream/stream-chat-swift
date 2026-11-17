@@ -76,6 +76,41 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
         createNewMessageCallCount += 1
     }
 
+    var scheduleMessageCallCount = 0
+    var scheduleMessage_text: String?
+    var scheduleMessage_quotedMessageId: MessageId?
+    var scheduleMessage_scheduledAt: Date?
+    var scheduleMessage_completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)?
+    override func scheduleMessage(
+        messageId: MessageId? = nil,
+        text: String,
+        silent: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
+        quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
+        scheduledAt: Date,
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
+    ) {
+        scheduleMessageCallCount += 1
+        scheduleMessage_text = text
+        scheduleMessage_quotedMessageId = quotedMessageId
+        scheduleMessage_scheduledAt = scheduledAt
+        scheduleMessage_completion = completion
+    }
+
+    var scheduledMessagesUsage_result: Result<ScheduledMessagesUsage, Error> = .success(
+        ScheduledMessagesUsage(channelCount: 0, channelLimit: nil, userCount: 0, userLimit: nil)
+    )
+    override func scheduledMessagesUsage(completion: @escaping @MainActor (Result<ScheduledMessagesUsage, Error>) -> Void) {
+        callback { completion(self.scheduledMessagesUsage_result) }
+    }
+
     var hasLoadedAllNextMessages_mock: Bool? = true
     override var hasLoadedAllNextMessages: Bool {
         hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages

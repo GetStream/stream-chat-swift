@@ -646,6 +646,28 @@ public extension Appearance {
             config: UIImage.SymbolConfiguration(pointSize: 13)
         )
 
+        // MARK: - V5 - Scheduled Message Icons
+
+        public var clock: UIImage = loadSafely(
+            systemName: "clock",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var exclamationCircle: UIImage = loadSafely(
+            systemName: "exclamationmark.circle",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var exclamationTriangle: UIImage = loadSafely(
+            systemName: "exclamationmark.triangle",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var info: UIImage = loadSafely(
+            systemName: "info.circle",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
         // MARK: - Mention Suggestion Icons
 
         public var mentionHere: UIImage = loadSafely(

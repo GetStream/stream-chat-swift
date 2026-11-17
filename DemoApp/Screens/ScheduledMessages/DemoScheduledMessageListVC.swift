@@ -129,7 +129,7 @@ final class DemoScheduledMessageListModel: ObservableObject, ScheduledMessageLis
     func reschedule(_ message: ScheduledMessage, to date: Date) {
         controller.rescheduleMessage(id: message.id, scheduledAt: date) { [weak self] result in
             let error: Error? = if case let .failure(error) = result { error } else { nil }
-            self?.handle(error, "Message rescheduled for \(DemoScheduledDateFormatter.string(from: date))")
+            self?.handle(error, "Message rescheduled for \(Appearance.default.formatters.scheduledMessageDate.format(date))")
         }
     }
 
@@ -299,7 +299,7 @@ private struct DemoScheduledMessageRow: View {
         case .failed:
             return ("Failed to send", colors.accentError)
         default:
-            return ("Send \(DemoScheduledDateFormatter.string(from: message.scheduledAt))", colors.accentPrimary)
+            return ("Send \(Appearance.default.formatters.scheduledMessageDate.format(message.scheduledAt))", colors.accentPrimary)
         }
     }
 

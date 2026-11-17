@@ -98,6 +98,11 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.updateScheduledMessage(id: id, content: content, scheduledAt: scheduledAt)
     }
 
+    func scheduledMessagesUsage(cid: ChannelId) throws -> ScheduledMessagesUsage {
+        try throwErrorIfNeeded()
+        return try underlyingSession.scheduledMessagesUsage(cid: cid)
+    }
+
     func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveScheduledMessage(payload: payload)
@@ -109,6 +114,10 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func deleteScheduledMessage(id: String) {
         underlyingSession.deleteScheduledMessage(id: id)
+    }
+
+    func saveScheduledMessages(payload: [ScheduledMessageResponse], cid: ChannelId) {
+        underlyingSession.saveScheduledMessages(payload: payload, cid: cid)
     }
 
     func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?) {

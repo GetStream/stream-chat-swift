@@ -531,6 +531,15 @@ public enum L10n {
     }
   }
 
+  public enum ScheduledMessage {
+    public enum Date {
+      /// %@ at %@
+      public static func dayAtTime(_ p1: Any, _ p2: Any) -> String {
+        return L10n.tr("Localizable", "scheduled-message.date.day-at-time", String(describing: p1), String(describing: p2))
+      }
+    }
+  }
+
   public enum ThreadList {
     /// %d new threads
     public static func newThreads(_ p1: Int) -> String {

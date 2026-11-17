@@ -364,3 +364,6 @@
 
 /// Shown in the composer's picker view to create a poll.
 "composer.picker.poll" = "Create Poll";
+
+/// Shown by the scheduled message date formatter to combine day and time with "at".
+"scheduled-message.date.day-at-time" = "%@ at %@";

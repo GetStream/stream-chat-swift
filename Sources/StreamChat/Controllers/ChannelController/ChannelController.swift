@@ -1630,7 +1630,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         client.syncRepository.startTrackingChannelController(self)
 
-        updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
+        updater.startWatching(
+            cid: cid,
+            includeScheduledMessages: channelQuery.includeScheduledMessages,
+            isInRecoveryMode: isInRecoveryMode
+        ) { error in
             self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
             self.callback {
                 completion?(error)
@@ -1952,6 +1956,22 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     // MARK: - Scheduled Messages
 
+    /// Loads how many scheduled messages the current user has in the channel and in all channels, next to the limits of the app.
+    ///
+    /// Use it to tell whether a limit is reached before scheduling a message, for example to disable scheduling in the UI.
+    /// The counts come from the local database. The server can still reject a scheduled message later.
+    ///
+    /// - Parameter completion: Called with the usage, or an error reading it from the local database.
+    public func scheduledMessagesUsage(completion: @escaping @MainActor (Result<ScheduledMessagesUsage, Error>) -> Void) {
+        guard let cid else {
+            callback { completion(.failure(ClientError.ChannelNotCreatedYet())) }
+            return
+        }
+        client.scheduledMessagesRepository.usage(cid: cid) { result in
+            self.callback { completion(result) }
+        }
+    }
+
     /// Schedules a new message to be sent to the channel at a later date.
     ///
     /// The message is not added to the channel until it is sent. Local attachments are uploaded when scheduling.
@@ -1960,8 +1980,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - messageId: The id of the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
     ///   - text: Text of the message.
     ///   - attachments: An array of the attachments for the message.
+    ///   - silent: A flag indicating whether the message is a silent message.
     ///   - mentionedUserIds: An array of the users mentioned in the message.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel.
+    ///   - mentionedChannel: If true, the message mentions all members of the channel.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message.
+    ///   - mentionedRoles: The list of roles mentioned in the message.
     ///   - quotedMessageId: An id of the message the new message quotes.
+    ///   - skipPush: If true, skips sending push notification to channel members.
     ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the message right away.
     ///   - extraData: Additional extra data of the message object.
@@ -1971,9 +1997,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     public func scheduleMessage(
         messageId: MessageId? = nil,
         text: String,
+        silent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
         scheduledAt: Date,
         extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
@@ -1986,9 +2018,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             text: text,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             parentId: nil,
             showReplyInChannel: false,
+            isSilent: silent,
+            skipPush: skipPush,
             extraData: extraData
         )
         client.scheduledMessagesRepository.schedule(

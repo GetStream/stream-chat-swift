@@ -24,7 +24,7 @@ enum DemoScheduleMessagePicker {
     ) {
         let alert = UIAlertController(
             title: title,
-            message: "All times in \(DemoScheduledDateFormatter.timeZoneDescription)",
+            message: "All times in \(Appearance.default.formatters.scheduledMessageDate.formatTimeZone(.current))",
             preferredStyle: .actionSheet
         )
         for preset in presets() {
@@ -58,14 +58,14 @@ enum DemoScheduleMessagePicker {
             let tomorrow = calendar.date(byAdding: .day, value: 1, to: now),
             let tomorrowMorning = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)
         else { return presets }
-        presets.append(Preset(title: DemoScheduledDateFormatter.string(from: tomorrowMorning, now: now), date: tomorrowMorning))
+        presets.append(Preset(title: Appearance.default.formatters.scheduledMessageDate.format(tomorrowMorning), date: tomorrowMorning))
 
         if let mondayMorning = calendar.nextDate(
             after: tomorrowMorning,
             matching: DateComponents(hour: 9, minute: 0, weekday: 2),
             matchingPolicy: .nextTime
         ) {
-            presets.append(Preset(title: DemoScheduledDateFormatter.string(from: mondayMorning, now: now), date: mondayMorning))
+            presets.append(Preset(title: Appearance.default.formatters.scheduledMessageDate.format(mondayMorning), date: mondayMorning))
         }
         return presets
     }
@@ -92,7 +92,7 @@ struct DemoScheduleDatePicker: View {
                 DatePicker("Custom Time", selection: $date, in: range)
                     .datePickerStyle(.graphical)
                     .tint(Color(Appearance.default.colorPalette.accentPrimary))
-                Text("All times in \(DemoScheduledDateFormatter.timeZoneDescription)")
+                Text("All times in \(Appearance.default.formatters.scheduledMessageDate.formatTimeZone(.current))")
                     .font(.footnote)
                     .foregroundColor(Color(Appearance.default.colorPalette.textSecondary))
                 Spacer()

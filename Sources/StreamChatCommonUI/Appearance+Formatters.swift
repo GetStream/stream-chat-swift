@@ -51,6 +51,9 @@ public extension Appearance {
         /// A formatter that converts the message timestamp to textual representation for the gallery header view.
         public var galleryHeaderViewDateFormatter: GalleryHeaderViewDateFormatter = DefaultGalleryHeaderViewDateFormatter()
 
+        /// A formatter that converts the date a scheduled message is sent at to textual representation.
+        public var scheduledMessageDate: ScheduledMessageDateFormatter = DefaultScheduledMessageDateFormatter()
+
         /// A boolean value that determines whether Markdown is active for messages to be formatted.
         public var isMarkdownEnabled = true
 

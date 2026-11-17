@@ -138,7 +138,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
             switch result {
             case let .success(message):
                 clearContent(sender: composerView.sendButton)
-                showToast("Message scheduled for \(DemoScheduledDateFormatter.string(from: message.scheduledAt))")
+                showToast("Message scheduled for \(Appearance.default.formatters.scheduledMessageDate.format(message.scheduledAt))")
             case let .failure(error):
                 presentAlert(title: "Couldn't schedule message", message: error.localizedDescription)
             }
@@ -181,7 +181,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
         editingScheduledMessage = message
         editingScheduledContent = DemoScheduledMessageContent(message)
         applyEditingScheduledMessageContent()
-        scheduledEditingBannerView.title = "Editing scheduled message · \(DemoScheduledDateFormatter.string(from: message.scheduledAt))"
+        scheduledEditingBannerView.title = "Editing scheduled message · \(Appearance.default.formatters.scheduledMessageDate.format(message.scheduledAt))"
         updateScheduledMessagesBanner()
     }
 
@@ -227,7 +227,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
             return
         }
 
-        let time = DemoScheduledDateFormatter.string(from: message.scheduledAt)
+        let time = Appearance.default.formatters.scheduledMessageDate.format(message.scheduledAt)
         let alert = UIAlertController(
             title: "Send now?",
             message: "This message is scheduled for \(time). It will be sent right away instead.",
@@ -291,7 +291,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
         isSubmittingScheduledMessage = true
         update(message, with: scheduledContent, scheduledAt: date) { [weak self] result in
             self?.finishScheduledMessageSubmission(result) {
-                "Message rescheduled for \(DemoScheduledDateFormatter.string(from: $0.scheduledAt))"
+                "Message rescheduled for \(Appearance.default.formatters.scheduledMessageDate.format($0.scheduledAt))"
             }
         }
     }
@@ -358,7 +358,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
             return
         }
         editingScheduledMessage = message
-        scheduledEditingBannerView.title = "Editing scheduled message · \(DemoScheduledDateFormatter.string(from: message.scheduledAt))"
+        scheduledEditingBannerView.title = "Editing scheduled message · \(Appearance.default.formatters.scheduledMessageDate.format(message.scheduledAt))"
     }
 
     private func applyEditingScheduledMessageContent() {
