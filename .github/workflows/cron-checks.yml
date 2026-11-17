@@ -49,7 +49,6 @@ jobs:
     env:
       GITHUB_EVENT: ${{ toJson(github.event) }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-      STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
       XCODE_VERSION: "26.2"
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
     steps:
@@ -330,10 +329,6 @@ jobs:
     env:
       XCODE_VERSION: "16.4"
     steps:
-    - name: Connect Bot
-      uses: webfactory/ssh-agent@v0.10.0
-      with:
-        ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
     - uses: actions/checkout@v7
     - uses: ./.github/actions/xcode-cache
     - uses: ./.github/actions/ruby-cache
