@@ -10,7 +10,7 @@ permissions:
 jobs:
   release:
     name: Publish new release
-    runs-on: macos-15
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
         with:
@@ -45,7 +45,7 @@ jobs:
 
   merge-main-to-develop:
     name: Merge main to develop
-    runs-on: macos-15
+    runs-on: ubuntu-24.04
     needs: release
     steps:
       - name: Generate release bot token
