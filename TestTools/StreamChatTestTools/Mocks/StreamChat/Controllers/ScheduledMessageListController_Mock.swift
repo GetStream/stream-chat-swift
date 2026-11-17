@@ -23,6 +23,12 @@ class ScheduledMessageListController_Mock: ScheduledMessageListController, @unch
         hasLoadedAllScheduledMessages_mock ?? super.hasLoadedAllScheduledMessages
     }
 
+    var state_mock: State?
+    override var state: DataController.State {
+        get { state_mock ?? super.state }
+        set { super.state = newValue }
+    }
+
     var synchronize_completion: (@MainActor (Error?) -> Void)?
     var synchronize_callCount = 0
     override func synchronize(_ completion: (@MainActor (Error?) -> Void)? = nil) {
