@@ -46,12 +46,33 @@ if [ "${GITHUB_ACTIONS:-}" != "true" ]; then
   bundle exec lefthook install
 fi
 
-if [[ ${GITHUB_ACTIONS:-} == true ]] && ! command -v xcbeautify >/dev/null; then
+OS="$(uname -s)"
+
+if [[ ${GITHUB_ACTIONS:-} == true && $OS != Linux ]] && ! command -v xcbeautify >/dev/null; then
   puts "Install xcbeautify for Xcode test output"
   CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install xcbeautify
 fi
 
-if [ "${SKIP_SWIFT_BOOTSTRAP:-}" != true ]; then
+# Linux runners only lint the code. SwiftGen and Sourcery have no Linux build.
+if [[ $OS == Linux && ${SKIP_SWIFT_BOOTSTRAP:-} != true ]]; then
+  puts "Install SwiftLint v${SWIFT_LINT_VERSION}"
+  DOWNLOAD_URL="https://github.com/realm/SwiftLint/releases/download/${SWIFT_LINT_VERSION}/swiftlint_linux.zip"
+  DOWNLOAD_PATH="/tmp/swiftlint-${SWIFT_LINT_VERSION}.zip"
+  wget "$DOWNLOAD_URL" -O "$DOWNLOAD_PATH"
+  unzip -o "$DOWNLOAD_PATH" -d "/tmp/swiftlint-${SWIFT_LINT_VERSION}"
+  sudo install -m 755 "/tmp/swiftlint-${SWIFT_LINT_VERSION}/swiftlint" /usr/local/bin/swiftlint
+  swiftlint version
+
+  puts "Install SwiftFormat v${SWIFT_FORMAT_VERSION}"
+  DOWNLOAD_URL="https://github.com/nicklockwood/SwiftFormat/releases/download/${SWIFT_FORMAT_VERSION}/swiftformat_linux.zip"
+  DOWNLOAD_PATH="/tmp/swiftformat-${SWIFT_FORMAT_VERSION}.zip"
+  wget "$DOWNLOAD_URL" -O "$DOWNLOAD_PATH"
+  unzip -o "$DOWNLOAD_PATH" -d "/tmp/swiftformat-${SWIFT_FORMAT_VERSION}"
+  sudo install -m 755 "/tmp/swiftformat-${SWIFT_FORMAT_VERSION}/swiftformat_linux" /usr/local/bin/swiftformat
+  swiftformat --version
+fi
+
+if [[ $OS != Linux && ${SKIP_SWIFT_BOOTSTRAP:-} != true ]]; then
   if ! reuse_version swiftlint "$SWIFT_LINT_VERSION" swiftlint version; then
     puts "Install SwiftLint v${SWIFT_LINT_VERSION}"
     DOWNLOAD_URL="https://github.com/realm/SwiftLint/releases/download/${SWIFT_LINT_VERSION}/SwiftLint.pkg"
@@ -189,11 +210,19 @@ if [[ ${INSTALL_IPSW-default} == true ]] && ! reuse_version ipsw "$IPSW_VERSION"
   sudo mv ipsw /usr/local/bin/
 fi
 
-if [[ ${INSTALL_INTERFACE_ANALYZER-default} == true ]] && ! reuse_binary interface-analyser "$INTERFACE_ANALYZER_SHA256"; then
+if [[ $OS == Linux ]]; then
+  INTERFACE_ANALYZER_ASSET="interface-analyser-linux"
+  INTERFACE_ANALYZER_CHECKSUM="$INTERFACE_ANALYZER_LINUX_SHA256"
+else
+  INTERFACE_ANALYZER_ASSET="interface-analyser"
+  INTERFACE_ANALYZER_CHECKSUM="$INTERFACE_ANALYZER_SHA256"
+fi
+
+if [[ ${INSTALL_INTERFACE_ANALYZER-default} == true ]] && ! reuse_binary interface-analyser "$INTERFACE_ANALYZER_CHECKSUM"; then
   puts "Install interface-analyser v${INTERFACE_ANALYZER_VERSION}"
   FILE="interface-analyser"
-  wget "https://github.com/GetStream/stream-module-interface-analyser/releases/download/v${INTERFACE_ANALYZER_VERSION}/${FILE}" -O "${FILE}"
-  shasum -a 256 -c - <<< "$INTERFACE_ANALYZER_SHA256  ${FILE}"
+  wget "https://github.com/GetStream/stream-module-interface-analyser/releases/download/v${INTERFACE_ANALYZER_VERSION}/${INTERFACE_ANALYZER_ASSET}" -O "${FILE}"
+  shasum -a 256 -c - <<< "$INTERFACE_ANALYZER_CHECKSUM  ${FILE}"
   chmod +x ${FILE}
   sudo mv ${FILE} /usr/local/bin/
 fi
