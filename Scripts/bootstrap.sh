@@ -221,7 +221,8 @@ if [[ $OS == Linux && ${INSTALL_SOURCERY-default} == true ]]; then
   shasum -a 256 -c - <<< "$SOURCERY_LINUX_SHA256  ${DOWNLOAD_PATH}"
   sudo rm -rf "$INSTALL_DIR"
   sudo install -d -m 755 "$INSTALL_DIR"
-  sudo tar -xJf "$DOWNLOAD_PATH" -C "$INSTALL_DIR"
+  # The asset is not xz-compressed, despite its name. tar detects the format.
+  sudo tar -xf "$DOWNLOAD_PATH" -C "$INSTALL_DIR"
   sudo tee /usr/local/bin/sourcery >/dev/null <<SCRIPT
 #!/usr/bin/env bash
 exec docker run --rm \\
