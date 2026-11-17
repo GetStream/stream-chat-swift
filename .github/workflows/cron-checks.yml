@@ -354,12 +354,11 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-15
-    env:
-      XCODE_VERSION: "16.1"
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v7
-    - uses: ./.github/actions/bootstrap
+    - uses: ./.github/actions/ruby-cache
+    - run: ./Scripts/bootstrap.sh
     - run: bundle exec fastlane rubocop
     - run: bundle exec fastlane run_swift_format strict:true
 
