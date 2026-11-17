@@ -31,7 +31,7 @@ xcodebuild_formatter = FastlaneCore::Globals.verbose? ? '' : nil
 # These lanes do not build anything, so they can run on Linux.
 lanes_without_xcode = [
   :sonar_upload, :allure_launch, :allure_upload, :copyright, :merge_main, :merge_release, :publish_release,
-  :lint_pr, :rubocop, :run_swift_format, :validate_public_interface
+  :lint_pr, :rubocop, :run_swift_format, :validate_public_interface, :validate_generated_code
 ]
 
 before_all do |lane|
@@ -1038,8 +1038,12 @@ desc 'Fail if generated code is stale (run `make generate` and commit the result
 lane :validate_generated_code do
   generate
   Dir.chdir('..') do
-    changed = sh('git status --porcelain Sources/StreamChat/Generated/PredefinedFilter+Generated.swift', log: false).strip
-    UI.user_error!('Generated code is stale. Run `make generate` and commit the result.') unless changed.empty?
+    generated_file = 'Sources/StreamChat/Generated/PredefinedFilter+Generated.swift'
+    changed = sh("git status --porcelain #{generated_file}", log: false).strip
+    next if changed.empty?
+
+    sh("git --no-pager diff -- #{generated_file}")
+    UI.user_error!('Generated code is stale. Run `make generate` and commit the result.')
   end
 end
 

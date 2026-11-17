@@ -210,6 +210,30 @@ if [[ ${INSTALL_IPSW-default} == true ]] && ! reuse_version ipsw "$IPSW_VERSION"
   sudo mv ipsw /usr/local/bin/
 fi
 
+# The Linux Sourcery binary links the Swift 5.10.1 runtime dynamically, so it
+# runs inside the matching Swift container. `sourcery` is a wrapper for that.
+if [[ $OS == Linux && ${INSTALL_SOURCERY-default} == true ]]; then
+  puts "Install Sourcery v${SOURCERY_VERSION}"
+  FILE="sourcery-${SOURCERY_VERSION}-ubuntu-22.04.5-lts-jammy-x86_64.tar.xz"
+  DOWNLOAD_PATH="/tmp/${FILE}"
+  INSTALL_DIR="/usr/local/lib/sourcery"
+  wget "https://github.com/krzysztofzablocki/Sourcery/releases/download/${SOURCERY_VERSION}/${FILE}" -O "$DOWNLOAD_PATH"
+  shasum -a 256 -c - <<< "$SOURCERY_LINUX_SHA256  ${DOWNLOAD_PATH}"
+  sudo rm -rf "$INSTALL_DIR"
+  sudo install -d -m 755 "$INSTALL_DIR"
+  sudo tar -xJf "$DOWNLOAD_PATH" -C "$INSTALL_DIR"
+  sudo tee /usr/local/bin/sourcery >/dev/null <<SCRIPT
+#!/usr/bin/env bash
+exec docker run --rm \\
+  -v "\$PWD:\$PWD" -w "\$PWD" \\
+  -v "${INSTALL_DIR}:${INSTALL_DIR}:ro" \\
+  -e LD_LIBRARY_PATH=/usr/lib/swift/linux \\
+  "${SOURCERY_LINUX_SWIFT_IMAGE}" "${INSTALL_DIR}/sourcery" "\$@"
+SCRIPT
+  sudo chmod 755 /usr/local/bin/sourcery
+  sourcery --version
+fi
+
 if [[ $OS == Linux ]]; then
   INTERFACE_ANALYZER_ASSET="interface-analyser-linux"
   INTERFACE_ANALYZER_CHECKSUM="$INTERFACE_ANALYZER_LINUX_SHA256"

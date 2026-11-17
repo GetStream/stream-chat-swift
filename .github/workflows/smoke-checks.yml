@@ -90,21 +90,11 @@ jobs:
       - run: ./Scripts/bootstrap.sh
         env:
           INSTALL_INTERFACE_ANALYZER: true
+          INSTALL_SOURCERY: true
       - run: bundle exec fastlane lint_pr
       - run: bundle exec fastlane rubocop
       - run: bundle exec fastlane run_swift_format strict:true
       - run: bundle exec fastlane validate_public_interface
-
-  validate-generated-code:
-    name: Validate Generated Code
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    needs: guard
-    env:
-      XCODE_VERSION: "16.1"
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ./.github/actions/bootstrap
       - run: bundle exec fastlane validate_generated_code
 
   build-old-xcode:
