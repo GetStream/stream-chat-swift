@@ -9,6 +9,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write # to dispatch release-publish.yml
 
 jobs:
   merge-release-to-main:
@@ -16,11 +17,6 @@ jobs:
     runs-on: macos-15
     if: github.event_name == 'workflow_dispatch' || (github.event.issue.pull_request && github.event.issue.state == 'open' && github.event.comment.body == '/merge release')
     steps:
-      - name: Connect Bot
-        uses: webfactory/ssh-agent@v0.10.0
-        with:
-          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
-
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
@@ -30,6 +26,6 @@ jobs:
       - name: Merge
         run: bundle exec fastlane merge_release author:"$USER_LOGIN" --verbose
         env:
-          GITHUB_TOKEN: ${{ secrets.ADMIN_API_TOKEN }} # A token with the "admin:org" scope to get the list of the team members on GitHub
+          GITHUB_TOKEN: ${{ github.token }}
           GITHUB_PR_NUM: ${{ github.event.issue.number }}
           USER_LOGIN: ${{ github.event.comment.user.login != null && github.event.comment.user.login || github.event.sender.login }}

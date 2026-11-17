@@ -15,7 +15,6 @@ github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
-metrics_git = 'git@github.com:GetStream/stream-internal-metrics.git'
 xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
@@ -106,7 +105,7 @@ end
 
 private_lane :appstore_api_key do
   @appstore_api_key ||= app_store_connect_api_key(
-    key_id: 'MT3PRT8TB7',
+    key_id: '8KCMZF773S',
     issuer_id: '69a6de96-0738-47e3-e053-5b8c7c11a4d1',
     key_content: ENV.fetch('APPSTORE_API_KEY', nil),
     in_house: false
@@ -308,7 +307,7 @@ lane :xcmetrics do |options|
   fail_status = '🔴' # Failure if a branch is more than #{max_tolerance} less performant than the benchmark
   success_status = '🟢' # Success if a branch is more performant or equals to the benchmark
 
-  sh("git clone #{metrics_git} #{File.dirname(xcmetrics_path)}")
+  clone_internal_metrics(path: File.expand_path(File.dirname(xcmetrics_path)))
   performance_benchmarks = JSON.parse(File.read(xcmetrics_path))
   expected_performance = performance_benchmarks['benchmark']
   actual_performance = xcmetrics_log_parser(log: xcodebuild_output)
