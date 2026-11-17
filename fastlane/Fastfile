@@ -28,12 +28,18 @@ e2e_selection_path = File.expand_path("../#{derived_data_path}/Build/e2e_selecti
 @impact = nil
 xcodebuild_formatter = FastlaneCore::Globals.verbose? ? '' : nil
 
+# These lanes do not build anything, so they can run on Linux.
+lanes_without_xcode = [
+  :sonar_upload, :allure_launch, :allure_upload, :copyright, :merge_main,
+  :lint_pr, :rubocop, :run_swift_format, :validate_public_interface
+]
+
 before_all do |lane|
   @impact = impact_analysis
   if is_ci
     setup_ci
     setup_git_config
-    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :copyright, :merge_main].include?(lane)
+    select_xcode(version: xcode_version) unless lanes_without_xcode.include?(lane)
   end
 end
 
