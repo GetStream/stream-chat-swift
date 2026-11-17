@@ -122,6 +122,26 @@ public extension ScheduledMessageFailure.ServerRejection {
     }
 }
 
+extension ScheduledMessageFailure.ServerRejection.Reason {
+    /// Creates the reason from an error of a scheduled message call, for example to tell that the server is sending
+    /// the message from the error of `deleteScheduledMessage`.
+    ///
+    /// It is the reason the server gives. Without one it is derived from the status code, for too many requests and
+    /// for errors of the server. Returns `nil` for other errors, including the ones which did not come from the server.
+    public init?(error: Error) {
+        guard let apiError = (error as? ClientError)?.apiError else { return nil }
+        if let reason = apiError.exceptionFields?["reason"] {
+            self.init(rawValue: reason)
+        } else if apiError.statusCode == 429 {
+            self = .rateLimited
+        } else if apiError.statusCode >= 500 {
+            self = .serverUnavailable
+        } else {
+            return nil
+        }
+    }
+}
+
 // MARK: - Publishing Failure
 
 public extension ScheduledMessageFailure {

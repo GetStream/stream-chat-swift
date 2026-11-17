@@ -145,6 +145,9 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     }
 
     /// Deletes a scheduled message. One that is not on the server yet is only deleted locally.
+    ///
+    /// When the server no longer has the message, because it was already sent or deleted on another device, it is
+    /// deleted locally and the completion is called with `ClientError.ScheduledMessageDoesNotExist`.
     func delete(id: String, completion: @escaping @Sendable (Error?) -> Void) {
         database.write(converting: { session in
             guard let dto = session.scheduledMessage(id: id) else { return false }
@@ -156,13 +159,16 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             switch result {
             case .success(true):
                 apiClient.request(endpoint: .deleteScheduledMessage(id: id)) { [weak self] result in
-                    if let error = result.error {
+                    let isGoneFromServer = result.error?.isBackendNotFound404StatusCode == true
+                    if let error = result.error, !isGoneFromServer {
                         completion(error)
                         return
                     }
                     self?.database.write({ session in
                         session.deleteScheduledMessage(id: id)
-                    }, completion: completion)
+                    }, completion: { error in
+                        completion(error ?? (isGoneFromServer ? ClientError.ScheduledMessageDoesNotExist(id: id) : nil))
+                    })
                 }
             case .success(false):
                 completion(nil)
@@ -259,6 +265,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                         id: id,
                         failedState: .syncingFailed,
                         pendingState: .pendingSync,
+                        removesWhenNotFound: true,
                         with: result.map(\.scheduledMessage),
                         completion: completion
                     )
@@ -282,7 +289,14 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     ) {
         guard case let .success(payload) = result else {
             // Kept to be sent now, after the changes are sent again when it is retried.
-            complete(id: id, failedState: .syncingFailed, pendingState: nil, with: result.map { $0 }, completion: completion)
+            complete(
+                id: id,
+                failedState: .syncingFailed,
+                pendingState: nil,
+                removesWhenNotFound: true,
+                with: result.map { $0 },
+                completion: completion
+            )
             return
         }
         database.write(converting: { session -> ScheduledMessage? in
@@ -296,6 +310,8 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         failedState: LocalMessageState,
         // The state to send the changes again once connected, `nil` when only sending now is pending.
         pendingState: LocalMessageState?,
+        // A missing scheduled message is one that was sent or deleted. Not for scheduling, where it can be the channel.
+        removesWhenNotFound: Bool = false,
         with result: Result<ScheduledMessageResponse?, Error>,
         completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void
     ) {
@@ -327,8 +343,9 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             // Without a connection, the changes are sent again once connected.
             let isEphemeral = ClientError.isEphemeral(error: error)
             let apiError = (error as? ClientError)?.apiError
-            let reason = apiError.flatMap(ScheduledMessageFailure.ServerRejection.Reason.init(apiError:))
-            if reason == .scheduledMessageAlreadySent || reason == .scheduledMessageCanceled {
+            let reason = ScheduledMessageFailure.ServerRejection.Reason(error: error)
+            let isGoneFromServer = removesWhenNotFound && error.isBackendNotFound404StatusCode
+            if reason == .scheduledMessageAlreadySent || reason == .scheduledMessageCanceled || isGoneFromServer {
                 // It went out at its date, or was deleted on another device, while this device was offline.
                 database.write({ session in
                     session.deleteScheduledMessage(id: id)
@@ -369,7 +386,8 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
 }
 
 extension ClientError {
-    /// There is no scheduled message with the given id in the local database.
+    /// There is no scheduled message with the given id: it is not in the local database, or the server no longer
+    /// has it because it was already sent or deleted on another device.
     public final class ScheduledMessageDoesNotExist: ClientError, @unchecked Sendable {
         init(id: String) {
             super.init("There is no scheduled message with id: \(id).")
@@ -525,21 +543,6 @@ extension ScheduledMessagesRepository {
     func sendNow(id: String) async throws {
         try await withCheckedThrowingContinuation { continuation in
             sendNow(id: id) { continuation.resume(with: $0) }
-        }
-    }
-}
-
-private extension ScheduledMessageFailure.ServerRejection.Reason {
-    /// The reason of the server, or one derived from the status code when the server gives none.
-    init?(apiError: APIError) {
-        if let reason = apiError.exceptionFields?["reason"] {
-            self.init(rawValue: reason)
-        } else if apiError.statusCode == 429 {
-            self = .rateLimited
-        } else if apiError.statusCode >= 500 {
-            self = .serverUnavailable
-        } else {
-            return nil
         }
     }
 }

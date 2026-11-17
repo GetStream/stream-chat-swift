@@ -1567,7 +1567,8 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Parameter id: The id of the scheduled message.
     ///
-    /// - Throws: An error while deleting the scheduled message.
+    /// - Throws: An error while deleting the scheduled message. It is `ClientError.ScheduledMessageDoesNotExist` when
+    /// the server no longer has the message, because it was already sent or deleted on another device. The message is then removed locally.
     public func deleteScheduledMessage(id: String) async throws {
         try await scheduledMessagesRepository.delete(id: id)
     }

@@ -45,4 +45,22 @@ class ScheduledMessageListController_Mock: ScheduledMessageListController, @unch
         loadMoreScheduledMessages_callCount += 1
         loadMoreScheduledMessages_completion = completion
     }
+
+    var deleteScheduledMessage_id: String?
+    var deleteScheduledMessage_completion: (@MainActor (Error?) -> Void)?
+    var deleteScheduledMessage_callCount = 0
+    override func deleteScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
+        deleteScheduledMessage_callCount += 1
+        deleteScheduledMessage_id = id
+        deleteScheduledMessage_completion = completion
+    }
+
+    var sendScheduledMessageNow_id: String?
+    var sendScheduledMessageNow_completion: (@MainActor (Error?) -> Void)?
+    var sendScheduledMessageNow_callCount = 0
+    override func sendScheduledMessageNow(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
+        sendScheduledMessageNow_callCount += 1
+        sendScheduledMessageNow_id = id
+        sendScheduledMessageNow_completion = completion
+    }
 }

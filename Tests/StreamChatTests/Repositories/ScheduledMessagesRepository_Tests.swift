@@ -123,6 +123,28 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try storedMessage(id: "scheduled-id")?.message.localState, .sendingFailed)
     }
 
+    func test_sendPendingChanges_whenSchedulingFailsWithNotFound_keepsTheMessageFailed() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(notFoundError()))
+
+        let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        XCTAssertNotNil(result.error)
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.message.localState, .sendingFailed)
+    }
+
+    func test_serverRejectionReason_fromAnError() {
+        let sending = APIError(code: 121, message: "scheduled message is being sent", statusCode: 409)
+        sending.exceptionFields = ["reason": "scheduled_message_sending"]
+
+        typealias Reason = ScheduledMessageFailure.ServerRejection.Reason
+        XCTAssertEqual(Reason(error: ClientError(with: sending)), .scheduledMessageSending)
+        XCTAssertEqual(Reason(error: ClientError(with: APIError(code: 9, message: "", statusCode: 429))), .rateLimited)
+        XCTAssertEqual(Reason(error: ClientError(with: APIError(code: -1, message: "", statusCode: 503))), .serverUnavailable)
+        XCTAssertNil(Reason(error: notFoundError()))
+        XCTAssertNil(Reason(error: ClientError("Not an error of the server")))
+    }
+
     func test_sendPendingChanges_whenTheLimitIsReached_keepsTheErrorOfTheServer() throws {
         _ = try schedule(id: "scheduled-id").get()
         let apiError = APIError(code: 117, message: "SendMessage failed with error: \"you can schedule at most 2 messages in this channel\"", statusCode: 400)
@@ -859,6 +881,17 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try storedMessage(id: "scheduled-id")?.message.text, "Updated")
     }
 
+    func test_update_whenTheServerNoLongerHasTheMessage_removesIt() throws {
+        try saveOnServer(id: "scheduled-id")
+        _ = try waitFor { repository.update(id: "scheduled-id", content: content(text: "Updated"), scheduledAt: nil, completion: $0) }.get()
+        apiClient.test_mockResponseResult(Result<UpdateScheduledMessageResponse, Error>.failure(notFoundError()))
+
+        let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        XCTAssertNil(try result.get())
+        XCTAssertEqual(try storedMessages(), [])
+    }
+
     func test_update_ofAMessageNotOnTheServerYet_staysPendingSend() throws {
         _ = try schedule(id: "scheduled-id").get()
 
@@ -934,13 +967,23 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_delete_whenTheRequestFails_failsAndKeepsTheMessage() throws {
         try saveOnServer(id: "scheduled-id")
         let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
-        let error = ClientError(with: APIError(code: 4, message: "This scheduled message no longer exists", statusCode: 404))
+        let error = ClientError(with: APIError(code: -1, message: "Internal error", statusCode: 500))
         apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(error))
 
         let result = try waitFor { repository.delete(id: message.id, completion: $0) }
 
         XCTAssertNotNil(result)
         XCTAssertEqual(try storedMessages(), [message])
+    }
+
+    func test_delete_whenTheServerNoLongerHasTheMessage_removesItAndFails() throws {
+        try saveOnServer(id: "scheduled-id")
+        apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(notFoundError()))
+
+        let error = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
+
+        XCTAssertTrue(error is ClientError.ScheduledMessageDoesNotExist, "\(String(describing: error))")
+        XCTAssertEqual(try storedMessages(), [])
     }
 
     // MARK: - Send now
@@ -1006,6 +1049,17 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
         XCTAssertEqual(try storedMessage(id: "scheduled-id")?.status, .failed)
         XCTAssertEqual(try isPendingSendNow(id: "scheduled-id"), true)
+    }
+
+    func test_sendPendingChanges_whenSendingNowAMessageTheServerNoLongerHas_removesIt() throws {
+        try saveOnServer(id: "scheduled-id")
+        _ = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }
+        apiClient.test_mockResponseResult(Result<SendScheduledMessageNowResponse, Error>.failure(notFoundError()))
+
+        let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        XCTAssertNil(try result.get())
+        XCTAssertEqual(try storedMessages(), [])
     }
 
     // MARK: - Load
@@ -1323,6 +1377,10 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         } catch {
             return .failure(error)
         }
+    }
+
+    private func notFoundError() -> ClientError {
+        ClientError(with: APIError(code: 16, message: "scheduled message scheduled-id not found", statusCode: 404))
     }
 
     private func isPendingSendNow(id: String) throws -> Bool? {
