@@ -55,6 +55,21 @@ class ScheduledMessageListController_Mock: ScheduledMessageListController, @unch
         deleteScheduledMessage_completion = completion
     }
 
+    var rescheduleMessage_id: String?
+    var rescheduleMessage_scheduledAt: Date?
+    var rescheduleMessage_completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)?
+    var rescheduleMessage_callCount = 0
+    override func rescheduleMessage(
+        id: String,
+        scheduledAt: Date,
+        completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
+    ) {
+        rescheduleMessage_callCount += 1
+        rescheduleMessage_id = id
+        rescheduleMessage_scheduledAt = scheduledAt
+        rescheduleMessage_completion = completion
+    }
+
     var sendScheduledMessageNow_id: String?
     var sendScheduledMessageNow_completion: (@MainActor (Error?) -> Void)?
     var sendScheduledMessageNow_callCount = 0
