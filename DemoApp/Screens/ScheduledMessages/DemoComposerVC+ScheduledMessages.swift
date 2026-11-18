@@ -104,7 +104,8 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
            editingScheduledMessage == nil,
            let messages = channelController?.channel?.scheduledMessages {
             let parentId = content.threadMessage?.id
-            count = messages.filter { $0.status != .failed && $0.message.parentMessageId == parentId }.count
+            // The channel counts every scheduled message, thread replies included.
+            count = messages.filter { $0.status != .failed && (parentId == nil || $0.message.parentMessageId == parentId) }.count
             let place = parentId == nil ? "channel" : "thread"
             scheduledMessagesBannerView.title = "\(count) scheduled message\(count == 1 ? "" : "s") in this \(place) · View all"
         }

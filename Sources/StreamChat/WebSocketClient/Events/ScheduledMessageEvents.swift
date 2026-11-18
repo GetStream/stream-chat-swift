@@ -98,15 +98,23 @@ public final class ScheduledMessageSentEvent: Event {
     /// The identifier of the message created when it was sent.
     public let messageId: MessageId
 
+    /// A Boolean value indicating whether the server sent the message right away instead of scheduling it,
+    /// because its date had passed when the request reached the server.
+    ///
+    /// The server sends no event then, so this one is created locally. The sent message has the identifier of
+    /// the scheduled message.
+    public let isSentNow: Bool
+
     /// The channel the message was sent to.
     public var cid: ChannelId { scheduledMessage.cid }
 
     /// The event timestamp.
     public let createdAt: Date
 
-    init(scheduledMessage: ScheduledMessage, messageId: MessageId, createdAt: Date) {
+    init(scheduledMessage: ScheduledMessage, messageId: MessageId, sentNow: Bool = false, createdAt: Date) {
         self.scheduledMessage = scheduledMessage
         self.messageId = messageId
+        isSentNow = sentNow
         self.createdAt = createdAt
     }
 }

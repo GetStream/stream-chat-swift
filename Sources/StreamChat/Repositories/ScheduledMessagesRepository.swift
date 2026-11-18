@@ -198,7 +198,14 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     /// Called by the `MessageScheduler` once the attachments of the message are uploaded. Completes with `nil` when the
     /// message is no longer scheduled: the server sent it right away because its date passed while offline, it was
     /// already sent, or it was deleted on another device.
-    func sendPendingChanges(id: String, completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void) {
+    ///
+    /// `didSendNow` is called before the completion when the server sent the message right away. The server sends
+    /// no event for it.
+    func sendPendingChanges(
+        id: String,
+        didSendNow: (@Sendable (ScheduledMessageSentEvent) -> Void)? = nil,
+        completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void
+    ) {
         enum Request {
             case schedule(cid: ChannelId, request: SendMessageRequest)
             case update(UpdateScheduledMessageRequest)
@@ -244,7 +251,12 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 apiClient.request(endpoint: endpoint) { [weak self] result in
                     if case let .success(response) = result, response.scheduledMessage == nil {
                         // A date in the past is sent right away as a normal message.
-                        self?.saveSentMessage(response.message, scheduledMessageId: id, completion: completion)
+                        self?.saveSentMessage(response.message, scheduledMessageId: id, didSendNow: didSendNow, completion: completion)
+                        return
+                    }
+                    if let error = result.error, error.isMessageAlreadyExistingError {
+                        // The response of an earlier attempt, which sent the message right away, was lost.
+                        self?.saveSentMessage(nil, scheduledMessageId: id, didSendNow: didSendNow, completion: completion)
                         return
                     }
                     self?.complete(
@@ -368,20 +380,49 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     }
 
     private func saveSentMessage(
-        _ message: MessageResponse,
+        // `nil` when the server only told that the message already exists.
+        _ message: MessageResponse?,
         scheduledMessageId: String,
+        didSendNow: (@Sendable (ScheduledMessageSentEvent) -> Void)?,
         completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void
     ) {
-        database.write({ session in
+        database.write(converting: { session -> ScheduledMessageSentEvent? in
+            let scheduledMessage = try session.scheduledMessage(id: scheduledMessageId)?.asModel()
             // Saved first: when the sent message has the id of the scheduled one, it keeps its content.
-            let messageDTO = try session.saveMessage(payload: message, syncOwnReactions: false, skipDraftUpdate: false, cache: nil)
-            if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
-                messageDTO.markMessageAsSent()
+            let messageDTO = try message.map {
+                try session.saveMessage(payload: $0, syncOwnReactions: false, skipDraftUpdate: false, cache: nil)
+            } ?? session.message(id: scheduledMessageId)
+            if messageDTO?.localMessageState == .sending || messageDTO?.localMessageState == .sendingFailed {
+                messageDTO?.markMessageAsSent()
             }
             session.deleteScheduledMessage(id: scheduledMessageId)
-        }, completion: { error in
-            completion(error.map { .failure($0) } ?? .success(nil))
+            return scheduledMessage.map {
+                ScheduledMessageSentEvent(
+                    scheduledMessage: $0,
+                    messageId: message?.id ?? scheduledMessageId,
+                    sentNow: true,
+                    createdAt: Date()
+                )
+            }
+        }, completion: { result in
+            switch result {
+            case let .success(event):
+                if let event {
+                    didSendNow?(event)
+                }
+                completion(.success(nil))
+            case let .failure(error):
+                completion(.failure(error))
+            }
         })
+    }
+}
+
+private extension Error {
+    // The same check as for regular messages in the `MessageRepository`: there is no error code of its own.
+    var isMessageAlreadyExistingError: Bool {
+        guard let apiError = (self as? ClientError)?.apiError else { return false }
+        return apiError.code == 4 && apiError.message.contains("already exists")
     }
 }
 

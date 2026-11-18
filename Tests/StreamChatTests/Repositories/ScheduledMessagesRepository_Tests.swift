@@ -317,6 +317,65 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertNil(sentMessage?.localState)
     }
 
+    func test_sendPendingChanges_whenTheServerSendsItRightAway_reportsItAsSentNow() throws {
+        try database.createChannel(cid: cid)
+        _ = try schedule(id: "scheduled-id", content: content(text: "Hello")).get()
+        apiClient.test_mockResponseResult(.success(SendMessageResponsePayload(
+            message: .dummy(messageId: "scheduled-id", authorUserId: userId, text: "Hello", cid: cid),
+            scheduledMessage: nil
+        )))
+
+        nonisolated(unsafe) var event: ScheduledMessageSentEvent?
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", didSendNow: { event = $0 }, completion: $0) }
+
+        XCTAssertEqual(event?.isSentNow, true)
+        XCTAssertEqual(event?.messageId, "scheduled-id")
+        XCTAssertEqual(event?.scheduledMessage.id, "scheduled-id")
+        XCTAssertEqual(event?.cid, cid)
+    }
+
+    func test_sendPendingChanges_whenScheduled_doesNotReportItAsSentNow() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        apiClient.test_mockResponseResult(.success(sendMessageResponse(.dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId)))))
+
+        nonisolated(unsafe) var event: ScheduledMessageSentEvent?
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", didSendNow: { event = $0 }, completion: $0) }
+
+        XCTAssertNil(event)
+    }
+
+    func test_sendPendingChanges_whenTheMessageAlreadyExists_treatsItAsSentNow() throws {
+        try database.createChannel(cid: cid)
+        _ = try schedule(id: "scheduled-id", content: content(text: "Hello")).get()
+        // The message arrived through an event while the first request was in flight, and its response was lost.
+        try database.writeSynchronously { [cid, userId] session in
+            let message = session.scheduledMessage(id: "scheduled-id")?.message
+            message?.localMessageState = .sending
+            _ = try session.saveMessage(
+                payload: .dummy(messageId: "scheduled-id", authorUserId: userId!, text: "Hello", cid: cid!),
+                syncOwnReactions: false,
+                skipDraftUpdate: false,
+                cache: nil
+            )
+            message?.localMessageState = .pendingSend
+        }
+        let error = ClientError(with: APIError(code: 4, message: "Message scheduled-id already exists.", statusCode: 400))
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
+
+        nonisolated(unsafe) var event: ScheduledMessageSentEvent?
+        let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", didSendNow: { event = $0 }, completion: $0) }
+
+        XCTAssertNil(try result.get())
+        XCTAssertEqual(try storedMessages(), [])
+        XCTAssertEqual(event?.isSentNow, true)
+        XCTAssertEqual(event?.messageId, "scheduled-id")
+        let sentMessage = try database.readSynchronously { session in
+            try session.message(id: "scheduled-id")?.asModel()
+        }
+        XCTAssertEqual(sentMessage?.cid, cid)
+        XCTAssertNil(sentMessage?.localState)
+    }
+
     func test_sendPendingChanges_whenItWasAlreadySent_removesIt() throws {
         try assertSendPendingChangesRemovesTheMessage(code: 123, reason: "scheduled_message_already_sent")
     }
