@@ -17,6 +17,11 @@ on:
         type: boolean
         required: false
         default: false
+      mock_check:
+        description: 'Run the E2E tests on iOS 26.2 only, without coverage or other checks (for mock server changes)'
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.mock_server_branch || 'main' }}
@@ -36,14 +41,8 @@ jobs:
     name: Test E2E UI (Debug)
     strategy:
       matrix:
-        include:
-          - ios: "26.2"
-            device: "iPhone 17 Pro"
-            setup_runtime: false
-            coverage: true # builds the map that selects e2e tests on pull requests
-          - ios: "17.5"
-            device: "iPhone 15 Pro"
-            setup_runtime: true
+        # Coverage builds the map that selects e2e tests on pull requests.
+        include: ${{ fromJson(inputs.mock_check && '[{"ios":"26.2","device":"iPhone 17 Pro","setup_runtime":false}]' || '[{"ios":"26.2","device":"iPhone 17 Pro","setup_runtime":false,"coverage":true},{"ios":"17.5","device":"iPhone 15 Pro","setup_runtime":true}]') }}
       fail-fast: false
     runs-on: macos-15
     env:
@@ -108,7 +107,7 @@ jobs:
 
   build-and-test-llc-debug:
     name: Test LLC (Debug)
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main' }}
+    if: ${{ !inputs.mock_check && (github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main') }}
     strategy:
       matrix:
         include:
@@ -162,7 +161,7 @@ jobs:
 
   build-and-test-common-ui-debug:
     name: Test CommonUI (Debug)
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main' }}
+    if: ${{ !inputs.mock_check && (github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main') }}
     strategy:
       matrix:
         include:
@@ -216,7 +215,7 @@ jobs:
 
   build-and-test-ai-debug:
     name: Test AI (Debug)
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main' }}
+    if: ${{ !inputs.mock_check && (github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main') }}
     strategy:
       matrix:
         include:
@@ -270,7 +269,7 @@ jobs:
 
   build-and-test-a2ui-debug:
     name: Test A2UI (Debug)
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main' }}
+    if: ${{ !inputs.mock_check && (github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main') }}
     strategy:
       matrix:
         include:
@@ -324,7 +323,7 @@ jobs:
 
   build-old-xcode:
     name: Build SDKs (Old Xcode)
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main' }}
+    if: ${{ !inputs.mock_check && (github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main') }}
     runs-on: macos-15
     env:
       XCODE_VERSION: "16.4"
@@ -354,6 +353,7 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
+    if: ${{ !inputs.mock_check }}
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v7
