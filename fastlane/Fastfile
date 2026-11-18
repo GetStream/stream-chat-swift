@@ -967,7 +967,7 @@ lane :impact_analysis do
       checks: ['Test OpenUI (Debug)', 'Build SDKs (Old Xcode)']
     },
     sample_apps: {
-      sources: ['Sources', 'Examples', 'DemoApp', 'Package.swift'],
+      sources: ['Sources', 'Examples', 'DemoApp', 'Package.swift', 'StreamChat.xcodeproj'],
       checks: ['Build Demo App + Example Apps']
     },
     integration: {
@@ -996,7 +996,12 @@ end
 desc 'Writes the checks this PR needs to GITHUB_OUTPUT, so CI can skip macOS jobs early'
 lane :required_checks do
   checks = @impact.transform_values do |impact|
-    is_check_required(sources: impact[:sources], force_check: @force_check, required_checks: impact[:checks])
+    begin
+      is_check_required(sources: impact[:sources], force_check: @force_check, required_checks: impact[:checks])
+    rescue StandardError => e
+      UI.important("Lookup failed, so the check runs: #{e.message}")
+      true
+    end
   end
   UI.important("Required checks: #{checks}")
   File.write(ENV.fetch('GITHUB_OUTPUT'), "checks=#{checks.to_json}\n", mode: 'a')
