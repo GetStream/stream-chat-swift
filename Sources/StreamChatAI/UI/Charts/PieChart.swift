@@ -11,8 +11,10 @@ struct PieDatum: Identifiable { let id = UUID(); let label: String; let value: D
 
 @available(iOS 15.0, macOS 12.0, *)
 func pieData(from spec: USpec) -> [PieDatum] {
-    let pts = spec.series.first?.points ?? []
-    let total = max(pts.reduce(0) { $0 + $1.y }, 0.000001)
+    // Only positive values are shares of a whole.
+    let pts = (spec.series.first?.points ?? []).filter { $0.y.isFinite && $0.y > 0 }
+    let total = pts.reduce(0) { $0 + $1.y }
+    guard total.isFinite, total > 0 else { return [] }
     return pts.map { PieDatum(label: $0.x, value: $0.y, pct: $0.y / total) }
 }
 

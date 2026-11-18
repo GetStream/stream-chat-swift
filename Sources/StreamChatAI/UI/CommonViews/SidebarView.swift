@@ -56,8 +56,6 @@ public struct SidebarView<Menu: View, Content: View>: View {
         self.splitWidthRatio = splitWidthRatio
         self.edgeActivationWidth = edgeActivationWidth
         self.excludedBottomHeight = excludedBottomHeight
-        self.dragOffset = dragOffset
-        self.isDragActive = isDragActive
     }
     
     public var body: some View {
@@ -80,10 +78,18 @@ public struct SidebarView<Menu: View, Content: View>: View {
                         .background(Color(colors.sidebarBackground))
                         .shadow(color: .black.opacity(0.15), radius: 12, x: 4, y: 0)
                         .simultaneousGesture(contentGesture, including: .gesture)
-                    
+                        // VoiceOver reads only the side that shows.
+                        .accessibilityHidden(!isOpen)
+                        // The content is hidden from VoiceOver while it is open, so its escape
+                        // gesture closes it.
+                        .accessibilityAction(.escape) {
+                            closeSplitView(animated: true)
+                        }
+
                     content()
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .simultaneousGesture(contentGesture, including: .gesture)
+                        .accessibilityHidden(isOpen)
                 }
                 .offset(x: totalOffset)
                 
@@ -96,6 +102,12 @@ public struct SidebarView<Menu: View, Content: View>: View {
                             closeSplitView(animated: true)
                         }
                         .gesture(overlayGesture)
+                        .accessibilityElement()
+                        .accessibilityLabel(L10n.Sidebar.close)
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityAction {
+                            closeSplitView(animated: true)
+                        }
                 }
             }
             .animation(sidebarAnimation, value: isOpen)

@@ -15,6 +15,9 @@ public struct StreamingMessageView: View {
     @State private var displayedText: String = ""
     @State private var characterQueue: [Character] = []
     @State private var typingTimer: Timer?
+    // Whether the reply is finished, which the typing timer reads: it was made with an earlier
+    // copy of the view, whose `isGenerating` it keeps.
+    @State private var isFinished = false
 
     @Environment(\.aiThinkingTurn) private var turn
     @Injected(\.aiAppearance.colors) private var colors
@@ -43,81 +46,106 @@ public struct StreamingMessageView: View {
             }
             .markdownCodeSyntaxHighlighter(.splash(theme: self.theme))
             .onAppear {
+                isFinished = !isGenerating
                 if !isGenerating {
                     self.characterQueue = []
                     self.displayedText = content
                     return
                 }
-                if self.characterQueue.isEmpty {
-                    self.characterQueue.append(contentsOf: content)
-                }
+                // The text shown before it disappeared stays: only the rest is typed.
+                queueRest(of: content)
                 startTypingTimer()
             }
             .onDisappear {
-                typingTimer?.invalidate()
-                typingTimer = nil
+                stopTypingTimer()
             }
             .transformPreference(AnswerWritingKey.self) { writing in
                 writing = (writing ?? false) || isGenerating || !characterQueue.isEmpty
             }
             .onChange(of: characterQueue, perform: { _ in
                 if characterQueue.isEmpty && !isGenerating {
-                    self.displayedText = content
+                    finishTyping()
                 }
             })
             .addChangeListeners(
                 content: content,
                 isGenerating: isGenerating,
-                onContentChange: { oldValue, newValue in
-                    if !isGenerating {
-                        if oldValue.isEmpty && !newValue.isEmpty {
-                            self.displayedText = newValue
-                        }
-                        return
+                onContentChange: { _, newValue in
+                    // A finished reply can still change, such as when its last words arrive late.
+                    if !isGenerating && characterQueue.isEmpty {
+                        self.displayedText = newValue
+                    } else {
+                        queueRest(of: newValue)
                     }
-                    let newChunk = getNewChunk(oldText: oldValue, newText: newValue)
-                    self.characterQueue.append(contentsOf: newChunk)
                 },
                 onIsGeneratingChange: { oldValue, newValue in
+                    isFinished = !newValue
                     if newValue {
+                        queueRest(of: content)
                         if typingTimer == nil {
-                            if self.characterQueue.isEmpty {
-                                self.characterQueue.append(contentsOf: content)
-                            }
                             startTypingTimer()
                         }
-                    } else if oldValue && !newValue {
-                        let inQueue = String(characterQueue)
-                        let newChunk = getNewChunk(oldText: displayedText + inQueue, newText: content)
-                        self.characterQueue.append(contentsOf: newChunk)
+                    } else if oldValue {
+                        queueRest(of: content)
+                        if characterQueue.isEmpty {
+                            finishTyping()
+                        }
                     }
                 }
             )
     }
-    
+
+    // What `newText` adds after the text it shares with `oldText`. It compares Unicode scalars,
+    // since a chunk can end inside a character, such as an emoji and its skin tone.
     func getNewChunk(oldText: String, newText: String) -> String {
-        if newText.hasPrefix(oldText) {
-            // Old text is a prefix of new text
-            let startIndex = newText.index(newText.startIndex, offsetBy: oldText.count)
-            let newChunk = String(newText[startIndex...])
-            return newChunk
+        let old = oldText.unicodeScalars
+        let new = newText.unicodeScalars
+        var oldIndex = old.startIndex
+        var newIndex = new.startIndex
+        while oldIndex != old.endIndex, newIndex != new.endIndex, old[oldIndex] == new[newIndex] {
+            old.formIndex(after: &oldIndex)
+            new.formIndex(after: &newIndex)
+        }
+        return String(String.UnicodeScalarView(new[newIndex...]))
+    }
+
+    // Queues what `text` adds to the text shown and queued. Text that doesn't carry on from what
+    // is shown replaces it at once.
+    private func queueRest(of text: String) {
+        let typed = displayedText + String(characterQueue)
+        if text.unicodeScalars.starts(with: typed.unicodeScalars) {
+            characterQueue.append(contentsOf: getNewChunk(oldText: typed, newText: text))
+        } else if text.unicodeScalars.starts(with: displayedText.unicodeScalars) {
+            characterQueue = Array(getNewChunk(oldText: displayedText, newText: text))
         } else {
-            // Find the longest common prefix
-            let commonPrefix = oldText.commonPrefix(with: newText)
-            let startIndex = newText.index(newText.startIndex, offsetBy: commonPrefix.count)
-            let newChunk = String(newText[startIndex...])
-            return newChunk
+            characterQueue = []
+            displayedText = text
         }
     }
-    
+
+    private func finishTyping() {
+        if displayedText != content {
+            displayedText = content
+        }
+        stopTypingTimer()
+    }
+
     func startTypingTimer() {
         typingTimer?.invalidate()
-        let timer = Timer.scheduledTimer(withTimeInterval: letterInterval, repeats: true) { _ in
+        let count = Self.charactersPerTick(letterInterval: letterInterval)
+        let timer = Timer.scheduledTimer(withTimeInterval: Self.tickInterval(letterInterval: letterInterval), repeats: true) { _ in
             // Scheduled on the main run loop.
             MainActor.assumeIsolated {
-                guard !self.characterQueue.isEmpty else { return }
-                let nextCharacter = self.characterQueue.removeFirst()
-                self.displayedText.append(nextCharacter)
+                guard !self.characterQueue.isEmpty else {
+                    // Typed out after the reply finished, in case that went by between updates.
+                    if self.isFinished {
+                        self.stopTypingTimer()
+                    }
+                    return
+                }
+                let next = self.characterQueue.prefix(count)
+                self.displayedText.append(contentsOf: next)
+                self.characterQueue.removeFirst(next.count)
             }
         }
         // In a list, an answer waits for the reasoning above it to show and fold first.
@@ -125,6 +153,24 @@ public struct StreamingMessageView: View {
             timer.fireDate = start
         }
         typingTimer = timer
+    }
+
+    private func stopTypingTimer() {
+        typingTimer?.invalidate()
+        typingTimer = nil
+    }
+
+    // The text is shown at most once a frame, a few letters at a time, at the pace of
+    // `letterInterval`: a tick lasts as long as the letters it shows.
+    static func tickInterval(letterInterval: TimeInterval) -> TimeInterval {
+        guard letterInterval.isFinite, letterInterval > 0 else { return 1.0 / 60 }
+        return max(letterInterval * Double(charactersPerTick(letterInterval: letterInterval)), 1.0 / 60)
+    }
+
+    static func charactersPerTick(letterInterval: TimeInterval) -> Int {
+        guard letterInterval > 0, letterInterval.isFinite else { return letterInterval > 0 ? 1 : .max }
+        let count = (1.0 / 60 / letterInterval).rounded(.up)
+        return Int(min(count, 10000))
     }
 
     /// The chart a code block describes: its language is one charts are written in, and its

@@ -48,6 +48,12 @@ enum L10n {
         }
     }
 
+    enum Sidebar {
+        static var close: String {
+            localized("sidebar.button.close", comment: "Accessibility label of the dimmed content next to the open sidebar, which closes it.")
+        }
+    }
+
     enum Attachment {
         static var image: String {
             localized("attachment.image", comment: "The name of an image attachment without one of its own.")
@@ -231,6 +237,14 @@ enum L10n {
     enum Transcription {
         static var recognizerUnavailable: String {
             localized("transcription.error.recognizer_unavailable", comment: "Error shown when the speech recognizer cannot be used.")
+        }
+
+        static var speechRecognitionDenied: String {
+            localized("transcription.error.speech_recognition_denied", comment: "Error shown when the person hasn't allowed speech recognition.")
+        }
+
+        static var microphoneDenied: String {
+            localized("transcription.error.microphone_denied", comment: "Error shown when the person hasn't allowed the microphone.")
         }
     }
 

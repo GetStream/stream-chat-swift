@@ -20,8 +20,12 @@ struct AIConversationExchange<Message: AIMessage> {
     // Tells it apart from the requests before and after it.
     let id: Int
     let request: AIConversationRequest<Message>
-    // The messages there were when it was made, none of which is its reply.
+    // The messages there were when it was made, none of which is its reply, and those of the
+    // requests before it that hadn't arrived, which aren't its own.
     let known: Set<AnyHashable>
+    // The ids of the messages of the requests before it that hadn't arrived when it was made,
+    // such as ones stopped before they arrived, which can still arrive under them: the latest few.
+    let earlierMessageIDs: [String]
     // The messages it replaces, as they were, which the conversation leaves out while it waits:
     // the reply written again, or the message edited, and those after it.
     let replaced: [AnyHashable: Message]
@@ -29,10 +33,16 @@ struct AIConversationExchange<Message: AIMessage> {
     let pending: AIPendingMessage?
     var state = State.waiting
 
-    init(id: Int, request: AIConversationRequest<Message>, conversation: [Message]) {
+    init(id: Int, request: AIConversationRequest<Message>, conversation: [Message], earlierMessageIDs: [String] = []) {
         self.id = id
         self.request = request
-        known = Set(conversation.map { AnyHashable($0.id) })
+        let ids = Set(conversation.map { AnyHashable($0.id) })
+        self.earlierMessageIDs = Array(
+            earlierMessageIDs
+                .filter { $0 != request.messageID && !ids.contains(AnyHashable($0)) }
+                .suffix(Self.earlierMessageLimit)
+        )
+        known = ids.union(self.earlierMessageIDs.map { AnyHashable($0) })
         let target = request.message.flatMap { message in
             conversation.firstIndex { AnyHashable($0.id) == AnyHashable(message.id) }
         }
@@ -53,8 +63,17 @@ struct AIConversationExchange<Message: AIMessage> {
         }
     }
 
+    // A few are enough: each is a request stopped, or that failed, before its message arrived.
+    private static var earlierMessageLimit: Int { 8 }
+
     var hasFailed: Bool {
         state == .failed || state == .unanswered
+    }
+
+    // The messages on their way when it was made, its own included, which the request after it
+    // can't take for its own.
+    var messageIDsOnTheirWay: [String] {
+        earlierMessageIDs + (pending.map { [$0.id] } ?? [])
     }
 
     // The person's message while the conversation shows it: until its reply starts, and for a
@@ -65,12 +84,27 @@ struct AIConversationExchange<Message: AIMessage> {
     }
 
     // The latest message when it is the request's reply: a reply that wasn't there, or one the
-    // request replaces, once it is written again.
+    // request replaces, once it is written again. A new message's reply comes after it: one
+    // before it answers an earlier message, such as one the person stopped.
     func reply(in conversation: [Message]) -> Message? {
         guard let last = conversation.last, last.role != .user else { return nil }
         let id = AnyHashable(last.id)
         let isRewritten = replaced[id].map { last.isRewritten(from: $0) } ?? false
-        return !known.contains(id) || isRewritten ? last : nil
+        guard !known.contains(id) || isRewritten else { return nil }
+        guard request.kind != .message || hasMessageArrived(in: conversation.dropLast()) else { return nil }
+        return last
+    }
+
+    // Whether a new message, or a request for the reply to the person's latest message, which
+    // has none, is overtaken by a newer message of theirs, which the replies after it answer.
+    func isOvertaken(in conversation: [Message]) -> Bool {
+        if request.kind == .message {
+            guard let own = ownMessageIndex(in: conversation[...]) else { return false }
+            return conversation[(own + 1)...].contains { $0.role == .user }
+        }
+        guard request.kind == .regenerate, request.message == nil,
+              let latest = conversation.last(where: { $0.role == .user }) else { return false }
+        return !known.contains(AnyHashable(latest.id))
     }
 
     // Whether its reply has started: it shows something, or it is already finished.
@@ -82,18 +116,28 @@ struct AIConversationExchange<Message: AIMessage> {
     // Whether the person's message is in the conversation: one with its id, or one of theirs
     // after the messages there were.
     func hasMessageArrived(in conversation: [Message]) -> Bool {
-        if conversation.contains(where: { AnyHashable($0.id) == AnyHashable(request.messageID) }) {
-            return true
+        hasMessageArrived(in: conversation[...])
+    }
+
+    private func hasMessageArrived(in conversation: ArraySlice<Message>) -> Bool {
+        ownMessageIndex(in: conversation) != nil
+    }
+
+    // Where the person's message is: the one with its id, or else their first after the
+    // messages there were.
+    private func ownMessageIndex(in conversation: ArraySlice<Message>) -> Int? {
+        if let exact = conversation.firstIndex(where: { AnyHashable($0.id) == AnyHashable(request.messageID) }) {
+            return exact
         }
         let lastKnown = conversation.lastIndex { known.contains(AnyHashable($0.id)) }
-        return conversation[(lastKnown.map { $0 + 1 } ?? 0)...].contains { $0.role == .user }
+        return conversation[(lastKnown.map { $0 + 1 } ?? conversation.startIndex)...].firstIndex { $0.role == .user }
     }
 
     // What `retry()` sends: the request again, or, when the agent had the person's message but
     // couldn't answer it, a request for its reply, since sending it again would add it twice.
     func retryRequest(in conversation: [Message]) -> AIConversationRequest<Message> {
         guard state == .unanswered, request.kind == .message, hasMessageArrived(in: conversation) else { return request }
-        return AIConversationRequest(kind: .regenerate, text: request.text)
+        return AIConversationRequest(kind: .regenerate, text: request.text, chatOption: request.chatOption)
     }
 }
 
