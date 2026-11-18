@@ -39,4 +39,32 @@ final class ChartData_Tests: XCTestCase {
     func test_pieData_whenSpecHasNoSeries_isEmpty() {
         XCTAssertTrue(pieData(from: USpec(title: nil, kind: .pie, series: [])).isEmpty)
     }
+
+    func test_pieData_leavesOutValuesThatArentShares() {
+        let spec = USpec(title: nil, kind: .pie, series: [
+            USeries(name: "Pie", points: [
+                UPoint(x: "Profit", y: 1e11), UPoint(x: "Loss", y: -1e11), UPoint(x: "None", y: 0), UPoint(x: "Costs", y: 3e11)
+            ])
+        ])
+
+        XCTAssertEqual(pieData(from: spec).map(\.label), ["Profit", "Costs"])
+        XCTAssertEqual(pieData(from: spec).map(\.pct), [0.25, 0.75])
+    }
+
+    func test_pieData_whenNothingIsPositive_isEmpty() {
+        let spec = USpec(title: nil, kind: .pie, series: [
+            USeries(name: "Pie", points: [UPoint(x: "Loss", y: -5), UPoint(x: "None", y: 0)])
+        ])
+
+        XCTAssertTrue(pieData(from: spec).isEmpty)
+    }
+
+    func test_makeBins_whenTheRangeIsTooWideOrTooNarrowToSplit_returnsNoBins() {
+        XCTAssertTrue(makeBins([-1e308, 1e308], targetBins: 10).isEmpty)
+        XCTAssertTrue(makeBins([0, 5e-324], targetBins: 10).isEmpty)
+    }
+
+    func test_makeBins_leavesOutValuesThatArentFinite() {
+        XCTAssertEqual(makeBins([0, .infinity, 10, .nan], targetBins: 2).map(\.count), [1, 1])
+    }
 }

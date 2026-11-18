@@ -56,8 +56,6 @@ public struct SidebarView<Menu: View, Content: View>: View {
         self.splitWidthRatio = splitWidthRatio
         self.edgeActivationWidth = edgeActivationWidth
         self.excludedBottomHeight = excludedBottomHeight
-        self.dragOffset = dragOffset
-        self.isDragActive = isDragActive
     }
     
     public var body: some View {
@@ -80,10 +78,13 @@ public struct SidebarView<Menu: View, Content: View>: View {
                         .background(Color(colors.sidebarBackground))
                         .shadow(color: .black.opacity(0.15), radius: 12, x: 4, y: 0)
                         .simultaneousGesture(contentGesture, including: .gesture)
-                    
+                        // VoiceOver reads only the side that shows.
+                        .accessibilityHidden(!isOpen)
+
                     content()
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .simultaneousGesture(contentGesture, including: .gesture)
+                        .accessibilityHidden(isOpen)
                 }
                 .offset(x: totalOffset)
                 
