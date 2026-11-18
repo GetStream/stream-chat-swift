@@ -25,6 +25,30 @@ final class StreamingMessageView_Tests: XCTestCase {
         XCTAssertEqual(view.getNewChunk(oldText: "Same", newText: "Same"), "")
     }
 
+    func test_getNewChunk_whenAChunkEndsInsideACharacter_returnsTheRestOfIt() {
+        let cases: [(old: String, new: String)] = [
+            ("Hello\r", "Hello\r\nWorld"),
+            ("Nice 👍", "Nice 👍🏽 work"),
+            ("🇺", "🇺🇸 flag"),
+            ("family 👨", "family 👨‍👩‍👧 ok"),
+            ("cafe", "cafe\u{301} au lait")
+        ]
+        for (old, new) in cases {
+            let chunk = view.getNewChunk(oldText: old, newText: new)
+            XCTAssertEqual(old + chunk, new, "\(old) + \(chunk)")
+        }
+    }
+
+    func test_typing_showsAFewLettersAFrameAtThePaceOfTheLetterInterval() {
+        XCTAssertEqual(StreamingMessageView.tickInterval(letterInterval: 0.005), 1.0 / 60)
+        XCTAssertEqual(StreamingMessageView.charactersPerTick(letterInterval: 0.005), 4)
+        XCTAssertEqual(StreamingMessageView.tickInterval(letterInterval: 0.05), 0.05)
+        XCTAssertEqual(StreamingMessageView.charactersPerTick(letterInterval: 0.05), 1)
+        XCTAssertEqual(StreamingMessageView.charactersPerTick(letterInterval: 0), .max, "everything at once")
+        XCTAssertEqual(StreamingMessageView.tickInterval(letterInterval: .infinity), 1.0 / 60)
+        XCTAssertEqual(StreamingMessageView.charactersPerTick(letterInterval: .infinity), 1)
+    }
+
     func test_changeListeners_startFromTheTextTheViewAppearedWith() {
         let listeners = StreamingMessageViewChangeListeners(
             text: "Already streamed",
