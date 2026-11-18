@@ -228,8 +228,27 @@ struct FunctionConformanceTests {
     func logicNeedsTwoValues() {
         #expect(run(LogicFunctions.and, ["values": [true]]) == nil)
         #expect(run(LogicFunctions.or, ["values": [false]]) == nil)
-        #expect(Json.bool(run(LogicFunctions.and, ["values": [1, "non-empty"] as JsonArray])) == true)
+    }
+
+    @Test("test_evaluate_function_and_truthiness_coercion_true: a string other than true reads as false")
+    func andCoercion() {
+        #expect(Json.bool(run(LogicFunctions.and, ["values": [1, "non-empty"] as JsonArray])) == false)
+        #expect(Json.bool(run(LogicFunctions.and, ["values": [1, "TRUE"] as JsonArray])) == true)
         #expect(Json.bool(run(LogicFunctions.and, ["values": [1, ""] as JsonArray])) == false)
+    }
+
+    @Test("test_evaluate_function_or_truthiness_coercion_true: zero and other strings read as false")
+    func orCoercion() {
+        #expect(Json.bool(run(LogicFunctions.or, ["values": [0, "yes"] as JsonArray])) == false)
+        #expect(Json.bool(run(LogicFunctions.or, ["values": [0, 2] as JsonArray])) == true)
+    }
+
+    @Test("test_evaluate_function_not_truthiness_truthy: not of an ordinary string is true")
+    func notCoercion() {
+        #expect(Json.bool(run(LogicFunctions.not, ["value": "hello"])) == true)
+        #expect(Json.bool(run(LogicFunctions.not, ["value": "True"])) == false)
+        #expect(Json.bool(run(LogicFunctions.not, ["value": ["a"] as JsonArray])) == true)
+        #expect(Json.bool(run(LogicFunctions.not, ["value": ["x": 1] as JsonMap])) == true)
     }
 
     @Test("A validation result read as a boolean argument uses its valid flag")

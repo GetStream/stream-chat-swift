@@ -89,7 +89,7 @@ struct ExpressionEvaluatorTests {
         #expect(router.errors[0].code == RendererError.Code.invalidFunctionCall)
     }
 
-    @Test("A failing function reports an error and evaluates to nil")
+    @Test("A function that fails in a binding reports EXPRESSION_ERROR and evaluates to nil")
     func functionFailure() {
         let router = StubRemoteRouter()
         let (evaluator, model) = makeEvaluator(router: router)
@@ -97,7 +97,27 @@ struct ExpressionEvaluatorTests {
 
         #expect(evaluator.invoke(FunctionCall(name: "boom"), in: context) == nil)
         #expect(router.errors.count == 1)
-        #expect(router.errors[0].code == RendererError.Code.executionError)
+        #expect(router.errors[0].code == RendererError.Code.expressionError)
+    }
+
+    @Test("test_action_function_call_execution_error: a function that fails in an action reports EXECUTION_ERROR")
+    func actionFunctionFailure() {
+        let router = StubRemoteRouter()
+        let (evaluator, model) = makeEvaluator(router: router)
+        let context = DataContext(model, "/")
+
+        #expect(evaluator.withUserActivation { evaluator.invoke(FunctionCall(name: "boom"), in: context) } == nil)
+        #expect(router.errors.map(\.code) == [RendererError.Code.executionError])
+    }
+
+    @Test("A call to an agent function names the catalog it resolved to")
+    func agentCallNamesItsCatalog() {
+        let router = StubRemoteRouter()
+        let (evaluator, model) = makeEvaluator(router: router)
+
+        _ = evaluator.invoke(FunctionCall(name: "deliveryEstimate"), in: DataContext(model, "/"))
+
+        #expect(router.calls.map(\.catalogId) == [TestCatalog.catalogId])
     }
 
     @Test("test_v10_function_call_naming_unknown_catalog_errors: a call whose catalog doesn't resolve fails")

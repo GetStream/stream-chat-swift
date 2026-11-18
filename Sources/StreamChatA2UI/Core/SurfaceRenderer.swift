@@ -64,7 +64,7 @@ final class SurfaceRenderer {
         guard definition.root != nil else {
             return AnyView(EmptyView())
         }
-        guard expandedSize(limit: Self.maxExpandedComponents) <= Self.maxExpandedComponents else {
+        guard expandedSize(limit: Self.maxExpandedComponents, dataContext: dataContext) <= Self.maxExpandedComponents else {
             report(RendererError(
                 code: RendererError.Code.recursionLimitExceeded,
                 message: "Surface '\(definition.surfaceId)' expands to more than \(Self.maxExpandedComponents) components. "
@@ -81,29 +81,41 @@ final class SurfaceRenderer {
         )
     }
 
-    // How many components the tree from the root expands to, up to `limit + 1`. A child that is
-    // one of its own ancestors counts nothing, as it doesn't show.
-    func expandedSize(limit: Int) -> Int {
-        var sizes: [String: Int] = [:]
-        var visiting: Set<String> = []
-        func size(of componentId: String, depth: Int) -> Int {
-            if let known = sizes[componentId] { return known }
-            guard depth < maxDepth, !visiting.contains(componentId), let component = definition.component(componentId) else {
-                return 0
-            }
-            visiting.insert(componentId)
-            defer { visiting.remove(componentId) }
-            let children = catalogs.resolveCatalog(entityCatalogId: component.catalogId, surfaceCatalogId: definition.catalogId)?
+    // How many components the tree from the root expands to as it renders, up to `limit + 1`: a
+    // component counts once for each place it shows, and a template's child once for each item
+    // of its collection. A child that is one of its own ancestors, or too deep, doesn't show.
+    func expandedSize(limit: Int, dataContext: DataContext) -> Int {
+        var children: [String: [(id: String, template: DataPath?)]] = [:]
+        var ancestors: Set<String> = []
+        var total = 0
+        func references(of component: Component) -> [(id: String, template: DataPath?)] {
+            if let known = children[component.id] { return known }
+            let found = catalogs.resolveCatalog(entityCatalogId: component.catalogId, surfaceCatalogId: definition.catalogId)?
                 .component(component.type)?
-                .childReferences(of: component) ?? []
-            var total = 1
-            for child in children where total <= limit {
-                total = min(total + size(of: child.id, depth: depth + 1), limit + 1)
-            }
-            sizes[componentId] = total
-            return total
+                .children(of: component)
+                .map { (id: $0.id, template: $0.template) } ?? []
+            children[component.id] = found
+            return found
         }
-        return size(of: A2UIProtocol.rootComponentId, depth: 0)
+        func expand(_ componentId: String, depth: Int, in context: DataContext) {
+            guard total <= limit, depth < maxDepth, !ancestors.contains(componentId),
+                  let component = definition.component(componentId) else { return }
+            total += 1
+            ancestors.insert(componentId)
+            defer { ancestors.remove(componentId) }
+            for child in references(of: component) where total <= limit {
+                guard let path = child.template else {
+                    expand(child.id, depth: depth + 1, in: context)
+                    continue
+                }
+                let count = Json.array(context.value(at: path))?.count ?? 0
+                for index in 0..<count where total <= limit {
+                    expand(child.id, depth: depth + 1, in: context.collectionScope(path: path, index: index))
+                }
+            }
+        }
+        expand(A2UIProtocol.rootComponentId, depth: 0, in: dataContext)
+        return total
     }
 
     /// Builds the view for one component of the surface.

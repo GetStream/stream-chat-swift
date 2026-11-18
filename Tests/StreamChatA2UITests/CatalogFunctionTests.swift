@@ -200,7 +200,8 @@ struct LogicFunctionTests {
         #expect(Json.bool(invoke(LogicFunctions.and, ["values": [valid, valid]])) == true)
         #expect(Json.bool(invoke(LogicFunctions.and, ["values": [valid, invalid]])) == false)
         #expect(LogicFunctions.truthy(invalid) == false)
-        #expect(LogicFunctions.truthy("text") == true)
+        #expect(LogicFunctions.truthy("text") == false)
+        #expect(LogicFunctions.truthy("true") == true)
         #expect(LogicFunctions.truthy(nil) == false)
     }
 }

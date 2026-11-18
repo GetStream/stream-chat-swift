@@ -44,7 +44,7 @@ struct RobustnessTests {
         } + [Component(id: "c30", type: "Text", properties: ["text": "leaf"])]
         let renderer = makeRenderer(levels)
 
-        #expect(renderer.renderer.expandedSize(limit: SurfaceRenderer.maxExpandedComponents) > SurfaceRenderer.maxExpandedComponents)
+        #expect(renderer.renderer.expandedSize(limit: SurfaceRenderer.maxExpandedComponents, dataContext: DataContext(renderer.model, "/")) > SurfaceRenderer.maxExpandedComponents)
         _ = renderer.renderer.rootView(dataContext: DataContext(renderer.model, "/"))
         #expect(renderer.errors.map(\.code) == [RendererError.Code.recursionLimitExceeded])
     }
@@ -58,7 +58,7 @@ struct RobustnessTests {
             Component(id: "c", type: "Text", properties: ["text": "c"])
         ])
 
-        #expect(renderer.renderer.expandedSize(limit: 100) == 4)
+        #expect(renderer.renderer.expandedSize(limit: 100, dataContext: DataContext(renderer.model, "/")) == 4)
     }
 
     @Test("A slider's bounds and step are always ones SwiftUI takes")

@@ -285,7 +285,7 @@ public struct ComponentRenderContext {
 
     /// A two-way binding for a bound boolean property.
     public func boolBinding(_ key: String = "value", default defaultValue: Bool = false) -> Binding<Bool> {
-        binding(key, default: defaultValue, read: { Json.bool($0) })
+        binding(key, default: defaultValue, read: { Json.dynamicBool($0) })
     }
 
     /// A two-way binding for a bound numeric property.

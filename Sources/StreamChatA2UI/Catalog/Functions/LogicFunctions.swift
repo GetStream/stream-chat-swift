@@ -82,19 +82,11 @@ enum LogicFunctions {
         return values
     }
 
-    /// Coerces a value to a boolean.
+    /// Coerces a `DynamicBoolean` argument as the specification says.
     ///
-    /// Validation results are truthy when they are valid, which lets `and`,
-    /// `or` and `not` compose validation functions.
+    /// Validation results read as their `valid` flag, which lets `and`, `or`
+    /// and `not` compose validation functions; `null` reads as false.
     static func truthy(_ value: (any Sendable)?) -> Bool {
-        guard let value = Json.normalized(value) else { return false }
-        if let map = value as? JsonMap, let isValid = Json.bool(map["valid"]) {
-            return isValid
-        }
-        if let bool = Json.bool(value) { return bool }
-        if let string = value as? String { return !string.isEmpty }
-        if let array = value as? JsonArray { return !array.isEmpty }
-        if let map = value as? JsonMap { return !map.isEmpty }
-        return true
+        Json.dynamicBool(value) ?? false
     }
 }

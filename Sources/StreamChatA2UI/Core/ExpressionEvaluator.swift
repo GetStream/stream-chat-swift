@@ -55,9 +55,15 @@ final class ExpressionEvaluator {
     /// Receives calls that cannot be resolved locally.
     weak var remoteRouter: RemoteFunctionRouter?
 
+    // The most templates one evaluation formats, counting those a template's calls format in
+    // turn, so a template that formats itself many times on each level can't run for minutes.
+    static let maxInterpolations = 256
+
     private var failureCount = 0
     private var userActivationDepth = 0
     private var interpolationDepth = 0
+    private var interpolationCount = 0
+    private var parsedTemplates: [String: [A2UITemplateSegment]] = [:]
 
     /// Creates an evaluator for one surface.
     /// Pass the surface's default catalog id so unqualified calls resolve.
@@ -126,9 +132,9 @@ final class ExpressionEvaluator {
         Json.double(evaluate(value, in: context))
     }
 
-    /// Evaluates a dynamic value and coerces it to a boolean.
+    /// Evaluates a `DynamicBoolean` and coerces it as the specification says.
     func bool(_ value: DynamicValue, in context: DataContext) -> Bool? {
-        Json.bool(evaluate(value, in: context))
+        Json.dynamicBool(evaluate(value, in: context))
     }
 
     /// Evaluates a dynamic value and coerces it to a list of strings.
@@ -194,7 +200,7 @@ final class ExpressionEvaluator {
                     )
                 )
             }
-            return execute(definition, arguments: resolvedArguments, in: context)
+            return execute(definition, arguments: resolvedArguments, in: context, catalogId: catalog.catalogId)
         }
 
         guard let remoteRouter else {
@@ -205,7 +211,7 @@ final class ExpressionEvaluator {
         do {
             return try remoteRouter.agentFunctionValue(
                 for: name,
-                catalogId: catalogId,
+                catalogId: catalog.catalogId,
                 arguments: resolvedArguments,
                 surfaceId: surfaceId,
                 userActivated: userActivationDepth > 0
@@ -232,7 +238,8 @@ final class ExpressionEvaluator {
     func execute(
         _ definition: FunctionDefinition,
         arguments: [String: any Sendable],
-        in context: DataContext
+        in context: DataContext,
+        catalogId: String? = nil
     ) -> (any Sendable)? {
         do {
             return try definition.implementation(
@@ -241,11 +248,16 @@ final class ExpressionEvaluator {
                     arguments: arguments,
                     context: context,
                     services: services,
-                    evaluator: self
+                    evaluator: self,
+                    catalogId: catalogId
                 )
             )
         } catch {
-            let code = (error as? A2UIFunctionError)?.code
+            // A binding or check that fails resolves to null with an EXPRESSION_ERROR; only an
+            // action's own call reports how the function failed.
+            let code = userActivationDepth == 0
+                ? RendererError.Code.expressionError
+                : (error as? A2UIFunctionError)?.code
                 ?? (error is A2UIExpressionError ? RendererError.Code.expressionError : RendererError.Code.executionError)
             return fail(RendererError(code: code, message: A2UIErrorFormatter.describe(error), surfaceId: surfaceId))
         }
@@ -293,8 +305,13 @@ final class ExpressionEvaluator {
     // MARK: - Interpolation
 
     /// Interpolates a `formatString` template in the given scope.
+    ///
+    /// Calls in the template resolve in `catalogId`, the catalog `formatString` resolved to.
     /// Unresolved expressions become empty strings; a template that doesn't parse throws.
-    func interpolate(_ template: String, in context: DataContext) throws -> String {
+    func interpolate(_ template: String, in context: DataContext, catalogId: String? = nil) throws -> String {
+        if interpolationDepth == 0 {
+            interpolationCount = 0
+        }
         // A template can come from the data model and format itself, through formatString.
         guard interpolationDepth < A2UIProtocol.maxFunctionCallDepth else {
             throw A2UIExpressionError(
@@ -302,23 +319,39 @@ final class ExpressionEvaluator {
                     + "such as a template in the data model that formats itself."
             )
         }
+        interpolationCount += 1
+        guard interpolationCount <= Self.maxInterpolations else {
+            throw A2UIExpressionError(
+                "One value formats more than \(Self.maxInterpolations) templates, "
+                    + "such as a template in the data model that formats itself several times."
+            )
+        }
         interpolationDepth += 1
         defer { interpolationDepth -= 1 }
         var output = ""
-        for segment in try A2UIExpressionParser.parseTemplate(template) {
+        for segment in try parsedTemplate(template) {
             switch segment {
             case let .text(text):
                 output += text
             case let .expression(expression):
-                output += Json.stringify(evaluate(expression, in: context))
+                output += Json.stringify(evaluate(expression, in: context, catalogId: catalogId))
             }
         }
         return output
     }
 
+    private func parsedTemplate(_ template: String) throws -> [A2UITemplateSegment] {
+        if let parsed = parsedTemplates[template] {
+            return parsed
+        }
+        let parsed = try A2UIExpressionParser.parseTemplate(template)
+        parsedTemplates[template] = parsed
+        return parsed
+    }
+
     /// Evaluates a parsed template expression.
-    /// Calls are dispatched through the regular function resolution path.
-    func evaluate(_ expression: A2UIExpression, in context: DataContext) -> (any Sendable)? {
+    /// Calls are dispatched through the regular function resolution path, in `catalogId`.
+    func evaluate(_ expression: A2UIExpression, in context: DataContext, catalogId: String? = nil) -> (any Sendable)? {
         switch expression {
         case let .literal(value):
             return Json.normalized(value)
@@ -327,11 +360,11 @@ final class ExpressionEvaluator {
         case let .call(name, arguments):
             var resolved: [String: any Sendable] = [:]
             for (key, argument) in arguments {
-                if let value = evaluate(argument, in: context) {
+                if let value = evaluate(argument, in: context, catalogId: catalogId) {
                     resolved[key] = value
                 }
             }
-            return invoke(name: name, catalogId: nil, resolvedArguments: resolved, in: context)
+            return invoke(name: name, catalogId: catalogId, resolvedArguments: resolved, in: context)
         }
     }
 

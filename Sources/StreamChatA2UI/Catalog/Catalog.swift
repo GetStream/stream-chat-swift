@@ -106,6 +106,12 @@ extension ComponentDefinition {
     // catalog's schema: a ComponentId, a ChildList, or either one in an array or object, such as
     // each of a Tabs' tabs.
     func childReferences(of component: Component) -> [(pointer: String, id: String)] {
+        children(of: component).map { ($0.pointer, $0.id) }
+    }
+
+    // The children a component holds, as `childReferences`, with the collection a template
+    // repeats its child over.
+    func children(of component: Component) -> [(pointer: String, id: String, template: DataPath?)] {
         propertySchema.keys.sorted().flatMap { key in
             Self.references(in: component.properties[key], schema: propertySchema[key] ?? [:], pointer: "/" + Self.escape(key))
         }
@@ -125,15 +131,19 @@ extension ComponentDefinition {
         }
     }
 
-    private static func references(in value: (any Sendable)?, schema: JsonMap, pointer: String) -> [(pointer: String, id: String)] {
+    private static func references(
+        in value: (any Sendable)?,
+        schema: JsonMap,
+        pointer: String
+    ) -> [(pointer: String, id: String, template: DataPath?)] {
         if let reference = schema["$ref"] as? String {
             if reference.hasSuffix("/ComponentId") {
-                return (value as? String).map { [(pointer, $0)] } ?? []
+                return (value as? String).map { [(pointer, $0, nil)] } ?? []
             }
             if reference.hasSuffix("/ChildList") {
                 switch ChildList(value) {
-                case let .ids(ids): return ids.enumerated().map { ("\(pointer)/\($0)", $1) }
-                case let .template(componentId, _): return [("\(pointer)/componentId", componentId)]
+                case let .ids(ids): return ids.enumerated().map { ("\(pointer)/\($0)", $1, nil) }
+                case let .template(componentId, path): return [("\(pointer)/componentId", componentId, path)]
                 case .none: return []
                 }
             }
