@@ -67,10 +67,10 @@ jobs:
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" mock_server_branch:${{ inputs.mock_server_branch }} coverage:${{ matrix.coverage == true }} ${{ env.VERBOSE }}
+      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" mock_server_branch:${{ inputs.mock_server_branch }} coverage:${{ matrix.coverage == true && (inputs.mock_server_branch || 'main') == 'main' }} ${{ env.VERBOSE }}
       timeout-minutes: 120
     - uses: actions/upload-artifact@v7
-      if: matrix.coverage && (success() || failure())
+      if: matrix.coverage && (inputs.mock_server_branch || 'main') == 'main' && (success() || failure())
       with:
         name: e2e-coverage-map
         path: fastlane/test_output/e2e_coverage_map.json
