@@ -2080,7 +2080,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// Changes when a scheduled message is sent.
+    ///
+    /// A message the server failed to send can not be changed, so it is scheduled again as a new message with a new id,
+    /// which the completion returns, and the failed one is deleted. When deleting it on the server fails, for example
+    /// offline, it is listed again after the next full load and can be deleted then. A message whose channel was deleted
+    /// can not be rescheduled.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.

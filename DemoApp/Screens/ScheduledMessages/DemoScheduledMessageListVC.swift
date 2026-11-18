@@ -202,8 +202,10 @@ struct DemoScheduledMessageList: View {
     @ViewBuilder private func swipeActions(for message: ScheduledMessage) -> some View {
         Button(role: .destructive) { model.delete(message) } label: { actionLabel("Delete", Image(uiImage: images.messageActionDelete)) }
             .tint(Color(colors.accentError))
-        Button { actions.reschedule(message) } label: { actionLabel("Reschedule", Image(uiImage: UIImage(systemName: "clock") ?? UIImage())) }
-            .tint(.yellow)
+        if !message.isChannelDeleted {
+            Button { actions.reschedule(message) } label: { actionLabel("Reschedule", Image(uiImage: UIImage(systemName: "clock") ?? UIImage())) }
+                .tint(.yellow)
+        }
         if message.status == .failed {
             if message.failure?.isRetryable ?? true {
                 Button { model.resend(message) } label: { actionLabel("Retry", Image(uiImage: UIImage(systemName: "arrow.clockwise") ?? UIImage())) }
@@ -325,5 +327,15 @@ private struct DemoScheduledMessageRow: View {
             return message.message.text
         }
         return attachmentsCount > 0 ? "📎 \(attachmentsCount) attachment\(attachmentsCount == 1 ? "" : "s")" : nil
+    }
+}
+
+private extension ScheduledMessage {
+    var isChannelDeleted: Bool {
+        if case let .serverFailedPublishing(failure) = failure {
+            failure.reason == .channelDeleted
+        } else {
+            false
+        }
     }
 }

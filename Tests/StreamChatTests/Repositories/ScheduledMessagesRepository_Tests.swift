@@ -998,6 +998,155 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertNotNil(body["scheduled_at"])
     }
 
+    // MARK: - Reschedule a failed message
+
+    func test_reschedule_ofAMessageTheServerFailed_schedulesACopyAndDeletesTheFailedOne() throws {
+        try saveFailedOnServer(id: "scheduled-id", message: .dummy(
+            text: "Hello",
+            attachments: [.dummy(type: .image, title: "Photo", imageURL: URL(string: "https://example.com/image.png")!)],
+            custom: ["key": .string("value")],
+            mentionedUsers: ["mentioned"],
+            parentId: "parent",
+            quotedMessageId: "quoted",
+            showInChannel: true
+        ))
+        let newDate = Date().addingTimeInterval(7200)
+        apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: "scheduled-id", cid: cid, status: .canceled))))
+
+        let rescheduled = try waitFor { repository.reschedule(id: "scheduled-id", scheduledAt: newDate, completion: $0) }.get()
+
+        XCTAssertNotEqual(rescheduled.id, "scheduled-id")
+        XCTAssertEqual(rescheduled.cid, cid)
+        XCTAssertEqual(rescheduled.status, .preparingToSchedule)
+        XCTAssertNil(rescheduled.failure)
+        XCTAssertEqual(rescheduled.scheduledAt.timeIntervalSince1970, newDate.timeIntervalSince1970, accuracy: 0.001)
+        XCTAssertEqual(rescheduled.message.text, "Hello")
+        XCTAssertEqual(rescheduled.message.parentMessageId, "parent")
+        XCTAssertTrue(rescheduled.message.showReplyInChannel)
+        XCTAssertEqual(rescheduled.quotedMessageId, "quoted")
+        XCTAssertEqual(rescheduled.message.extraData, ["key": .string("value")])
+        XCTAssertEqual(rescheduled.message.imageAttachments.first?.imageURL, URL(string: "https://example.com/image.png"))
+        XCTAssertEqual(try storedMessages().map(\.id), [rescheduled.id])
+        XCTAssertEqual(try pendingRequestIds(), [rescheduled.id])
+        let expectedEndpoint: Endpoint<DeleteScheduledMessageResponse> = .deleteScheduledMessage(id: "scheduled-id")
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_reschedule_ofAMessageTheServerFailed_sendsTheCopyWithTheQuoteAndTheMentions() throws {
+        try saveFailedOnServer(id: "scheduled-id", message: .dummy(mentionedUsers: ["mentioned"], quotedMessageId: "quoted"))
+        apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: "scheduled-id", cid: cid, status: .canceled))))
+        let rescheduled = try waitFor {
+            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
+        }.get()
+
+        apiClient.test_mockResponseResult(.success(sendMessageResponse(.dummy(id: rescheduled.id, cid: cid, user: .dummy(userId: userId)))))
+        _ = try waitFor { repository.sendPendingChanges(id: rescheduled.id, completion: $0) }.get()
+
+        let body = try XCTUnwrap(apiClient.request_endpoint).bodyAsDictionary()
+        let message = try XCTUnwrap(body["message"] as? [String: Any])
+        XCTAssertEqual(message["quoted_message_id"] as? String, "quoted")
+        XCTAssertEqual(message["mentioned_users"] as? [String], ["mentioned"])
+    }
+
+    func test_reschedule_ofAMessageTheServerFailed_whenTheDeleteFails_stillSucceeds() throws {
+        try saveFailedOnServer(id: "scheduled-id")
+        let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorNotConnectedToInternet)
+        apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(error))
+
+        let rescheduled = try waitFor {
+            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
+        }.get()
+
+        XCTAssertEqual(try storedMessages().map(\.id), [rescheduled.id])
+    }
+
+    func test_reschedule_ofAMessageWhoseChannelWasDeleted_failsAndKeepsIt() throws {
+        try saveFailedOnServer(id: "scheduled-id", failureReason: .channelDeleted)
+
+        let result = try waitFor {
+            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
+        }
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageChannelDeleted)
+        XCTAssertEqual(try storedMessages().map(\.id), ["scheduled-id"])
+        XCTAssertNil(apiClient.request_endpoint)
+    }
+
+    func test_reschedule_ofAMessageTheServerFailed_whenTheChannelLimitIsReached_failsAndKeepsIt() throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxPerChannel: 1))
+        _ = try schedule().get()
+        try saveFailedOnServer(id: "scheduled-id")
+
+        let result = try waitFor {
+            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
+        }
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessagesChannelLimitReached)
+        XCTAssertNotNil(try storedMessage(id: "scheduled-id"))
+        XCTAssertNil(apiClient.request_endpoint)
+    }
+
+    func test_reschedule_ofAMessageThatFailedLocally_keepsItsId() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(
+            ClientError(with: APIError(code: 4, message: "banned", statusCode: 403))
+        ))
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        let rescheduled = try waitFor {
+            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
+        }.get()
+
+        XCTAssertEqual(rescheduled.id, "scheduled-id")
+        XCTAssertEqual(rescheduled.message.localState, .pendingSend)
+    }
+
+    func test_update_ofAMessageTheServerFailed_fails() throws {
+        try saveFailedOnServer(id: "scheduled-id")
+
+        let result = try waitFor {
+            repository.update(id: "scheduled-id", content: content(text: "Updated"), scheduledAt: nil, completion: $0)
+        }
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageNotEditable)
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.message.text, "Hello")
+    }
+
+    // MARK: - Failed uploads
+
+    func test_resend_restartsTheFailedUploads() throws {
+        try scheduleWithFailedUpload(id: "scheduled-id")
+
+        _ = try waitFor { repository.resend(id: "scheduled-id", completion: $0) }.get()
+
+        XCTAssertEqual(try attachmentStates(id: "scheduled-id"), [.pendingUpload])
+    }
+
+    func test_reschedule_restartsTheFailedUploads() throws {
+        try scheduleWithFailedUpload(id: "scheduled-id")
+
+        _ = try waitFor {
+            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
+        }.get()
+
+        XCTAssertEqual(try attachmentStates(id: "scheduled-id"), [.pendingUpload])
+    }
+
+    // MARK: - Quoted message id
+
+    func test_sendPendingChanges_ofAnUpdate_sendsTheQuotedMessageIdWhenTheQuotedMessageIsNotStored() throws {
+        try saveOnServer(id: "scheduled-id")
+        _ = try waitFor {
+            repository.update(id: "scheduled-id", content: content(text: "Updated", quotedMessageId: "quoted"), scheduledAt: nil, completion: $0)
+        }.get()
+        apiClient.test_mockResponseResult(.success(updateResponse(.dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId)))))
+
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }.get()
+
+        let body = try XCTUnwrap(apiClient.request_endpoint).bodyAsDictionary()
+        XCTAssertEqual((body["message"] as? [String: Any])?["quoted_message_id"] as? String, "quoted")
+    }
+
     // MARK: - Delete
 
     func test_delete_ofAMessageNotOnTheServerYet_onlyDeletesItLocally() throws {
@@ -1452,6 +1601,45 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     private func saveOnServer(id: String) throws {
         _ = try XCTUnwrap(model(from: .dummy(id: id, cid: cid, user: .dummy(userId: userId))))
+    }
+
+    private func saveFailedOnServer(
+        id: String,
+        message: ScheduledMessageContentResponse = .dummy(),
+        failureReason: ScheduledMessageFailureReason = .banned
+    ) throws {
+        _ = try XCTUnwrap(model(from: .dummy(
+            id: id,
+            cid: cid,
+            user: .dummy(userId: userId),
+            message: message,
+            scheduledAt: Date().addingTimeInterval(-60),
+            status: .failed,
+            failureReason: failureReason
+        )))
+    }
+
+    private func scheduleWithFailedUpload(id: String) throws {
+        var content = content()
+        content.attachments = [.mockImage]
+        _ = try schedule(id: id, content: content).get()
+        try database.writeSynchronously { session in
+            let message = try XCTUnwrap(session.scheduledMessage(id: id)?.message)
+            message.attachments.forEach { $0.localState = .uploadingFailed }
+            message.localMessageState = .sendingFailed
+        }
+    }
+
+    private func attachmentStates(id: String) throws -> [LocalAttachmentState?] {
+        try database.readSynchronously { session in
+            session.scheduledMessage(id: id)?.message?.attachments.map(\.localState) ?? []
+        }
+    }
+
+    private func pendingRequestIds() throws -> [String] {
+        try database.readSynchronously { session in
+            try (session as? NSManagedObjectContext)?.fetch(ScheduledMessageDTO.pendingRequestsFetchRequest()).map(\.id) ?? []
+        }
     }
 
     private func sendMessageResponse(_ scheduledMessage: ScheduledMessageResponse?) -> SendMessageResponsePayload {

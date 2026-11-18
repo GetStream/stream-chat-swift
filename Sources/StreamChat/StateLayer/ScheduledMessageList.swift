@@ -52,7 +52,12 @@ public final class ScheduledMessageList: Sendable {
 
     // MARK: - Managing Scheduled Messages
 
-    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// Changes when a scheduled message is sent.
+    ///
+    /// A message the server failed to send can not be changed, so it is scheduled again as a new message with a new id,
+    /// which is returned, and the failed one is deleted. When deleting it on the server fails, for example
+    /// offline, it is listed again after the next full load and can be deleted then. A message whose channel was deleted
+    /// can not be rescheduled.
     ///
     /// The new date is sent to the server right after it is saved locally, see `ScheduledMessage.status`.
     ///

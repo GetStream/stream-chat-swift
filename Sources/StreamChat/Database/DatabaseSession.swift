@@ -648,6 +648,16 @@ protocol ScheduledMessageDatabaseSession {
         scheduledAt: Date?
     ) throws -> ScheduledMessageDTO
 
+    /// Schedules a message the server failed to send again, as a new scheduled message with `newId`, and deletes the
+    /// failed one locally. Without `content`, the new message has the content of the failed one.
+    @discardableResult
+    func scheduleFailedMessageAgain(
+        id: String,
+        newId: String,
+        content: ScheduledMessageContent?,
+        scheduledAt: Date
+    ) throws -> ScheduledMessageDTO
+
     /// Counts the current user's scheduled messages saved locally, next to the limits in the config of the channel.
     func scheduledMessagesUsage(cid: ChannelId) throws -> ScheduledMessagesUsage
 

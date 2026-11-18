@@ -163,6 +163,11 @@ class ScheduledMessageDTO: NSManagedObject {
         }
     }
 
+    /// Whether the server failed to send the scheduled message. The server refuses to change it.
+    var isServerFailed: Bool {
+        ScheduledMessageServerStatus(rawValue: status) == .failed && !hasLocalChanges
+    }
+
     /// Whether the scheduled message has local changes the server does not have yet.
     var hasLocalChanges: Bool {
         switch message?.localMessageState {
@@ -233,6 +238,9 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
+        if dto.isServerFailed {
+            throw ClientError.ScheduledMessageNotEditable(id: id)
+        }
         let cid = try ChannelId(cid: dto.cid)
         if let content {
             try validateSchedulable(content, cid: cid)
@@ -258,6 +266,9 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             message.createdAt = scheduledAt.bridgeDate
             dto.hasPendingScheduledAt = !dto.isLocalOnly
         }
+        if content == nil {
+            message.restartFailedUploads()
+        }
         dto.updatedAt = Date().bridgeDate
         dto.syncErrorReason = nil
         dto.syncErrorMessage = nil
@@ -267,6 +278,45 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.localMessageState = dto.isLocalOnly ? .pendingSend : .pendingSync
 
         return dto
+    }
+
+    func scheduleFailedMessageAgain(
+        id: String,
+        newId: String,
+        content: ScheduledMessageContent?,
+        scheduledAt: Date
+    ) throws -> ScheduledMessageDTO {
+        guard let dto = scheduledMessage(id: id), let message = dto.message else {
+            throw ClientError.ScheduledMessageDoesNotExist(id: id)
+        }
+        if dto.failureReason == ScheduledMessageFailureReason.channelDeleted.rawValue {
+            throw ClientError.ScheduledMessageChannelDeleted(id: id)
+        }
+        let cid = try ChannelId(cid: dto.cid)
+        let newContent = try content ?? storedContent(of: dto, message: message)
+        let new = try createNewScheduledMessage(id: newId, cid: cid, content: newContent, scheduledAt: scheduledAt)
+        deleteScheduledMessage(id: id)
+        return new
+    }
+
+    private func storedContent(of dto: ScheduledMessageDTO, message: MessageDTO) throws -> ScheduledMessageContent {
+        ScheduledMessageContent(
+            text: message.text,
+            attachments: message.attachments
+                .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
+                .compactMap { $0.asAnyModel()?.toAnyAttachmentPayload() },
+            mentionedUserIds: message.mentionedUserIds,
+            mentionedHere: message.mentionedHere,
+            mentionedChannel: message.mentionedChannel,
+            mentionedGroupIds: message.mentionedGroupIds,
+            mentionedRoles: message.mentionedRoles,
+            quotedMessageId: dto.quotedMessageId,
+            parentId: message.parentMessageId,
+            showReplyInChannel: message.showReplyInChannel,
+            isSilent: message.isSilent,
+            skipPush: message.skipPush,
+            extraData: try JSONDecoder.stream.decodeRawJSON(from: message.extraData)
+        )
     }
 
     func scheduledMessagesUsage(cid: ChannelId) throws -> ScheduledMessagesUsage {
@@ -501,6 +551,15 @@ extension ScheduledMessageDTO {
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate
         )
+    }
+}
+
+extension MessageDTO {
+    /// The scheduler waits until every attachment is uploaded, so a failed upload has to start again.
+    func restartFailedUploads() {
+        attachments
+            .filter { $0.localState == .uploadingFailed }
+            .forEach { $0.localState = .pendingUpload }
     }
 }
 
