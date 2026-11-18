@@ -8,8 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ChatChannelController.scheduledMessagesUsage(completion:)` and `Chat.scheduledMessagesUsage()` for comparing scheduled message counts with their limits [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
 - Add role, group, here and channel mentions, `silent` and `skipPush` to scheduling a message [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
 - Make the errors of the schedule calls public, for example `ClientError.ScheduledMessagesChannelLimitReached` [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
+- Add `ScheduledMessageFailure.ServerRejection.Reason.init(error:)` for reading the reason of the server from an error [#4416](https://github.com/GetStream/stream-chat-swift/pull/4416)
 ### 🐞 Fixed
 - Fix scheduled messages of an open channel going stale after a reconnect [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
+- Fix scheduled messages that were already sent or deleted on another device staying in the list as failed [#4416](https://github.com/GetStream/stream-chat-swift/pull/4416)
 
 ## StreamChatCommonUI
 ### ✅ Added
