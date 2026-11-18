@@ -19,7 +19,8 @@ public struct UserInfo: Identifiable, Sendable {
     /// The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     public let privacySettings: UserPrivacySettings?
     /// A list of blocked user ids.
-    public let blockedUserIds: [UserId]?
+    @available(*, deprecated, message: "This value is never used. Use ChatUserController.block() and CurrentChatUser.blockedUserIds instead.")
+    public var blockedUserIds: [UserId]? { nil }
     /// Custom extra data of the user.
     public let extraData: [String: RawJSON]
 
@@ -30,7 +31,6 @@ public struct UserInfo: Identifiable, Sendable {
         isInvisible: Bool? = nil,
         language: TranslationLanguage? = nil,
         privacySettings: UserPrivacySettings? = nil,
-        blockedUserIds: [UserId]? = nil,
         extraData: [String: RawJSON] = [:]
     ) {
         self.id = id
@@ -39,7 +39,28 @@ public struct UserInfo: Identifiable, Sendable {
         self.isInvisible = isInvisible
         self.language = language
         self.privacySettings = privacySettings
-        self.blockedUserIds = blockedUserIds
         self.extraData = extraData
+    }
+
+    @available(*, deprecated, message: "This value is never used. Use ChatUserController.block() and CurrentChatUser.blockedUserIds instead.")
+    public init(
+        id: UserId,
+        name: String? = nil,
+        imageURL: URL? = nil,
+        isInvisible: Bool? = nil,
+        language: TranslationLanguage? = nil,
+        privacySettings: UserPrivacySettings? = nil,
+        blockedUserIds: [UserId]?,
+        extraData: [String: RawJSON] = [:]
+    ) {
+        self.init(
+            id: id,
+            name: name,
+            imageURL: imageURL,
+            isInvisible: isInvisible,
+            language: language,
+            privacySettings: privacySettings,
+            extraData: extraData
+        )
     }
 }

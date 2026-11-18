@@ -1749,6 +1749,37 @@ import XCTest
         XCTAssertTrue(containerViewController.view.subviews.last === floatingView)
     }
 
+    // MARK: - Typing events
+
+    func test_addingAttachment_doesNotSendKeystrokeEvent() {
+        composerVC.loadViewIfNeeded()
+
+        composerVC.content.attachments = [.mockFile]
+
+        XCTAssertEqual(mockedChatChannelController.sendKeystrokeEvent_callCount, 0)
+    }
+
+    func test_removingAttachment_doesNotSendKeystrokeEvent() {
+        composerVC.loadViewIfNeeded()
+        composerVC.content.attachments = [.mockFile, .mockFile]
+        mockedChatChannelController.sendKeystrokeEvent_callCount = 0
+
+        composerVC.attachmentsVC.didTapRemoveItemButton?(0)
+
+        XCTAssertEqual(composerVC.content.attachments.count, 1)
+        XCTAssertEqual(mockedChatChannelController.sendKeystrokeEvent_callCount, 0)
+    }
+
+    func test_textViewDidChange_sendsKeystrokeEvent() {
+        composerVC.loadViewIfNeeded()
+        let textView = composerVC.composerView.inputMessageView.textView
+
+        textView.text = "Hey"
+        composerVC.textViewDidChange(textView)
+
+        XCTAssertEqual(mockedChatChannelController.sendKeystrokeEvent_callCount, 1)
+    }
+
     // MARK: - Draft Message Handling
 
     func test_viewWillDisappear_whenContentIsEmpty_andNoDraftExists() {

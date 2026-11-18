@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix the composer sending typing events when attachments are added or removed [#4407](https://github.com/GetStream/stream-chat-swift/pull/4407)
 
 # [5.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.17.0)
 _November 12, 2026_

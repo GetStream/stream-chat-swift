@@ -18,11 +18,13 @@ permissions:
 
 jobs:
   sonar:
-    runs-on: macos-15
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v7
 
-    - uses: ./.github/actions/bootstrap
+    - uses: ./.github/actions/ruby-cache
+
+    - run: ./Scripts/bootstrap.sh
       env:
         INSTALL_SONAR: true
         SKIP_SWIFT_BOOTSTRAP: true
@@ -54,5 +56,5 @@ jobs:
             bundle exec fastlane sonar_upload
           fi
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_IOS_BOTS }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
