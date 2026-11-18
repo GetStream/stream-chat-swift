@@ -42,7 +42,20 @@ jobs:
     strategy:
       matrix:
         # Coverage builds the map that selects e2e tests on pull requests, only against the main mock server.
-        include: ${{ fromJson(inputs.mock_check && '[{"ios":"26.2","device":"iPhone 17 Pro","setup_runtime":false}]' || (inputs.mock_server_branch || 'main') != 'main' && '[{"ios":"26.2","device":"iPhone 17 Pro","setup_runtime":false},{"ios":"17.5","device":"iPhone 15 Pro","setup_runtime":true}]' || '[{"ios":"26.2","device":"iPhone 17 Pro","setup_runtime":false,"coverage":true},{"ios":"17.5","device":"iPhone 15 Pro","setup_runtime":true}]') }}
+        include: |-
+          ${{ fromJson(
+            inputs.mock_check && '[
+              { "ios": "26.2", "device": "iPhone 17 Pro", "setup_runtime": false }
+            ]'
+            || (inputs.mock_server_branch || 'main') != 'main' && '[
+              { "ios": "26.2", "device": "iPhone 17 Pro", "setup_runtime": false },
+              { "ios": "17.5", "device": "iPhone 15 Pro", "setup_runtime": true }
+            ]'
+            || '[
+              { "ios": "26.2", "device": "iPhone 17 Pro", "setup_runtime": false, "coverage": true },
+              { "ios": "17.5", "device": "iPhone 15 Pro", "setup_runtime": true }
+            ]'
+          ) }}
       fail-fast: false
     runs-on: macos-15
     env:
