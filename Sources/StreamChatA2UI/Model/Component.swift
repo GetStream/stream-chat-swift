@@ -12,8 +12,11 @@ import Foundation
 /// renderer rebuilds the tree at render time.
 @available(iOS 15.0, macOS 12.0, *)
 struct Component: Equatable, Sendable {
-    /// Wire keys that belong to the component envelope rather than the catalog schema.
-    static let envelopeKeys: Set<String> = ["id", "component", "catalogId", "accessibility", "metadata"]
+    /// Wire keys that belong to the component envelope rather than the catalog schema, in the
+    /// spec's `@` form and in the earlier unprefixed one.
+    static let envelopeKeys: Set<String> = [
+        "id", "component", "catalogId", "accessibility", "metadata", "@catalogId", "@accessibility", "@metadata"
+    ]
 
     /// The unique id of this component within its surface.
     let id: String
@@ -62,12 +65,18 @@ struct Component: Equatable, Sendable {
         for key in envelopeKeys {
             properties.removeValue(forKey: key)
         }
+        if let checks = properties.removeValue(forKey: "@checks") {
+            properties["checks"] = checks
+        }
+        func envelope(_ key: String) -> (any Sendable)? {
+            Json.normalized(json["@" + key]) ?? Json.normalized(json[key])
+        }
         return Component(
             id: id,
             type: type,
-            catalogId: json["catalogId"] as? String,
-            accessibility: AccessibilityAttributes(json["accessibility"]),
-            metadata: Json.map(json["metadata"]),
+            catalogId: envelope("catalogId") as? String,
+            accessibility: AccessibilityAttributes(envelope("accessibility")),
+            metadata: Json.map(envelope("metadata")),
             properties: properties
         )
     }

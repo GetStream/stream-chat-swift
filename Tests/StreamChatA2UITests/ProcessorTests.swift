@@ -15,12 +15,13 @@ final class ProcessorHarness {
     private(set) var outgoing: [RendererMessage] = []
     private var cancellables: Set<AnyCancellable> = []
 
-    init(catalogs: [Catalog]? = nil, defaultCatalogId: String? = nil) {
+    init(catalogs: [Catalog]? = nil, defaultCatalogId: String? = nil, agentFunctionTimeout: TimeInterval = 30) {
         let recorder = RenderRecorder()
         processor = A2UIMessageProcessor(
             catalogs: catalogs ?? [TestCatalog.make(recorder: recorder)],
             defaultCatalogId: defaultCatalogId,
-            services: TestServices.make()
+            services: TestServices.make(),
+            agentFunctionTimeout: agentFunctionTimeout
         )
         processor.surfaceUpdates.sink { [weak self] in self?.updates.append($0) }.store(in: &cancellables)
         processor.rendererMessages.sink { [weak self] in self?.outgoing.append($0) }.store(in: &cancellables)
