@@ -64,20 +64,17 @@ enum ValidationFunctions {
         let pattern = try invocation.requireString("pattern")
         let value = invocation.string("value") ?? ""
         guard !value.isEmpty else { return ValidationResult.valid.rawValue }
-
-        guard let expression = try? NSRegularExpression(pattern: pattern) else {
-            throw A2UIFunctionError.invalidArgument(
-                "pattern",
-                function: "regex",
-                reason: "'\(pattern)' is not a valid regular expression."
-            )
+        if let problem = A2UIRegexSafety.problem(in: pattern) {
+            throw A2UIExpressionError("regex can't use '\(pattern)': \(problem)")
+        }
+        guard value.unicodeScalars.count <= A2UIRegexSafety.maxValueLength else {
+            return ValidationResult(isValid: false).rawValue
+        }
+        guard let expression = try? A2UIFormatters.expression(pattern) else {
+            throw A2UIExpressionError("regex can't use '\(pattern)': it isn't a valid regular expression.")
         }
         guard let matches = firstMatch(of: expression, in: value) else {
-            throw A2UIFunctionError.invalidArgument(
-                "pattern",
-                function: "regex",
-                reason: "'\(pattern)' took too long to match, so it can't be checked."
-            )
+            throw A2UIExpressionError("regex can't use '\(pattern)': it took too long to match.")
         }
         return matches
             ? ValidationResult.valid.rawValue

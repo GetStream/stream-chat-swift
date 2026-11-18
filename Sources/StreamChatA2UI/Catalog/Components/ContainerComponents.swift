@@ -60,8 +60,9 @@ enum ContainerComponents {
     /// A dialog opened by a trigger component.
     ///
     /// The trigger is rendered inline; interacting with it presents the content
-    /// as a sheet. The trigger's own action, if it has one, still fires, and a
-    /// disabled button trigger doesn't open the modal.
+    /// as a sheet. A button trigger's function call still runs, but its event
+    /// isn't sent to the agent, and a disabled button trigger doesn't open the
+    /// modal.
     static let modal = ComponentDefinition(
         name: "Modal",
         description: "A dialog that appears over the main content, triggered by a component in the main content.",

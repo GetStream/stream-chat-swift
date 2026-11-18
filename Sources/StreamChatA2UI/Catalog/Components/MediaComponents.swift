@@ -85,8 +85,8 @@ enum MediaComponents {
     ) { context in
         AnyView(
             A2UIMediaPlayerView(
-                url: URL(string: context.string("url", default: "")).flatMap(context.services.mediaURL),
-                posterUrl: context.string("posterUrl").flatMap { URL(string: $0) }.flatMap(context.services.mediaURL),
+                url: A2UIImageView.link(context.string("url", default: "")).flatMap(context.services.mediaURL),
+                posterUrl: context.string("posterUrl").flatMap(A2UIImageView.link).flatMap(context.services.mediaURL),
                 title: nil,
                 isAudioOnly: false
             )
@@ -115,7 +115,7 @@ enum MediaComponents {
     ) { context in
         AnyView(
             A2UIMediaPlayerView(
-                url: URL(string: context.string("url", default: "")).flatMap(context.services.mediaURL),
+                url: A2UIImageView.link(context.string("url", default: "")).flatMap(context.services.mediaURL),
                 posterUrl: nil,
                 title: context.string("description"),
                 isAudioOnly: true
@@ -147,6 +147,16 @@ struct A2UIImageView: View {
         description == nil && label.isMissing
     }
 
+    // The link of a media URL the agent wrote: trimmed, with spaces encoded, and only with a
+    // scheme, so a bare name never loads one of the app's own images.
+    static func link(_ source: String) -> URL? {
+        let trimmed = source.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty,
+              let url = URL(string: trimmed.replacingOccurrences(of: " ", with: "%20")),
+              url.scheme != nil else { return nil }
+        return url
+    }
+
     var body: some View {
         box
             .overlay(content)
@@ -171,21 +181,14 @@ struct A2UIImageView: View {
 
     @ViewBuilder
     private var content: some View {
-        if source.isEmpty {
-            EmptyView()
-        } else if let url = URL(string: source), url.scheme != nil {
-            if let allowed = mediaURL(url) {
-                A2UIRemoteImage(url: allowed) { image in
-                    scaled(image)
-                } placeholder: { failed in
-                    if !failed {
-                        ProgressView()
-                    }
+        if let allowed = Self.link(source).flatMap(mediaURL) {
+            A2UIRemoteImage(url: allowed) { image in
+                scaled(image)
+            } placeholder: { failed in
+                if !failed {
+                    ProgressView()
                 }
             }
-        } else {
-            // Names without a scheme are resolved from the app's asset catalog.
-            scaled(Image(source))
         }
     }
 

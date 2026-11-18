@@ -70,8 +70,15 @@ private struct A2UIButtonView: View {
 
         VStack(alignment: .leading, spacing: 4) {
             Button {
-                modalPresenter?.present()
-                context.performAction()
+                // A modal's trigger opens it in place of telling the agent; a call it makes still runs.
+                if let modalPresenter {
+                    modalPresenter.present()
+                    if case .functionCall = context.action {
+                        context.performAction()
+                    }
+                } else {
+                    context.performAction()
+                }
             } label: {
                 context.childView(context.childId())
                     .modifier(A2UIButtonLabelStyle(variant: context.option("variant", default: "default")))
