@@ -179,8 +179,18 @@ struct AccordionView: View {
     /// value as the model writes it.
     private func autoOpen(_ items: [ContainerItem]) {
         defer { previousCount = items.count }
-        guard !userInteracted, items.count >= previousCount, let newest = items.last else { return }
-        openItem = newest.id
+        guard !userInteracted else { return }
+        let next = Self.autoOpenedItem(items.map(\.id), open: openItem, previousCount: previousCount, isStreaming: context.isStreaming)
+        if next != openItem { openItem = next }
+    }
+
+    // The newest item when one arrives, or while the model writes its value, and in place of an
+    // open item that is gone. Otherwise, such as when the items are reordered, the open one stays.
+    static func autoOpenedItem(_ ids: [ContainerItem.ID], open: ContainerItem.ID?, previousCount: Int, isStreaming: Bool) -> ContainerItem.ID? {
+        guard let newest = ids.last else { return open }
+        let arrives = ids.count > previousCount || isStreaming && ids.count == previousCount
+        let isGone = open.map { !ids.contains($0) } ?? true
+        return arrives || isGone ? newest : open
     }
 }
 
@@ -390,9 +400,10 @@ struct CarouselView: View {
                 }
                 .scrollTargetBehavior(.viewAligned)
                 .scrollPosition(id: $position)
-                .onChange(of: slides.count) { _, count in
-                    if let position, position >= count { self.position = max(count - 1, 0) }
-                }
+                .onChange(of: slides.count) { _, count in clampPosition(count) }
+                // Without slides, nothing is shown to see the count change, so slides that come back
+                // are checked as they appear.
+                .onAppear { clampPosition(slides.count) }
                 if slides.count > 1 {
                     let current = min(max(position ?? 0, 0), slides.count - 1)
                     HStack(spacing: theme.spacing.m) {
@@ -416,6 +427,17 @@ struct CarouselView: View {
                 }
             }
         }
+    }
+
+    private func clampPosition(_ count: Int) {
+        let next = Self.clamped(position, count: count)
+        if next != position { position = next }
+    }
+
+    // A position past the last slide moves to the last one.
+    static func clamped(_ position: Int?, count: Int) -> Int? {
+        guard let position, position >= count else { return position }
+        return max(count - 1, 0)
     }
 
     private func pagerButton(_ systemName: String, label: String, disabled: Bool, action: @escaping () -> Void) -> some View {

@@ -378,22 +378,31 @@ enum DateFormatting {
 
     private static let isoStyle = Date.ISO8601FormatStyle()
 
+    // A time without an offset is one where the person is, as in JavaScript.
+    private static let localTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return formatter
+    }()
+
     static func string(from date: Date) -> String {
         formatter.string(from: date)
     }
 
-    // Noon of the day where the person is, which daylight saving never skips.
+    // A day is noon of it where the person is, which daylight saving never skips, and a time is
+    // the moment it names.
     static func date(from string: String?) -> Date? {
         guard let string, !string.isEmpty else { return nil }
-        let prefix = String(string.prefix(10))
         // The formatter rolls a day past the month's end over into the next month.
-        if let day = dayFormatter.date(from: prefix), dayFormatter.string(from: day) == prefix {
+        if string.count == 10, let day = dayFormatter.date(from: string), dayFormatter.string(from: day) == string {
             var utc = Calendar(identifier: .gregorian)
             utc.timeZone = TimeZone(identifier: "UTC") ?? utc.timeZone
             var components = utc.dateComponents([.year, .month, .day], from: day)
             components.hour = 12
             return Calendar(identifier: .gregorian).date(from: components)
         }
-        return try? isoStyle.parse(string)
+        return (try? isoStyle.parse(string)) ?? localTimeFormatter.date(from: string)
     }
 }

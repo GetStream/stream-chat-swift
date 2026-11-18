@@ -86,9 +86,11 @@ struct FormComponentTests {
         #expect(validation.error(for: "x") != nil)
         #expect(validation.error(for: "y") != nil)
 
-        validation.unregister("x", owner: first)
-        validation.unregister("x", owner: second)
+        #expect(!validation.unregister("x", owner: first), "x is the second field's now")
+        #expect(validation.unregister("x", owner: second))
         #expect(validation.validateForm() == false, "y is still registered")
+        #expect(validation.error(for: "x") == nil)
+        #expect(validation.error(for: "y") != nil)
     }
 
     @Test func selectShowsEachValueOnce() {

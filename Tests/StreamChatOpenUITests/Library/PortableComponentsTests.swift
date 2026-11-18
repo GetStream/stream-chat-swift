@@ -94,6 +94,23 @@ struct PortableComponentsTests {
         #expect(schema.description == "code: The booking code.")
     }
 
+    @Test func aNullableParameterOfOneTypeGetsItsFormatNote() throws {
+        let schema = try ComponentSchema(portableDefinition: [
+            "name": "stay",
+            "parameters": [
+                "type": "object",
+                "properties": [
+                    "nights": ["anyOf": [["type": "integer"], ["type": "null"]]],
+                    "day": ["oneOf": [["type": "string", "format": "date"], ["type": "null"]]],
+                    "code": ["anyOf": [["type": "integer"], ["type": "string"]]]
+                ],
+                "x-order": ["nights", "day", "code"]
+            ]
+        ])
+
+        #expect(schema.description == "nights: a whole number. day: a date as YYYY-MM-DD.")
+    }
+
     @Test func aDefinitionNeedsAName() {
         #expect(throws: OpenUIPortableComponentError.self) {
             try ComponentSchema(portableDefinition: ["description": "No name"])

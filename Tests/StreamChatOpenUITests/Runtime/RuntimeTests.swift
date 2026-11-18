@@ -263,6 +263,87 @@ struct QueryManagerTests {
         #expect(provider.calls.count == 2, "one more fetch for both")
     }
 
+    @Test func aQueryThatJoinsAFetchGetsItsErrorAfterTheQueryThatStartedItLeaves() async {
+        let released = OSAllocatedUnfairLock(initialState: false)
+        let provider = RecordingToolProvider { _, args, _ in
+            if args["q"] == "x" {
+                try await waitForRelease(released)
+                throw ToolFailure()
+            }
+            return ["rows": [args["q"] ?? "none"]]
+        }
+        let manager = QueryManager(toolProvider: provider)
+        manager.argumentDebounce = 0
+        manager.evaluateQueries([node("a", args: ["q": "x"]), node("b", args: ["q": "y"])])
+        #expect(await waitUntil { manager.result(for: "b") == ["rows": ["y"]] })
+
+        manager.evaluateQueries([node("a", args: ["q": "x"]), node("b", args: ["q": "x"])])
+        manager.evaluateQueries([node("b", args: ["q": "x"])])
+        released.withLock { $0 = true }
+
+        #expect(await waitUntil { manager.snapshot.errors.map(\.statementId) == ["b"] })
+        #expect(!manager.isLoading("b"))
+    }
+
+    @Test func aRefreshQueuedDuringAFetchFetchesTheArgumentsOfThatFetch() async {
+        let released = OSAllocatedUnfairLock(initialState: false)
+        let provider = RecordingToolProvider { _, args, count in
+            if count == 1 { try await waitForRelease(released) }
+            return ["q": args["q"] ?? .null]
+        }
+        let manager = QueryManager(toolProvider: provider)
+        manager.argumentDebounce = 0
+        manager.evaluateQueries([node("a", args: ["q": "x"])])
+        manager.invalidate(["a"])
+        var moved = false
+        // As the runtime may, such as when an error handler changes the state the query reads.
+        manager.onChange = { [weak manager] in
+            guard !moved else { return }
+            moved = true
+            manager?.evaluateQueries([self.node("a", args: ["q": "y"])])
+        }
+        released.withLock { $0 = true }
+
+        #expect(await waitUntil { manager.result(for: "a") == ["q": "y"] && !manager.isAnyLoading })
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        #expect(provider.calls.filter { $0.1["q"] == "x" }.count == 2, "the refresh fetches x")
+        #expect(provider.calls.filter { $0.1["q"] == "y" }.count == 1)
+    }
+
+    @Test func aRefreshAskedForOnArgumentsAQueryLeftDoesntRunOnItsNewOnes() async {
+        let released = OSAllocatedUnfairLock(initialState: false)
+        let provider = RecordingToolProvider { _, args, _ in
+            if args["q"] == "x" { try await waitForRelease(released) }
+            return ["q": args["q"] ?? .null]
+        }
+        let manager = QueryManager(toolProvider: provider)
+        manager.argumentDebounce = 0
+        manager.evaluateQueries([node("b", args: ["q": "x"])])
+        manager.invalidate(["b"])
+
+        manager.evaluateQueries([node("b", args: ["q": "y"])])
+        #expect(await waitUntil { manager.result(for: "b") == ["q": "y"] && !manager.isAnyLoading })
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        #expect(provider.calls.filter { $0.1["q"] == "y" }.count == 1)
+        released.withLock { $0 = true }
+    }
+
+    @Test func refreshingQueriesOnOneKeyFetchesItOnceAndShowsThemAllLoading() async {
+        let provider = RecordingToolProvider { _, _, count in ["n": .number(Double(count))] }
+        let manager = QueryManager(toolProvider: provider)
+        manager.evaluateQueries([node("a"), node("b")])
+        #expect(await waitUntil { manager.result(for: "a") == ["n": 1] && !manager.isAnyLoading })
+
+        manager.invalidate()
+
+        #expect(manager.isLoading("a"))
+        #expect(manager.isLoading("b"))
+        #expect(await waitUntil { manager.result(for: "b") == ["n": 2] && !manager.isAnyLoading })
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        #expect(provider.calls.count == 2)
+    }
+
     @Test func newQueriesReportOnceForAllTheirFetches() {
         let provider = RecordingToolProvider { _, _, _ in ["rows": []] }
         let manager = QueryManager(toolProvider: provider)
@@ -606,6 +687,66 @@ struct RuntimeTests {
         try? await Task.sleep(nanoseconds: 200_000_000)
 
         #expect(provider.calls.count == 1, "arguments evaluated only in part aren't sent")
+    }
+
+    @Test func aQueryWhoseArgumentsRunOutStopsFetchingUntilTheyFitAgain() async {
+        let provider = RecordingToolProvider { _, _, _ in ["rows": []] }
+        let runtime = OpenUIRuntime(library: .openUI, toolProvider: provider)
+        runtime.queryManager.argumentDebounce = 0
+        runtime.update(response: """
+        root = Stack([])
+        data = Query("search", {top: @First(@Sort($xs, ""))}, {rows: []}, 0.02)
+        """, isStreaming: false)
+        #expect(await waitUntil { provider.calls.count >= 2 })
+
+        runtime.store.set("$xs", .array((0..<300_000).map { index -> OpenUIValue in .number(Double(index)) }))
+        // A refresh that started before may still arrive.
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        let calls = provider.calls.count
+        try? await Task.sleep(nanoseconds: 200_000_000)
+
+        #expect(provider.calls.count == calls, "it doesn't refresh with the arguments it had")
+
+        runtime.store.set("$xs", [3, 1, 2])
+        #expect(await waitUntil { provider.calls.contains { $0.1["top"] == 1 } })
+        let resumed = provider.calls.count
+        #expect(await waitUntil { provider.calls.count >= resumed + 2 }, "it refreshes again")
+        runtime.dispose()
+    }
+
+    @Test func queriesShareABudgetEachTimeTheyAreEvaluated() async {
+        let provider = RecordingToolProvider { _, _, _ in ["n": 0] }
+        let numbers = OpenUIValue.array((0..<60000).map { index -> OpenUIValue in .number(Double(index % 10)) })
+        let runtime = OpenUIRuntime(library: .openUI, toolProvider: provider, initialState: ["$xs": numbers])
+        let queries = (0..<6).map { #"q\#($0) = Query("sum", {n: \#($0), s: @Sum($xs) + @Sum($xs) + @Sum($xs)}, {n: 0})"# }
+
+        runtime.update(response: (["root = Stack([])"] + queries).joined(separator: "\n"), isStreaming: false)
+        #expect(await waitUntil { provider.calls.count == 4 })
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        #expect(Set(provider.calls.compactMap { $0.1["n"]?.numberValue }) == [0, 1, 2, 3], "the ones past it wait")
+    }
+
+    @Test func aMutationWhoseArgumentsRunOutReportsWhyItDidntRun() async {
+        var events: [ActionEvent] = []
+        let provider = RecordingToolProvider { _, _, _ in ["ok": true] }
+        let runtime = OpenUIRuntime(library: library, toolProvider: provider)
+        runtime.onAction = { events.append($0) }
+        runtime.update(response: """
+        $done = false
+        save = Mutation("save", {top: @First(@Sort($xs, ""))})
+        root = Card([Button("Go", Action([@Run(save), @Set($done, true), @ToAssistant("next")]))])
+        """, isStreaming: false)
+        runtime.store.set("$xs", .array((0..<300_000).map { index -> OpenUIValue in .number(Double(index)) }))
+        let action = runtime.root?.props["children"]?.arrayValue?.first?.elementValue?.props["action"]
+
+        await runtime.triggerAction(label: "Go", action: action)
+
+        #expect(provider.calls.isEmpty)
+        #expect(runtime.queryManager.mutationResult(for: "save")?["status"] == "error")
+        #expect(runtime.errors.contains { $0.source == .mutation && $0.statementId == "save" })
+        #expect(runtime.store.get("$done") == false)
+        #expect(events.isEmpty)
     }
 
     @Test func restoresInitialState() {

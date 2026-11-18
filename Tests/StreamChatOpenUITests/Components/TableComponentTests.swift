@@ -95,6 +95,14 @@ struct EditableTableTests {
         #expect(DateFormatting.date(from: "2025-09-07T10:00:00Z") != nil)
     }
 
+    @Test func timesAreTheMomentTheyName() {
+        let local = Calendar(identifier: .gregorian).date(from: DateComponents(year: 2025, month: 9, day: 7, hour: 10))
+
+        #expect(DateFormatting.date(from: "2025-09-07T23:30:00-05:00") == Date(timeIntervalSince1970: 1_757_305_800))
+        #expect(DateFormatting.date(from: "2025-09-07T10:00:00") == local)
+        #expect(DateFormatting.date(from: "2025-09-07xyz") == nil)
+    }
+
     @Test func rowsFollowTheColumns() {
         var table = EditableTableRows()
         table.load(complete, keys: ["name"], isStreaming: true)

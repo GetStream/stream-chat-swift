@@ -279,12 +279,16 @@ struct RobustnessTests {
         #expect(runtime.errors.contains { $0.message.contains("Evaluation stopped after") })
     }
 
-    @Test func filteringAndSortingALargeQueryResultStopsAtTheEvaluationBudget() async {
+    @Test(arguments: [
+        #"TextContent("" + @Count(@Filter(data.rows, "", ">", 5)))"#,
+        #"TextContent("" + @First(@Sort(data.rows, "", "desc")))"#
+    ])
+    func filteringOrSortingALargeQueryResultStopsAtTheEvaluationBudget(_ text: String) async {
         let numbers = OpenUIValue.array((0..<1_000_000).map { index -> OpenUIValue in .number(Double(index % 1000)) })
         let tools = FunctionToolProvider(["numbers": { _ in ["rows": numbers] }])
         let runtime = OpenUIRuntime(library: .openUI, toolProvider: tools)
         runtime.update(response: """
-        root = Stack([TextContent("" + @Count(@Filter(data.rows, "", ">", 5))), TextContent("" + @First(@Sort(data.rows, "", "desc")))])
+        root = Stack([\(text)])
         data = Query("numbers", {}, {rows: []})
         """, isStreaming: false)
 
@@ -292,8 +296,31 @@ struct RobustnessTests {
         let started = ProcessInfo.processInfo.systemUptime
         let (_, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
 
-        #expect(ProcessInfo.processInfo.systemUptime - started < 1, "neither runs over the million numbers")
+        #expect(ProcessInfo.processInfo.systemUptime - started < 1, "it doesn't run over the million numbers")
         #expect(errors.contains { $0.message.contains("Evaluation stopped after") })
+    }
+
+    @Test func aFieldNameThatIsALargeArrayStopsAtTheEvaluationBudget() {
+        let runtime = OpenUIRuntime(library: .openUI)
+        runtime.update(response: #"root = Stack([TextContent("" + @Count(@Sort([2, 1], $field)))])"#, isStreaming: false)
+        runtime.store.set("$field", .array((0..<300_000).map { index -> OpenUIValue in .number(Double(index)) }))
+
+        let (_, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
+
+        #expect(errors.contains { $0.message.contains("Evaluation stopped after") })
+    }
+
+    @Test func readingAFieldAnEachItemLacksDoesntCopyTheItem() {
+        let row: OpenUIValue = ["blob": .array(Array(repeating: .number(1), count: 2000))]
+        let rows = OpenUIValue.array(Array(repeating: row, count: 300))
+        let runtime = OpenUIRuntime(library: .openUI)
+        runtime.update(response: #"root = Stack(@Each($rows, "r", TextContent("" + r.label)))"#, isStreaming: false)
+        runtime.store.set("$rows", rows)
+
+        let (root, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
+
+        #expect(!errors.contains { $0.message.contains("Evaluation stopped") })
+        #expect(root?.props["children"]?.arrayValue?.compactMap { $0.elementValue?.props["text"] } == [OpenUIValue](repeating: "", count: 300))
     }
 
     @Test func filteringAndSortingTwoThousandRowsStaysWithinTheBudget() async {

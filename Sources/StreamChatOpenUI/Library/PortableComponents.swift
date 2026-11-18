@@ -59,6 +59,10 @@ extension ComponentSchema {
     // What a parameter's value must be beyond the type its signature shows, for a parameter of
     // one type besides null: of several, a value of another type is valid too.
     private static func formatNote(_ schema: OpenUIValue) -> String? {
+        if let options = (schema["anyOf"] ?? schema["oneOf"])?.arrayValue {
+            let named = options.filter { $0["type"]?.stringValue != "null" }
+            return named.count == 1 ? formatNote(named[0]) : nil
+        }
         let types = schema["type"]?.stringValue.map { [$0] } ?? schema["type"]?.arrayValue?.compactMap(\.stringValue) ?? []
         let named = types.filter { $0 != "null" }
         guard named.count == 1 else { return nil }

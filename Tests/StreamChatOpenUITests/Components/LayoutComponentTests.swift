@@ -45,6 +45,30 @@ struct LayoutComponentTests {
         #expect(ids(["a", nil], requireValue: false) == [ID(value: "a", occurrence: 0), ID(value: "1", occurrence: 0)])
     }
 
+    @Test func anAccordionKeepsItsOpenItemWhenTheItemsAreReordered() {
+        typealias ID = ContainerItem.ID
+        let a = ID(value: "a", occurrence: 0)
+        let b = ID(value: "b", occurrence: 0)
+        let written = ID(value: "bc", occurrence: 0)
+        func opened(_ ids: [ID], _ open: ID?, previousCount: Int, isStreaming: Bool = false) -> ID? {
+            AccordionView.autoOpenedItem(ids, open: open, previousCount: previousCount, isStreaming: isStreaming)
+        }
+
+        #expect(opened([a, b], nil, previousCount: 0) == b)
+        #expect(opened([b, a], b, previousCount: 2) == b)
+        #expect(opened([a, written], b, previousCount: 2, isStreaming: true) == written, "it follows the value the model writes")
+        #expect(opened([a, written], b, previousCount: 2) == written, "the open item is gone")
+        #expect(opened([a, b, written], b, previousCount: 2) == written, "a new item opens")
+        #expect(opened([a], b, previousCount: 2) == a)
+    }
+
+    @Test func aCarouselPositionPastTheLastSlideMovesToIt() {
+        #expect(CarouselView.clamped(4, count: 2) == 1)
+        #expect(CarouselView.clamped(4, count: 0) == 0)
+        #expect(CarouselView.clamped(1, count: 3) == 1)
+        #expect(CarouselView.clamped(nil, count: 3) == nil)
+    }
+
     @Test func justifyHandlesOneItemAndOverflow() {
         #expect(JustifiedRowLayout.offsets(widths: [50], available: 300, gap: 10, justify: "between") == [0])
         #expect(JustifiedRowLayout.offsets(widths: [200, 200], available: 300, gap: 10, justify: "evenly") == [0, 210])

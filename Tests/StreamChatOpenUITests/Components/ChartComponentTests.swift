@@ -98,6 +98,7 @@ struct ChartComponentTests {
 
         #expect(rows.series == ["Sales"])
         #expect(ChartData.bySeries(rows.points).map { $0.map(\.value) } == [[1, 2, 3], [4, 5, 6]])
+        #expect(rows.points.filter { $0.category == "Mon" }.map(\.slot) == ["0", "1"], "their bars stand side by side")
         #expect(ChartData.distinct(["b", "a", "b", "c", "a"]) == ["b", "a", "c"])
     }
 

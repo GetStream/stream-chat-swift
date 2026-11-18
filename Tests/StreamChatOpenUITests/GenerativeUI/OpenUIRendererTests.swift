@@ -197,11 +197,13 @@ struct OpenUIRendererTests {
 
         engine.remove(messageID: "m1")
         engine.remove(messageID: "m2")
-        let calls = tools.calls.count
+        // A fetch that started before they left may still arrive.
         try? await Task.sleep(nanoseconds: 100_000_000)
+        let calls = tools.calls.count
+        try? await Task.sleep(nanoseconds: 300_000_000)
 
         #expect(engine.runtimes.isEmpty)
-        #expect(tools.calls.count <= calls + 2, "the replies' queries stop refreshing")
+        #expect(tools.calls.count == calls, "the replies' queries stop refreshing")
     }
 
     @Test func aReplyWithoutAViewFetchesItsQueriesOnceAndDoesntRefreshThem() async {

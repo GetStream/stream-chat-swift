@@ -32,10 +32,11 @@ final class FormValidationModel {
     }
 
     // Removes the field's rules, unless another field has since registered under its name, such
-    // as when two fields swap names.
-    func unregister(_ name: String, owner: UUID? = nil) {
-        guard owner == nil || fields[name]?.owner == owner else { return }
-        fields.removeValue(forKey: name)
+    // as when two fields swap names. Returns whether it removed them.
+    @discardableResult
+    func unregister(_ name: String, owner: UUID? = nil) -> Bool {
+        guard owner == nil || fields[name]?.owner == owner else { return false }
+        return fields.removeValue(forKey: name) != nil
     }
 
     @discardableResult
@@ -121,10 +122,12 @@ struct FieldValidationRegistration: ViewModifier {
         validation.register(name, rules: rules, owner: owner, value: value)
     }
 
-    // The field no longer checks these rules, so their error goes too.
+    // The field no longer checks these rules, so their error goes too, unless the name is
+    // another field's now.
     private func unregister(_ name: String) {
-        validation?.unregister(name, owner: owner)
-        validation?.clearError(name)
+        if validation?.unregister(name, owner: owner) == true {
+            validation?.clearError(name)
+        }
     }
 }
 

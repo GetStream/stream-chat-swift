@@ -15,6 +15,8 @@ struct ChartPoint: Identifiable, Hashable {
     // Tells apart two series the model gave the same name.
     var seriesIndex = 0
     var id: String { "\(seriesIndex)#\(order)" }
+    // Where a grouped bar stands in its category: by series, beside one with the same name.
+    var slot: String { String(seriesIndex) }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
@@ -155,7 +157,7 @@ struct CartesianChartView: View {
             } else {
                 BarMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value))
                     .foregroundStyle(by: .value(L10n.Chart.series, point.series))
-                    .position(by: .value(L10n.Chart.series, point.series))
+                    .position(by: .value(L10n.Chart.series, point.slot))
                     .cornerRadius(3)
             }
         case .horizontalBar:
@@ -166,7 +168,7 @@ struct CartesianChartView: View {
             } else {
                 BarMark(x: .value(L10n.Chart.value, point.value), y: .value(L10n.Chart.category, point.category))
                     .foregroundStyle(by: .value(L10n.Chart.series, point.series))
-                    .position(by: .value(L10n.Chart.series, point.series))
+                    .position(by: .value(L10n.Chart.series, point.slot))
                     .cornerRadius(3)
             }
         case .line:

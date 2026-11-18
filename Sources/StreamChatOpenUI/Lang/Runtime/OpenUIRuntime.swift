@@ -217,10 +217,14 @@ final class OpenUIRuntime {
         guard !isStreaming else { return }
         let snapshot = store.snapshot
 
-        let queryNodes: [QueryManager.QueryNode] = (parseResult?.queryStatements ?? []).map { statement in
-            // Each query evaluates with a budget of its own. One that runs out of it waits, as if
-            // the model were still writing it, rather than fetching with what it evaluated so far.
-            let context = evaluationContext
+        // Each query evaluates with a budget of its own, out of one they all share. One that runs
+        // out waits, as if the model were still writing it, rather than fetching with what it
+        // evaluated so far.
+        var passNodes = EvaluationBudget.maxQueryPassNodes
+        var queryNodes: [QueryManager.QueryNode] = []
+        for statement in parseResult?.queryStatements ?? [] {
+            var context = evaluationContext
+            context.budget = EvaluationBudget(nodes: min(EvaluationBudget.maxNodes, passNodes))
             var deps: OpenUIValue?
             if let names = statement.deps, !names.isEmpty {
                 var relevant = OpenUIObject()
@@ -234,7 +238,8 @@ final class OpenUIRuntime {
             let toolName = statement.toolAST.flatMap { Evaluator.evaluate($0, context) }.map { JS.toString($0) } ?? ""
             let args = statement.argsAST.map { Evaluator.evaluate($0, context) ?? .null } ?? .null
             let defaults = statement.defaultsAST.map { Evaluator.evaluate($0, context) ?? .null } ?? .null
-            return QueryManager.QueryNode(
+            passNodes -= context.budget.spentNodes
+            queryNodes.append(QueryManager.QueryNode(
                 statementId: statement.statementId,
                 toolName: toolName,
                 args: args,
@@ -242,14 +247,15 @@ final class OpenUIRuntime {
                 deps: deps,
                 refreshInterval: refreshInterval,
                 complete: statement.complete && !context.budget.ranOut
-            )
+            ))
         }
         queryManager.evaluateQueries(queryNodes)
 
+        let mutationContext = evaluationContext
         let mutationNodes = (parseResult?.mutationStatements ?? []).map { statement in
             QueryManager.MutationNode(
                 statementId: statement.statementId,
-                toolName: statement.toolAST.flatMap { Evaluator.evaluate($0, evaluationContext) }.map { JS.toString($0) } ?? ""
+                toolName: statement.toolAST.flatMap { Evaluator.evaluate($0, mutationContext) }.map { JS.toString($0) } ?? ""
             )
         }
         queryManager.registerMutations(mutationNodes)
@@ -430,7 +436,10 @@ final class OpenUIRuntime {
                         let context = evaluationContext
                         let arguments = argsAST.flatMap { Evaluator.evaluate($0, context)?.objectValue } ?? [:]
                         // Arguments evaluated only in part would run it without some of its fields.
-                        if context.budget.ranOut { return }
+                        if context.budget.ranOut {
+                            queryManager.rejectMutation(statementId, reason: "its arguments were too large or nested too deeply to evaluate")
+                            return
+                        }
                         let succeeded = await queryManager.fireMutation(statementId, arguments: arguments)
                         if !succeeded { return }
                     } else {
