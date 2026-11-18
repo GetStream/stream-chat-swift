@@ -48,6 +48,63 @@ struct FormComponentTests {
         #expect(runtime.fieldValue(formName: "trip", name: "pace") == "slow")
     }
 
+    @Test func aDefaultThatChangesAfterStreamingIsSaved() async {
+        let runtime = OpenUIRuntime(library: .openUIChat)
+        runtime.update(response: """
+        $pace = ""
+        root = Card([form])
+        form = Form("trip", Buttons([Button("Go")]), [pace])
+        pace = FormControl("Pace", Chips("pace", "single", [ChipItem("slow", "Slow"), ChipItem("fast", "Fast")], null, $pace))
+        """, isStreaming: false)
+        let host = HostedView(OpenUIView(runtime: runtime))
+        defer { host.close() }
+        await host.settle()
+
+        #expect(runtime.fieldValue(formName: "trip", name: "pace") == nil)
+
+        runtime.store.set("$pace", "fast")
+        await host.settle()
+
+        #expect(runtime.fieldValue(formName: "trip", name: "pace") == "fast", "such as a Query's result")
+    }
+
+    @Test func requiredFieldsThatSwapNamesAreBothStillValidated() {
+        let validation = FormValidationModel()
+        let first = UUID()
+        let second = UUID()
+        let required = [ValidationRule(type: "required")]
+        validation.register("x", rules: required, owner: first) { nil }
+        validation.register("y", rules: required, owner: second) { nil }
+
+        // Each field moves to the other's name, as its view sees the change.
+        validation.unregister("x", owner: first)
+        validation.register("y", rules: required, owner: first) { nil }
+        validation.unregister("y", owner: second)
+        validation.register("x", rules: required, owner: second) { nil }
+
+        #expect(!validation.validateForm())
+        #expect(validation.error(for: "x") != nil)
+        #expect(validation.error(for: "y") != nil)
+
+        #expect(!validation.unregister("x", owner: first), "x is the second field's now")
+        #expect(validation.unregister("x", owner: second))
+        #expect(validation.validateForm() == false, "y is still registered")
+        #expect(validation.error(for: "x") == nil)
+        #expect(validation.error(for: "y") != nil)
+    }
+
+    @Test func selectShowsEachValueOnce() {
+        let items = [
+            ElementNode(typeName: "SelectItem", props: ["value": "a", "label": "A"]),
+            ElementNode(typeName: "SelectItem", props: ["value": "a", "label": "Again"]),
+            ElementNode(typeName: "SelectItem", props: ["value": "", "label": "Empty"]),
+            ElementNode(typeName: "SelectItem", props: ["value": "b"])
+        ]
+
+        #expect(SelectView.items(items).map(\.value) == ["a", "b"])
+        #expect(SelectView.items(items).map(\.label) == ["A", "b"])
+    }
+
     @Test func selectionDefaultIsSavedWhenTheFieldAppearsAfterStreaming() {
         let runtime = OpenUIRuntime(library: .openUIChat)
         runtime.update(response: Self.selectionForm, isStreaming: false)

@@ -24,6 +24,12 @@ enum ActionPlan {
         ["type": .string(ActionStepType.customAction), "name": .string(name), "params": params, callTokenKey: callToken]
     }
 
+    // Whether a field is the token, which never leaves the runtime. A field of the same name with
+    // another value is data, such as a tool's argument, and stays.
+    static func isCallToken(key: String, value: OpenUIValue?) -> Bool {
+        key == callTokenKey && value == callToken
+    }
+
     static func isPlan(_ value: OpenUIValue?) -> Bool {
         if case .object(let object)? = value, case .array? = object["steps"] { return true }
         return false

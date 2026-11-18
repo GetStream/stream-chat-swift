@@ -36,8 +36,12 @@ extension ComponentSchema {
             notes.append(Self.sentence(description))
         }
         for (field, schema) in Self.orderedProperties(parameters) {
-            if let description = schema["description"]?.stringValue, !description.isEmpty {
-                notes.append(Self.sentence("\(field): \(description)"))
+            // The signature says `number` or `string`, while the app reads a whole number or a date.
+            let parts = [schema["description"]?.stringValue, Self.formatNote(schema)].compactMap { part in
+                part.flatMap { $0.isEmpty ? nil : $0 }
+            }
+            if !parts.isEmpty {
+                notes.append(Self.sentence("\(field): \(parts.joined(separator: "; "))"))
             }
         }
         for event in definition["events"]?.arrayValue ?? [] {
@@ -50,6 +54,25 @@ extension ComponentSchema {
             description: notes.joined(separator: " "),
             props: PropType.fields(of: parameters)
         )
+    }
+
+    // What a parameter's value must be beyond the type its signature shows, for a parameter of
+    // one type besides null: of several, a value of another type is valid too.
+    private static func formatNote(_ schema: OpenUIValue) -> String? {
+        if let options = (schema["anyOf"] ?? schema["oneOf"])?.arrayValue {
+            let named = options.filter { $0["type"]?.stringValue != "null" }
+            return named.count == 1 ? formatNote(named[0]) : nil
+        }
+        let types = schema["type"]?.stringValue.map { [$0] } ?? schema["type"]?.arrayValue?.compactMap(\.stringValue) ?? []
+        let named = types.filter { $0 != "null" }
+        guard named.count == 1 else { return nil }
+        if named[0] == "integer" { return "a whole number" }
+        guard named[0] == "string" else { return nil }
+        switch schema["format"]?.stringValue {
+        case "date": return "a date as YYYY-MM-DD"
+        case "date-time": return "a date and time as YYYY-MM-DDTHH:MM:SSZ"
+        default: return nil
+        }
     }
 
     // A component's line in the prompt stays on one line, so a description does too.

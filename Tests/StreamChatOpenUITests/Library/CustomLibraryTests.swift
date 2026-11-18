@@ -62,4 +62,18 @@ struct CustomLibraryTests {
         #expect(prompt.contains("- search_hotels(city: string) → {hotels?: {name?: string}[]}"))
         #expect(prompt.contains("## Query — Live Data Fetching"))
     }
+
+    @Test func aToolWithoutAnOutputSchemaGetsNoResultShape() {
+        var options = ComponentLibrary.openUIChat.defaultPromptOptions
+        options.tools = [.spec(ToolSpec(
+            name: "list_events",
+            inputSchema: ["type": "object", "properties": ["day": ["type": "string"]], "required": ["day"]]
+        ))]
+
+        let prompt = ComponentLibrary.openUIChat.systemPrompt(options)
+
+        #expect(prompt.contains("- list_events(day: string)\n"))
+        #expect(!prompt.contains("list_events(day: string) →"))
+        #expect(!prompt.contains("### Default values for Query results"))
+    }
 }

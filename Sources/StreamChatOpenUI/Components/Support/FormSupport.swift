@@ -16,6 +16,7 @@ final class FormValidationModel {
     private struct Registration {
         var rules: [ValidationRule]
         var value: @MainActor () -> OpenUIValue?
+        var owner: UUID?
     }
 
     @ObservationIgnored private var fields: [String: Registration] = [:]
@@ -26,12 +27,16 @@ final class FormValidationModel {
         errors[name]
     }
 
-    func register(_ name: String, rules: [ValidationRule], value: @escaping @MainActor () -> OpenUIValue?) {
-        fields[name] = Registration(rules: rules, value: value)
+    func register(_ name: String, rules: [ValidationRule], owner: UUID? = nil, value: @escaping @MainActor () -> OpenUIValue?) {
+        fields[name] = Registration(rules: rules, value: value, owner: owner)
     }
 
-    func unregister(_ name: String) {
-        fields.removeValue(forKey: name)
+    // Removes the field's rules, unless another field has since registered under its name, such
+    // as when two fields swap names. Returns whether it removed them.
+    @discardableResult
+    func unregister(_ name: String, owner: UUID? = nil) -> Bool {
+        guard owner == nil || fields[name]?.owner == owner else { return false }
+        return fields.removeValue(forKey: name) != nil
     }
 
     @discardableResult
@@ -95,18 +100,34 @@ struct FieldValidationRegistration: ViewModifier {
     let isStreaming: Bool
     let value: @MainActor () -> OpenUIValue?
     @Environment(\.openUIFormValidation) private var validation
+    @State private var owner = UUID()
 
     func body(content: Content) -> some View {
         content
             .onAppear(perform: register)
             .onChange(of: isStreaming) { _, _ in register() }
-            .onChange(of: rules) { _, _ in register() }
-            .onDisappear { validation?.unregister(name) }
+            .onChange(of: rules) { _, rules in
+                if rules.isEmpty { unregister(name) }
+                register()
+            }
+            .onChange(of: name) { previous, _ in
+                unregister(previous)
+                register()
+            }
+            .onDisappear { validation?.unregister(name, owner: owner) }
     }
 
     private func register() {
         guard let validation, !rules.isEmpty, !isStreaming else { return }
-        validation.register(name, rules: rules, value: value)
+        validation.register(name, rules: rules, owner: owner, value: value)
+    }
+
+    // The field no longer checks these rules, so their error goes too, unless the name is
+    // another field's now.
+    private func unregister(_ name: String) {
+        if validation?.unregister(name, owner: owner) == true {
+            validation?.clearError(name)
+        }
     }
 }
 
@@ -130,9 +151,12 @@ enum FieldDefault {
     }
 }
 
+// It saves again when the default changes, such as when a Query's result arrives after the model
+// finished writing, while nothing is stored yet (useHydrateDefaultFieldValues).
 @available(iOS 17.0, macOS 14.0, *)
 private struct SavesDefault: ViewModifier {
     let isStreaming: Bool
+    let defaultValue: OpenUIValue?
     let save: @MainActor () -> Void
 
     func body(content: Content) -> some View {
@@ -141,13 +165,14 @@ private struct SavesDefault: ViewModifier {
             .onChange(of: isStreaming) { _, isStreaming in
                 if !isStreaming { save() }
             }
+            .onChange(of: defaultValue) { _, _ in save() }
     }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
 extension View {
-    func savesDefault(isStreaming: Bool, _ save: @escaping @MainActor () -> Void) -> some View {
-        modifier(SavesDefault(isStreaming: isStreaming, save: save))
+    func savesDefault(isStreaming: Bool, defaultValue: OpenUIValue?, _ save: @escaping @MainActor () -> Void) -> some View {
+        modifier(SavesDefault(isStreaming: isStreaming, defaultValue: defaultValue, save: save))
     }
 }
 

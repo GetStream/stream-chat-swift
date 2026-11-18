@@ -264,7 +264,7 @@ struct TextContentView: View {
         case "small": return theme.fonts.bodySmall
         case "large": return theme.fonts.bodyLarge
         case "small-heavy": return theme.fonts.bodySmall.weight(.semibold)
-        case "large-heavy": return .title2.weight(.bold)
+        case "large-heavy": return theme.fonts.bodyLarge.weight(.bold)
         default: return theme.fonts.body
         }
     }

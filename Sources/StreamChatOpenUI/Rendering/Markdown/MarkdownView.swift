@@ -41,24 +41,42 @@ struct MarkdownView: View {
 @available(iOS 17.0, macOS 14.0, *)
 @MainActor
 enum MarkdownCache {
-    private static let limit = 256
-    private static var parsedBlocks: [String: [MarkdownBlock]] = [:]
-    private static var parsedInline: [String: AttributedString] = [:]
+    private static var parsedBlocks = RecentValues<[MarkdownBlock]>(limit: 256)
+    private static var parsedInline = RecentValues<AttributedString>(limit: 256)
 
     static func blocks(for text: String) -> [MarkdownBlock] {
-        if let cached = parsedBlocks[text] { return cached }
-        let parsed = MarkdownParser.parse(text)
-        if parsedBlocks.count >= limit { parsedBlocks.removeAll(keepingCapacity: true) }
-        parsedBlocks[text] = parsed
-        return parsed
+        parsedBlocks.value(for: text, make: MarkdownParser.parse)
     }
 
     static func inline(for text: String) -> AttributedString {
-        if let cached = parsedInline[text] { return cached }
-        let parsed = InlineMarkdown.attributed(text)
-        if parsedInline.count >= limit { parsedInline.removeAll(keepingCapacity: true) }
-        parsedInline[text] = parsed
-        return parsed
+        parsedInline.value(for: text, make: InlineMarkdown.attributed)
+    }
+}
+
+// Values by their text, keeping those used lately: a value used again moves to the current
+// generation, and the older one is dropped once the current one holds `limit` values. Texts a
+// view shows on each pass so stay, which emptying the whole cache at once wouldn't keep.
+@available(iOS 17.0, macOS 14.0, *)
+struct RecentValues<Value> {
+    let limit: Int
+    private var current: [String: Value] = [:]
+    private var previous: [String: Value] = [:]
+
+    init(limit: Int) {
+        self.limit = max(limit, 1)
+    }
+
+    var count: Int { current.count + previous.count }
+
+    mutating func value(for key: String, make: (String) -> Value) -> Value {
+        if let value = current[key] { return value }
+        let value = previous.removeValue(forKey: key) ?? make(key)
+        if current.count >= limit {
+            previous = current
+            current = [:]
+        }
+        current[key] = value
+        return value
     }
 }
 
@@ -177,10 +195,10 @@ struct MarkdownBlockView: View, Equatable {
 
     private func headingFont(_ level: Int) -> Font {
         switch level {
-        case 1: return .title2.weight(.bold)
-        case 2: return .title3.weight(.bold)
-        case 3: return .headline
-        default: return .subheadline.weight(.semibold)
+        case 1: return theme.fonts.title.weight(.bold)
+        case 2: return theme.fonts.bodyLarge.weight(.semibold)
+        case 3: return theme.fonts.heading
+        default: return theme.fonts.bodySmall.weight(.semibold)
         }
     }
 }

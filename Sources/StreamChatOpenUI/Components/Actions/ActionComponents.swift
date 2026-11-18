@@ -26,7 +26,8 @@ enum ItemActionContext {
             let suffix = "Selected item: " + OpenUIJSON.stringify(.object(context))
             plan["steps"] = .array(steps.map { step in
                 guard step["type"] == .string(ActionStepType.continueConversation), case .object(var object) = step else { return step }
-                if let existing = object["context"]?.stringValue, !existing.isEmpty {
+                let existing = object["context"].flatMap { JS.isNullish($0) ? nil : ($0.stringValue ?? OpenUIJSON.stringify($0)) }
+                if let existing, !existing.isEmpty {
                     object["context"] = .string(existing + "\n" + suffix)
                 } else {
                     object["context"] = .string(suffix)
@@ -59,7 +60,6 @@ enum ItemActionContext {
 @available(iOS 17.0, macOS 14.0, *)
 struct ButtonComponentView: View {
     let context: ComponentContext
-    var sizeOverride: String?
     @Environment(\.openUIFormName) private var formName
     @Environment(\.openUIFormValidation) private var validation
     @Environment(\.openUITheme) private var theme
@@ -69,7 +69,7 @@ struct ButtonComponentView: View {
         let label = props.text("label") ?? ""
         let variant = props.string("variant") ?? "primary"
         let destructive = props.string("type") == "destructive"
-        let size = sizeOverride ?? props.string("size") ?? "medium"
+        let size = props.string("size") ?? "medium"
 
         Button(role: destructive ? .destructive : nil) {
             tap(label: label, variant: variant)
@@ -89,18 +89,21 @@ struct ButtonComponentView: View {
     private func tap(label: String, variant: String) {
         let action = context.props["action"]
         // Primary buttons validate the enclosing form first.
-        if let validation, variant == "primary" {
-            if case .array(let steps)? = action?["steps"] {
-                let needsValidation = steps.contains { step in
-                    step["type"] == .string(ActionStepType.continueConversation)
-                        || (step["type"] == .string(ActionStepType.run) && step["refType"] == "mutation")
-                }
-                if needsValidation && !validation.validateForm() { return }
-            } else if !validation.validateForm() {
-                return
-            }
+        if let validation, variant == "primary", Self.needsValidation(action), !validation.validateForm() {
+            return
         }
         context.trigger(label: label, formName: formName, action: action)
+    }
+
+    // An action plan validates the form when it sends a message, runs a mutation or a custom
+    // action; any other action always does.
+    static func needsValidation(_ action: OpenUIValue?) -> Bool {
+        guard case .array(let steps)? = action?["steps"] else { return true }
+        return steps.contains { step in
+            step["type"] == .string(ActionStepType.continueConversation)
+                || step["type"] == .string(ActionStepType.customAction)
+                || (step["type"] == .string(ActionStepType.run) && step["refType"] == "mutation")
+        }
     }
 
     static func controlSize(_ size: String) -> ControlSize {
@@ -226,14 +229,13 @@ struct FollowUpBlockView: View {
 @available(iOS 17.0, macOS 14.0, *)
 struct ListBlockView: View {
     let context: ComponentContext
-    var sizeOverride: String?
     @Environment(\.openUITheme) private var theme
     @ScaledMetric(relativeTo: .caption) private var scale: CGFloat = 1
 
     var body: some View {
         let items = context.props.elements("items")
         let variant = context.props.string("variant") ?? "number"
-        let small = (sizeOverride ?? context.props.string("size")) == "small"
+        let small = context.props.string("size") == "small"
         let hasSubtitle = items.contains { ComponentProps($0.props).text("subtitle") != nil }
 
         VStack(alignment: .leading, spacing: 0) {
@@ -345,9 +347,8 @@ struct TagPill: View {
 
     private var font: Font {
         switch size {
-        case "lg": return .subheadline
-        case "md": return .footnote
-        default: return .caption
+        case "lg": return theme.fonts.bodySmall
+        default: return theme.fonts.caption
         }
     }
 }
@@ -355,14 +356,13 @@ struct TagPill: View {
 @available(iOS 17.0, macOS 14.0, *)
 struct TagView: View {
     let context: ComponentContext
-    var sizeOverride: String?
 
     var body: some View {
         let props = context.props
         TagPill(
             text: props.text("text") ?? "",
             icon: props.element("icon"),
-            size: sizeOverride ?? props.string("size"),
+            size: props.string("size"),
             variant: props.string("variant")
         )
     }
@@ -372,14 +372,13 @@ struct TagView: View {
 @available(iOS 17.0, macOS 14.0, *)
 struct TagBlockView: View {
     let context: ComponentContext
-    var sizeOverride: String?
     @Environment(\.openUITheme) private var theme
 
     var body: some View {
         let tags = context.props.strings("tags")
         FlowLayout(horizontalSpacing: theme.spacing.xs + 2, verticalSpacing: theme.spacing.xs + 2) {
             ForEach(Array(tags.enumerated()), id: \.offset) { _, tag in
-                TagPill(text: tag, size: sizeOverride ?? context.props.string("size"))
+                TagPill(text: tag, size: context.props.string("size"))
             }
         }
     }
@@ -389,12 +388,11 @@ struct TagBlockView: View {
 @available(iOS 17.0, macOS 14.0, *)
 struct EntityListView: View {
     let context: ComponentContext
-    var compact: Bool = false
     @Environment(\.openUITheme) private var theme
 
     var body: some View {
         let props = context.props
-        let small = compact || props.string("size") == "small"
+        let small = props.string("size") == "small"
         let rows = props.array("rows").compactMap(\.objectValue)
         VStack(spacing: 0) {
             if !small, let header = props.object("header") {

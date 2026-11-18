@@ -12,7 +12,11 @@ struct ChartPoint: Identifiable, Hashable {
     let series: String
     let value: Double
     let order: Int
-    var id: String { "\(series)#\(order)" }
+    // Tells apart two series the model gave the same name.
+    var seriesIndex = 0
+    var id: String { "\(seriesIndex)#\(order)" }
+    // Where a grouped bar stands in its category: by series, beside one with the same name.
+    var slot: String { String(seriesIndex) }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
@@ -39,23 +43,41 @@ enum ChartData {
                 for (seriesIndex, name) in seriesNames.enumerated() {
                     let cell = seriesIndex + 1 < cells.count ? cells[seriesIndex + 1] : nil
                     guard let value = plottable(JS.toNumber(cell)) else { continue }
-                    points.append(ChartPoint(category: category, series: name, value: value, order: rowIndex))
+                    points.append(ChartPoint(category: category, series: name, value: value, order: rowIndex, seriesIndex: seriesIndex))
                 }
             }
-            return (points, seriesNames)
+            return (points, distinct(seriesNames))
         }
         let elements = series.compactMap(\.elementValue)
         var names: [String] = []
         var points: [ChartPoint] = []
-        for element in elements {
+        for (seriesIndex, element) in elements.enumerated() {
             guard case .string(let name)? = element.props["category"], case .array(let values)? = element.props["values"] else { continue }
-            if !names.contains(name) { names.append(name) }
-            for (index, label) in labelStrings.enumerated() where index < values.count {
+            names.append(name)
+            for (index, label) in labelStrings.prefix(values.count).enumerated() {
                 guard let value = plottable(JS.toNumber(values[index])) else { continue }
-                points.append(ChartPoint(category: label, series: name, value: value, order: index))
+                points.append(ChartPoint(category: label, series: name, value: value, order: index, seriesIndex: seriesIndex))
             }
         }
-        return (points, names)
+        return (points, distinct(names))
+    }
+
+    // Each name once, in the order they first appear.
+    static func distinct(_ names: [String]) -> [String] {
+        var seen = Set<String>()
+        return names.filter { seen.insert($0).inserted }
+    }
+
+    // The points of each series, in the order the series come, apart even when two have the
+    // same name.
+    static func bySeries(_ points: [ChartPoint]) -> [[ChartPoint]] {
+        var order: [Int] = []
+        var groups: [Int: [ChartPoint]] = [:]
+        for point in points {
+            if groups[point.seriesIndex] == nil { order.append(point.seriesIndex) }
+            groups[point.seriesIndex, default: []].append(point)
+        }
+        return order.compactMap { groups[$0] }
     }
 
     /// `labels` + `values`, falling back to legacy `Slice` elements.
@@ -110,7 +132,8 @@ struct CartesianChartView: View {
         let (points, seriesNames) = ChartData.points(labels: props.array("labels"), series: props.array("series"))
         if !points.isEmpty {
             let variant = props.string("variant")
-            let height = CGFloat(props.number("height") ?? (kind == .horizontalBar ? Double(max(160, Set(points.map(\.category)).count * 34 + 40)) : 220))
+            let fitting = kind == .horizontalBar ? Double(max(160, Set(points.map(\.category)).count * 34 + 40)) : 220
+            let height = clampedDimension(props.number("height") ?? fitting, in: 80...1200, default: 220)
             ChartFrame(height: height, xLabel: props.text("xLabel"), yLabel: props.text("yLabel")) {
                 Chart(points) { point in
                     mark(point, variant: variant)
@@ -134,7 +157,7 @@ struct CartesianChartView: View {
             } else {
                 BarMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value))
                     .foregroundStyle(by: .value(L10n.Chart.series, point.series))
-                    .position(by: .value(L10n.Chart.series, point.series))
+                    .position(by: .value(L10n.Chart.series, point.slot))
                     .cornerRadius(3)
             }
         case .horizontalBar:
@@ -145,11 +168,12 @@ struct CartesianChartView: View {
             } else {
                 BarMark(x: .value(L10n.Chart.value, point.value), y: .value(L10n.Chart.category, point.category))
                     .foregroundStyle(by: .value(L10n.Chart.series, point.series))
-                    .position(by: .value(L10n.Chart.series, point.series))
+                    .position(by: .value(L10n.Chart.series, point.slot))
                     .cornerRadius(3)
             }
         case .line:
-            LineMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value))
+            // A line joins the points of one series, which a name two series share doesn't tell.
+            LineMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value), series: .value(L10n.Chart.series, point.seriesIndex))
                 .foregroundStyle(by: .value(L10n.Chart.series, point.series))
                 .interpolationMethod(interpolation)
                 .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
@@ -157,21 +181,26 @@ struct CartesianChartView: View {
                 .foregroundStyle(by: .value(L10n.Chart.series, point.series))
                 .symbolSize(24)
         case .area:
-            AreaMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value), stacking: .unstacked)
-                .foregroundStyle(by: .value(L10n.Chart.series, point.series))
-                .interpolationMethod(interpolation)
-                .opacity(0.25)
-            LineMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value))
+            AreaMark(
+                x: .value(L10n.Chart.category, point.category),
+                y: .value(L10n.Chart.value, point.value),
+                series: .value(L10n.Chart.series, point.seriesIndex),
+                stacking: .unstacked
+            )
+            .foregroundStyle(by: .value(L10n.Chart.series, point.series))
+            .interpolationMethod(interpolation)
+            .opacity(0.25)
+            LineMark(x: .value(L10n.Chart.category, point.category), y: .value(L10n.Chart.value, point.value), series: .value(L10n.Chart.series, point.seriesIndex))
                 .foregroundStyle(by: .value(L10n.Chart.series, point.series))
                 .interpolationMethod(interpolation)
                 .lineStyle(StrokeStyle(lineWidth: 2))
         }
     }
 
-    static func summary(points: [ChartPoint], series: [String]) -> String {
-        series.map { name in
-            let values = points.filter { $0.series == name }.map { "\($0.category) \(NumberFormatting.decimal($0.value))" }
-            return "\(name): " + values.joined(separator: ", ")
+    static func summary(points: [ChartPoint]) -> String {
+        ChartData.bySeries(points).map { series in
+            let values = series.map { "\($0.category) \(NumberFormatting.decimal($0.value))" }
+            return "\(series.first?.series ?? ""): " + values.joined(separator: ", ")
         }.joined(separator: ". ")
     }
 }
@@ -188,6 +217,16 @@ struct ScatterChartView: View {
         let x: Double
         let y: Double
         let z: Double?
+    }
+
+    // Each point's symbol area: from 30 to 200 across the range of `z`, which can be negative,
+    // and 50 for a point without one or when every `z` is the same.
+    static func symbolSizes(_ zs: [Double?]) -> [Double] {
+        let values = zs.compactMap { $0 }
+        guard let minZ = values.min(), let maxZ = values.max(), maxZ > minZ else {
+            return zs.map { _ in 50 }
+        }
+        return zs.map { z in z.map { 30 + 170 * ($0 - minZ) / (maxZ - minZ) } ?? 50 }
     }
 
     var body: some View {
@@ -211,18 +250,19 @@ struct ScatterChartView: View {
                 ))
             }
         }
-        let maxZ = points.compactMap(\.z).max() ?? 1
+        let sizes = Self.symbolSizes(points.map(\.z))
+        let seriesNames = ChartData.distinct(names)
         return Group {
             if !points.isEmpty {
                 ChartFrame(height: 240, xLabel: context.props.text("xLabel"), yLabel: context.props.text("yLabel")) {
                     Chart(points) { point in
                         PointMark(x: .value("X", point.x), y: .value("Y", point.y))
                             .foregroundStyle(by: .value(L10n.Chart.series, point.series))
-                            .symbolSize(point.z.map { 30 + 170 * $0 / max(maxZ, 1) } ?? 50)
+                            .symbolSize(sizes[point.id])
                             .opacity(0.8)
                     }
-                    .chartForegroundStyleScale(domain: names, range: names.indices.map { theme.colors.chartColor($0) })
-                    .chartLegend(names.count > 1 ? .visible : .hidden)
+                    .chartForegroundStyleScale(domain: seriesNames, range: seriesNames.indices.map { theme.colors.chartColor($0) })
+                    .chartLegend(seriesNames.count > 1 ? .visible : .hidden)
                 }
             }
         }
@@ -437,6 +477,8 @@ struct RadarChartView: View {
         let (points, seriesNames) = ChartData.points(labels: context.props.array("labels"), series: series)
         let labels = Self.axes(labels: context.props.strings("labels"), series: series, points: points)
         let maximum = max(points.map(\.value).max() ?? 0, 1)
+        // A series has the color of its name, as the legend shows it.
+        let colorIndex = Dictionary(seriesNames.enumerated().map { ($1, $0) }, uniquingKeysWith: { first, _ in first })
         if labels.count >= 3, !points.isEmpty {
             VStack(spacing: theme.spacing.m) {
                 Canvas { canvas, size in
@@ -463,16 +505,14 @@ struct RadarChartView: View {
                         let labelPoint = point(index, 1.18)
                         canvas.draw(Text(labels[index]).font(theme.fonts.caption).foregroundStyle(theme.colors.textSecondary), at: labelPoint)
                     }
-                    for (seriesIndex, name) in seriesNames.enumerated() {
-                        let values = points.filter { $0.series == name }.sorted { $0.order < $1.order }
-                        guard !values.isEmpty else { continue }
+                    for values in ChartData.bySeries(points) {
                         var shape = Path()
-                        for value in values {
+                        for (offset, value) in values.sorted(by: { $0.order < $1.order }).enumerated() {
                             let p = point(value.order, max(0, value.value) / maximum)
-                            if value.order == values.first?.order { shape.move(to: p) } else { shape.addLine(to: p) }
+                            if offset == 0 { shape.move(to: p) } else { shape.addLine(to: p) }
                         }
                         shape.closeSubpath()
-                        let color = theme.colors.chartColor(seriesIndex)
+                        let color = theme.colors.chartColor(colorIndex[values.first?.series ?? ""] ?? 0)
                         canvas.fill(shape, with: .color(color.opacity(0.2)))
                         canvas.stroke(shape, with: .color(color), lineWidth: 2)
                     }
@@ -490,7 +530,7 @@ struct RadarChartView: View {
                 }
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(CartesianChartView.summary(points: points, series: seriesNames)))
+            .accessibilityLabel(Text(CartesianChartView.summary(points: points)))
         }
     }
 

@@ -63,6 +63,8 @@ final class QueryManager {
         var timer: Task<Void, Never>?
         var pendingFetch: Task<Void, Never>?
         var needsRefetch = false
+        // Whether its arguments couldn't be evaluated, so it fetches nothing until they can.
+        var isSuspended = false
         var error: OpenUIError?
 
         init(toolName: String, args: OpenUIValue?, defaults: OpenUIValue?, cacheKey: String) {
@@ -155,8 +157,9 @@ final class QueryManager {
 
     // MARK: - Fetching
 
-    /// Marks the fetch as in flight synchronously, then performs it asynchronously.
-    private func startFetch(cacheKey: String, statementId: String) {
+    /// Marks the fetch as in flight synchronously, then performs it asynchronously. Without
+    /// `publishes`, the caller updates the snapshot once it is done.
+    private func startFetch(cacheKey: String, statementId: String, publishes: Bool = true) {
         guard let toolProvider, let query = queries[statementId] else { return }
         let toolName = query.toolName
         let arguments = query.args?.objectValue ?? [:]
@@ -169,9 +172,14 @@ final class QueryManager {
             entry = CacheEntry(data: nil, inFlight: true)
             cache[cacheKey] = entry
         }
-        query.loading = true
-        rebuildSnapshot()
-        notify()
+        // Every query on the key gets what it fetches.
+        for other in queries.values where other.cacheKey == cacheKey {
+            other.loading = true
+        }
+        if publishes {
+            rebuildSnapshot()
+            notify()
+        }
 
         Task { [weak self] in
             let outcome: Result<OpenUIValue, any Error>
@@ -185,40 +193,58 @@ final class QueryManager {
     }
 
     private func finishFetch(_ outcome: Result<OpenUIValue, any Error>, entry: CacheEntry, cacheKey: String, statementId: String, toolName: String) {
+        // Every query on the key waits for the fetch, whichever of them started it, unless the
+        // entry was dropped and made again for a later fetch.
+        let isCurrent = cache[cacheKey] === entry
+        var waiting: [(id: String, query: QueryEntry)] = []
+        if isCurrent {
+            for id in queryOrder {
+                if let query = queries[id], query.cacheKey == cacheKey { waiting.append((id: id, query: query)) }
+            }
+        }
         switch outcome {
         case .success(let data):
             if !disposed {
-                if let current = queries[statementId], current.cacheKey == cacheKey {
-                    entry.data = data
-                    current.everFetched = true
-                    current.error = nil
-                    if let previousKey = current.previousCacheKey, previousKey != cacheKey {
-                        current.previousCacheKey = nil
-                        cleanupCacheEntry(previousKey)
-                    }
-                } else {
-                    // The query was removed or moved to another cache key while in flight.
+                if waiting.isEmpty {
+                    // The queries were removed or moved to another cache key while in flight.
                     entry.inFlight = false
                     cleanupCacheEntry(cacheKey)
+                } else {
+                    entry.data = data
+                    for (_, query) in waiting {
+                        query.everFetched = true
+                        query.error = nil
+                        if let previousKey = query.previousCacheKey, previousKey != cacheKey {
+                            query.previousCacheKey = nil
+                            cleanupCacheEntry(previousKey)
+                        }
+                    }
                 }
             }
         case .failure(let error):
-            if let current = queries[statementId], current.cacheKey == cacheKey {
-                current.error = Self.queryError(error, source: .query, statementId: statementId, toolName: toolName)
+            for (id, query) in waiting {
+                query.error = Self.queryError(error, source: .query, statementId: id, toolName: toolName)
             }
         }
 
         entry.inFlight = false
-        if let current = queries[statementId], current.cacheKey == cacheKey {
-            current.loading = false
-            if rebuildSnapshot() { notify() }
-            if current.needsRefetch {
-                current.needsRefetch = false
-                startFetch(cacheKey: current.cacheKey, statementId: statementId)
+        var refetches: String?
+        for (id, query) in waiting {
+            if id == statementId || query.pendingFetch == nil {
+                query.loading = false
             }
-        } else if rebuildSnapshot() {
-            notify()
+            // What any of them invalidated while the fetch was in flight runs as one more fetch.
+            if query.needsRefetch {
+                query.needsRefetch = false
+                refetches = refetches ?? id
+            }
         }
+        // It starts before anything hears of this fetch, which could move the query to other
+        // arguments, so it fetches the ones of this key.
+        if let refetches {
+            startFetch(cacheKey: cacheKey, statementId: refetches, publishes: false)
+        }
+        if rebuildSnapshot() { notify() }
     }
 
     private static func errorMessage(_ error: any Error) -> String {
@@ -314,15 +340,23 @@ final class QueryManager {
         }
         queryOrder.removeAll { queries[$0] == nil }
 
+        for node in nodes where !node.complete {
+            if let query = queries[node.statementId] { suspend(query) }
+        }
+
         for node in nodes where node.complete {
             let cacheKey = Self.cacheKey(toolName: node.toolName, args: node.args, deps: node.deps)
             let query: QueryEntry
             var argumentsChanged = false
+            var isNew = false
             if let existing = queries[node.statementId] {
                 if existing.cacheKey != cacheKey {
                     existing.previousCacheKey = existing.cacheKey
+                    // A refresh it asked for while it waited concerns the arguments it had.
+                    existing.needsRefetch = false
                     argumentsChanged = true
                 }
+                existing.isSuspended = false
                 existing.toolName = node.toolName
                 existing.args = node.args
                 existing.defaults = node.defaults
@@ -332,6 +366,7 @@ final class QueryManager {
                 query = QueryEntry(toolName: node.toolName, args: node.args, defaults: node.defaults, cacheKey: cacheKey)
                 queries[node.statementId] = query
                 queryOrder.append(node.statementId)
+                isNew = true
             }
 
             let entry = cache[cacheKey]
@@ -344,8 +379,13 @@ final class QueryManager {
                 if argumentsChanged {
                     scheduleFetch(query: query, cacheKey: cacheKey, statementId: node.statementId)
                 } else if query.pendingFetch == nil {
-                    startFetch(cacheKey: cacheKey, statementId: node.statementId)
+                    startFetch(cacheKey: cacheKey, statementId: node.statementId, publishes: false)
                 }
+            } else if argumentsChanged || isNew, entry?.inFlight == true {
+                // New, or back on args, whose fetch is already in flight: it is the one to wait for.
+                query.pendingFetch?.cancel()
+                query.pendingFetch = nil
+                query.loading = true
             } else if hasSettledData, query.loading {
                 // Back on args whose data is cached while another fetch was in flight: that fetch
                 // no longer concerns this query, so it must not keep it loading.
@@ -370,13 +410,27 @@ final class QueryManager {
         if rebuildSnapshot() { notify() }
     }
 
+    // Arguments that can't be evaluated, such as ones that ran out of the evaluation budget, mustn't
+    // be stood in for by the ones it had: it keeps what it shows, but fetches nothing, after a
+    // pause, on refresh or when invalidated, until they can be.
+    private func suspend(_ query: QueryEntry) {
+        query.isSuspended = true
+        query.pendingFetch?.cancel()
+        query.pendingFetch = nil
+        query.timer?.cancel()
+        query.timer = nil
+        query.refreshInterval = 0
+        query.needsRefetch = false
+        query.loading = cache[query.cacheKey]?.inFlight == true
+    }
+
     // Fetches once the arguments have stayed the same for `argumentDebounce`, as a query whose
     // arguments are bound to a field changes with every keystroke.
     private func scheduleFetch(query: QueryEntry, cacheKey: String, statementId: String) {
         query.pendingFetch?.cancel()
         query.pendingFetch = nil
         guard argumentDebounce > 0 else {
-            startFetch(cacheKey: cacheKey, statementId: statementId)
+            startFetch(cacheKey: cacheKey, statementId: statementId, publishes: false)
             return
         }
         // It shows as refetching while it waits, with the data it had.
@@ -389,7 +443,7 @@ final class QueryManager {
             let entry = self.cache[cacheKey]
             let hasSettledData = entry?.data != nil && entry?.inFlight == false
             guard query.cacheKey == cacheKey, !hasSettledData, entry?.inFlight != true else {
-                query.loading = entry?.inFlight == true
+                query.loading = self.cache[query.cacheKey]?.inFlight == true
                 if self.rebuildSnapshot() { self.notify() }
                 return
             }
@@ -445,12 +499,16 @@ final class QueryManager {
         } else {
             targets = queryOrder
         }
+        // Queries on the same key share one fetch, so a key fetches once, or once more after the
+        // fetch it already has in flight.
+        var started = Set<String>()
         for statementId in targets {
-            guard let query = queries[statementId] else { continue }
+            guard let query = queries[statementId], !query.isSuspended, !started.contains(query.cacheKey) else { continue }
             if cache[query.cacheKey]?.inFlight == true {
                 query.needsRefetch = true
             } else {
                 startFetch(cacheKey: query.cacheKey, statementId: statementId)
+                started.insert(query.cacheKey)
             }
         }
     }
@@ -510,6 +568,22 @@ final class QueryManager {
             invalidate(refreshQueryIds)
         }
         return success
+    }
+
+    // Reports a mutation the plan stopped at without running it, unless it is already running.
+    func rejectMutation(_ statementId: String, reason: String) {
+        guard !disposed, let mutation = mutations[statementId], mutation.result["status"] != "loading" else { return }
+        let message = "Mutation \"\(mutation.toolName)\" did not run: \(reason)"
+        mutation.result = ["status": "error", "error": .string(message)]
+        mutation.error = OpenUIError(
+            source: .mutation,
+            code: "runtime-error",
+            message: message,
+            statementId: statementId,
+            component: "Mutation",
+            toolName: mutation.toolName
+        )
+        if rebuildSnapshot() { notify() }
     }
 
     /// The `{ status, data?, error? }` result of a mutation, or `nil` if there is no such mutation.

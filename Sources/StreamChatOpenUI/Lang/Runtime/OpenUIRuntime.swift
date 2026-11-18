@@ -43,6 +43,7 @@ final class OpenUIRuntime {
 
     /// The raw response text.
     private(set) var response: String?
+    @ObservationIgnored private var untrackedResponse: String?
     /// Whether the model is still streaming (inputs are disabled and queries wait until it ends).
     private(set) var isStreaming = false
     /// The raw parse result (runtime expressions unevaluated).
@@ -97,6 +98,7 @@ final class OpenUIRuntime {
         let streamingChanged = isStreaming != self.isStreaming
         guard responseChanged || streamingChanged || parseResult == nil else { return }
         self.response = response
+        untrackedResponse = response
         self.isStreaming = isStreaming
 
         // The end of the stream completes a `$name` that was still streaming in.
@@ -131,6 +133,7 @@ final class OpenUIRuntime {
         initialState = state
         storeInitKey = nil
         initializeStoreIfNeeded()
+        runQueryEffects()
         recompute()
     }
 
@@ -212,10 +215,16 @@ final class OpenUIRuntime {
 
     private func runQueryEffects() {
         guard !isStreaming else { return }
-        let context = evaluationContext
         let snapshot = store.snapshot
 
-        let queryNodes: [QueryManager.QueryNode] = (parseResult?.queryStatements ?? []).map { statement in
+        // Each query evaluates with a budget of its own, out of one they all share. One that runs
+        // out waits, as if the model were still writing it, rather than fetching with what it
+        // evaluated so far.
+        var passNodes = EvaluationBudget.maxQueryPassNodes
+        var queryNodes: [QueryManager.QueryNode] = []
+        for statement in parseResult?.queryStatements ?? [] {
+            var context = evaluationContext
+            context.budget = EvaluationBudget(nodes: min(EvaluationBudget.maxNodes, passNodes))
             var deps: OpenUIValue?
             if let names = statement.deps, !names.isEmpty {
                 var relevant = OpenUIObject()
@@ -226,35 +235,40 @@ final class OpenUIRuntime {
             if let refreshAST = statement.refreshAST, let value = Evaluator.evaluate(refreshAST, context) {
                 refreshInterval = JS.toNumber(value)
             }
-            return QueryManager.QueryNode(
+            let toolName = statement.toolAST.flatMap { Evaluator.evaluate($0, context) }.map { JS.toString($0) } ?? ""
+            let args = statement.argsAST.map { Evaluator.evaluate($0, context) ?? .null } ?? .null
+            let defaults = statement.defaultsAST.map { Evaluator.evaluate($0, context) ?? .null } ?? .null
+            passNodes -= context.budget.spentNodes
+            queryNodes.append(QueryManager.QueryNode(
                 statementId: statement.statementId,
-                toolName: statement.toolAST.flatMap { Evaluator.evaluate($0, context) }.map { JS.toString($0) } ?? "",
-                args: statement.argsAST.map { Evaluator.evaluate($0, context) ?? .null } ?? .null,
-                defaults: statement.defaultsAST.map { Evaluator.evaluate($0, context) ?? .null } ?? .null,
+                toolName: toolName,
+                args: args,
+                defaults: defaults,
                 deps: deps,
                 refreshInterval: refreshInterval,
-                complete: statement.complete
-            )
+                complete: statement.complete && !context.budget.ranOut
+            ))
         }
         queryManager.evaluateQueries(queryNodes)
 
+        let mutationContext = evaluationContext
         let mutationNodes = (parseResult?.mutationStatements ?? []).map { statement in
             QueryManager.MutationNode(
                 statementId: statement.statementId,
-                toolName: statement.toolAST.flatMap { Evaluator.evaluate($0, context) }.map { JS.toString($0) } ?? ""
+                toolName: statement.toolAST.flatMap { Evaluator.evaluate($0, mutationContext) }.map { JS.toString($0) } ?? ""
             )
         }
         queryManager.registerMutations(mutationNodes)
     }
 
     private func storeDidChange(_ key: String) {
+        // What initializing changes is evaluated once, after it.
+        guard !isInitializingStore else { return }
         if key.hasPrefix("$") {
             runQueryEffects()
             recompute()
         }
-        if !isInitializingStore {
-            onStateUpdate?(store.snapshot)
-        }
+        onStateUpdate?(store.snapshot)
     }
 
     private func queryManagerDidChange() {
@@ -347,10 +361,17 @@ final class OpenUIRuntime {
 
     // Whether an image may load from `link`, as the model wrote it: only from a link written out
     // in the program, or one a tool returned. A link built from what the person typed is neither,
-    // so an image can't send it to a server as they type, however it is split or encoded.
+    // so an image can't send it to a server as they type, however it is split or encoded. While
+    // the model writes, a link counts once its closing quote arrives, so nothing loads from the
+    // parts of it written so far. It doesn't follow the response, which images check each render.
     func allowsImageLink(_ link: String) -> Bool {
         guard !link.isEmpty else { return false }
-        if response?.contains(link) == true { return true }
+        if let written = untrackedResponse {
+            let isWritten = isStreaming
+                ? written.contains("\"\(link)\"") || written.contains("'\(link)'")
+                : written.contains(link)
+            if isWritten { return true }
+        }
         return Self.value(.object(queryManager.snapshot.values), contains: link)
     }
 
@@ -412,7 +433,13 @@ final class OpenUIRuntime {
                     guard let statementId = step["statementId"]?.stringValue else { continue }
                     if step["refType"] == "mutation" {
                         let argsAST = parseResult?.mutationStatements.first { $0.statementId == statementId }?.argsAST
-                        let arguments = argsAST.flatMap { evaluate($0)?.objectValue } ?? [:]
+                        let context = evaluationContext
+                        let arguments = argsAST.flatMap { Evaluator.evaluate($0, context)?.objectValue } ?? [:]
+                        // Arguments evaluated only in part would run it without some of its fields.
+                        if context.budget.ranOut {
+                            queryManager.rejectMutation(statementId, reason: "its arguments were too large or nested too deeply to evaluate")
+                            return
+                        }
                         let succeeded = await queryManager.fireMutation(statementId, arguments: arguments)
                         if !succeeded { return }
                     } else {

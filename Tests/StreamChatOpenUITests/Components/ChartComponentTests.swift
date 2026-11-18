@@ -81,6 +81,42 @@ struct ChartComponentTests {
         #expect(ChartData.slices(labels: ["a", "b", "c"], values: [1e308, .number(.infinity), 2]).map(\.value) == [1e15, 2])
     }
 
+    @Test func seriesWithTheSameNameHaveTheirOwnPoints() {
+        let first = OpenUIValue.element(ElementNode(typeName: "Series", props: ["category": "Sales", "values": [1, 2]]))
+        let second = OpenUIValue.element(ElementNode(typeName: "Series", props: ["category": "Sales", "values": [3, 4]]))
+        let (points, series) = ChartData.points(labels: ["a", "b"], series: [first, second])
+        let rows = ChartData.points(labels: ["label", "s", "s"], series: [["a", 1, 2]])
+
+        #expect(Set(points.map(\.id)).count == 4)
+        #expect(series == ["Sales"])
+        #expect(Set(rows.points.map(\.id)).count == 2)
+        #expect(rows.series == ["s"])
+    }
+
+    @Test func seriesWithTheSameNameAreDrawnApart() {
+        let rows = ChartData.points(labels: ["day", "Sales", "Sales"], series: [["Mon", 1, 4], ["Tue", 2, 5], ["Wed", 3, 6]])
+
+        #expect(rows.series == ["Sales"])
+        #expect(ChartData.bySeries(rows.points).map { $0.map(\.value) } == [[1, 2, 3], [4, 5, 6]])
+        #expect(rows.points.filter { $0.category == "Mon" }.map(\.slot) == ["0", "1"], "their bars stand side by side")
+        #expect(ChartData.distinct(["b", "a", "b", "c", "a"]) == ["b", "a", "c"])
+    }
+
+    @Test func bubbleSizesFollowTheRangeOfZ() {
+        #expect(ScatterChartView.symbolSizes([-5, 0, 5, nil]) == [30, 115, 200, 50])
+        #expect(ScatterChartView.symbolSizes([3, 3]) == [50, 50])
+        #expect(ScatterChartView.symbolSizes([]).isEmpty)
+    }
+
+    @Test func modelSizesAreKeptInRange() {
+        #expect(clampedDimension(-200, in: 80...1200, default: 220) == 80)
+        #expect(clampedDimension(1e300, in: 80...1200, default: 220) == 1200)
+        #expect(clampedDimension(.infinity, in: 80...1200, default: 220) == 220)
+        #expect(clampedDimension(.nan, in: 0...64, default: 12) == 12)
+        #expect(clampedDimension(nil, in: 16...200, default: 40) == 40)
+        #expect(clampedDimension(48, in: 16...200, default: 40) == 48)
+    }
+
     @Test func anEmptyPaletteFallsBackToTheDefaultColors() {
         var colors = OpenUITheme.Colors()
         let defaults = colors.chartPalette

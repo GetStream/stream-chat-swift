@@ -174,14 +174,6 @@ struct PropType: Sendable, Hashable {
         }
     }
 
-    /// Component names referenced by this type, in declaration order.
-    var componentReferences: [String] {
-        definitionReferences.compactMap { reference in
-            if case .component(let name) = reference { return name }
-            return nil
-        }
-    }
-
     /// The type without `names` among the options of its unions. A union keeps them when they are
     /// all it has.
     func removingComponents(_ names: Set<String>) -> PropType {
@@ -370,14 +362,5 @@ struct ComponentSchema: Sendable, Hashable {
     /// Names of reactive props.
     var reactiveProps: Set<String> {
         Set(props.filter(\.isReactive).map(\.name))
-    }
-
-    /// Returns a copy with the prop named `name` modified.
-    func updatingProp(_ name: String, _ update: (inout PropField) -> Void) -> ComponentSchema {
-        var copy = self
-        if let index = copy.props.firstIndex(where: { $0.name == name }) {
-            update(&copy.props[index])
-        }
-        return copy
     }
 }

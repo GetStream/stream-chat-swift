@@ -157,19 +157,20 @@ struct EditableTableView: View {
         let type: String
         let key: String
         let header: String
-        let width: Double?
+        let width: CGFloat
         let options: [(value: String, label: String)]
     }
 
     private var columns: [Column] {
         context.props.array("columns").compactMap(\.objectValue).map { column in
-            Column(
+            var values = Set<String>()
+            return Column(
                 type: column["type"]?.stringValue ?? "text",
                 key: column["key"]?.stringValue ?? "default",
                 header: column["header"]?.stringValue ?? "",
-                width: column["width"]?.numberValue,
+                width: clampedDimension(column["width"]?.numberValue, in: 40...600, default: 150),
                 options: (column["options"]?.arrayValue ?? []).compactMap { option in
-                    guard let value = option["value"]?.stringValue else { return nil }
+                    guard let value = option["value"]?.stringValue, values.insert(value).inserted else { return nil }
                     return (value, option["label"]?.stringValue ?? value)
                 }
             )
@@ -190,7 +191,7 @@ struct EditableTableView: View {
                             Text(column.header)
                                 .font(theme.fonts.caption.weight(.semibold))
                                 .foregroundStyle(theme.colors.textSecondary)
-                                .frame(width: CGFloat(column.width ?? 150), alignment: .leading)
+                                .frame(width: column.width, alignment: .leading)
                                 .padding(.horizontal, theme.spacing.s)
                                 .padding(.vertical, theme.spacing.s)
                         }
@@ -201,7 +202,7 @@ struct EditableTableView: View {
                         GridRow {
                             ForEach(Array(columns.enumerated()), id: \.offset) { _, column in
                                 editor(column, row: rowIndex)
-                                    .frame(width: CGFloat(column.width ?? 150), alignment: .leading)
+                                    .frame(width: column.width, alignment: .leading)
                                     .padding(.horizontal, theme.spacing.s)
                                     .padding(.vertical, theme.spacing.xs)
                             }
@@ -292,22 +293,27 @@ struct EditableTableView: View {
 
 // The edited rows of an `EditableTable`, and the rows they are compared with to count changes.
 // The comparison starts only once the model has finished writing the table, as partial rows
-// would otherwise count as edits.
+// would otherwise count as edits, and starts again from rows that arrive after that, or that a
+// later stream wrote.
 @available(iOS 17.0, macOS 14.0, *)
 struct EditableTableRows {
     var rows: [[String: OpenUIValue]] = []
     private(set) var baseline: [[String: OpenUIValue]]?
     private var loadedSource: OpenUIValue?
     private var loadedKeys: [String] = []
+    private var loadedWhileStreaming = false
 
     mutating func load(_ source: OpenUIValue?, keys: [String], isStreaming: Bool) {
         if source != loadedSource || keys != loadedKeys {
             loadedSource = source
             loadedKeys = keys
             rows = Self.rows(from: source, keys: keys)
+            loadedWhileStreaming = isStreaming
+            if !isStreaming { baseline = rows }
         }
-        if baseline == nil, !isStreaming {
+        if baseline == nil || loadedWhileStreaming, !isStreaming {
             baseline = rows
+            loadedWhileStreaming = false
         }
     }
 
@@ -359,13 +365,44 @@ enum DateFormatting {
         return formatter
     }()
 
+    // Reads the day in UTC, which has no daylight saving, so a day whose midnight is skipped
+    // where the person is still reads.
+    private static let dayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(identifier: "UTC")
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private static let isoStyle = Date.ISO8601FormatStyle()
+
+    // A time without an offset is one where the person is, as in JavaScript.
+    private static let localTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return formatter
+    }()
+
     static func string(from date: Date) -> String {
         formatter.string(from: date)
     }
 
+    // A day is noon of it where the person is, which daylight saving never skips, and a time is
+    // the moment it names.
     static func date(from string: String?) -> Date? {
         guard let string, !string.isEmpty else { return nil }
-        if let date = formatter.date(from: String(string.prefix(10))) { return date }
-        return ISO8601DateFormatter().date(from: string)
+        // The formatter rolls a day past the month's end over into the next month.
+        if string.count == 10, let day = dayFormatter.date(from: string), dayFormatter.string(from: day) == string {
+            var utc = Calendar(identifier: .gregorian)
+            utc.timeZone = TimeZone(identifier: "UTC") ?? utc.timeZone
+            var components = utc.dateComponents([.year, .month, .day], from: day)
+            components.hour = 12
+            return Calendar(identifier: .gregorian).date(from: components)
+        }
+        return (try? isoStyle.parse(string)) ?? localTimeFormatter.date(from: string)
     }
 }
