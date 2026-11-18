@@ -17,8 +17,8 @@ final class SurfaceRenderer {
     /// The maximum nesting depth.
     static let defaultMaxDepth = A2UIProtocol.maxNestingDepth
 
-    // The most components a surface may expand to, counting a component once for each place it
-    // shows, so a component listed as a child several times on each level can't build millions.
+    // The most child views a surface may build, as `expandedSize` counts them, so a component
+    // listed as a child several times on each level can't build millions.
     static let maxExpandedComponents = 5000
 
     /// The component tree being rendered.
@@ -81,41 +81,130 @@ final class SurfaceRenderer {
         )
     }
 
-    // How many components the tree from the root expands to as it renders, up to `limit + 1`: a
-    // component counts once for each place it shows, and a template's child once for each item
-    // of its collection. A child that is one of its own ancestors, or too deep, doesn't show.
+    // How many child views the tree from the root builds, up to `limit + 1`: one for the root and
+    // for each component listed as a child, whether or not it shows, one for each item of a
+    // template whose child shows, and one for a template that builds nothing. Every tab of a
+    // `Tabs` and a `Modal`'s content count, though they don't all show at once. The walk stops as
+    // soon as the count passes `limit`, so it takes at most about `limit` steps, however long the
+    // collections in the data model are.
     func expandedSize(limit: Int, dataContext: DataContext) -> Int {
-        var children: [String: [(id: String, template: DataPath?)]] = [:]
-        var ancestors: Set<String> = []
+        var knownReferences: [String: [(id: String, template: DataPath?)]] = [:]
+        var ancestors: [String] = []
         var total = 0
-        func references(of component: Component) -> [(id: String, template: DataPath?)] {
-            if let known = children[component.id] { return known }
-            let found = catalogs.resolveCatalog(entityCatalogId: component.catalogId, surfaceCatalogId: definition.catalogId)?
-                .component(component.type)?
-                .children(of: component)
-                .map { (id: $0.id, template: $0.template) } ?? []
-            children[component.id] = found
+        func references(of placed: Placement) -> [(id: String, template: DataPath?)] {
+            if let known = knownReferences[placed.component.id] { return known }
+            let found = placed.definition.children(of: placed.component).map { (id: $0.id, template: $0.template) }
+            knownReferences[placed.component.id] = found
             return found
         }
-        func expand(_ componentId: String, depth: Int, in context: DataContext) {
-            guard total <= limit, depth < maxDepth, !ancestors.contains(componentId),
-                  let component = definition.component(componentId) else { return }
+        // Counts the view built for `componentId` as a child of `parent`, and the views under it
+        // when it shows. Returns false once the count passes `limit`.
+        func place(_ componentId: String, parent: ComponentDefinition?, in context: DataContext) -> Bool {
             total += 1
-            ancestors.insert(componentId)
-            defer { ancestors.remove(componentId) }
-            for child in references(of: component) where total <= limit {
+            guard total <= limit else { return false }
+            guard let placed = placement(of: componentId, parent: parent, ancestors: ancestors, reports: false) else {
+                return true
+            }
+            ancestors.append(componentId)
+            defer { ancestors.removeLast() }
+            for child in references(of: placed) {
                 guard let path = child.template else {
-                    expand(child.id, depth: depth + 1, in: context)
+                    guard place(child.id, parent: placed.definition, in: context) else { return false }
                     continue
                 }
-                let count = Json.array(context.value(at: path))?.count ?? 0
-                for index in 0..<count where total <= limit {
-                    expand(child.id, depth: depth + 1, in: context.collectionScope(path: path, index: index))
+                // Like `resolvedChildren`, a template whose child doesn't show builds no items. It
+                // still counts once, so a component holding many templates can't be walked for free.
+                let shows = placement(of: child.id, parent: placed.definition, ancestors: ancestors, reports: false) != nil
+                let count = shows ? Json.array(context.value(at: path))?.count ?? 0 : 0
+                guard count > 0 else {
+                    total += 1
+                    guard total <= limit else { return false }
+                    continue
+                }
+                for index in 0..<count {
+                    guard place(child.id, parent: placed.definition, in: context.collectionScope(path: path, index: index)) else {
+                        return false
+                    }
                 }
             }
+            return true
         }
-        expand(A2UIProtocol.rootComponentId, depth: 0, in: dataContext)
+        _ = place(A2UIProtocol.rootComponentId, parent: nil, in: dataContext)
         return total
+    }
+
+    // A component `view` builds, with its catalog definition.
+    struct Placement {
+        let component: Component
+        let definition: ComponentDefinition
+    }
+
+    // What `view` builds for `componentId` as a child of `parent`, or nil when it builds nothing,
+    // reporting why when `reports` is set and that is a problem of the surface.
+    func placement(
+        of componentId: String,
+        parent: ComponentDefinition?,
+        ancestors: [String],
+        reports: Bool
+    ) -> Placement? {
+        if let first = ancestors.firstIndex(of: componentId) {
+            if reports {
+                report(RendererError(
+                    code: RendererError.Code.recursionLimitExceeded,
+                    message: "Component '\(componentId)' contains itself: "
+                        + (ancestors[first...] + [componentId]).joined(separator: " > ") + ".",
+                    surfaceId: definition.surfaceId
+                ))
+            }
+            return nil
+        }
+        guard ancestors.count < maxDepth else {
+            if reports {
+                report(RendererError(
+                    code: RendererError.Code.recursionLimitExceeded,
+                    message: "Component nesting exceeded \(maxDepth) levels at '\(componentId)'.",
+                    surfaceId: definition.surfaceId
+                ))
+            }
+            return nil
+        }
+
+        guard let component = definition.component(componentId) else {
+            if reports {
+                a2uiLogger.debug("Component '\(componentId)' is not defined yet on surface '\(definition.surfaceId)'.")
+            }
+            return nil
+        }
+
+        guard let catalog = catalogs.resolveCatalog(
+            entityCatalogId: component.catalogId,
+            surfaceCatalogId: definition.catalogId
+        ) else {
+            if reports {
+                report(RendererError(
+                    code: RendererError.Code.catalogNotFound,
+                    message: "Component '\(componentId)' of type '\(component.type)' has no catalog. "
+                        + "Neither the component nor its surface names a catalog this renderer supports.",
+                    surfaceId: definition.surfaceId
+                ))
+            }
+            return nil
+        }
+        guard let componentDefinition = catalog.component(component.type) else {
+            if reports {
+                a2uiLogger.debug("Component type '\(component.type)' is not defined by catalog '\(catalog.catalogId)'.")
+            }
+            return nil
+        }
+
+        // The processor reported this to the agent when the component arrived.
+        guard CompositionValidator.allows(componentDefinition, in: parent) else {
+            if reports {
+                a2uiLogger.debug("Component '\(componentId)' (\(component.type)) is not allowed in '\(parent?.name ?? A2UIProtocol.surfaceComponentType)'.")
+            }
+            return nil
+        }
+        return Placement(component: component, definition: componentDefinition)
     }
 
     /// Builds the view for one component of the surface.
@@ -129,54 +218,11 @@ final class SurfaceRenderer {
         parent: ComponentDefinition?,
         ancestors: [String]
     ) -> AnyView {
-        if let first = ancestors.firstIndex(of: componentId) {
-            report(RendererError(
-                code: RendererError.Code.recursionLimitExceeded,
-                message: "Component '\(componentId)' contains itself: "
-                    + (ancestors[first...] + [componentId]).joined(separator: " > ") + ".",
-                surfaceId: definition.surfaceId
-            ))
+        guard let placed = placement(of: componentId, parent: parent, ancestors: ancestors, reports: true) else {
             return AnyView(EmptyView())
         }
-        let depth = ancestors.count
-        guard depth < maxDepth else {
-            let error = RendererError(
-                code: RendererError.Code.recursionLimitExceeded,
-                message: "Component nesting exceeded \(maxDepth) levels at '\(componentId)'.",
-                surfaceId: definition.surfaceId
-            )
-            onError(error)
-            return AnyView(EmptyView())
-        }
-
-        guard let component = definition.component(componentId) else {
-            a2uiLogger.debug("Component '\(componentId)' is not defined yet on surface '\(definition.surfaceId)'.")
-            return AnyView(EmptyView())
-        }
-
-        guard let catalog = catalogs.resolveCatalog(
-            entityCatalogId: component.catalogId,
-            surfaceCatalogId: definition.catalogId
-        ) else {
-            let error = RendererError(
-                code: RendererError.Code.catalogNotFound,
-                message: "Component '\(componentId)' of type '\(component.type)' has no catalog. "
-                    + "Neither the component nor its surface names a catalog this renderer supports.",
-                surfaceId: definition.surfaceId
-            )
-            onError(error)
-            return AnyView(EmptyView())
-        }
-        guard let componentDefinition = catalog.component(component.type) else {
-            a2uiLogger.debug("Component type '\(component.type)' is not defined by catalog '\(catalog.catalogId)'.")
-            return AnyView(EmptyView())
-        }
-
-        // The processor reported this to the agent when the component arrived.
-        guard CompositionValidator.allows(componentDefinition, in: parent) else {
-            a2uiLogger.debug("Component '\(componentId)' (\(component.type)) is not allowed in '\(parent?.name ?? A2UIProtocol.surfaceComponentType)'.")
-            return AnyView(EmptyView())
-        }
+        let component = placed.component
+        let componentDefinition = placed.definition
 
         let context = ComponentRenderContext(
             component: component,

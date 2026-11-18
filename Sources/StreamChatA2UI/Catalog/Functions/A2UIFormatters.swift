@@ -17,7 +17,9 @@ enum A2UIFormatters {
     private static var dateFormatters: [String: DateFormatter] = [:]
     private static var numberFormatters: [String: NumberFormatter] = [:]
     private static var isoFormatters: [String: ISO8601DateFormatter] = [:]
-    private static var expressions: [String: NSRegularExpression] = [:]
+    // Keyed by the pattern's bytes: Swift compares strings by canonical equivalence, so `[é]` and
+    // `[e\u{301}]` are equal strings, but ICU reads them as different character classes.
+    private static var expressions: [Data: NSRegularExpression] = [:]
 
     static func dateFormatter(pattern: String, locale: Locale, timeZone: TimeZone, isLenient: Bool = false) -> DateFormatter {
         let key = [pattern, locale.identifier, timeZone.identifier, String(isLenient)].joined(separator: "|")
@@ -71,14 +73,15 @@ enum A2UIFormatters {
     }
 
     static func expression(_ pattern: String) throws -> NSRegularExpression {
-        if let expression = expressions[pattern] {
+        let key = Data(pattern.utf8)
+        if let expression = expressions[key] {
             return expression
         }
         let expression = try NSRegularExpression(pattern: pattern)
         if expressions.count >= limit {
             expressions.removeAll()
         }
-        expressions[pattern] = expression
+        expressions[key] = expression
         return expression
     }
 

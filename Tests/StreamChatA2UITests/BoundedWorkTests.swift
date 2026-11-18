@@ -21,6 +21,19 @@ struct BoundedWorkTests {
 
         #expect(ProcessInfo.processInfo.systemUptime - started < 2)
         #expect(router.errors.allSatisfy { $0.code == RendererError.Code.expressionError })
+        #expect(router.errors.contains { $0.message.contains("more than \(ExpressionEvaluator.maxInterpolations) templates") })
+    }
+
+    @Test("The parsed templates kept for reuse are few")
+    func templateCacheIsBounded() throws {
+        let (evaluator, model) = makeEvaluator()
+        let context = DataContext(model, "/")
+        for index in 0..<(ExpressionEvaluator.maxCachedTemplates * 2) {
+            _ = try evaluator.interpolate("Item \(index)", in: context)
+        }
+
+        #expect(!evaluator.parsedTemplates.isEmpty)
+        #expect(evaluator.parsedTemplates.count <= ExpressionEvaluator.maxCachedTemplates)
     }
 
     @Test("A size cut short by a cycle isn't reused where the component renders in full")
@@ -32,7 +45,7 @@ struct BoundedWorkTests {
             Component(id: "c", type: "Text", properties: ["text": "c"])
         ])
 
-        #expect(renderer.renderer.expandedSize(limit: 5000, dataContext: DataContext(renderer.model, "/")) > 5000)
+        #expect(renderer.size(limit: 5000) > 5000)
     }
 
     @Test("A template counts its child once for each item")
@@ -45,7 +58,7 @@ struct BoundedWorkTests {
             ],
             data: ["items": items]
         )
-        #expect(list.renderer.expandedSize(limit: 5000, dataContext: DataContext(list.model, "/")) == 101)
+        #expect(list.size(limit: 5000) == 101)
 
         let nested = makeRenderer(
             [
@@ -55,14 +68,99 @@ struct BoundedWorkTests {
             ],
             data: ["items": items]
         )
-        #expect(nested.renderer.expandedSize(limit: 5000, dataContext: DataContext(nested.model, "/")) > 5000)
+        #expect(nested.size(limit: 5000) > 5000)
     }
 
-    private func makeRenderer(_ components: [Component], data: JsonMap = [:]) -> (renderer: SurfaceRenderer, model: DataModel) {
+    @Test("A template over a collection far larger than the limit stops at the limit")
+    func hugeTemplateStopsAtLimit() {
+        let renderer = makeRenderer(
+            [
+                Component(id: "root", type: "Column", properties: ["children": ["componentId": "group", "path": "/items"] as JsonMap]),
+                Component(id: "group", type: "Column", properties: ["children": ["componentId": "row", "path": "/items"] as JsonMap]),
+                Component(id: "row", type: "Text", properties: ["text": "row"])
+            ],
+            data: ["items": Self.hugeCollection()]
+        )
+        let started = ProcessInfo.processInfo.systemUptime
+
+        #expect(renderer.size(limit: SurfaceRenderer.maxExpandedComponents) == SurfaceRenderer.maxExpandedComponents + 1)
+        _ = renderer.renderer.rootView(dataContext: DataContext(renderer.model, "/"))
+
+        #expect(ProcessInfo.processInfo.systemUptime - started < 2)
+        #expect(renderer.errors.errors.map(\.code) == [RendererError.Code.recursionLimitExceeded])
+        #expect(renderer.recorder.context("root") == nil)
+    }
+
+    @Test("A template whose child hasn't arrived yet walks none of its items")
+    func hugeTemplateOfMissingChild() throws {
+        let groups = Array(repeating: ["x": 1] as JsonMap, count: 2000) as JsonArray
+        let renderer = makeRenderer(
+            [
+                Component(id: "root", type: "Column", properties: ["children": ["componentId": "group", "path": "/groups"] as JsonMap]),
+                Component(id: "group", type: "Column", properties: ["children": ["componentId": "row", "path": "/items"] as JsonMap])
+            ],
+            data: ["groups": groups, "items": Self.hugeCollection()]
+        )
+        let started = ProcessInfo.processInfo.systemUptime
+
+        // The root, then each group and its template, which counts once.
+        #expect(renderer.size(limit: SurfaceRenderer.maxExpandedComponents) == 1 + 2000 * 2)
+        _ = renderer.renderer.rootView(dataContext: DataContext(renderer.model, "/"))
+        let group = try #require(renderer.recorder.context("group"))
+        #expect(group.resolvedChildren().isEmpty)
+
+        #expect(ProcessInfo.processInfo.systemUptime - started < 2)
+        #expect(renderer.errors.count == 0)
+    }
+
+    @Test("A template whose child type is unknown doesn't hide the rest of the surface")
+    func templateOfUnknownTypeDoesNotCount() throws {
+        let items = Array(repeating: ["x": 1] as JsonMap, count: SurfaceRenderer.maxExpandedComponents) as JsonArray
+        let renderer = makeRenderer(
+            [
+                Component(id: "root", type: "Column", properties: ["children": ["status", "list"]]),
+                Component(id: "status", type: "Text", properties: ["text": "Ready"]),
+                Component(id: "list", type: "List", properties: ["children": ["componentId": "row", "path": "/items"] as JsonMap]),
+                Component(id: "row", type: "Nonexistent")
+            ],
+            data: ["items": items]
+        )
+
+        #expect(renderer.size(limit: SurfaceRenderer.maxExpandedComponents) == 4)
+        _ = renderer.renderer.rootView(dataContext: DataContext(renderer.model, "/"))
+        #expect(renderer.recorder.context("status") != nil)
+        #expect(try #require(renderer.recorder.context("list")).resolvedChildren().isEmpty)
+    }
+
+    private static func hugeCollection() -> JsonArray {
+        Array(repeating: 1 as any Sendable, count: 1_000_000)
+    }
+
+    private func makeRenderer(_ components: [Component], data: JsonMap = [:]) -> RenderedSurface {
         var definition = SurfaceDefinition(surfaceId: "surface", catalogId: TestCatalog.catalogId)
         definition.merge(components)
-        let (evaluator, model) = makeEvaluator(data: data)
-        let renderer = SurfaceRenderer(definition: definition, catalogs: evaluator.catalogs, evaluator: evaluator, onAction: { _ in })
-        return (renderer, model)
+        let recorder = RenderRecorder()
+        let errors = ErrorLog()
+        let (evaluator, model) = makeEvaluator(data: data, catalogs: [TestCatalog.make(recorder: recorder)])
+        let renderer = SurfaceRenderer(
+            definition: definition,
+            catalogs: evaluator.catalogs,
+            evaluator: evaluator,
+            onAction: { _ in },
+            onError: { errors.append($0) }
+        )
+        return RenderedSurface(renderer: renderer, model: model, recorder: recorder, errors: errors)
+    }
+}
+
+@MainActor
+private struct RenderedSurface {
+    let renderer: SurfaceRenderer
+    let model: DataModel
+    let recorder: RenderRecorder
+    let errors: ErrorLog
+
+    func size(limit: Int) -> Int {
+        renderer.expandedSize(limit: limit, dataContext: DataContext(model, "/"))
     }
 }

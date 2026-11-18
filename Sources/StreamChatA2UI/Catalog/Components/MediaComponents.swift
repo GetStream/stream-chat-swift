@@ -14,7 +14,7 @@ enum MediaComponents {
         [image, video, audioPlayer]
     }
 
-    /// Displays a remote or bundled image.
+    /// Displays an image from a URL.
     static let image = ComponentDefinition(
         name: "Image",
         description: "Displays an image from a URL.",
@@ -147,14 +147,28 @@ struct A2UIImageView: View {
         description == nil && label.isMissing
     }
 
-    // The link of a media URL the agent wrote: trimmed, with spaces encoded, and only with a
-    // scheme, so a bare name never loads one of the app's own images.
+    // The link of a media URL the agent wrote, checked as the basic catalog says: trimmed, without
+    // tabs and line breaks, with spaces encoded, and only http and https links with `//` and a host,
+    // data links, and relative paths that stay on the same host, which `mediaURL` can resolve. A
+    // bare name is a relative path, never one of the app's own images.
     static func link(_ source: String) -> URL? {
-        let trimmed = source.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty,
-              let url = URL(string: trimmed.replacingOccurrences(of: " ", with: "%20")),
-              url.scheme != nil else { return nil }
-        return url
+        let trimmed = source.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines.union(.controlCharacters))
+        let cleaned = String(trimmed.unicodeScalars.filter { $0 != "\t" && $0 != "\n" && $0 != "\r" })
+        guard !cleaned.isEmpty, let url = URL(string: cleaned.replacingOccurrences(of: " ", with: "%20")) else {
+            return nil
+        }
+        guard let scheme = url.scheme?.lowercased() else {
+            let leading = cleaned.unicodeScalars.prefix(2).map { $0 == "\\" ? "/" : $0 }
+            return leading == ["/", "/"] ? nil : url
+        }
+        switch scheme {
+        case "http", "https":
+            return cleaned.dropFirst(scheme.count + 1).hasPrefix("//") && !(url.host ?? "").isEmpty ? url : nil
+        case "data":
+            return url
+        default:
+            return nil
+        }
     }
 
     var body: some View {

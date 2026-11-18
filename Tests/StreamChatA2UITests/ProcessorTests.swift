@@ -90,6 +90,25 @@ struct A2UIMessageProcessorTests {
         #expect(harness.errors.isEmpty)
     }
 
+    @Test("A composition error points at the parent's slot, not at a component the update rejected")
+    func compositionErrorSkipsRejectedComponent() {
+        let harness = ProcessorHarness()
+        harness.createSurface(components: [
+            Component(id: "root", type: "Menu", properties: ["children": ["item"]]),
+            Component(id: "item", type: "MenuItem")
+        ])
+        harness.processor.handle(.updateComponents(UpdateComponentsMessage(
+            surfaceId: "main",
+            components: [
+                Component(id: "root", type: "Column", properties: ["children": ["item"]]),
+                Component(id: "item", type: "MenuItem", metadata: ["owner": "me"])
+            ]
+        )))
+
+        #expect(harness.errors.map(\.code) == [RendererError.Code.validationFailed, RendererError.Code.unallowedParent])
+        #expect(harness.errors.map(\.path) == ["/components/1/metadata/owner", "/components/0/children/0"])
+    }
+
     @Test("updateComponents merges into an existing surface")
     func updateComponents() {
         let harness = ProcessorHarness()

@@ -40,11 +40,12 @@ final class A2UIReply: ObservableObject {
             applied = []
         }
         let messages = scanner.messages
-        for raw in messages.dropFirst(applied.count) {
+        for (offset, raw) in messages.enumerated().dropFirst(applied.count) {
+            // The message's text can hold what the person wrote, so the error leaves it out.
             guard var json = Json.decodeMap(raw) else {
                 processor.report(RendererError(
                     code: RendererError.Code.validationFailed,
-                    message: "A message isn't a JSON object: \(raw.prefix(80))"
+                    message: "Message \(offset + 1) of the reply couldn't be read as a JSON object."
                 ))
                 continue
             }

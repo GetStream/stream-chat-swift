@@ -76,7 +76,7 @@ enum A2UIProgram {
             for missing in definition.requiredProperties where component.properties[missing] == nil {
                 problems.append("\(component.id) is a \(component.type) without its \(missing)")
             }
-            let known = Set(definition.propertySchema.keys).union(["checks", "weight"])
+            let known = Set(definition.propertySchema.keys).union(["checks", "@checks", "weight"])
             for property in component.properties.keys.sorted() where !known.contains(property) {
                 problems.append("\(component.id) is a \(component.type), which has no \(property)")
             }

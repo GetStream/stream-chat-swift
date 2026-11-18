@@ -28,6 +28,24 @@ struct AgentFunctionFailureTests {
         #expect(error.surfaceId == nil)
     }
 
+    @Test("A failed call is reported once, and isn't kept once it is")
+    func failuresAreNotKept() throws {
+        let harness = ProcessorHarness()
+        harness.createSurface()
+        for _ in 0..<2 {
+            _ = try harness.processor.agentFunctionValue(for: "estimate", catalogId: nil, arguments: [:], surfaceId: "main", userActivated: true)
+        }
+        let failure = FunctionResponse.Failure(code: "UNKNOWN_FUNCTION", message: "No such function: estimate")
+        for call in harness.agentCalls {
+            harness.processor.handle(.agentFunctionResponse(FunctionResponse(functionCallId: call.functionCallId, error: failure)))
+            harness.processor.handle(.agentFunctionResponse(FunctionResponse(functionCallId: call.functionCallId, error: failure)))
+        }
+
+        #expect(harness.agentCalls.count == 2)
+        #expect(harness.errors.compactMap(\.functionCallId) == harness.agentCalls.map(\.functionCallId))
+        #expect(harness.processor.reportedErrors[""] == nil)
+    }
+
     @Test("A call the agent doesn't answer in time is reported")
     func timeout() async throws {
         let harness = ProcessorHarness(agentFunctionTimeout: 0.01)

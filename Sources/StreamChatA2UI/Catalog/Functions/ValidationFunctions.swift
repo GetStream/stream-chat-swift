@@ -63,18 +63,20 @@ enum ValidationFunctions {
     ) { invocation in
         let pattern = try invocation.requireString("pattern")
         let value = invocation.string("value") ?? ""
-        guard !value.isEmpty else { return ValidationResult.valid.rawValue }
-        if let problem = A2UIRegexSafety.problem(in: pattern) {
-            throw A2UIExpressionError("regex can't use '\(pattern)': \(problem)")
-        }
-        guard value.unicodeScalars.count <= A2UIRegexSafety.maxValueLength else {
+        // A value that is too long doesn't match, and no error is reported for its pattern.
+        guard value.unicodeScalars.dropFirst(A2UIRegexSafety.maxValueLength).isEmpty else {
             return ValidationResult(isValid: false).rawValue
         }
-        guard let expression = try? A2UIFormatters.expression(pattern) else {
-            throw A2UIExpressionError("regex can't use '\(pattern)': it isn't a valid regular expression.")
+        let quoted = pattern.unicodeScalars.dropFirst(A2UIRegexSafety.maxPatternLength).isEmpty ? "'\(pattern)'" : "its pattern"
+        if let problem = A2UIRegexSafety.problem(in: pattern) {
+            throw A2UIExpressionError("regex can't use \(quoted): \(problem)")
         }
+        guard let expression = try? A2UIFormatters.expression(pattern) else {
+            throw A2UIExpressionError("regex can't use \(quoted): it isn't a valid regular expression.")
+        }
+        guard !value.isEmpty else { return ValidationResult.valid.rawValue }
         guard let matches = firstMatch(of: expression, in: value) else {
-            throw A2UIExpressionError("regex can't use '\(pattern)': it took too long to match.")
+            throw A2UIExpressionError("regex can't use \(quoted): it took too long to match.")
         }
         return matches
             ? ValidationResult.valid.rawValue

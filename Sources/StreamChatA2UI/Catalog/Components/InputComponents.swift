@@ -333,7 +333,10 @@ private struct A2UIChoicePickerView: View {
         let stored = context.stringArrayBinding()
         // A model often seeds a single choice with a string; what the person picks is written as a list.
         let selection = Binding<[String]>(
-            get: { (context.value("value") as? String).map { [$0] } ?? stored.wrappedValue },
+            get: {
+                let value = context.value("value")
+                return (value as? String).map { [$0] } ?? Json.stringArray(value) ?? []
+            },
             set: { stored.wrappedValue = $0 }
         )
         let failures = context.failingChecks
@@ -463,7 +466,7 @@ struct A2UISliderView: View {
                     Text(label).font(theme.label).foregroundColor(theme.secondaryText)
                 }
                 Spacer(minLength: 0)
-                Text(Json.stringify(Self.rounded(binding.wrappedValue, in: range, step: step)))
+                Text(Json.stringify(binding.wrappedValue))
                     .font(theme.label.monospacedDigit())
             }
             slider(binding: binding, range: range, step: step)
@@ -524,14 +527,18 @@ struct A2UISliderView: View {
         return rounded.isFinite ? min(max(rounded, range.lowerBound), range.upperBound) : snapped
     }
 
-    // How many decimals a number needs, up to 6.
+    // How many decimals a number needs, up to 6 past its first significant digit and at most 15,
+    // so the values of a slider over a tiny range stay apart.
     private static func decimals(of number: Double) -> Int {
-        var scaled = abs(number)
-        for places in 0..<6 {
-            if abs(scaled - scaled.rounded()) < 1e-9 * max(1, scaled) { return places }
+        let magnitude = abs(number)
+        let firstDigit = magnitude > 0 && magnitude < 1 ? Int((-log10(magnitude)).rounded(.up)) : 0
+        let limit = min(firstDigit + 6, 15)
+        var scaled = magnitude
+        for places in 0..<limit {
+            if abs(scaled - scaled.rounded()) <= 1e-9 * scaled { return places }
             scaled *= 10
         }
-        return 6
+        return limit
     }
 }
 
@@ -552,7 +559,12 @@ struct A2UIDateTimeInputView: View {
         var components: DatePickerComponents = []
         if showsDate { components.insert(.date) }
         if enableTime { components.insert(.hourAndMinute) }
-        let range = self.range(timeZone: timeZone)
+        let range = Self.range(
+            minimum: context.string("min"),
+            maximum: context.string("max"),
+            timeZone: timeZone,
+            showsTime: enableTime
+        )
         // A time without a date is read on the day times are, so it compares with the bounds.
         let now = context.services.now()
         let fallback = showsDate
@@ -573,6 +585,7 @@ struct A2UIDateTimeInputView: View {
 
         return VStack(alignment: .leading, spacing: 4) {
             picker(label: label, selection: selection, components: components, range: range)
+                .environment(\.timeZone, timeZone)
                 .font(theme.body)
                 .tint(theme.accent)
             ValidationMessages(results: failures)
@@ -610,11 +623,17 @@ struct A2UIDateTimeInputView: View {
         }
     }
 
-    private func range(timeZone: TimeZone) -> (lower: Date?, upper: Date?) {
-        (
-            A2UIDateParser.date(from: context.string("min"), timeZone: timeZone),
-            A2UIDateParser.date(from: context.string("max"), timeZone: timeZone)
-        )
+    // The picker's bounds. An input without a time writes a day, read back as its midnight, so its
+    // bounds are the days `min` and `max` fall on, or a day it writes could read as out of bounds.
+    @MainActor
+    static func range(minimum: String?, maximum: String?, timeZone: TimeZone, showsTime: Bool) -> (lower: Date?, upper: Date?) {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        func bound(_ string: String?) -> Date? {
+            let date = A2UIDateParser.date(from: string, timeZone: timeZone)
+            return showsTime ? date : date.map { calendar.startOfDay(for: $0) }
+        }
+        return (bound(minimum), bound(maximum))
     }
 
     /// Formats a date using the narrowest ISO 8601 form the input shows.

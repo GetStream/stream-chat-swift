@@ -15,7 +15,7 @@ enum A2UIRegexSafety {
 
     // What makes the pattern unsafe or outside the dialect, or nil when it passes the checks.
     static func problem(in pattern: String) -> String? {
-        let scalars = Array(pattern.unicodeScalars)
+        let scalars = Array(pattern.unicodeScalars.prefix(maxPatternLength + 1))
         guard scalars.count <= maxPatternLength else {
             return "it is longer than \(maxPatternLength) characters."
         }
@@ -28,9 +28,7 @@ enum A2UIRegexSafety {
             case "\\":
                 guard index + 1 < scalars.count else { return "it ends with a lone backslash." }
                 let escaped = scalars[index + 1]
-                if ("1"..."9").contains(escaped) || ["k", "p", "P", "c"].contains(escaped) {
-                    return "'\\\(escaped)' isn't allowed."
-                }
+                if let problem = escapeProblem(escaped) { return problem }
                 index += 2
                 if escaped == "u", index < scalars.count, scalars[index] == "{" {
                     while index < scalars.count, scalars[index] != "}" { index += 1 }
@@ -39,7 +37,13 @@ enum A2UIRegexSafety {
             case "[":
                 index += 1
                 while index < scalars.count, scalars[index] != "]" {
-                    index += scalars[index] == "\\" ? 2 : 1
+                    if scalars[index] == "\\" {
+                        guard index + 1 < scalars.count else { return "it ends with a lone backslash." }
+                        if let problem = escapeProblem(scalars[index + 1]) { return problem }
+                        index += 2
+                    } else {
+                        index += 1
+                    }
                 }
                 index += 1
             case "(":
@@ -74,6 +78,13 @@ enum A2UIRegexSafety {
             }
         }
         return groups.count == 1 ? nil : "it opens a group it doesn't close."
+    }
+
+    // Backreferences, Unicode property escapes and `\c`, which the dialect leaves out, in a
+    // character class or out of one.
+    private static func escapeProblem(_ escaped: Unicode.Scalar) -> String? {
+        guard ("1"..."9").contains(escaped) || ["k", "p", "P", "c"].contains(escaped) else { return nil }
+        return "'\\\(escaped)' isn't allowed."
     }
 
     private struct Quantifier {

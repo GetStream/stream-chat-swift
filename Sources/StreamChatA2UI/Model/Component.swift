@@ -12,12 +12,6 @@ import Foundation
 /// renderer rebuilds the tree at render time.
 @available(iOS 15.0, macOS 12.0, *)
 struct Component: Equatable, Sendable {
-    /// Wire keys that belong to the component envelope rather than the catalog schema, in the
-    /// spec's `@` form and in the earlier unprefixed one.
-    static let envelopeKeys: Set<String> = [
-        "id", "component", "catalogId", "accessibility", "metadata", "@catalogId", "@accessibility", "@metadata"
-    ]
-
     /// The unique id of this component within its surface.
     let id: String
 
@@ -33,6 +27,9 @@ struct Component: Equatable, Sendable {
     /// Vendor extension metadata attached to this instance.
     let metadata: JsonMap?
 
+    // The key the metadata came in, `@metadata` or `metadata`, which errors in it point at.
+    let metadataKey: String
+
     /// The type-specific properties of the component.
     let properties: JsonMap
 
@@ -44,6 +41,7 @@ struct Component: Equatable, Sendable {
         catalogId: String? = nil,
         accessibility: AccessibilityAttributes? = nil,
         metadata: JsonMap? = nil,
+        metadataKey: String = "metadata",
         properties: JsonMap = [:]
     ) {
         self.id = id
@@ -51,6 +49,7 @@ struct Component: Equatable, Sendable {
         self.catalogId = catalogId
         self.accessibility = accessibility
         self.metadata = metadata
+        self.metadataKey = metadataKey
         self.properties = properties
     }
 
@@ -62,21 +61,25 @@ struct Component: Equatable, Sendable {
             return nil
         }
         var properties = json
-        for key in envelopeKeys {
-            properties.removeValue(forKey: key)
+        properties.removeValue(forKey: "id")
+        properties.removeValue(forKey: "component")
+        // An envelope field the spec writes with an `@` is also read without it, as earlier
+        // versions and the conformance suite's messages write it, unless the `@` form is there
+        // too: then the unprefixed key is a catalog property like any other.
+        func envelope(_ field: String) -> (key: String, value: (any Sendable)?) {
+            let key = json["@" + field] == nil ? field : "@" + field
+            return (key, Json.normalized(properties.removeValue(forKey: key)))
         }
-        if let checks = properties.removeValue(forKey: "@checks") {
-            properties["checks"] = checks
-        }
-        func envelope(_ key: String) -> (any Sendable)? {
-            Json.normalized(json["@" + key]) ?? Json.normalized(json[key])
-        }
+        let catalogId = envelope("catalogId")
+        let accessibility = envelope("accessibility")
+        let metadata = envelope("metadata")
         return Component(
             id: id,
             type: type,
-            catalogId: envelope("catalogId") as? String,
-            accessibility: AccessibilityAttributes(envelope("accessibility")),
-            metadata: Json.map(envelope("metadata")),
+            catalogId: catalogId.value as? String,
+            accessibility: AccessibilityAttributes(accessibility.value),
+            metadata: Json.map(metadata.value),
+            metadataKey: metadata.key,
             properties: properties
         )
     }
@@ -98,9 +101,10 @@ struct Component: Equatable, Sendable {
         DynamicValue(properties[key])
     }
 
-    /// The validation rules declared by this component.
+    /// The validation rules declared by this component, in `@checks`, or in `checks` as this
+    /// renderer's catalog schemas name them.
     var checks: [CheckRule] {
-        CheckRule.list(properties["checks"])
+        CheckRule.list(properties["@checks"] ?? properties["checks"])
     }
 
     /// The serialized wire representation of the component.
@@ -108,9 +112,13 @@ struct Component: Equatable, Sendable {
         var json = properties
         json["id"] = id
         json["component"] = type
-        if let catalogId { json["catalogId"] = catalogId }
-        if let accessibility, !accessibility.rawValue.isEmpty { json["accessibility"] = accessibility.rawValue }
-        if let metadata { json["metadata"] = metadata }
+        // A field takes its `@` form only where a catalog property has the unprefixed key.
+        func key(_ field: String) -> String {
+            properties[field] == nil ? field : "@" + field
+        }
+        if let catalogId { json[key("catalogId")] = catalogId }
+        if let accessibility, !accessibility.rawValue.isEmpty { json[key("accessibility")] = accessibility.rawValue }
+        if let metadata { json[key("metadata")] = metadata }
         return json
     }
 

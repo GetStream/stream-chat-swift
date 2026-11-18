@@ -185,7 +185,8 @@ public struct ComponentRenderContext {
     /// Resolves a child list into renderable children.
     ///
     /// Template child lists are expanded against the bound collection, giving
-    /// each item its own scope and `@index` value.
+    /// each item its own scope and `@index` value. A template whose component
+    /// can't render, such as one that hasn't arrived yet, has no children.
     public func resolvedChildren(_ key: String = "children") -> [ResolvedChild] {
         switch childList(key) {
         case let .ids(ids):
@@ -198,6 +199,10 @@ public struct ComponentRenderContext {
                 )
             }
         case let .template(componentId, path):
+            // Each item would render nothing, so none is built, however long the collection is.
+            guard renderer.placement(of: componentId, parent: definition, ancestors: ancestors, reports: true) != nil else {
+                return []
+            }
             let items = Json.array(dataContext.value(at: path)) ?? []
             let weight = renderer.component(componentId)?.weight
             return items.indices.map { index in

@@ -19,8 +19,10 @@ enum A2UIStream {
     }
 }
 
-// Finds the complete messages of a reply as it grows, scanning only the text added since the
-// last scan, so a reply streamed in many chunks is read once rather than once per chunk.
+// Finds the complete messages of a reply as it grows, parsing only the text added since the
+// last scan, so a reply streamed in many chunks is parsed once rather than once per chunk. Telling
+// whether the text carries on from the last still compares all of the earlier text, as the reply
+// can be rewritten anywhere, but with `memcmp`, far faster than parsing it.
 @available(iOS 15.0, macOS 12.0, *)
 struct A2UIStreamScanner {
     private(set) var messages: [String] = []

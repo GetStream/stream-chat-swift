@@ -59,11 +59,13 @@ final class ExpressionEvaluator {
     // turn, so a template that formats itself many times on each level can't run for minutes.
     static let maxInterpolations = 256
 
+    static let maxCachedTemplates = 64
+
     private var failureCount = 0
     private var userActivationDepth = 0
     private var interpolationDepth = 0
     private var interpolationCount = 0
-    private var parsedTemplates: [String: [A2UITemplateSegment]] = [:]
+    private(set) var parsedTemplates: [String: [A2UITemplateSegment]] = [:]
 
     /// Creates an evaluator for one surface.
     /// Pass the surface's default catalog id so unqualified calls resolve.
@@ -340,11 +342,16 @@ final class ExpressionEvaluator {
         return output
     }
 
+    // A template can come from the data model and change with it, so the cache keeps at most
+    // `maxCachedTemplates` of them. The parser takes none longer than its own limit.
     private func parsedTemplate(_ template: String) throws -> [A2UITemplateSegment] {
         if let parsed = parsedTemplates[template] {
             return parsed
         }
         let parsed = try A2UIExpressionParser.parseTemplate(template)
+        if parsedTemplates.count >= Self.maxCachedTemplates {
+            parsedTemplates.removeAll()
+        }
         parsedTemplates[template] = parsed
         return parsed
     }

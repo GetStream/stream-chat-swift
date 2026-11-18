@@ -113,11 +113,14 @@ struct ExpressionEvaluatorTests {
     @Test("A call to an agent function names the catalog it resolved to")
     func agentCallNamesItsCatalog() {
         let router = StubRemoteRouter()
-        let (evaluator, model) = makeEvaluator(router: router)
+        let other = Catalog(catalogId: "other:catalog", instructions: "Another catalog.")
+        let (evaluator, model) = makeEvaluator(catalogs: [TestCatalog.make(recorder: RenderRecorder()), other], router: router)
+        let context = DataContext(model, "/")
 
-        _ = evaluator.invoke(FunctionCall(name: "deliveryEstimate"), in: DataContext(model, "/"))
+        _ = evaluator.invoke(FunctionCall(name: "deliveryEstimate"), in: context)
+        _ = evaluator.invoke(FunctionCall(name: "deliveryEstimate", catalogId: "other:catalog"), in: context)
 
-        #expect(router.calls.map(\.catalogId) == [TestCatalog.catalogId])
+        #expect(router.calls.map(\.catalogId) == [TestCatalog.catalogId, "other:catalog"])
     }
 
     @Test("test_v10_function_call_naming_unknown_catalog_errors: a call whose catalog doesn't resolve fails")

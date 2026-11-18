@@ -251,6 +251,27 @@ struct ComponentRenderContextTests {
         #expect(action.timestamp == TestServices.referenceDate)
     }
 
+    @Test("Only a modal's trigger Button opens it in place of sending its event")
+    func modalTriggerButton() throws {
+        let result = render(
+            components: [
+                Component(id: "root", type: "Row", properties: ["children": ["open", "save"]]),
+                Component(id: "open", type: "Button", properties: ["action": ["event": ["name": "open"] as JsonMap] as JsonMap]),
+                Component(id: "save", type: "Button", properties: ["action": ["event": ["name": "save"] as JsonMap] as JsonMap])
+            ]
+        )
+        let trigger = try #require(result.recorder.context("open"))
+        let save = try #require(result.recorder.context("save"))
+        let presented = PresentCount()
+        let presenter = A2UIModalPresenter(triggerId: "open") { presented.count += 1 }
+
+        ButtonComponent.activate(trigger, in: presenter)
+        ButtonComponent.activate(save, in: presenter)
+
+        #expect(presented.count == 1)
+        #expect(result.actions.map(\.name) == ["save"])
+    }
+
     @Test("Function actions run locally")
     func functionAction() throws {
         let opened = OpenedUrls()
@@ -432,4 +453,9 @@ struct LayoutMappingTests {
         #expect(A2UILayout.verticalAlignment("end") == .bottom)
         #expect(A2UILayout.verticalAlignment("start") == .top)
     }
+}
+
+@MainActor
+private final class PresentCount {
+    var count = 0
 }

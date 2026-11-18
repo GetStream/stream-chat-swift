@@ -35,7 +35,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     private var remoteCallIds: [String: RemoteCallKey] = [:]
     // The errors reported so far, by surface ("" for those of none), so a surface created again
     // reports its problems again.
-    private var reportedErrors: [String: Set<String>] = [:]
+    private(set) var reportedErrors: [String: Set<String>] = [:]
     private var callIdCounter = 0
 
     /// Creates a processor for the given catalogs.
@@ -202,17 +202,17 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
             metadata: message.metadata
         )
         reportMalformed(message.malformedComponents, surfaceId: message.surfaceId)
-        let components = validated(
+        let accepted = validated(
             message.components,
             indices: message.componentIndices,
             surfaceId: message.surfaceId,
             catalogId: message.catalogId
         )
-        definition.merge(components)
+        definition.merge(accepted.components)
         for error in CompositionValidator.errors(
             in: definition,
-            batch: message.components,
-            indices: message.componentIndices,
+            batch: accepted.components,
+            indices: accepted.indices,
             catalogs: catalogs
         ) {
             report(error)
@@ -247,17 +247,18 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
             return
         }
         reportMalformed(message.malformedComponents, surfaceId: message.surfaceId)
-        viewModel.merge(components: validated(
+        let accepted = validated(
             message.components,
             indices: message.componentIndices,
             surfaceId: message.surfaceId,
             catalogId: current.catalogId
-        ))
+        )
+        viewModel.merge(components: accepted.components)
         guard let definition = viewModel.definition else { return }
         for error in CompositionValidator.errors(
             in: definition,
-            batch: message.components,
-            indices: message.componentIndices,
+            batch: accepted.components,
+            indices: accepted.indices,
             catalogs: catalogs
         ) {
             report(error)
@@ -282,10 +283,17 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     ///
     /// A batch that repeats an id is an integrity error; only the first
     /// component with that id is applied. `indices` are the components' indices
-    /// in their message, which error paths point at.
-    private func validated(_ components: [Component], indices: [Int], surfaceId: String, catalogId: String?) -> [Component] {
+    /// in their message, which error paths point at, and are returned with the
+    /// components applied.
+    private func validated(
+        _ components: [Component],
+        indices: [Int],
+        surfaceId: String,
+        catalogId: String?
+    ) -> (components: [Component], indices: [Int]) {
         var seen: Set<String> = []
         var accepted: [Component] = []
+        var acceptedIndices: [Int] = []
         for (offset, component) in components.enumerated() {
             let index = offset < indices.count ? indices[offset] : offset
             guard seen.insert(component.id).inserted else {
@@ -316,7 +324,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
                         code: RendererError.Code.validationFailed,
                         message: violation.reason,
                         surfaceId: surfaceId,
-                        path: "/components/\(index)/metadata\(violation.pointer)"
+                        path: "/components/\(index)/\(component.metadataKey)\(violation.pointer)"
                     )
                 )
                 continue
@@ -394,8 +402,9 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
                 }
             }
             accepted.append(component)
+            acceptedIndices.append(index)
         }
-        return accepted
+        return (accepted, acceptedIndices)
     }
 
     // A call that can't resolve its catalog, or whose literal arguments break its function's schema.
@@ -569,7 +578,8 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         if let error = response.error {
             a2uiLogger.error("Agent function '\(key.name)' failed: \(error.code) \(error.message)")
             remoteCalls[key] = .failed(error)
-            report(RendererError(code: RendererError.Code.expressionError, message: error.message, functionCallId: response.functionCallId))
+            // The call's id is gone, so it can't fail again and needs no entry among the errors reported.
+            send(.error(RendererError(code: RendererError.Code.expressionError, message: error.message, functionCallId: response.functionCallId)))
         } else {
             remoteCalls[key] = .resolved(Json.normalized(response.value))
         }
@@ -679,11 +689,11 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         a2uiLogger.warning("Agent function '\(key.name)' did not answer within \(agentFunctionTimeout) seconds.")
         let failure = FunctionResponse.Failure(code: RendererError.Code.timeout, message: "The agent did not answer in time.")
         remoteCalls[key] = .failed(failure)
-        report(RendererError(
+        send(.error(RendererError(
             code: RendererError.Code.expressionError,
             message: "Function '\(key.name)' got no answer from the agent in time.",
             functionCallId: callId
-        ))
+        )))
         surfaces[key.surfaceId]?.touch()
     }
 }

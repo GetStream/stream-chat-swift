@@ -19,8 +19,8 @@ struct StreamScannerTests {
             #expect(carriesOn)
         }
 
+        #expect(scanner.messages == [#"{"version":"1.0","createSurface":{"surfaceId":"a"}}"#, #"{"text":"a } \" { b"}"#])
         #expect(scanner.messages == A2UIStream.messages(in: text))
-        #expect(scanner.messages.count == 2)
         #expect(scanner.hasOpenMessage)
     }
 
