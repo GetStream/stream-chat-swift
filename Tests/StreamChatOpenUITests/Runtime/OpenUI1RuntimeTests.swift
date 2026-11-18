@@ -253,6 +253,22 @@ struct OpenUI1RuntimeTests {
         #expect(texts.contains(#""text":"c""#))
     }
 
+    @Test func anEachItemThatHoldsAComponentDrawsIt() throws {
+        let runtime = makeRuntime("""
+        root = Stack([list, tiles])
+        list = Stack(@Each(items, "i", Card([i.icon, TextContent(i.label)])))
+        tiles = Stack(@Each([TextContent("a")], "c", Card([c])))
+        items = [{icon: TextContent("star"), label: "A"}]
+        """, library: .openUI)
+
+        let card = try #require(element(runtime, "list")?.props["children"]?.arrayValue?.first?.elementValue)
+        let children = card.props["children"]?.arrayValue ?? []
+        #expect(children.map { $0.elementValue?.typeName } == ["TextContent", "TextContent"])
+        #expect(children.map { $0.elementValue?.props["text"] } == ["star", "A"])
+        let tile = try #require(element(runtime, "tiles")?.props["children"]?.arrayValue?.first?.elementValue)
+        #expect(tile.props["children"]?.arrayValue?.first?.elementValue?.typeName == "TextContent")
+    }
+
     @Test func stringEqualityComparesCodeUnitsLikeJavaScript() {
         #expect(!JS.looseEquals("é", "e\u{301}"))
         #expect(JS.looseEquals("é", "é"))

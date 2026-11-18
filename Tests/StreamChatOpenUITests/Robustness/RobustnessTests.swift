@@ -251,6 +251,53 @@ struct RobustnessTests {
         #expect(runtime.errors.filter { $0.message.contains("Evaluation stopped") }.count == 1)
     }
 
+    @Test func eachTemplatesThatDontReadTheItemAreNotRebuiltForEachItem() {
+        let runtime = OpenUIRuntime(library: .openUI)
+        let started = ProcessInfo.processInfo.systemUptime
+
+        runtime.update(response: Self.doublingArrays(
+            root: #"root = Stack([TextContent("" + @Count(@Each(xs, "x", $off ? b14 : 1)))])"#,
+            items: 4000,
+            levels: 14
+        ), isStreaming: false)
+
+        #expect(ProcessInfo.processInfo.systemUptime - started < 2)
+        #expect(runtime.root?.props["children"]?.arrayValue?.first?.elementValue?.props["text"] == "4000")
+    }
+
+    @Test func comparingEachItemWithALargeValueStopsAtTheEvaluationBudget() {
+        let runtime = OpenUIRuntime(library: .openUI)
+        let started = ProcessInfo.processInfo.systemUptime
+
+        runtime.update(response: Self.doublingArrays(
+            root: #"root = Stack([TextContent("" + @Count(@Filter(xs, "", "==", b13)))])"#,
+            items: 4000,
+            levels: 13
+        ), isStreaming: false)
+
+        #expect(ProcessInfo.processInfo.systemUptime - started < 2)
+        #expect(runtime.errors.contains { $0.message.contains("Evaluation stopped after") })
+    }
+
+    @Test func componentsNestedTooDeepStopEvaluatingInsteadOfOverflowingTheStack() {
+        let program = "root = " + String(repeating: "Stack([", count: 100) + "TextContent($x)" + String(repeating: "])", count: 100) + "\n$x = \"deep\""
+        let runtime = OpenUIRuntime(library: .openUI)
+
+        runtime.update(response: program, isStreaming: false)
+
+        #expect(runtime.root?.typeName == "Stack")
+        #expect(runtime.errors.filter { $0.message.contains("levels of nesting") }.count == 1)
+    }
+
+    // `xs` holds `items` zeros, and `b<levels>` an array that doubles with each level.
+    private static func doublingArrays(root: String, items: Int, levels: Int) -> String {
+        var lines = [root, "xs = [" + Array(repeating: "0", count: items).joined(separator: ",") + "]", "b0 = [1, 1]"]
+        for level in 1...levels {
+            lines.append("b\(level) = [b\(level - 1), b\(level - 1)]")
+        }
+        return lines.joined(separator: "\n")
+    }
+
     @Test func eachLoopsWithinTheBudgetAreKept() {
         let items = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
         let runtime = OpenUIRuntime(library: .openUI)
