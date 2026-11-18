@@ -15,6 +15,9 @@ public struct StreamingMessageView: View {
     @State private var displayedText: String = ""
     @State private var characterQueue: [Character] = []
     @State private var typingTimer: Timer?
+    // Whether the reply is finished, which the typing timer reads: it was made with an earlier
+    // copy of the view, whose `isGenerating` it keeps.
+    @State private var isFinished = false
 
     @Environment(\.aiThinkingTurn) private var turn
     @Injected(\.aiAppearance.colors) private var colors
@@ -43,6 +46,7 @@ public struct StreamingMessageView: View {
             }
             .markdownCodeSyntaxHighlighter(.splash(theme: self.theme))
             .onAppear {
+                isFinished = !isGenerating
                 if !isGenerating {
                     self.characterQueue = []
                     self.displayedText = content
@@ -75,6 +79,7 @@ public struct StreamingMessageView: View {
                     }
                 },
                 onIsGeneratingChange: { oldValue, newValue in
+                    isFinished = !newValue
                     if newValue {
                         queueRest(of: content)
                         if typingTimer == nil {
@@ -131,7 +136,13 @@ public struct StreamingMessageView: View {
         let timer = Timer.scheduledTimer(withTimeInterval: Self.tickInterval(letterInterval: letterInterval), repeats: true) { _ in
             // Scheduled on the main run loop.
             MainActor.assumeIsolated {
-                guard !self.characterQueue.isEmpty else { return }
+                guard !self.characterQueue.isEmpty else {
+                    // Typed out after the reply finished, in case that went by between updates.
+                    if self.isFinished {
+                        self.stopTypingTimer()
+                    }
+                    return
+                }
                 let next = self.characterQueue.prefix(count)
                 self.displayedText.append(contentsOf: next)
                 self.characterQueue.removeFirst(next.count)
@@ -150,14 +161,15 @@ public struct StreamingMessageView: View {
     }
 
     // The text is shown at most once a frame, a few letters at a time, at the pace of
-    // `letterInterval`.
+    // `letterInterval`: a tick lasts as long as the letters it shows.
     static func tickInterval(letterInterval: TimeInterval) -> TimeInterval {
-        letterInterval.isFinite && letterInterval > 1.0 / 60 ? letterInterval : 1.0 / 60
+        guard letterInterval.isFinite, letterInterval > 0 else { return 1.0 / 60 }
+        return max(letterInterval * Double(charactersPerTick(letterInterval: letterInterval)), 1.0 / 60)
     }
 
     static func charactersPerTick(letterInterval: TimeInterval) -> Int {
         guard letterInterval > 0, letterInterval.isFinite else { return letterInterval > 0 ? 1 : .max }
-        let count = (tickInterval(letterInterval: letterInterval) / letterInterval).rounded(.up)
+        let count = (1.0 / 60 / letterInterval).rounded(.up)
         return Int(min(count, 10000))
     }
 

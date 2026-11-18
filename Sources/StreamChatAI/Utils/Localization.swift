@@ -48,6 +48,12 @@ enum L10n {
         }
     }
 
+    enum Sidebar {
+        static var close: String {
+            localized("sidebar.button.close", comment: "Accessibility label of the dimmed content next to the open sidebar, which closes it.")
+        }
+    }
+
     enum Attachment {
         static var image: String {
             localized("attachment.image", comment: "The name of an image attachment without one of its own.")

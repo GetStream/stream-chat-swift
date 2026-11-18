@@ -72,11 +72,21 @@ final class AIPendingMessageTracker {
         if let awaited = pending ?? lastPending {
             // First seen, the copy may already be here: only the messages that were there in
             // the last update are known. A message being edited is left out while it waits.
-            let known = seen[awaited.id] ?? lastSent.map { $0.intersection(ids) } ?? ids
-            let matched = copies.first { $0.value.id == awaited.id && ids.contains($0.key) }?.key
+            let known = seen[awaited.id] ?? firstKnown(for: awaited, ids: ids)
+            let earlier = copies.first { $0.value.id == awaited.id && ids.contains($0.key) }?.key
+            // The message with its id is its copy, even after another message took its row.
+            let exact = AnyHashable(awaited.id)
+            let matched = ids.contains(exact) ? exact : earlier
             if let copy = matched ?? copy(of: awaited, in: sent, known: known) {
-                // A message edited again is the copy of its latest edit.
-                copies[copy] = awaited
+                if let earlier, earlier != copy {
+                    copies[earlier] = nil
+                }
+                // A message edited again is the copy of its latest edit once it says what that
+                // edit does: an edit that failed brings it back as the edit before left it.
+                let says = sent.contains { AnyHashable($0.id) == copy && $0.text == awaited.text }
+                if copies[copy] == nil || says {
+                    copies[copy] = awaited
+                }
                 showsPending = false
             } else {
                 seen[awaited.id] = known.union(ids)
@@ -99,6 +109,17 @@ final class AIPendingMessageTracker {
             entries[last].isLatestReply = true
         }
         return entries
+    }
+
+    // The person's messages a pending message's copy cannot be, the first time it is passed: those
+    // of the last update, and the message on its way before it, such as one stopped before it
+    // arrived, which can still arrive under its id.
+    private func firstKnown(for pending: AIPendingMessage, ids: Set<AnyHashable>) -> Set<AnyHashable> {
+        var known = lastSent.map { $0.intersection(ids) } ?? ids
+        if let lastPending, lastPending.id != pending.id {
+            known.insert(AnyHashable(lastPending.id))
+        }
+        return known
     }
 
     // The copy of a message that was on its way: the person's message with its id, when the app

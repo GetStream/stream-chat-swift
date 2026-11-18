@@ -95,7 +95,7 @@ public struct AIComposerInputView<TrailingView: View>: View {
             }
         }
         .onChange(of: viewModel.text) { newText in
-            if newText.isEmpty && speechHandler.isRecording {
+            if newText.isEmpty {
                 speechHandler.stop()
             }
         }
@@ -145,10 +145,9 @@ public struct AIComposerInputView<TrailingView: View>: View {
 
     private func send() {
         guard canSend else { return }
-        // Stopped first, so what it still hears doesn't come back into the empty composer.
-        if speechHandler.isRecording {
-            speechHandler.stop()
-        }
+        // Stopped first, also while it is starting, so what it hears doesn't come back into the
+        // empty composer.
+        speechHandler.stop()
         onMessageSend(.init(text: text, attachments: viewModel.attachments, chatOption: viewModel.selectedChatOption))
         viewModel.clearAfterSending()
     }

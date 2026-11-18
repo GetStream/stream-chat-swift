@@ -7,6 +7,7 @@
 "streaming.code_block.language_fallback" = "plain text";
 "conversation.button.scroll_to_latest" = "Scroll to latest";
 "conversation.error.agent" = "The agent couldn't answer. Try again.";
+"sidebar.button.close" = "Close menu";
 "attachment.image" = "Image";
 "attachment.file" = "File";
 "attachment.details" = "%1$@ · %2$@";

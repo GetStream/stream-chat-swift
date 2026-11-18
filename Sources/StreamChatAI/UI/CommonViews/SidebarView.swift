@@ -80,6 +80,11 @@ public struct SidebarView<Menu: View, Content: View>: View {
                         .simultaneousGesture(contentGesture, including: .gesture)
                         // VoiceOver reads only the side that shows.
                         .accessibilityHidden(!isOpen)
+                        // The content is hidden from VoiceOver while it is open, so its escape
+                        // gesture closes it.
+                        .accessibilityAction(.escape) {
+                            closeSplitView(animated: true)
+                        }
 
                     content()
                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -97,6 +102,12 @@ public struct SidebarView<Menu: View, Content: View>: View {
                             closeSplitView(animated: true)
                         }
                         .gesture(overlayGesture)
+                        .accessibilityElement()
+                        .accessibilityLabel(L10n.Sidebar.close)
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityAction {
+                            closeSplitView(animated: true)
+                        }
                 }
             }
             .animation(sidebarAnimation, value: isOpen)

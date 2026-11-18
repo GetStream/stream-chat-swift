@@ -185,6 +185,46 @@ final class AIConversationExchange_Tests: XCTestCase {
         }
     }
 
+    func test_theMessageOfTheRequestBefore_isNotItsOwn() {
+        let exchange = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .message, text: "Porto?", messageID: "m2"),
+            conversation: conversation,
+            earlierMessageID: "m1"
+        )
+
+        XCTAssertFalse(exchange.hasMessageArrived(in: conversation + [.user("m1")]), "the message stopped before it arrived")
+        XCTAssertTrue(exchange.hasMessageArrived(in: conversation + [.user("m1"), .user("u3")]))
+        XCTAssertTrue(exchange.hasMessageArrived(in: conversation + [.user("m2"), .user("m1")]))
+        XCTAssertNil(exchange.reply(in: conversation + [.user("m1"), .reply("a3", "Hello")]))
+    }
+
+    func test_aRetry_keepsMatchingItsOwnMessage() {
+        let exchange = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .message, text: "Porto?", messageID: "m1"),
+            conversation: conversation,
+            earlierMessageID: "m1"
+        )
+
+        XCTAssertFalse(exchange.known.contains("m1"))
+        XCTAssertTrue(exchange.hasMessageArrived(in: conversation + [.user("u3")]))
+    }
+
+    func test_aReplyToTheLatestMessage_isOvertakenByANewerOne() {
+        let waiting: [ChatMessage] = [.user("u1"), .reply("a1"), .user("u2")]
+        let exchange = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .regenerate, text: "Porto?"),
+            conversation: waiting
+        )
+
+        XCTAssertFalse(exchange.isOvertaken(in: waiting + [.reply("a2", generating: true)]))
+        XCTAssertFalse(exchange.isOvertaken(in: [.user("u0"), .reply("a0")] + waiting), "older messages loaded above")
+        XCTAssertTrue(exchange.isOvertaken(in: waiting + [.user("u3")]))
+        XCTAssertFalse(message().isOvertaken(in: conversation + [.user("u3")]), "a new message's own")
+    }
+
     func test_anOldReplyStillBeingWritten_isNotTheNewOne() {
         let writing: [ChatMessage] = [.user("u1"), .reply("a1", "Day one", generating: true)]
         let exchange = AIConversationExchange(

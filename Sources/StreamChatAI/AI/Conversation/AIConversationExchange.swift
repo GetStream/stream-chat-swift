@@ -20,7 +20,8 @@ struct AIConversationExchange<Message: AIMessage> {
     // Tells it apart from the requests before and after it.
     let id: Int
     let request: AIConversationRequest<Message>
-    // The messages there were when it was made, none of which is its reply.
+    // The messages there were when it was made, none of which is its reply, and the id of the
+    // message of the request before it, such as one stopped before it arrived, which isn't its own.
     let known: Set<AnyHashable>
     // The messages it replaces, as they were, which the conversation leaves out while it waits:
     // the reply written again, or the message edited, and those after it.
@@ -29,10 +30,14 @@ struct AIConversationExchange<Message: AIMessage> {
     let pending: AIPendingMessage?
     var state = State.waiting
 
-    init(id: Int, request: AIConversationRequest<Message>, conversation: [Message]) {
+    init(id: Int, request: AIConversationRequest<Message>, conversation: [Message], earlierMessageID: String? = nil) {
         self.id = id
         self.request = request
-        known = Set(conversation.map { AnyHashable($0.id) })
+        var known = Set(conversation.map { AnyHashable($0.id) })
+        if let earlierMessageID, earlierMessageID != request.messageID {
+            known.insert(AnyHashable(earlierMessageID))
+        }
+        self.known = known
         let target = request.message.flatMap { message in
             conversation.firstIndex { AnyHashable($0.id) == AnyHashable(message.id) }
         }
@@ -74,6 +79,14 @@ struct AIConversationExchange<Message: AIMessage> {
         guard !known.contains(id) || isRewritten else { return nil }
         guard request.kind != .message || hasMessageArrived(in: conversation.dropLast()) else { return nil }
         return last
+    }
+
+    // Whether a request for the reply to the person's latest message, which has none, is
+    // overtaken by a newer message of theirs, which the replies after it answer.
+    func isOvertaken(in conversation: [Message]) -> Bool {
+        guard request.kind == .regenerate, request.message == nil,
+              let latest = conversation.last(where: { $0.role == .user }) else { return false }
+        return !known.contains(AnyHashable(latest.id))
     }
 
     // Whether its reply has started: it shows something, or it is already finished.

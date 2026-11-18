@@ -22,6 +22,7 @@ public final class SpeechHandler: NSObject, ObservableObject {
     var silenceTimeout: TimeInterval = 3.0
 
     // Internals
+    private let system: any SpeechSystem
     private var speechRecognizer: SFSpeechRecognizer?
     private var audioEngine = AVAudioEngine()
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
@@ -30,22 +31,26 @@ public final class SpeechHandler: NSObject, ObservableObject {
     private let lastSpeech = AllocatedUnfairLock(Date.distantPast)
     private var monitorTask: Task<Void, Never>?
     private var interruptionObserver: NSObjectProtocol?
-    // Incremented each session so callbacks from the previous session are ignored.
+    // Incremented by each start and stop, so what an earlier start still hears back, and what
+    // the recognizer reports for an earlier session, is ignored.
     private var sessionGeneration = 0
+    // From `start()` until it records or fails: the permission prompts, then the audio session's
+    // activation.
     private var isStarting = false
     private var isSessionActive = false
-    // Activating and deactivating the audio session can block for a while, so both run here,
-    // in order, off the main thread.
-    private nonisolated static let audioSessionQueue = DispatchQueue(label: "io.getstream.ai.speech-audio-session")
 
     override public init() {
-        // Public init.
+        system = LiveSpeechSystem()
+    }
+
+    init(system: any SpeechSystem) {
+        self.system = system
     }
 
     // MARK: - Authorization
 
     public func requestAuthorization() {
-        SFSpeechRecognizer.requestAuthorization { @Sendable [weak self] status in
+        system.requestSpeechAuthorization { @Sendable [weak self] status in
             Task { @MainActor in
                 self?.authorizationStatus = status
             }
@@ -54,57 +59,112 @@ public final class SpeechHandler: NSObject, ObservableObject {
 
     // MARK: - Recording Control
 
+    /// Starts dictating, once the person allows speech recognition and the microphone.
     public func start() {
         guard !isRecording, !isStarting else { return }
         lastError = nil
+        isStarting = true
+        sessionGeneration += 1
+        authorizeSpeech(for: sessionGeneration)
+    }
 
-        let currentStatus = SFSpeechRecognizer.authorizationStatus()
-        if currentStatus == .notDetermined {
-            SFSpeechRecognizer.requestAuthorization { @Sendable [weak self] status in
-                Task { @MainActor in
-                    self?.authorizationStatus = status
-                    if status == .authorized { self?.start() }
-                }
-            }
+    /// Stops dictating, or a start that still waits for the person's permissions or for the
+    /// audio session. It does nothing when there is neither.
+    public func stop() {
+        isStarting = false
+        // What a start still waits for, and what the recognizer still reports, belong to the
+        // session that ended.
+        sessionGeneration += 1
+        monitorTask?.cancel()
+        monitorTask = nil
+
+        if let observer = interruptionObserver {
+            NotificationCenter.default.removeObserver(observer)
+            interruptionObserver = nil
+        }
+
+        // Only a session that started recognizing has an engine to stop, so a stop without one
+        // doesn't set up the microphone's input.
+        if let request = recognitionRequest {
+            audioEngine.stop()
+            audioEngine.inputNode.removeTap(onBus: 0)
+            request.endAudio()
+            recognitionTask?.cancel()
+
+            recognitionTask = nil
+            recognitionRequest = nil
+
+            // Fresh engine so the next session never inherits stale AVAudioEngine state.
+            audioEngine = AVAudioEngine()
+        }
+
+        // Lets other apps' audio, which the session ducked, play at full volume again. While the
+        // session is still activating, this runs after it.
+        if isSessionActive {
+            isSessionActive = false
+            system.deactivateAudioSession()
+        }
+
+        if isRecording {
+            isRecording = false
+        }
+    }
+
+    // MARK: - Starting
+
+    // Whether the start made at `generation` goes on: no stop or newer start since.
+    private func isPendingStart(_ generation: Int) -> Bool {
+        isStarting && generation == sessionGeneration
+    }
+
+    private func authorizeSpeech(for generation: Int) {
+        let status = system.speechAuthorization
+        guard status == .notDetermined else {
+            speechAuthorized(status, for: generation)
             return
         }
-        authorizationStatus = currentStatus
-        guard currentStatus == .authorized else {
-            lastError = SpeechHandlerError.speechRecognitionDenied
+        system.requestSpeechAuthorization { @Sendable [weak self] status in
+            Task { @MainActor in
+                self?.speechAuthorized(status, for: generation)
+            }
+        }
+    }
+
+    private func speechAuthorized(_ status: SFSpeechRecognizerAuthorizationStatus, for generation: Int) {
+        authorizationStatus = status
+        guard isPendingStart(generation) else { return }
+        guard status == .authorized else {
+            failStarting(SpeechHandlerError.speechRecognitionDenied)
             return
         }
         // Asked before recording, so the silence while the person answers doesn't end it.
-        switch Self.microphonePermission {
+        switch system.microphonePermission {
         case .undetermined:
-            Self.requestMicrophonePermission { @Sendable [weak self] granted in
+            system.requestMicrophonePermission { @Sendable [weak self] granted in
                 Task { @MainActor in
-                    if granted {
-                        self?.start()
-                    } else {
-                        self?.lastError = SpeechHandlerError.microphoneDenied
-                    }
+                    self?.microphoneAuthorized(granted, for: generation)
                 }
             }
-            return
         case .denied:
-            lastError = SpeechHandlerError.microphoneDenied
-            return
+            microphoneAuthorized(false, for: generation)
         case .granted:
-            break
+            microphoneAuthorized(true, for: generation)
         }
+    }
 
-        speechRecognizer = SFSpeechRecognizer(locale: locale) ?? SFSpeechRecognizer()
-        guard let recognizer = speechRecognizer, recognizer.isAvailable else {
-            lastError = SpeechHandlerError.recognizerUnavailable
+    private func microphoneAuthorized(_ granted: Bool, for generation: Int) {
+        guard isPendingStart(generation) else { return }
+        guard granted else {
+            failStarting(SpeechHandlerError.microphoneDenied)
             return
         }
-
-        isStarting = true
+        guard let recognizer = system.recognizer(for: locale) else {
+            failStarting(SpeechHandlerError.recognizerUnavailable)
+            return
+        }
+        speechRecognizer = recognizer
         isSessionActive = true
-        sessionGeneration += 1
-        let generation = sessionGeneration
-        Self.audioSessionQueue.async { [weak self] in
-            let activation = Result { try Self.activateAudioSession() }
+        system.activateAudioSession { @Sendable [weak self] activation in
             Task { @MainActor in
                 self?.finishStarting(generation: generation, activation: activation)
             }
@@ -112,8 +172,7 @@ public final class SpeechHandler: NSObject, ObservableObject {
     }
 
     private func finishStarting(generation: Int, activation: Result<Void, Error>) {
-        // A stop, or a newer start, since this one began.
-        guard isStarting, generation == sessionGeneration, let recognizer = speechRecognizer else { return }
+        guard isPendingStart(generation), let recognizer = speechRecognizer else { return }
         isStarting = false
         do {
             try activation.get()
@@ -128,77 +187,12 @@ public final class SpeechHandler: NSObject, ObservableObject {
         }
     }
 
-    public func stop() {
+    private func failStarting(_ error: Error) {
         isStarting = false
-        // What the recognizer still reports belongs to the session that ended.
-        sessionGeneration += 1
-        monitorTask?.cancel()
-        monitorTask = nil
-
-        if let observer = interruptionObserver {
-            NotificationCenter.default.removeObserver(observer)
-            interruptionObserver = nil
-        }
-
-        audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
-        recognitionRequest?.endAudio()
-        recognitionTask?.cancel()
-
-        recognitionTask = nil
-        recognitionRequest = nil
-
-        // Fresh engine so the next session never inherits stale AVAudioEngine state.
-        audioEngine = AVAudioEngine()
-
-        // Lets other apps' audio, which the session ducked, play at full volume again.
-        if isSessionActive {
-            isSessionActive = false
-            Self.audioSessionQueue.async {
-                try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            }
-        }
-
-        isRecording = false
+        lastError = error
     }
 
     // MARK: - Private helpers
-
-    private enum MicrophonePermission {
-        case undetermined
-        case denied
-        case granted
-    }
-
-    private static var microphonePermission: MicrophonePermission {
-        if #available(iOS 17.0, *) {
-            switch AVAudioApplication.shared.recordPermission {
-            case .undetermined: return .undetermined
-            case .granted: return .granted
-            default: return .denied
-            }
-        } else {
-            switch AVAudioSession.sharedInstance().recordPermission {
-            case .undetermined: return .undetermined
-            case .granted: return .granted
-            default: return .denied
-            }
-        }
-    }
-
-    private static func requestMicrophonePermission(_ completion: @escaping @Sendable (Bool) -> Void) {
-        if #available(iOS 17.0, *) {
-            AVAudioApplication.requestRecordPermission(completionHandler: completion)
-        } else {
-            AVAudioSession.sharedInstance().requestRecordPermission(completion)
-        }
-    }
-
-    private nonisolated static func activateAudioSession() throws {
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.record, mode: .measurement, options: [.duckOthers])
-        try session.setActive(true, options: .notifyOthersOnDeactivation)
-    }
 
     private func observeInterruptions() {
         interruptionObserver = NotificationCenter.default.addObserver(

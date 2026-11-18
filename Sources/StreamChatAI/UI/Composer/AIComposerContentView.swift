@@ -47,10 +47,9 @@ struct AIComposerContentView<ComposerFactory: AIComposerViewFactory>: View {
             }
         }
         .onDisappear {
-            // Ends the recording session, which ducks other audio while it is active.
-            if speechHandler.isRecording {
-                speechHandler.stop()
-            }
+            // Ends dictation, which ducks other audio while it is active, or cancels it while it
+            // still waits for a permission or the audio session, so it doesn't start off screen.
+            speechHandler.stop()
         }
     }
 }
