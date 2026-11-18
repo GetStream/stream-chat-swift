@@ -139,14 +139,16 @@ if [[ ${INSTALL_SONAR-default} == true ]]; then
     ln -sfn "$sonar_home" fastlane/sonar
   else
     puts "Install sonar scanner v${SONAR_VERSION}"
-    DOWNLOAD_URL="https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_VERSION}-macosx-x64.zip"
+    SONAR_PLATFORM="macosx-x64"
+    if [[ $OS == Linux ]]; then SONAR_PLATFORM="linux-x64"; fi
+    DOWNLOAD_URL="https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_VERSION}-${SONAR_PLATFORM}.zip"
     wget "${DOWNLOAD_URL}" -O ./fastlane/sonar.zip
     cd fastlane
     unzip sonar.zip
     rm sonar.zip
     cd ..
     rm -rf fastlane/sonar
-    mv "fastlane/sonar-scanner-${SONAR_VERSION}-macosx-x64/" fastlane/sonar/
+    mv "fastlane/sonar-scanner-${SONAR_VERSION}-${SONAR_PLATFORM}" fastlane/sonar
     chmod +x ./fastlane/sonar/bin/sonar-scanner
   fi
 fi
