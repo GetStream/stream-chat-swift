@@ -330,7 +330,15 @@ private struct A2UIChoicePickerView: View {
         let isMultiSelect = context.option("variant", default: "mutuallyExclusive") == "multipleSelection"
         let usesChips = context.option("displayStyle", default: "checkbox") == "chips"
         let isFilterable = Json.bool(context.component.property("filterable")) ?? false
-        let selection = context.stringArrayBinding()
+        let stored = context.stringArrayBinding()
+        // A model often seeds a single choice with a string; what the person picks is written as a list.
+        let selection = Binding<[String]>(
+            get: {
+                let value = context.value("value")
+                return (value as? String).map { [$0] } ?? Json.stringArray(value) ?? []
+            },
+            set: { stored.wrappedValue = $0 }
+        )
         let failures = context.failingChecks
         let options = self.options.filter {
             filter.isEmpty || $0.label.localizedCaseInsensitiveContains(filter)
@@ -445,7 +453,11 @@ struct A2UISliderView: View {
             maximum: Json.double(context.component.property("max"))
         )
         let step = Self.step(in: range, steps: Json.int(context.component.property("steps")))
-        let binding = context.doubleBinding(default: range.lowerBound)
+        let stored = context.doubleBinding(default: range.lowerBound)
+        let binding = Binding<Double>(
+            get: { stored.wrappedValue },
+            set: { stored.wrappedValue = Self.rounded($0, in: range, step: step) }
+        )
         let failures = context.failingChecks
 
         return VStack(alignment: .leading, spacing: 4) {
@@ -454,7 +466,8 @@ struct A2UISliderView: View {
                     Text(label).font(theme.label).foregroundColor(theme.secondaryText)
                 }
                 Spacer(minLength: 0)
-                Text(Json.stringify(binding.wrappedValue)).font(theme.label.monospacedDigit())
+                Text(Json.stringify(binding.wrappedValue))
+                    .font(theme.label.monospacedDigit())
             }
             slider(binding: binding, range: range, step: step)
                 .tint(theme.accent)
@@ -495,44 +508,89 @@ struct A2UISliderView: View {
         let step = (range.upperBound - range.lowerBound) / Double(steps)
         return step.isFinite && step > 0 ? step : nil
     }
+
+    // A value on the slider's step, in the range, without the noise of floating-point steps, such
+    // as 0.30000000000000004: to the decimals of the step and the lower bound, or for a slider
+    // without steps, to two decimals or a thousandth of its range. A step or range too small for
+    // those decimals to tell its values apart keeps them as they are.
+    static func rounded(_ value: Double, in range: ClosedRange<Double>, step: Double?) -> Double {
+        guard value.isFinite else { return range.lowerBound }
+        var snapped = min(max(value, range.lowerBound), range.upperBound)
+        let places: Int
+        let unit: Double
+        if let step {
+            snapped = range.lowerBound + ((snapped - range.lowerBound) / step).rounded() * step
+            places = max(decimals(of: step), decimals(of: range.lowerBound))
+            unit = step
+        } else {
+            unit = (range.upperBound - range.lowerBound) / 1000
+            places = max(2, decimals(of: unit))
+        }
+        let scale = pow(10, Double(places))
+        guard unit * scale > 1 - 4 * Double.ulpOfOne else { return min(max(snapped, range.lowerBound), range.upperBound) }
+        let rounded = (snapped * scale).rounded() / scale
+        return rounded.isFinite ? min(max(rounded, range.lowerBound), range.upperBound) : snapped
+    }
+
+    // How many decimals a number needs, up to 6 past its first significant digit and at most 15,
+    // so the values of a slider over a tiny range stay apart. A number read from a decimal is off
+    // by about its last binary digit, so only that much is taken for a whole number.
+    private static func decimals(of number: Double) -> Int {
+        let magnitude = abs(number)
+        let firstDigit = magnitude > 0 && magnitude < 1 ? Int((-log10(magnitude)).rounded(.up)) : 0
+        let limit = min(firstDigit + 6, 15)
+        for places in 0..<limit {
+            let scaled = magnitude * pow(10, Double(places))
+            if abs(scaled - scaled.rounded()) <= 2 * scaled.ulp { return places }
+        }
+        return limit
+    }
 }
 
 /// Renders an A2UI `DateTimeInput` and writes ISO 8601 values back.
 @available(iOS 15.0, macOS 12.0, *)
-private struct A2UIDateTimeInputView: View {
+struct A2UIDateTimeInputView: View {
     let context: ComponentRenderContext
 
     @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         let label = context.string("label", default: "")
-        let enableDate = Json.bool(context.component.property("enableDate")) ?? false
         let enableTime = Json.bool(context.component.property("enableTime")) ?? false
+        // Without either flag the picker shows a date.
+        let showsDate = (Json.bool(context.component.property("enableDate")) ?? false) || !enableTime
+        let timeZone = context.services.timeZone
         let failures = context.failingChecks
         var components: DatePickerComponents = []
-        if enableDate || (!enableDate && !enableTime) { components.insert(.date) }
+        if showsDate { components.insert(.date) }
         if enableTime { components.insert(.hourAndMinute) }
+        let range = Self.range(
+            minimum: context.string("min"),
+            maximum: context.string("max"),
+            timeZone: timeZone,
+            showsDate: showsDate,
+            showsTime: enableTime
+        )
+        // A time without a date is read on the day times are, so it compares with the bounds.
+        let now = context.services.now()
+        let fallback = showsDate ? now : A2UIDateParser.clockTime(of: now, timeZone: timeZone) ?? now
 
         let selection = Binding<Date>(
             get: {
-                A2UIDateParser.date(from: context.string("value"), timeZone: context.services.timeZone)
-                    ?? context.services.now()
+                let date = A2UIDateParser.date(from: context.string("value"), timeZone: timeZone)
+                return (showsDate ? date : date.flatMap { A2UIDateParser.clockTime(of: $0, timeZone: timeZone) }) ?? fallback
             },
             set: { newValue in
                 context.write(
-                    A2UIDateTimeInputView.format(
-                        newValue,
-                        enableDate: enableDate,
-                        enableTime: enableTime,
-                        timeZone: context.services.timeZone
-                    ),
+                    A2UIDateTimeInputView.format(newValue, showsDate: showsDate, showsTime: enableTime, timeZone: timeZone),
                     to: "value"
                 )
             }
         )
 
         return VStack(alignment: .leading, spacing: 4) {
-            picker(label: label, selection: selection, components: components)
+            picker(label: label, selection: selection, components: components, range: range)
+                .environment(\.timeZone, timeZone)
                 .font(theme.body)
                 .tint(theme.accent)
             ValidationMessages(results: failures)
@@ -540,22 +598,25 @@ private struct A2UIDateTimeInputView: View {
         // What the picker shows is what the person submits.
         .onAppear {
             if (context.string("value") ?? "").isEmpty {
-                selection.wrappedValue = shown(selection.wrappedValue)
+                selection.wrappedValue = Self.shown(selection.wrappedValue, in: range)
             }
         }
     }
 
     // A date within the picker's bounds, as the picker shows it.
-    private func shown(_ date: Date) -> Date {
-        let range = self.range
+    static func shown(_ date: Date, in range: (lower: Date?, upper: Date?)) -> Date {
         if let lower = range.lower, date < lower { return lower }
         if let upper = range.upper, date > upper { return upper }
         return date
     }
 
     @ViewBuilder
-    private func picker(label: String, selection: Binding<Date>, components: DatePickerComponents) -> some View {
-        let range = self.range
+    private func picker(
+        label: String,
+        selection: Binding<Date>,
+        components: DatePickerComponents,
+        range: (lower: Date?, upper: Date?)
+    ) -> some View {
         if let lower = range.lower, let upper = range.upper, lower <= upper {
             DatePicker(label, selection: selection, in: lower...upper, displayedComponents: components)
         } else if let lower = range.lower {
@@ -567,29 +628,42 @@ private struct A2UIDateTimeInputView: View {
         }
     }
 
-    private var range: (lower: Date?, upper: Date?) {
-        (
-            A2UIDateParser.date(from: context.string("min"), timeZone: context.services.timeZone),
-            A2UIDateParser.date(from: context.string("max"), timeZone: context.services.timeZone)
-        )
+    // The picker's bounds. An input without a time writes a day, read back as its midnight, so its
+    // bounds are the days `min` and `max` fall on, or a day it writes could read as out of bounds.
+    // An input without a date writes a time, read back on one day, so its bounds are the times
+    // `min` and `max` show, on that day.
+    @MainActor
+    static func range(
+        minimum: String?,
+        maximum: String?,
+        timeZone: TimeZone,
+        showsDate: Bool,
+        showsTime: Bool
+    ) -> (lower: Date?, upper: Date?) {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        func bound(_ string: String?) -> Date? {
+            guard let date = A2UIDateParser.date(from: string, timeZone: timeZone) else { return nil }
+            if !showsTime {
+                return calendar.startOfDay(for: date)
+            }
+            return showsDate ? date : A2UIDateParser.clockTime(of: date, timeZone: timeZone)
+        }
+        return (bound(minimum), bound(maximum))
     }
 
-    /// Formats a date using the narrowest ISO 8601 form the input allows.
-    static func format(_ date: Date, enableDate: Bool, enableTime: Bool, timeZone: TimeZone) -> String {
-        if enableDate && !enableTime {
+    /// Formats a date using the narrowest ISO 8601 form the input shows.
+    static func format(_ date: Date, showsDate: Bool, showsTime: Bool, timeZone: TimeZone) -> String {
+        if !showsTime {
             return formatted(date, pattern: "yyyy-MM-dd", timeZone: timeZone)
         }
-        if enableTime && !enableDate {
+        if !showsDate {
             return formatted(date, pattern: "HH:mm:ss", timeZone: timeZone)
         }
         return A2UITimestamp.string(from: date)
     }
 
-    private static func formatted(_ date: Date, pattern: String, timeZone: TimeZone) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = timeZone
-        formatter.dateFormat = pattern
-        return formatter.string(from: date)
+    static func formatted(_ date: Date, pattern: String, timeZone: TimeZone) -> String {
+        A2UIFormatters.dateFormatter(pattern: pattern, locale: A2UIFormatters.posix, timeZone: timeZone).string(from: date)
     }
 }

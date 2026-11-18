@@ -14,12 +14,13 @@ import Testing
 @Suite("Untrusted messages")
 struct RobustnessTests {
     @Test("A formatString template from the data model that formats itself stops")
-    func selfFormattingTemplate() throws {
+    func selfFormattingTemplate() {
         let template = "${formatString(value:${/t})}"
         let router = StubRemoteRouter()
         let (evaluator, model) = makeEvaluator(data: ["t": template], router: router)
+        let call = FunctionCall(name: "formatString", arguments: ["value": template])
 
-        #expect(try evaluator.interpolate(template, in: DataContext(model, "/")) == "")
+        #expect(evaluator.invoke(call, in: DataContext(model, "/")) == nil)
         #expect(router.errors.map(\.code) == [RendererError.Code.expressionError])
     }
 
@@ -44,7 +45,7 @@ struct RobustnessTests {
         } + [Component(id: "c30", type: "Text", properties: ["text": "leaf"])]
         let renderer = makeRenderer(levels)
 
-        #expect(renderer.renderer.expandedSize(limit: SurfaceRenderer.maxExpandedComponents) > SurfaceRenderer.maxExpandedComponents)
+        #expect(renderer.renderer.expandedSize(limit: SurfaceRenderer.maxExpandedComponents, dataContext: DataContext(renderer.model, "/")) > SurfaceRenderer.maxExpandedComponents)
         _ = renderer.renderer.rootView(dataContext: DataContext(renderer.model, "/"))
         #expect(renderer.errors.map(\.code) == [RendererError.Code.recursionLimitExceeded])
     }
@@ -58,7 +59,7 @@ struct RobustnessTests {
             Component(id: "c", type: "Text", properties: ["text": "c"])
         ])
 
-        #expect(renderer.renderer.expandedSize(limit: 100) == 4)
+        #expect(renderer.renderer.expandedSize(limit: 100, dataContext: DataContext(renderer.model, "/")) == 4)
     }
 
     @Test("A slider's bounds and step are always ones SwiftUI takes")

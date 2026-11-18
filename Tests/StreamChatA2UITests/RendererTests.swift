@@ -251,6 +251,27 @@ struct ComponentRenderContextTests {
         #expect(action.timestamp == TestServices.referenceDate)
     }
 
+    @Test("Only a modal's trigger Button opens it in place of sending its event")
+    func modalTriggerButton() throws {
+        let result = render(
+            components: [
+                Component(id: "root", type: "Row", properties: ["children": ["open", "save"]]),
+                Component(id: "open", type: "Button", properties: ["action": ["event": ["name": "open"] as JsonMap] as JsonMap]),
+                Component(id: "save", type: "Button", properties: ["action": ["event": ["name": "save"] as JsonMap] as JsonMap])
+            ]
+        )
+        let trigger = try #require(result.recorder.context("open"))
+        let save = try #require(result.recorder.context("save"))
+        let presented = PresentCount()
+        let presenter = A2UIModalPresenter(triggerId: "open") { presented.count += 1 }
+
+        ButtonComponent.activate(trigger, in: presenter)
+        ButtonComponent.activate(save, in: presenter)
+
+        #expect(presented.count == 1)
+        #expect(result.actions.map(\.name) == ["save"])
+    }
+
     @Test("Function actions run locally")
     func functionAction() throws {
         let opened = OpenedUrls()
@@ -342,7 +363,7 @@ struct ComponentRenderContextTests {
                     properties: [
                         "label": "Email",
                         "value": ["@path": "/email"],
-                        "checks": [
+                        "@checks": [
                             ["condition": ["@call": "email", "args": ["value": ["@path": "/email"]]] as JsonMap]
                         ]
                     ]
@@ -354,6 +375,24 @@ struct ComponentRenderContextTests {
         let context = try #require(result.recorder.context("root"))
         #expect(!context.isValid)
         #expect(context.validationErrors == ["Please enter a valid email address (e.g. user@example.com)."])
+    }
+
+    @Test("A boolean property bound to no value reads as false, and only a property left out reads as its default")
+    func missingBoundBoolean() throws {
+        let result = render(
+            components: [
+                Component(id: "root", type: "Text", properties: ["value": ["@path": "/enabled"]])
+            ]
+        )
+
+        let context = try #require(result.recorder.context("root"))
+        #expect(context.boolBinding(default: true).wrappedValue == false)
+        #expect(context.bool("value", default: true) == false)
+        #expect(context.boolBinding("checked", default: true).wrappedValue == true)
+        #expect(context.bool("checked", default: true) == true)
+
+        result.model.update(at: DataPath("/enabled"), value: true)
+        #expect(context.boolBinding(default: false).wrappedValue == true)
     }
 
     @Test("Style hints are read as literals, ignoring bindings")
@@ -432,4 +471,9 @@ struct LayoutMappingTests {
         #expect(A2UILayout.verticalAlignment("end") == .bottom)
         #expect(A2UILayout.verticalAlignment("start") == .top)
     }
+}
+
+@MainActor
+private final class PresentCount {
+    var count = 0
 }

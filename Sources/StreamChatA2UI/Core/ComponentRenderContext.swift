@@ -137,9 +137,10 @@ public struct ComponentRenderContext {
         evaluator.bool(dynamic(key), in: dataContext)
     }
 
-    /// Evaluates a property and coerces it to a boolean, with a fallback.
+    /// Evaluates a property and coerces it to a boolean, with a fallback for a property the
+    /// component leaves out. A property that resolves to `null` or to no value reads as `false`.
     public func bool(_ key: String, default defaultValue: Bool) -> Bool {
-        bool(key) ?? defaultValue
+        dynamic(key).isMissing ? defaultValue : bool(key) ?? false
     }
 
     /// Evaluates a property and coerces it to a list of strings.
@@ -185,7 +186,8 @@ public struct ComponentRenderContext {
     /// Resolves a child list into renderable children.
     ///
     /// Template child lists are expanded against the bound collection, giving
-    /// each item its own scope and `@index` value.
+    /// each item its own scope and `@index` value. A template whose component
+    /// can't render, such as one that hasn't arrived yet, has no children.
     public func resolvedChildren(_ key: String = "children") -> [ResolvedChild] {
         switch childList(key) {
         case let .ids(ids):
@@ -198,6 +200,10 @@ public struct ComponentRenderContext {
                 )
             }
         case let .template(componentId, path):
+            // Each item would render nothing, so none is built, however long the collection is.
+            guard renderer.placement(of: componentId, parent: definition, ancestors: ancestors, reports: true) != nil else {
+                return []
+            }
             let items = Json.array(dataContext.value(at: path)) ?? []
             let weight = renderer.component(componentId)?.weight
             return items.indices.map { index in
@@ -260,7 +266,7 @@ public struct ComponentRenderContext {
 
     /// The checks of this component that currently fail.
     var failingChecks: [ValidationResult] {
-        evaluator.failingChecks(component.checks, in: dataContext)
+        evaluator.failingChecks(definition.checks(of: component), in: dataContext)
     }
 
     /// The messages of failing checks with error severity.
@@ -284,8 +290,10 @@ public struct ComponentRenderContext {
     }
 
     /// A two-way binding for a bound boolean property.
+    /// `defaultValue` is read for a property the component leaves out; a property that resolves to
+    /// `null` or to no value, such as a binding to a path without data, reads as `false`.
     public func boolBinding(_ key: String = "value", default defaultValue: Bool = false) -> Binding<Bool> {
-        binding(key, default: defaultValue, read: { Json.bool($0) })
+        binding(key, default: dynamic(key).isMissing ? defaultValue : false, read: { Json.dynamicBool($0) })
     }
 
     /// A two-way binding for a bound numeric property.

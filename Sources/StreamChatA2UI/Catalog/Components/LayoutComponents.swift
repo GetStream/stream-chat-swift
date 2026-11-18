@@ -153,6 +153,7 @@ enum LayoutComponents {
                     LazyHStack(alignment: A2UILayout.verticalAlignment(align), spacing: A2UILayout.spacing) {
                         ForEach(children) { child in
                             context.childView(child)
+                                .modifier(A2UIHorizontalListItemWidth())
                         }
                     }
                 }
@@ -250,5 +251,40 @@ private struct A2UIDividerView: View {
         } else {
             Divider().overlay(theme.border)
         }
+    }
+}
+
+// A horizontal list offers its children all the width they want, so a long text in one would
+// stay on one line; each child is as wide as it likes, up to a card's width, and wraps within it.
+@available(iOS 15.0, macOS 12.0, *)
+private struct A2UIHorizontalListItemWidth: ViewModifier {
+    static let maxWidth: CGFloat = 280
+
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, macOS 13.0, *) {
+            A2UIWidthCapLayout(maxWidth: Self.maxWidth) { content }
+        } else {
+            content.frame(width: Self.maxWidth)
+        }
+    }
+}
+
+@available(iOS 16.0, macOS 13.0, *)
+private struct A2UIWidthCapLayout: Layout {
+    let maxWidth: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        guard let child = subviews.first else { return .zero }
+        return child.sizeThatFits(ProposedViewSize(width: width(of: child), height: proposal.height))
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard let child = subviews.first else { return }
+        child.place(at: bounds.origin, proposal: ProposedViewSize(width: bounds.width, height: bounds.height))
+    }
+
+    private func width(of child: LayoutSubview) -> CGFloat {
+        let ideal = child.sizeThatFits(.unspecified).width
+        return ideal.isFinite ? min(ideal, maxWidth) : maxWidth
     }
 }

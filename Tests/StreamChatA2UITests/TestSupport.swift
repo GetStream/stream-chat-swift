@@ -163,7 +163,7 @@ func makeEvaluator(
 @MainActor
 final class StubRemoteRouter: RemoteFunctionRouter {
     var answers: [String: any Sendable] = [:]
-    private(set) var calls: [(name: String, arguments: [String: any Sendable])] = []
+    private(set) var calls: [(name: String, catalogId: String?, arguments: [String: any Sendable])] = []
     private(set) var errors: [RendererError] = []
 
     func agentFunctionValue(
@@ -173,7 +173,7 @@ final class StubRemoteRouter: RemoteFunctionRouter {
         surfaceId: String,
         userActivated: Bool
     ) throws -> (any Sendable)? {
-        calls.append((name, arguments))
+        calls.append((name, catalogId, arguments))
         return answers[name]
     }
 

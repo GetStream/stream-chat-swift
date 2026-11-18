@@ -70,8 +70,9 @@ struct ComponentTests {
             )
         )
 
-        #expect(component.checks.count == 1)
-        #expect(component.checks[0].message == "Required.")
+        let checks = InputComponents.textField.checks(of: component)
+        #expect(checks.count == 1)
+        #expect(checks.first?.message == "Required.")
     }
 }
 
