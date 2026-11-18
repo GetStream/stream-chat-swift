@@ -18,6 +18,8 @@ final class OpenUIEngine: AIUIEngine {
     private(set) var library: ComponentLibrary
     private(set) var runtimes: [String: OpenUIRuntime] = [:]
     private var messageIDs: [ObjectIdentifier: String] = [:]
+    // The problems each reply's program has, as the app was last told them.
+    private var reported: [String: Set<OpenUIError>] = [:]
 
     init(
         library: ComponentLibrary,
@@ -41,6 +43,7 @@ final class OpenUIEngine: AIUIEngine {
     }
 
     func remove(messageID: String) {
+        reported[messageID] = nil
         guard let runtime = runtimes.removeValue(forKey: messageID) else { return }
         messageIDs[ObjectIdentifier(runtime)] = nil
         runtime.dispose()
@@ -49,6 +52,12 @@ final class OpenUIEngine: AIUIEngine {
     func view(for document: AIUIDocument, messageID: String) -> OpenUIMessageView? {
         guard let program = document.text else { return nil }
         let runtime = runtimes[messageID] ?? makeRuntime(messageID: messageID, program: program, isStreaming: document.isStreaming)
+        // A reply with nothing to show has no view following it, so it is brought up to date
+        // here, and shows its text until its program has a root.
+        if runtime.root == nil {
+            runtime.update(response: program, isStreaming: document.isStreaming)
+        }
+        guard runtime.root != nil else { return nil }
         return OpenUIMessageView(runtime: runtime, program: program, isStreaming: document.isStreaming, mediaURL: mediaURL, theme: theme)
     }
 
@@ -71,13 +80,24 @@ final class OpenUIEngine: AIUIEngine {
         return runtime
     }
 
-    // The problems with a reply's program, for the app, or for the log without its hook.
+    // The problems with a reply's program the app hasn't heard of, for the app, or for the log
+    // without its hook. The runtime tells all of them each time they change, and a problem that
+    // goes away is told again when it comes back. The app hears of them after the view update
+    // that finds them, which can make a reply's runtime.
     private func report(_ errors: [OpenUIError], messageID: String) {
-        for error in errors {
-            if let onError {
-                onError(error, messageID)
-            } else {
+        let known = reported[messageID] ?? []
+        let new = errors.filter { !known.contains($0) }
+        reported[messageID] = Set(errors)
+        guard !new.isEmpty else { return }
+        guard let onError else {
+            for error in new {
                 log.error("A reply's OpenUI has a problem: \(error.code) \(error.message)")
+            }
+            return
+        }
+        Task { @MainActor in
+            for error in new {
+                onError(error, messageID)
             }
         }
     }

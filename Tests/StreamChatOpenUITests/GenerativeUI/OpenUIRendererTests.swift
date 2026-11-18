@@ -139,7 +139,10 @@ struct OpenUIRendererTests {
             PlaceCardComponent(),
             PlaceCardComponent(name: "card"),
             PlaceCardComponent(name: ""),
-            PlaceCardComponent(name: "place-card")
+            PlaceCardComponent(name: "place-card"),
+            PlaceCardComponent(name: "filter"),
+            PlaceCardComponent(name: "3d_viewer"),
+            PlaceCardComponent(name: "café_card")
         ]
 
         let placeable = OpenUIRenderer.placeableSchemas(of: components, in: .openUIChat)
@@ -219,21 +222,70 @@ struct OpenUIRendererTests {
         #expect(host.states["m1"] == ["$count": 2, "login": ["user": ["value": "ana"]]])
     }
 
-    @Test func problemsReachTheAppOrTheLog() {
-        var reported: [(code: String, messageID: String)] = []
+    @Test func problemsReachTheAppOrTheLog() async {
+        let reported = Box<[(code: String, messageID: String)]>([])
         let host = FakeHost()
         let engine = OpenUIEngine(
             library: .openUIChat,
             host: host,
             toolProvider: FunctionToolProvider([:]),
-            onError: { error, messageID in reported.append((error.code, messageID)) }
+            onError: { error, messageID in reported.value.append((error.code, messageID)) }
         )
         let runtime = engine.view(for: Self.document(#"root = Card([])"#), messageID: "m1")?.runtime
 
         runtime?.onError?([OpenUIError(source: .runtime, code: "unknown-component", message: "No Foo")])
 
-        #expect(reported.map(\.code) == ["unknown-component"])
-        #expect(reported.map(\.messageID) == ["m1"])
+        #expect(reported.value.isEmpty, "not within the view update that found it")
+        #expect(await waitUntil { !reported.value.isEmpty })
+        #expect(reported.value.map(\.code) == ["unknown-component"])
+        #expect(reported.value.map(\.messageID) == ["m1"])
+    }
+
+    @Test func eachProblemReachesTheAppOnceUntilItGoesAway() async {
+        let reported = Box<[String]>([])
+        let engine = OpenUIEngine(
+            library: .openUIChat,
+            host: FakeHost(),
+            toolProvider: FunctionToolProvider([:]),
+            onError: { error, _ in reported.value.append(error.code) }
+        )
+        let runtime = engine.view(for: Self.document(#"root = Card([])"#), messageID: "m1")?.runtime
+        let unknown = OpenUIError(source: .runtime, code: "unknown-component", message: "No Foo")
+        let failed = OpenUIError(source: .query, code: "tool-error", message: "list failed")
+
+        runtime?.onError?([unknown])
+        runtime?.onError?([unknown, failed])
+        runtime?.onError?([unknown])
+        runtime?.onError?([unknown, failed])
+        #expect(await waitUntil { reported.value.count == 3 })
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        #expect(reported.value == ["unknown-component", "tool-error", "tool-error"])
+    }
+
+    @Test func aReplyShowsItsTextUntilItsProgramHasARoot() {
+        let engine = OpenUIEngine(library: .openUIChat, host: FakeHost(), toolProvider: FunctionToolProvider([:]))
+
+        #expect(engine.view(for: Self.document("Here is your plan:", isStreaming: true), messageID: "m1") == nil)
+        #expect(engine.view(for: Self.document(#"root = Card([TextContent("Hi")])"#, isStreaming: true), messageID: "m1") != nil)
+        #expect(engine.runtimes.count == 1)
+    }
+
+    @Test func valuesLeaveAsJSON() {
+        let value: OpenUIValue = [
+            "amount": .number(.nan),
+            "limit": .number(.infinity),
+            "step": ActionPlan.customStep(name: "Export", params: ["format": "csv"])
+        ]
+
+        #expect(value.rawJSON == ["amount": .nil, "limit": .nil, "step": ["type": "custom_action", "name": "Export", "params": ["format": "csv"]]])
+        #expect(OpenUIJSON.stringify(value).contains(ActionPlan.callTokenKey) == false)
+    }
+
+    @Test func toolArgumentsReadInTheSameOrderEachTime() {
+        let schema: RawJSON = ["type": "object", "properties": ["sort": ["type": "string"], "city": ["type": "string"], "max_price": ["type": "number"]]]
+
+        #expect(schema.openUIValue["properties"]?.objectValue?.keys == ["city", "max_price", "sort"])
     }
 
     @Test func aQueryRunsTheHostsToolByItselfAndAMutationAsATap() async throws {

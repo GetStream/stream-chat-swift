@@ -7,10 +7,15 @@ import StreamChatAI
 
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIValue {
-    // The value as JSON. Components and expressions turn into their plain JSON shapes.
+    // The value as JSON, as JavaScript's `JSON.stringify` writes it: components and expressions
+    // turn into their plain JSON shapes, and numbers that aren't finite into null.
     var rawJSON: RawJSON {
+        plainJSON.plainRawJSON
+    }
+
+    private var plainRawJSON: RawJSON {
         switch self {
-        case .null:
+        case .null, .element, .expression:
             return .nil
         case let .bool(value):
             return .bool(value)
@@ -19,14 +24,9 @@ extension OpenUIValue {
         case let .string(value):
             return .string(value)
         case let .array(items):
-            return .array(items.map(\.rawJSON))
+            return .array(items.map(\.plainRawJSON))
         case let .object(object):
-            return .dictionary(object.rawJSON)
-        case .element, .expression:
-            let plain = plainJSON
-            if case .element = plain { return .nil }
-            if case .expression = plain { return .nil }
-            return plain.rawJSON
+            return .dictionary(Dictionary(object.entries.map { ($0.key, $0.value.plainRawJSON) }, uniquingKeysWith: { _, last in last }))
         }
     }
 }
@@ -34,11 +34,14 @@ extension OpenUIValue {
 @available(iOS 17.0, macOS 14.0, *)
 extension OpenUIObject {
     var rawJSON: [String: RawJSON] {
-        Dictionary(entries.map { ($0.key, $0.value.rawJSON) }, uniquingKeysWith: { _, last in last })
+        guard case let .dictionary(fields) = OpenUIValue.object(self).rawJSON else { return [:] }
+        return fields
     }
 
+    // The fields in the order of their keys, which a dictionary doesn't keep, so a value reads
+    // the same each time, such as a tool's arguments in the agent's instructions.
     init(rawJSON: [String: RawJSON]) {
-        self.init(rawJSON.map { ($0.key, $0.value.openUIValue) })
+        self.init(rawJSON.sorted { $0.key < $1.key }.map { ($0.key, $0.value.openUIValue) })
     }
 }
 
