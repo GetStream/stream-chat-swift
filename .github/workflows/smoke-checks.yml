@@ -79,6 +79,24 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
+    runs-on: ubuntu-24.04
+    needs: guard
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/ruby-cache
+      - run: ./Scripts/bootstrap.sh
+        env:
+          INSTALL_INTERFACE_ANALYZER: true
+      - run: bundle exec fastlane lint_pr
+      - run: bundle exec fastlane rubocop
+      - run: bundle exec fastlane run_swift_format strict:true
+      - run: bundle exec fastlane validate_public_interface
+
+  validate-generated-code:
+    name: Validate Generated Code
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     needs: guard
     env:
@@ -86,15 +104,7 @@ jobs:
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
       - uses: ./.github/actions/bootstrap
-        env:
-          INSTALL_INTERFACE_ANALYZER: true
-      - run: bundle exec fastlane lint_pr
-      - run: bundle exec fastlane rubocop
-      - run: bundle exec fastlane run_swift_format strict:true
-      - run: bundle exec fastlane validate_public_interface
       - run: bundle exec fastlane validate_generated_code
 
   build-old-xcode:
@@ -375,7 +385,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: ubuntu-24.04
     if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' }}
     needs:
       - guard
