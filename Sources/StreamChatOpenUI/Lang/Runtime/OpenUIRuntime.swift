@@ -131,6 +131,7 @@ final class OpenUIRuntime {
         initialState = state
         storeInitKey = nil
         initializeStoreIfNeeded()
+        runQueryEffects()
         recompute()
     }
 
@@ -248,13 +249,13 @@ final class OpenUIRuntime {
     }
 
     private func storeDidChange(_ key: String) {
+        // What initializing changes is evaluated once, after it.
+        guard !isInitializingStore else { return }
         if key.hasPrefix("$") {
             runQueryEffects()
             recompute()
         }
-        if !isInitializingStore {
-            onStateUpdate?(store.snapshot)
-        }
+        onStateUpdate?(store.snapshot)
     }
 
     private func queryManagerDidChange() {

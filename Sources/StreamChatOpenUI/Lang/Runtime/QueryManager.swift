@@ -155,8 +155,9 @@ final class QueryManager {
 
     // MARK: - Fetching
 
-    /// Marks the fetch as in flight synchronously, then performs it asynchronously.
-    private func startFetch(cacheKey: String, statementId: String) {
+    /// Marks the fetch as in flight synchronously, then performs it asynchronously. Without
+    /// `publishes`, the caller updates the snapshot once it is done.
+    private func startFetch(cacheKey: String, statementId: String, publishes: Bool = true) {
         guard let toolProvider, let query = queries[statementId] else { return }
         let toolName = query.toolName
         let arguments = query.args?.objectValue ?? [:]
@@ -170,8 +171,10 @@ final class QueryManager {
             cache[cacheKey] = entry
         }
         query.loading = true
-        rebuildSnapshot()
-        notify()
+        if publishes {
+            rebuildSnapshot()
+            notify()
+        }
 
         Task { [weak self] in
             let outcome: Result<OpenUIValue, any Error>
@@ -209,6 +212,9 @@ final class QueryManager {
         }
 
         entry.inFlight = false
+        for (otherId, other) in queries where otherId != statementId && other.cacheKey == cacheKey && other.pendingFetch == nil {
+            other.loading = false
+        }
         if let current = queries[statementId], current.cacheKey == cacheKey {
             current.loading = false
             if rebuildSnapshot() { notify() }
@@ -344,8 +350,13 @@ final class QueryManager {
                 if argumentsChanged {
                     scheduleFetch(query: query, cacheKey: cacheKey, statementId: node.statementId)
                 } else if query.pendingFetch == nil {
-                    startFetch(cacheKey: cacheKey, statementId: node.statementId)
+                    startFetch(cacheKey: cacheKey, statementId: node.statementId, publishes: false)
                 }
+            } else if argumentsChanged, entry?.inFlight == true {
+                // Back on args whose fetch is still in flight: it is the one to wait for.
+                query.pendingFetch?.cancel()
+                query.pendingFetch = nil
+                query.loading = true
             } else if hasSettledData, query.loading {
                 // Back on args whose data is cached while another fetch was in flight: that fetch
                 // no longer concerns this query, so it must not keep it loading.
@@ -376,7 +387,7 @@ final class QueryManager {
         query.pendingFetch?.cancel()
         query.pendingFetch = nil
         guard argumentDebounce > 0 else {
-            startFetch(cacheKey: cacheKey, statementId: statementId)
+            startFetch(cacheKey: cacheKey, statementId: statementId, publishes: false)
             return
         }
         // It shows as refetching while it waits, with the data it had.
@@ -389,7 +400,7 @@ final class QueryManager {
             let entry = self.cache[cacheKey]
             let hasSettledData = entry?.data != nil && entry?.inFlight == false
             guard query.cacheKey == cacheKey, !hasSettledData, entry?.inFlight != true else {
-                query.loading = entry?.inFlight == true
+                query.loading = self.cache[query.cacheKey]?.inFlight == true
                 if self.rebuildSnapshot() { self.notify() }
                 return
             }

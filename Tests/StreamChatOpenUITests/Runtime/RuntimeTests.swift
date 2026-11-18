@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import os
 @testable import StreamChatOpenUI
 import Testing
 
@@ -192,6 +193,37 @@ struct QueryManagerTests {
         try? await Task.sleep(nanoseconds: 250_000_000)
         #expect(!manager.isAnyLoading, "the superseded fetch finishing doesn't leave it loading")
         #expect(manager.result(for: "data") == ["rows": ["a"]])
+    }
+
+    @Test func argumentsThatComeBackWhileTheirFetchIsInFlightWaitForIt() async {
+        let provider = RecordingToolProvider { _, args, _ in
+            if args["q"] == "a" { try await Task.sleep(nanoseconds: 400_000_000) }
+            return ["rows": [args["q"] ?? "none"]]
+        }
+        let manager = QueryManager(toolProvider: provider)
+        manager.argumentDebounce = 0.05
+        manager.evaluateQueries([node("data", args: ["q": "a"], deps: ["$q": "a"])])
+
+        manager.evaluateQueries([node("data", args: ["q": "b"], deps: ["$q": "b"])])
+        manager.evaluateQueries([node("data", args: ["q": "a"], deps: ["$q": "a"])])
+        try? await Task.sleep(nanoseconds: 150_000_000)
+
+        #expect(manager.isLoading("data"), "the fetch of a is still on its way")
+        #expect(provider.calls.count == 1, "b is never fetched")
+        #expect(await waitUntil { manager.result(for: "data") == ["rows": ["a"]] })
+        #expect(!manager.isLoading("data"))
+    }
+
+    @Test func newQueriesReportOnceForAllTheirFetches() {
+        let provider = RecordingToolProvider { _, _, _ in ["rows": []] }
+        let manager = QueryManager(toolProvider: provider)
+        var changes = 0
+        manager.onChange = { changes += 1 }
+
+        manager.evaluateQueries([node("a", args: ["q": "a"]), node("b", args: ["q": "b"]), node("c", args: ["q": "c"])])
+
+        #expect(changes == 1)
+        #expect(manager.snapshot.loading == ["a", "b", "c"])
     }
 
     @Test func invalidateRefetchesAndQueuesWhileInFlight() async {
@@ -495,6 +527,20 @@ struct RuntimeTests {
         empty.onError = { emptyErrors = $0 }
         empty.update(response: "just some text", isStreaming: false)
         #expect(emptyErrors.first?.code == "parse-failed")
+    }
+
+    @Test func aProgramsStateIsEvaluatedOnceWhenItArrives() {
+        let evaluations = OSAllocatedUnfairLock(initialState: 0)
+        let tick = OpenUIFunction("Tick", description: "Counts its calls", params: [], returns: .string) { _ in
+            evaluations.withLock { $0 += 1 }
+            return "tick"
+        }
+        let runtime = OpenUIRuntime(library: library.withCalls(functions: [tick], actions: []))
+
+        runtime.update(response: "root = Card([TextContent(@Tick())])\n$a = 1\n$b = 2\n$c = 3", isStreaming: false)
+
+        #expect(texts(runtime) == ["tick"])
+        #expect(evaluations.withLock { $0 } == 1)
     }
 
     @Test func restoresInitialState() {
