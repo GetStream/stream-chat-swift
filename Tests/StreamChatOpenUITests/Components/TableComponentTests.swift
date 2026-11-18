@@ -50,13 +50,32 @@ struct EditableTableTests {
         #expect(table.changedCellCount(keys: keys) == 0)
     }
 
-    @Test func newDataKeepsTheBaselineFromWhenStreamingEnded() {
+    @Test func dataThatArrivesAfterStreamingIsTheNewBaseline() {
         var table = EditableTableRows()
+        table.load([], keys: keys, isStreaming: false)
         table.load(complete, keys: keys, isStreaming: false)
-        table.load([["id": "1", "values": ["Apples", 9]], ["id": "2", "values": ["Pears", 5]]], keys: keys, isStreaming: false)
 
-        #expect(table.rows[0]["qty"] == 9)
+        #expect(table.rows.count == 2)
+        #expect(table.changedCellCount(keys: keys) == 0, "a Query's rows aren't edits")
+
+        table.rows[0]["qty"] = 4
         #expect(table.changedCellCount(keys: keys) == 1)
+
+        table.load([["id": "1", "values": ["Apples", 9]], ["id": "2", "values": ["Pears", 5]]], keys: keys, isStreaming: false)
+        table.reset()
+
+        #expect(table.rows[0]["qty"] == 9, "reset goes back to the latest data")
+        #expect(table.changedCellCount(keys: keys) == 0)
+    }
+
+    @Test func datesReadAsNoonOfTheDay() throws {
+        let date = try #require(DateFormatting.date(from: "2025-09-07"))
+
+        #expect(Calendar(identifier: .gregorian).component(.hour, from: date) == 12)
+        #expect(DateFormatting.string(from: date) == "2025-09-07")
+        #expect(DateFormatting.date(from: "2025-02-30") == nil)
+        #expect(DateFormatting.date(from: "") == nil)
+        #expect(DateFormatting.date(from: "2025-09-07T10:00:00Z") != nil)
     }
 
     @Test func rowsFollowTheColumns() {

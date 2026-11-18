@@ -7,7 +7,7 @@ import SwiftUI
 /// Item props shared by `TabItem`, `AccordionItem` and `SectionItem`.
 @available(iOS 17.0, macOS 14.0, *)
 private struct ContainerItem {
-    let value: String
+    private(set) var value: String
     let trigger: String
     let content: OpenUIValue
 
@@ -17,6 +17,19 @@ private struct ContainerItem {
         self.value = value
         self.trigger = props.text("trigger") ?? ""
         self.content = element.props["content"] ?? .array([])
+    }
+
+    // The items in order, each with a value of its own: the model can repeat a value, which would
+    // otherwise select or open those items together.
+    static func items(_ elements: [ElementNode]) -> [ContainerItem] {
+        var values = Set<String>()
+        return elements.enumerated().compactMap { index, element in
+            guard var item = ContainerItem(element, index: index) else { return nil }
+            while !values.insert(item.value).inserted {
+                item.value += "#\(index)"
+            }
+            return item
+        }
     }
 
     // A cheap size measure used to follow content as it streams in.
@@ -58,7 +71,7 @@ struct TabsView: View {
     @State private var previousSizes: [String: Int] = [:]
 
     private var items: [ContainerItem] {
-        context.props.elements("items").enumerated().compactMap { ContainerItem($1, index: $0) }
+        ContainerItem.items(context.props.elements("items"))
     }
 
     var body: some View {
@@ -127,11 +140,12 @@ struct TabsView: View {
 // MARK: - Accordion
 
 /// `Accordion(items)` with `AccordionItem(value, trigger, content)` — one section open at a time.
+/// Sections are told apart by position: the model can repeat a value, or still be writing it.
 @available(iOS 17.0, macOS 14.0, *)
 struct AccordionView: View {
     let context: ComponentContext
     @Environment(\.openUITheme) private var theme
-    @State private var openItem: String?
+    @State private var openItem: Int?
     @State private var userInteracted = false
     @State private var previousCount = 0
 
@@ -139,14 +153,14 @@ struct AccordionView: View {
         let items = context.props.elements("items").enumerated().compactMap { ContainerItem($1, index: $0) }
         if !items.isEmpty {
             VStack(spacing: 0) {
-                ForEach(Array(items.enumerated()), id: \.element.value) { index, item in
+                ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                     DisclosureRow(
                         title: item.trigger,
                         isExpanded: Binding(
-                            get: { openItem == item.value },
+                            get: { openItem == index },
                             set: { expanded in
                                 userInteracted = true
-                                withAnimation(.snappy(duration: 0.25)) { openItem = expanded ? item.value : nil }
+                                withAnimation(.snappy(duration: 0.25)) { openItem = expanded ? index : nil }
                             }
                         )
                     ) {
@@ -155,16 +169,16 @@ struct AccordionView: View {
                     if index < items.count - 1 { Divider() }
                 }
             }
-            .onChange(of: items.count) { _, count in autoOpen(items, count: count) }
-            .onAppear { autoOpen(items, count: items.count) }
+            .onChange(of: items.count) { _, count in autoOpen(count: count) }
+            .onAppear { autoOpen(count: items.count) }
         }
     }
 
     /// Auto-opens the newest item while it streams in (until the user interacts).
-    private func autoOpen(_ items: [ContainerItem], count: Int) {
+    private func autoOpen(count: Int) {
         defer { previousCount = count }
-        guard !userInteracted, count > previousCount, let newest = items.last else { return }
-        openItem = newest.value
+        guard !userInteracted, count > previousCount, count > 0 else { return }
+        openItem = count - 1
     }
 }
 
@@ -215,12 +229,13 @@ struct DisclosureRow<Content: View>: View {
 
 // MARK: - Sections
 
-/// `SectionBlock(sections, isFoldable?)` with `SectionItem(value, trigger, content)`.
+/// `SectionBlock(sections, isFoldable?)` with `SectionItem(value, trigger, content)`. Sections are
+/// told apart by position: the model can repeat a value, or still be writing it.
 @available(iOS 17.0, macOS 14.0, *)
 struct SectionBlockView: View {
     let context: ComponentContext
     @Environment(\.openUITheme) private var theme
-    @State private var openItems: Set<String> = []
+    @State private var openItems: Set<Int> = []
     @State private var userInteracted = false
     @State private var previousCount = 0
     @State private var wasStreaming = false
@@ -234,11 +249,11 @@ struct SectionBlockView: View {
                     DisclosureRow(
                         title: section.trigger,
                         isExpanded: Binding(
-                            get: { openItems.contains(section.value) },
+                            get: { openItems.contains(index) },
                             set: { expanded in
                                 userInteracted = true
                                 withAnimation(.snappy(duration: 0.25)) {
-                                    if expanded { openItems.insert(section.value) } else { openItems.remove(section.value) }
+                                    if expanded { openItems.insert(index) } else { openItems.remove(index) }
                                 }
                             }
                         ),
@@ -274,17 +289,17 @@ struct SectionBlockView: View {
     private func updateOpenSections(_ sections: [ContainerItem]) {
         defer { previousCount = sections.count }
         guard !sections.isEmpty else { return }
-        if context.isStreaming, sections.count > previousCount, !userInteracted, let last = sections.last {
-            openItems.insert(last.value)
-        } else if openItems.isEmpty, let first = sections.first {
-            openItems = [first.value]
+        if context.isStreaming, sections.count > previousCount, !userInteracted {
+            openItems.insert(sections.count - 1)
+        } else if openItems.isEmpty {
+            openItems = [0]
         }
     }
 
     /// When streaming ends, collapse back to the first section (unless the user interacted).
     private func streamingChanged(_ streaming: Bool, _ sections: [ContainerItem]) {
-        if wasStreaming, !streaming, !userInteracted, let first = sections.first {
-            withAnimation { openItems = [first.value] }
+        if wasStreaming, !streaming, !userInteracted, !sections.isEmpty {
+            withAnimation { openItems = [0] }
         }
         wasStreaming = streaming
     }
@@ -371,8 +386,11 @@ struct CarouselView: View {
                 }
                 .scrollTargetBehavior(.viewAligned)
                 .scrollPosition(id: $position)
+                .onChange(of: slides.count) { _, count in
+                    if let position, position >= count { self.position = max(count - 1, 0) }
+                }
                 if slides.count > 1 {
-                    let current = position ?? 0
+                    let current = min(max(position ?? 0, 0), slides.count - 1)
                     HStack(spacing: theme.spacing.m) {
                         pagerButton("chevron.backward", label: L10n.Carousel.previous, disabled: current == 0) {
                             position = max(0, current - 1)

@@ -12,7 +12,9 @@ struct ChartPoint: Identifiable, Hashable {
     let series: String
     let value: Double
     let order: Int
-    var id: String { "\(series)#\(order)" }
+    // Tells apart two series the model gave the same name.
+    var seriesIndex = 0
+    var id: String { "\(seriesIndex)#\(order)" }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
@@ -39,20 +41,24 @@ enum ChartData {
                 for (seriesIndex, name) in seriesNames.enumerated() {
                     let cell = seriesIndex + 1 < cells.count ? cells[seriesIndex + 1] : nil
                     guard let value = plottable(JS.toNumber(cell)) else { continue }
-                    points.append(ChartPoint(category: category, series: name, value: value, order: rowIndex))
+                    points.append(ChartPoint(category: category, series: name, value: value, order: rowIndex, seriesIndex: seriesIndex))
                 }
             }
-            return (points, seriesNames)
+            var names: [String] = []
+            for name in seriesNames where !names.contains(name) {
+                names.append(name)
+            }
+            return (points, names)
         }
         let elements = series.compactMap(\.elementValue)
         var names: [String] = []
         var points: [ChartPoint] = []
-        for element in elements {
+        for (seriesIndex, element) in elements.enumerated() {
             guard case .string(let name)? = element.props["category"], case .array(let values)? = element.props["values"] else { continue }
             if !names.contains(name) { names.append(name) }
             for (index, label) in labelStrings.enumerated() where index < values.count {
                 guard let value = plottable(JS.toNumber(values[index])) else { continue }
-                points.append(ChartPoint(category: label, series: name, value: value, order: index))
+                points.append(ChartPoint(category: label, series: name, value: value, order: index, seriesIndex: seriesIndex))
             }
         }
         return (points, names)
@@ -110,7 +116,8 @@ struct CartesianChartView: View {
         let (points, seriesNames) = ChartData.points(labels: props.array("labels"), series: props.array("series"))
         if !points.isEmpty {
             let variant = props.string("variant")
-            let height = CGFloat(props.number("height") ?? (kind == .horizontalBar ? Double(max(160, Set(points.map(\.category)).count * 34 + 40)) : 220))
+            let fitting = kind == .horizontalBar ? Double(max(160, Set(points.map(\.category)).count * 34 + 40)) : 220
+            let height = clampedDimension(props.number("height") ?? fitting, in: 80...1200, default: 220)
             ChartFrame(height: height, xLabel: props.text("xLabel"), yLabel: props.text("yLabel")) {
                 Chart(points) { point in
                     mark(point, variant: variant)
@@ -190,13 +197,23 @@ struct ScatterChartView: View {
         let z: Double?
     }
 
+    // Each point's symbol area: from 30 to 200 across the range of `z`, which can be negative,
+    // and 50 for a point without one or when every `z` is the same.
+    static func symbolSizes(_ zs: [Double?]) -> [Double] {
+        let values = zs.compactMap { $0 }
+        guard let minZ = values.min(), let maxZ = values.max(), maxZ > minZ else {
+            return zs.map { _ in 50 }
+        }
+        return zs.map { z in z.map { 30 + 170 * ($0 - minZ) / (maxZ - minZ) } ?? 50 }
+    }
+
     var body: some View {
         var points: [ScatterPoint] = []
         var names: [String] = []
         for dataset in context.props.array("datasets") {
             let props = dataset.elementValue?.props ?? dataset.objectValue ?? [:]
             let name = props["name"].map { JS.toString($0) } ?? ""
-            names.append(name)
+            if !names.contains(name) { names.append(name) }
             for point in props["points"]?.arrayValue ?? [] {
                 let pointProps = point.elementValue?.props ?? point.objectValue ?? [:]
                 guard let x = ChartData.plottable(JS.toNumber(pointProps["x"])), let y = ChartData.plottable(JS.toNumber(pointProps["y"])) else {
@@ -211,14 +228,14 @@ struct ScatterChartView: View {
                 ))
             }
         }
-        let maxZ = points.compactMap(\.z).max() ?? 1
+        let sizes = Self.symbolSizes(points.map(\.z))
         return Group {
             if !points.isEmpty {
                 ChartFrame(height: 240, xLabel: context.props.text("xLabel"), yLabel: context.props.text("yLabel")) {
                     Chart(points) { point in
                         PointMark(x: .value("X", point.x), y: .value("Y", point.y))
                             .foregroundStyle(by: .value(L10n.Chart.series, point.series))
-                            .symbolSize(point.z.map { 30 + 170 * $0 / max(maxZ, 1) } ?? 50)
+                            .symbolSize(sizes[point.id])
                             .opacity(0.8)
                     }
                     .chartForegroundStyleScale(domain: names, range: names.indices.map { theme.colors.chartColor($0) })
