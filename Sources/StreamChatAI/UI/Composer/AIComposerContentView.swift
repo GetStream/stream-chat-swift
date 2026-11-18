@@ -46,5 +46,11 @@ struct AIComposerContentView<ComposerFactory: AIComposerViewFactory>: View {
                 picker
             }
         }
+        .onDisappear {
+            // Ends the recording session, which ducks other audio while it is active.
+            if speechHandler.isRecording {
+                speechHandler.stop()
+            }
+        }
     }
 }

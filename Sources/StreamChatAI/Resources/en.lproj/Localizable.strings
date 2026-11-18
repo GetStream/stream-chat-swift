@@ -18,6 +18,8 @@
 "message_actions.rate_negative" = "Bad response";
 "message_actions.edit" = "Edit";
 "transcription.error.recognizer_unavailable" = "Speech recognizer is unavailable.";
+"transcription.error.speech_recognition_denied" = "Speech recognition isn't allowed for this app.";
+"transcription.error.microphone_denied" = "The microphone isn't allowed for this app.";
 "reasoning.title.thinking" = "Thinking…";
 "reasoning.title.thinking_for" = "Thinking… %@";
 "reasoning.title.thought" = "Thought process";

@@ -88,6 +88,12 @@ public struct AIComposerInputView<TrailingView: View>: View {
         .onChange(of: viewModel.isTextFieldFocused) { newValue in
             isFocused = newValue
         }
+        .onChange(of: isFocused) { newValue in
+            // So setting it again focuses the field after the person dismissed the keyboard.
+            if viewModel.isTextFieldFocused != newValue {
+                viewModel.isTextFieldFocused = newValue
+            }
+        }
         .onChange(of: viewModel.text) { newText in
             if newText.isEmpty && speechHandler.isRecording {
                 speechHandler.stop()
@@ -115,7 +121,7 @@ public struct AIComposerInputView<TrailingView: View>: View {
     private var actions: some View {
         ZStack {
             trailingView
-                .opacity(viewModel.isGenerating ? 0 : (text.isEmpty ? 1 : 0))
+                .opacity(viewModel.isGenerating ? 0 : (canSend ? 0 : 1))
             
             Button {
                 send()
@@ -125,7 +131,7 @@ public struct AIComposerInputView<TrailingView: View>: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 22)
             }
-            .opacity(viewModel.isGenerating ? 0 : (text.isEmpty ? 0 : 1))
+            .opacity(viewModel.isGenerating ? 0 : (canSend ? 1 : 0))
             
             Button {
                 onStopGenerating?()
@@ -138,15 +144,22 @@ public struct AIComposerInputView<TrailingView: View>: View {
     }
 
     private func send() {
-        onMessageSend(.init(text: text, attachments: viewModel.attachments, chatOption: viewModel.selectedChatOption))
-        viewModel.clearAfterSending()
+        guard canSend else { return }
+        // Stopped first, so what it still hears doesn't come back into the empty composer.
         if speechHandler.isRecording {
             speechHandler.stop()
         }
+        onMessageSend(.init(text: text, attachments: viewModel.attachments, chatOption: viewModel.selectedChatOption))
+        viewModel.clearAfterSending()
     }
 
     var text: String {
         viewModel.text
+    }
+
+    // Something to send: text, or files without text.
+    private var canSend: Bool {
+        !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !viewModel.attachments.isEmpty
     }
 }
 

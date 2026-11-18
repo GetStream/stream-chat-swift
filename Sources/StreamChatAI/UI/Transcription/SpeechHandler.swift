@@ -69,8 +69,31 @@ public final class SpeechHandler: NSObject, ObservableObject {
             return
         }
         authorizationStatus = currentStatus
+        guard currentStatus == .authorized else {
+            lastError = SpeechHandlerError.speechRecognitionDenied
+            return
+        }
+        // Asked before recording, so the silence while the person answers doesn't end it.
+        switch Self.microphonePermission {
+        case .undetermined:
+            Self.requestMicrophonePermission { @Sendable [weak self] granted in
+                Task { @MainActor in
+                    if granted {
+                        self?.start()
+                    } else {
+                        self?.lastError = SpeechHandlerError.microphoneDenied
+                    }
+                }
+            }
+            return
+        case .denied:
+            lastError = SpeechHandlerError.microphoneDenied
+            return
+        case .granted:
+            break
+        }
 
-        speechRecognizer = SFSpeechRecognizer(locale: locale)
+        speechRecognizer = SFSpeechRecognizer(locale: locale) ?? SFSpeechRecognizer()
         guard let recognizer = speechRecognizer, recognizer.isAvailable else {
             lastError = SpeechHandlerError.recognizerUnavailable
             return
@@ -107,6 +130,8 @@ public final class SpeechHandler: NSObject, ObservableObject {
 
     public func stop() {
         isStarting = false
+        // What the recognizer still reports belongs to the session that ended.
+        sessionGeneration += 1
         monitorTask?.cancel()
         monitorTask = nil
 
@@ -138,6 +163,36 @@ public final class SpeechHandler: NSObject, ObservableObject {
     }
 
     // MARK: - Private helpers
+
+    private enum MicrophonePermission {
+        case undetermined
+        case denied
+        case granted
+    }
+
+    private static var microphonePermission: MicrophonePermission {
+        if #available(iOS 17.0, *) {
+            switch AVAudioApplication.shared.recordPermission {
+            case .undetermined: return .undetermined
+            case .granted: return .granted
+            default: return .denied
+            }
+        } else {
+            switch AVAudioSession.sharedInstance().recordPermission {
+            case .undetermined: return .undetermined
+            case .granted: return .granted
+            default: return .denied
+            }
+        }
+    }
+
+    private static func requestMicrophonePermission(_ completion: @escaping @Sendable (Bool) -> Void) {
+        if #available(iOS 17.0, *) {
+            AVAudioApplication.requestRecordPermission(completionHandler: completion)
+        } else {
+            AVAudioSession.sharedInstance().requestRecordPermission(completion)
+        }
+    }
 
     private nonisolated static func activateAudioSession() throws {
         let session = AVAudioSession.sharedInstance()

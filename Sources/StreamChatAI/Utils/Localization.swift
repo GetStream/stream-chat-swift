@@ -232,6 +232,14 @@ enum L10n {
         static var recognizerUnavailable: String {
             localized("transcription.error.recognizer_unavailable", comment: "Error shown when the speech recognizer cannot be used.")
         }
+
+        static var speechRecognitionDenied: String {
+            localized("transcription.error.speech_recognition_denied", comment: "Error shown when the person hasn't allowed speech recognition.")
+        }
+
+        static var microphoneDenied: String {
+            localized("transcription.error.microphone_denied", comment: "Error shown when the person hasn't allowed the microphone.")
+        }
     }
 
     enum Voice {

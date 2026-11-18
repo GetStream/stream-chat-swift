@@ -48,6 +48,8 @@ final class Localization_Tests: XCTestCase {
         XCTAssertEqual(L10n.ToolAuthorization.decline, "Not now")
         XCTAssertEqual(L10n.ToolAuthorization.notOpened, "The sign-in couldn't be opened. Try again.")
         XCTAssertEqual(L10n.Transcription.recognizerUnavailable, "Speech recognizer is unavailable.")
+        XCTAssertEqual(L10n.Transcription.speechRecognitionDenied, "Speech recognition isn't allowed for this app.")
+        XCTAssertEqual(L10n.Transcription.microphoneDenied, "The microphone isn't allowed for this app.")
         XCTAssertEqual(L10n.Charts.series, "Series")
         XCTAssertEqual(L10n.Charts.pie, "Pie")
         XCTAssertEqual(L10n.Charts.axisX, "X")

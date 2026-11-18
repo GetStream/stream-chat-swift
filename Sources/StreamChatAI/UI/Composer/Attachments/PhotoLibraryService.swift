@@ -60,7 +60,8 @@ final class PhotoLibraryService: ObservableObject {
         await withCheckedContinuation { continuation in
             let options = PHContentEditingInputRequestOptions()
             options.isNetworkAccessAllowed = true
-            options.canHandleAdjustmentData = { _ in true }
+            // Photos then renders the person's edits, such as a crop, into the file.
+            options.canHandleAdjustmentData = { _ in false }
 
             asset.requestContentEditingInput(with: options) { input, _ in
                 continuation.resume(returning: input?.fullSizeImageURL)
@@ -157,12 +158,13 @@ final class PhotoLibraryService: ObservableObject {
             return .failed
         }
 
-        if hasResult {
-            return .result
-        }
-
+        // A request resumes once, so it waits for the sharp image after the blurry one.
         if (info?[PHImageResultIsDegradedKey] as? Bool) == true {
             return .wait
+        }
+
+        if hasResult {
+            return .result
         }
 
         return .fullSize
