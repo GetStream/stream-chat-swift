@@ -111,7 +111,7 @@ struct PromptConformanceTests {
                 name: tool["name"]?.stringValue ?? "",
                 description: tool["description"]?.stringValue,
                 inputSchema: tool["inputSchema"] ?? [:],
-                outputSchema: tool["outputSchema"] ?? [:]
+                outputSchema: tool["outputSchema"]
             ))
         }
         return PromptOptions(

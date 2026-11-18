@@ -10,9 +10,10 @@ struct ToolSpec: Sendable, Hashable {
     var name: String
     var description: String?
     var inputSchema: OpenUIValue
-    var outputSchema: OpenUIValue
+    /// What the tool returns, when known. Without it, the prompt gives no result shape.
+    var outputSchema: OpenUIValue?
 
-    init(name: String, description: String? = nil, inputSchema: OpenUIValue = [:], outputSchema: OpenUIValue = [:]) {
+    init(name: String, description: String? = nil, inputSchema: OpenUIValue = [:], outputSchema: OpenUIValue? = nil) {
         self.name = name
         self.description = description
         self.inputSchema = inputSchema
@@ -667,7 +668,7 @@ enum PromptGenerator {
                 "\(key)\(required.contains(key) ? "" : "?"): \(jsonSchemaTypeString(value))"
             }.joined(separator: ", ")
         }
-        let returnType = " → \(jsonSchemaTypeString(tool.outputSchema))"
+        let returnType = tool.outputSchema.map { " → \(jsonSchemaTypeString($0))" } ?? ""
         var line = "- \(tool.name)(\(args))\(returnType)"
         if let description = tool.description, !description.isEmpty {
             line += "\n  \(description)"
@@ -692,13 +693,14 @@ enum PromptGenerator {
                 lines.append(toolSignature(spec))
             }
         }
-        if !specTools.isEmpty {
+        let outputs = specTools.compactMap { tool in tool.outputSchema.map { (name: tool.name, schema: $0) } }
+        if !outputs.isEmpty {
             lines.append("")
             lines.append("### Default values for Query results")
             lines.append("")
             lines.append("Use these shapes as minimal Query defaults:")
-            for tool in specTools {
-                lines.append("- \(tool.name): `\(OpenUIJSON.stringify(defaultValue(for: tool.outputSchema)))`")
+            for output in outputs {
+                lines.append("- \(output.name): `\(OpenUIJSON.stringify(defaultValue(for: output.schema)))`")
             }
         }
         lines.append("")

@@ -162,7 +162,9 @@ public struct ComponentLibrary: Sendable {
     /// Returns a library in which `view` shows the component named `name`, which keeps its props,
     /// such as to restyle the chat library's buttons. The view's context has the component's
     /// props, and the library's own view of it, ``ComponentContext/defaultView``, to wrap or
-    /// restyle. It is the same library when it has no such component.
+    /// restyle. It is the same library when it has no such component, or when the component has
+    /// no view of its own because its parent draws it, such as a list's items, a chart's series
+    /// or a table's columns: replace the parent's view instead.
     ///
     /// ```swift
     /// let library = ComponentLibrary.openUIChat.replacingView(of: .button) { context in
@@ -201,10 +203,11 @@ public struct ComponentLibrary: Sendable {
     }
 
     /// Returns a library without the given components. They are also removed from every slot that
-    /// takes several types, and groups left empty are dropped. The root component, and a type that
-    /// is the only one a slot takes, stay.
+    /// takes several types, and groups left empty are dropped, as are the prompt's examples, rules
+    /// and group notes that use them. The root component, and a type that is the only one a slot
+    /// takes, stay.
     public func removing(_ names: Set<String>) -> ComponentLibrary {
-        var names = names
+        var names = names.intersection(componentNames)
         if let root { names.remove(root) }
         // A component that is all a remaining slot takes stays, and so do the ones its slots need.
         while true {
@@ -224,18 +227,31 @@ public struct ComponentLibrary: Sendable {
             }
             return OpenUIComponentDefinition(schema, renderer: definition.renderer)
         }
+        // Text that names a removed component would have the model write it.
+        func keeps(_ text: String) -> Bool {
+            Self.identifiers(in: text).isDisjoint(with: names)
+        }
         let groups = componentGroups.compactMap { group -> ComponentGroup? in
             let kept = group.components.filter { !names.contains($0) }
-            return kept.isEmpty ? nil : ComponentGroup(name: group.name, components: kept, notes: group.notes)
+            return kept.isEmpty ? nil : ComponentGroup(name: group.name, components: kept, notes: group.notes.filter(keeps))
         }
+        var options = defaultPromptOptions
+        options.examples = options.examples.filter(keeps)
+        options.toolExamples = options.toolExamples.filter(keeps)
+        options.additionalRules = options.additionalRules.filter(keeps)
         return ComponentLibrary(
             root: root,
             components: remaining,
             componentGroups: groups,
-            defaultPromptOptions: defaultPromptOptions,
+            defaultPromptOptions: options,
             functions: functions,
             customActions: customActions
         )
+    }
+
+    // The words of `text` that could name a component: runs of letters and digits.
+    private static func identifiers(in text: String) -> Set<String> {
+        Set(text.split { !($0.isASCII && ($0.isLetter || $0.isNumber)) }.map(String.init))
     }
 
     // MARK: - Prompt & spec
