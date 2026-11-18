@@ -840,6 +840,43 @@ final class AIConversation_Tests: XCTestCase {
         XCTAssertNil(conversation.pendingMessage)
     }
 
+    func test_stop_twiceBeforeTheMessagesArrive_neitherIsTheNextOnes() async throws {
+        let transport = ConversationTransport(messages: [.user("u1"), .reply("a1")])
+        let conversation = AIConversation(transport: transport)
+        conversation.send("Hi")
+        conversation.stop()
+        conversation.send("Porto?")
+        conversation.stop()
+        conversation.send("Faro?")
+        try await waitUntil { transport.requests.count == 3 }
+        let hi = try XCTUnwrap(transport.requests.first { $0.text == "Hi" })
+
+        transport.update([.user("u1"), .reply("a1"), .user(hi.messageID, "Hi"), .reply("a2", "Hello the", generating: true)])
+
+        XCTAssertEqual(conversation.status, .submitted, "the agent hasn't answered Faro yet")
+        XCTAssertEqual(conversation.pendingMessage?.text, "Faro?")
+    }
+
+    func test_stop_whileWaiting_doesNotStopTheReplyToANewerMessage() async throws {
+        let transport = ConversationTransport(messages: [.user("u1"), .reply("a1")])
+        let conversation = AIConversation(transport: transport)
+        conversation.send("Hi")
+        await settle()
+        let hi = try XCTUnwrap(transport.lastRequest)
+        transport.update([.user("u1"), .reply("a1"), .user(hi.messageID, "Hi")])
+        conversation.stop()
+        await settle()
+
+        // The person sends another message from another device before the agent answers Hi.
+        transport.update([
+            .user("u1"), .reply("a1"), .user(hi.messageID, "Hi"),
+            .user("u3", "Porto?"), .reply("a3", "Sure", generating: true)
+        ])
+
+        XCTAssertEqual(conversation.status, .streaming, "the person stopped the reply to Hi, not this one")
+        XCTAssertTrue(conversation.composerViewModel.isGenerating)
+    }
+
     func test_send_whileTheAgentSendsAnotherMessageToTheLastTurn_waitsForItsOwnReply() {
         let transport = ConversationTransport(messages: [.user("u1"), .reply("a1")])
         let conversation = AIConversation(transport: transport)
@@ -966,6 +1003,39 @@ final class AIConversation_Tests: XCTestCase {
 
         XCTAssertNil(conversation.error)
         XCTAssertEqual(conversation.status, .submitted)
+    }
+
+    func test_stop_failureAfterANewRequest_showsTheReplyStillBeingWritten() async throws {
+        let writing = ChatMessage.reply("a1", "Day one", generating: true)
+        let transport = ConversationTransport(messages: [.user("u1"), writing])
+        transport.stopError = TransportError()
+        let conversation = AIConversation(transport: transport)
+
+        conversation.stop()
+        conversation.send("Something else")
+        XCTAssertFalse(conversation.isGenerating(writing))
+
+        try await waitUntil { conversation.isGenerating(writing) }
+        XCTAssertNil(conversation.error)
+        XCTAssertEqual(conversation.status, .submitted, "the new request still waits for its reply")
+    }
+
+    func test_stop_whenALaterStopFails_keepsTheReplyAnEarlierStopEnded() async throws {
+        let writing = ChatMessage.reply("a1", "Day one", generating: true)
+        let transport = ConversationTransport(messages: [.user("u1"), writing])
+        let conversation = AIConversation(transport: transport)
+        conversation.stop()
+        conversation.send("Something else")
+        // Sent once the first stop reached the transport.
+        try await waitUntil { transport.requests.count == 1 }
+        transport.stopError = TransportError()
+
+        conversation.stop()
+        XCTAssertEqual(conversation.status, .ready)
+        try await waitUntil { conversation.status == .submitted }
+
+        XCTAssertEqual(transport.stops, 2)
+        XCTAssertFalse(conversation.isGenerating(writing), "the first stop ended it")
     }
 
     // MARK: - What the agent says it is doing

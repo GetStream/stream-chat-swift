@@ -20,9 +20,12 @@ struct AIConversationExchange<Message: AIMessage> {
     // Tells it apart from the requests before and after it.
     let id: Int
     let request: AIConversationRequest<Message>
-    // The messages there were when it was made, none of which is its reply, and the id of the
-    // message of the request before it, such as one stopped before it arrived, which isn't its own.
+    // The messages there were when it was made, none of which is its reply, and those of the
+    // requests before it that hadn't arrived, which aren't its own.
     let known: Set<AnyHashable>
+    // The ids of the messages of the requests before it that hadn't arrived when it was made,
+    // such as ones stopped before they arrived, which can still arrive under them: the latest few.
+    let earlierMessageIDs: [String]
     // The messages it replaces, as they were, which the conversation leaves out while it waits:
     // the reply written again, or the message edited, and those after it.
     let replaced: [AnyHashable: Message]
@@ -30,14 +33,16 @@ struct AIConversationExchange<Message: AIMessage> {
     let pending: AIPendingMessage?
     var state = State.waiting
 
-    init(id: Int, request: AIConversationRequest<Message>, conversation: [Message], earlierMessageID: String? = nil) {
+    init(id: Int, request: AIConversationRequest<Message>, conversation: [Message], earlierMessageIDs: [String] = []) {
         self.id = id
         self.request = request
-        var known = Set(conversation.map { AnyHashable($0.id) })
-        if let earlierMessageID, earlierMessageID != request.messageID {
-            known.insert(AnyHashable(earlierMessageID))
-        }
-        self.known = known
+        let ids = Set(conversation.map { AnyHashable($0.id) })
+        self.earlierMessageIDs = Array(
+            earlierMessageIDs
+                .filter { $0 != request.messageID && !ids.contains(AnyHashable($0)) }
+                .suffix(Self.earlierMessageLimit)
+        )
+        known = ids.union(self.earlierMessageIDs.map { AnyHashable($0) })
         let target = request.message.flatMap { message in
             conversation.firstIndex { AnyHashable($0.id) == AnyHashable(message.id) }
         }
@@ -58,8 +63,17 @@ struct AIConversationExchange<Message: AIMessage> {
         }
     }
 
+    // A few are enough: each is a request stopped, or that failed, before its message arrived.
+    private static var earlierMessageLimit: Int { 8 }
+
     var hasFailed: Bool {
         state == .failed || state == .unanswered
+    }
+
+    // The messages on their way when it was made, its own included, which the request after it
+    // can't take for its own.
+    var messageIDsOnTheirWay: [String] {
+        earlierMessageIDs + (pending.map { [$0.id] } ?? [])
     }
 
     // The person's message while the conversation shows it: until its reply starts, and for a
@@ -81,9 +95,13 @@ struct AIConversationExchange<Message: AIMessage> {
         return last
     }
 
-    // Whether a request for the reply to the person's latest message, which has none, is
-    // overtaken by a newer message of theirs, which the replies after it answer.
+    // Whether a new message, or a request for the reply to the person's latest message, which
+    // has none, is overtaken by a newer message of theirs, which the replies after it answer.
     func isOvertaken(in conversation: [Message]) -> Bool {
+        if request.kind == .message {
+            guard let own = ownMessageIndex(in: conversation[...]) else { return false }
+            return conversation[(own + 1)...].contains { $0.role == .user }
+        }
         guard request.kind == .regenerate, request.message == nil,
               let latest = conversation.last(where: { $0.role == .user }) else { return false }
         return !known.contains(AnyHashable(latest.id))
@@ -102,11 +120,17 @@ struct AIConversationExchange<Message: AIMessage> {
     }
 
     private func hasMessageArrived(in conversation: ArraySlice<Message>) -> Bool {
-        if conversation.contains(where: { AnyHashable($0.id) == AnyHashable(request.messageID) }) {
-            return true
+        ownMessageIndex(in: conversation) != nil
+    }
+
+    // Where the person's message is: the one with its id, or else their first after the
+    // messages there were.
+    private func ownMessageIndex(in conversation: ArraySlice<Message>) -> Int? {
+        if let exact = conversation.firstIndex(where: { AnyHashable($0.id) == AnyHashable(request.messageID) }) {
+            return exact
         }
         let lastKnown = conversation.lastIndex { known.contains(AnyHashable($0.id)) }
-        return conversation[(lastKnown.map { $0 + 1 } ?? conversation.startIndex)...].contains { $0.role == .user }
+        return conversation[(lastKnown.map { $0 + 1 } ?? conversation.startIndex)...].firstIndex { $0.role == .user }
     }
 
     // What `retry()` sends: the request again, or, when the agent had the person's message but

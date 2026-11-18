@@ -15,25 +15,23 @@ final class SpeechHandler_Tests: XCTestCase {
 
     // MARK: - Permissions
 
-    func test_start_whenThePersonAllowsSpeechRecognition_asksForTheMicrophone() async {
+    func test_start_whenThePersonAllowsSpeechRecognition_asksForTheMicrophone() {
         system.speechAuthorization = .notDetermined
         system.microphonePermission = .undetermined
 
         handler.start()
         XCTAssertEqual(system.speechAuthorizationRequests.count, 1)
         system.answerSpeechAuthorization(.authorized)
-        await settle()
 
         XCTAssertEqual(system.microphonePermissionRequests.count, 1)
         XCTAssertEqual(handler.authorizationStatus, .authorized)
     }
 
-    func test_start_whenThePersonDeniesSpeechRecognitionTheFirstTime_saysWhy() async {
+    func test_start_whenThePersonDeniesSpeechRecognitionTheFirstTime_saysWhy() {
         system.speechAuthorization = .notDetermined
 
         handler.start()
         system.answerSpeechAuthorization(.denied)
-        await settle()
 
         XCTAssertEqual(handler.lastError as? SpeechHandlerError, .speechRecognitionDenied)
         XCTAssertEqual(handler.authorizationStatus, .denied)
@@ -51,23 +49,21 @@ final class SpeechHandler_Tests: XCTestCase {
         XCTAssertTrue(system.activations.isEmpty)
     }
 
-    func test_start_whenThePersonAllowsTheMicrophone_activatesTheAudioSession() async {
+    func test_start_whenThePersonAllowsTheMicrophone_activatesTheAudioSession() {
         system.microphonePermission = .undetermined
 
         handler.start()
         system.answerMicrophonePermission(true)
-        await settle()
 
         XCTAssertEqual(system.activations.count, 1)
         XCTAssertNil(handler.lastError)
     }
 
-    func test_start_whenThePersonDeniesTheMicrophone_saysWhy() async {
+    func test_start_whenThePersonDeniesTheMicrophone_saysWhy() {
         system.microphonePermission = .undetermined
 
         handler.start()
         system.answerMicrophonePermission(false)
-        await settle()
 
         XCTAssertEqual(handler.lastError as? SpeechHandlerError, .microphoneDenied)
         XCTAssertTrue(system.activations.isEmpty)
@@ -94,14 +90,13 @@ final class SpeechHandler_Tests: XCTestCase {
 
     // MARK: - Stopping while it starts
 
-    func test_stop_whileSpeechRecognitionIsAsked_ignoresTheAnswer() async {
+    func test_stop_whileSpeechRecognitionIsAsked_ignoresTheAnswer() {
         system.speechAuthorization = .notDetermined
         system.microphonePermission = .undetermined
 
         handler.start()
         handler.stop()
         system.answerSpeechAuthorization(.authorized)
-        await settle()
 
         XCTAssertTrue(system.microphonePermissionRequests.isEmpty)
         XCTAssertTrue(system.activations.isEmpty)
@@ -109,44 +104,41 @@ final class SpeechHandler_Tests: XCTestCase {
         XCTAssertEqual(handler.authorizationStatus, .authorized, "what the person allowed still shows")
     }
 
-    func test_stop_whileTheMicrophoneIsAsked_ignoresTheAnswer() async {
+    func test_stop_whileTheMicrophoneIsAsked_ignoresTheAnswer() {
         system.microphonePermission = .undetermined
 
         handler.start()
         handler.stop()
         system.answerMicrophonePermission(true)
-        await settle()
 
         XCTAssertTrue(system.activations.isEmpty, "the microphone stays off")
         XCTAssertFalse(handler.isRecording)
     }
 
-    func test_stop_whileTheMicrophoneIsAsked_ignoresADenial() async {
+    func test_stop_whileTheMicrophoneIsAsked_ignoresADenial() {
         system.microphonePermission = .undetermined
 
         handler.start()
         handler.stop()
         system.answerMicrophonePermission(false)
-        await settle()
 
         XCTAssertNil(handler.lastError, "the person stopped it before")
     }
 
-    func test_stop_whileTheAudioSessionActivates_doesNotRecordAndDeactivatesIt() async {
+    func test_stop_whileTheAudioSessionActivates_doesNotRecordAndDeactivatesIt() {
         handler.start()
         XCTAssertEqual(system.activations.count, 1)
 
         handler.stop()
-        XCTAssertEqual(system.deactivations, 1, "so other apps' audio plays at full volume again")
+        XCTAssertEqual(system.deactivations, 1, "so other apps' audio plays again")
         system.finishActivation()
-        await settle()
 
         XCTAssertFalse(handler.isRecording)
         XCTAssertNil(handler.lastError)
         XCTAssertEqual(system.deactivations, 1)
     }
 
-    func test_start_afterAStopWhileTheMicrophoneWasAsked_goesOnWithItsOwnAnswer() async {
+    func test_start_afterAStopWhileTheMicrophoneWasAsked_goesOnWithItsOwnAnswer() {
         system.microphonePermission = .undetermined
         handler.start()
         handler.stop()
@@ -154,22 +146,30 @@ final class SpeechHandler_Tests: XCTestCase {
         handler.start()
         XCTAssertEqual(system.microphonePermissionRequests.count, 2)
         system.answerMicrophonePermission(true, at: 0)
-        await settle()
         XCTAssertTrue(system.activations.isEmpty, "the answer to the start that was stopped")
 
         system.answerMicrophonePermission(true, at: 1)
-        await settle()
         XCTAssertEqual(system.activations.count, 1)
     }
 
-    func test_start_whenTheAudioSessionCannotActivate_saysWhyAndDeactivatesIt() async {
+    func test_start_whenTheAudioSessionCannotActivate_saysWhyAndDeactivatesIt() {
         handler.start()
         system.finishActivation(.failure(ActivationError()))
-        await settle()
 
         XCTAssertTrue(handler.lastError is ActivationError)
         XCTAssertFalse(handler.isRecording)
         XCTAssertEqual(system.deactivations, 1)
+    }
+
+    func test_release_whileTheAudioSessionActivates_deactivatesIt() async throws {
+        var dictation: SpeechHandler? = SpeechHandler(system: system)
+        dictation?.start()
+        XCTAssertEqual(system.activations.count, 1)
+
+        dictation = nil
+        system.finishActivation()
+
+        try await waitUntil { system.deactivations == 1 }
     }
 
     func test_stop_whenItIsNotDictating_doesNothing() {

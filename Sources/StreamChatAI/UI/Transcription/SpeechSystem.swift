@@ -7,18 +7,18 @@ import Foundation
 import Speech
 
 // What dictation asks of the system before it records: the person's permissions, a recognizer,
-// and the audio session. Each answer can come long after it is asked for, such as while the
-// person reads a permission prompt.
+// and the audio session. Each answer comes on the main actor, and can come long after it is
+// asked for, such as while the person reads a permission prompt.
 @available(iOS 15.0, macOS 12.0, *)
 @MainActor
-protocol SpeechSystem {
+protocol SpeechSystem: Sendable {
     var speechAuthorization: SFSpeechRecognizerAuthorizationStatus { get }
-    func requestSpeechAuthorization(_ completion: @escaping @Sendable (SFSpeechRecognizerAuthorizationStatus) -> Void)
+    func requestSpeechAuthorization(_ completion: @escaping @MainActor @Sendable (SFSpeechRecognizerAuthorizationStatus) -> Void)
     var microphonePermission: MicrophonePermission { get }
-    func requestMicrophonePermission(_ completion: @escaping @Sendable (Bool) -> Void)
+    func requestMicrophonePermission(_ completion: @escaping @MainActor @Sendable (Bool) -> Void)
     // A recognizer for `locale`, or else for the device's language, while it is available.
     func recognizer(for locale: Locale) -> SFSpeechRecognizer?
-    func activateAudioSession(_ completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+    func activateAudioSession(_ completion: @escaping @MainActor @Sendable (Result<Void, Error>) -> Void)
     func deactivateAudioSession()
 }
 
@@ -43,8 +43,10 @@ struct LiveSpeechSystem: SpeechSystem {
         SFSpeechRecognizer.authorizationStatus()
     }
 
-    func requestSpeechAuthorization(_ completion: @escaping @Sendable (SFSpeechRecognizerAuthorizationStatus) -> Void) {
-        SFSpeechRecognizer.requestAuthorization(completion)
+    func requestSpeechAuthorization(_ completion: @escaping @MainActor @Sendable (SFSpeechRecognizerAuthorizationStatus) -> Void) {
+        SFSpeechRecognizer.requestAuthorization { @Sendable status in
+            Task { @MainActor in completion(status) }
+        }
     }
 
     var microphonePermission: MicrophonePermission {
@@ -63,11 +65,14 @@ struct LiveSpeechSystem: SpeechSystem {
         }
     }
 
-    func requestMicrophonePermission(_ completion: @escaping @Sendable (Bool) -> Void) {
+    func requestMicrophonePermission(_ completion: @escaping @MainActor @Sendable (Bool) -> Void) {
+        let answer: @Sendable (Bool) -> Void = { granted in
+            Task { @MainActor in completion(granted) }
+        }
         if #available(iOS 17.0, *) {
-            AVAudioApplication.requestRecordPermission(completionHandler: completion)
+            AVAudioApplication.requestRecordPermission(completionHandler: answer)
         } else {
-            AVAudioSession.sharedInstance().requestRecordPermission(completion)
+            AVAudioSession.sharedInstance().requestRecordPermission(answer)
         }
     }
 
@@ -78,9 +83,10 @@ struct LiveSpeechSystem: SpeechSystem {
         return recognizer
     }
 
-    func activateAudioSession(_ completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+    func activateAudioSession(_ completion: @escaping @MainActor @Sendable (Result<Void, Error>) -> Void) {
         Self.audioSessionQueue.async {
-            completion(Result { try Self.activate() })
+            let activation = Result { try Self.activate() }
+            Task { @MainActor in completion(activation) }
         }
     }
 
@@ -90,9 +96,11 @@ struct LiveSpeechSystem: SpeechSystem {
         }
     }
 
+    // `.record` silences other apps' audio while it is active, and takes no ducking, which is
+    // for categories that play.
     private nonisolated static func activate() throws {
         let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.record, mode: .measurement, options: [.duckOthers])
-        try session.setActive(true, options: .notifyOthersOnDeactivation)
+        try session.setCategory(.record, mode: .measurement)
+        try session.setActive(true)
     }
 }

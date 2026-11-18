@@ -47,13 +47,21 @@ public final class SpeechHandler: NSObject, ObservableObject {
         self.system = system
     }
 
+    // Released while it dictates, or while its audio session activates, nothing else ends the
+    // session, which keeps other apps' audio silent.
+    deinit {
+        guard isSessionActive else { return }
+        let system = system
+        Task { @MainActor in
+            system.deactivateAudioSession()
+        }
+    }
+
     // MARK: - Authorization
 
     public func requestAuthorization() {
-        system.requestSpeechAuthorization { @Sendable [weak self] status in
-            Task { @MainActor in
-                self?.authorizationStatus = status
-            }
+        system.requestSpeechAuthorization { [weak self] status in
+            self?.authorizationStatus = status
         }
     }
 
@@ -98,8 +106,8 @@ public final class SpeechHandler: NSObject, ObservableObject {
             audioEngine = AVAudioEngine()
         }
 
-        // Lets other apps' audio, which the session ducked, play at full volume again. While the
-        // session is still activating, this runs after it.
+        // Lets other apps' audio, which the session silenced, play again. While the session is
+        // still activating, this runs after it.
         if isSessionActive {
             isSessionActive = false
             system.deactivateAudioSession()
@@ -123,10 +131,8 @@ public final class SpeechHandler: NSObject, ObservableObject {
             speechAuthorized(status, for: generation)
             return
         }
-        system.requestSpeechAuthorization { @Sendable [weak self] status in
-            Task { @MainActor in
-                self?.speechAuthorized(status, for: generation)
-            }
+        system.requestSpeechAuthorization { [weak self] status in
+            self?.speechAuthorized(status, for: generation)
         }
     }
 
@@ -140,10 +146,8 @@ public final class SpeechHandler: NSObject, ObservableObject {
         // Asked before recording, so the silence while the person answers doesn't end it.
         switch system.microphonePermission {
         case .undetermined:
-            system.requestMicrophonePermission { @Sendable [weak self] granted in
-                Task { @MainActor in
-                    self?.microphoneAuthorized(granted, for: generation)
-                }
+            system.requestMicrophonePermission { [weak self] granted in
+                self?.microphoneAuthorized(granted, for: generation)
             }
         case .denied:
             microphoneAuthorized(false, for: generation)
@@ -164,10 +168,8 @@ public final class SpeechHandler: NSObject, ObservableObject {
         }
         speechRecognizer = recognizer
         isSessionActive = true
-        system.activateAudioSession { @Sendable [weak self] activation in
-            Task { @MainActor in
-                self?.finishStarting(generation: generation, activation: activation)
-            }
+        system.activateAudioSession { [weak self] activation in
+            self?.finishStarting(generation: generation, activation: activation)
         }
     }
 

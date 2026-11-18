@@ -11,21 +11,23 @@ import XCTest
 
 @MainActor
 final class AIComposerContentView_Tests: XCTestCase {
+    @MainActor
     private final class Screen: ObservableObject {
         @Published var showsComposer = true
+        @Published var viewModel = AIComposerViewModel()
     }
 
-    // Shows the composer until the test takes it away, as when the person leaves the screen.
+    // Shows the composer until the test takes it away, as when the person leaves the screen, or
+    // gives it another draft, as when the person opens another conversation.
     private struct ScreenView: View {
         @ObservedObject var screen: Screen
-        let viewModel: AIComposerViewModel
         let speechHandler: SpeechHandler
 
         var body: some View {
             if screen.showsComposer {
                 AIComposerContentView(
                     viewFactory: DefaultAIComposerViewFactory.shared,
-                    viewModel: viewModel,
+                    viewModel: screen.viewModel,
                     speechHandler: speechHandler,
                     onMessageSend: { _ in },
                     onStopGenerating: nil
@@ -35,7 +37,7 @@ final class AIComposerContentView_Tests: XCTestCase {
     }
 
     private let system = SpeechSystemFake()
-    private let screen = Screen()
+    private lazy var screen = Screen()
 
     func test_disappearing_whileTheMicrophoneIsAsked_dictationDoesNotStart() async throws {
         system.microphonePermission = .undetermined
@@ -48,7 +50,6 @@ final class AIComposerContentView_Tests: XCTestCase {
         screen.showsComposer = false
         try await layOut(window)
         system.answerMicrophonePermission(true)
-        await settle()
 
         XCTAssertTrue(system.activations.isEmpty, "the person allowed the microphone after the composer went away")
         XCTAssertFalse(handler.isRecording)
@@ -57,6 +58,7 @@ final class AIComposerContentView_Tests: XCTestCase {
 
     func test_disappearing_whileSpeechRecognitionIsAsked_dictationDoesNotStart() async throws {
         system.speechAuthorization = .notDetermined
+        system.microphonePermission = .undetermined
         let handler = SpeechHandler(system: system)
         let window = show(handler)
         try await layOut(window)
@@ -66,8 +68,8 @@ final class AIComposerContentView_Tests: XCTestCase {
         screen.showsComposer = false
         try await layOut(window)
         system.answerSpeechAuthorization(.authorized)
-        await settle()
 
+        XCTAssertTrue(system.microphonePermissionRequests.isEmpty, "the person isn't asked for the microphone")
         XCTAssertTrue(system.activations.isEmpty)
         XCTAssertFalse(handler.isRecording)
         window.isHidden = true
@@ -82,10 +84,26 @@ final class AIComposerContentView_Tests: XCTestCase {
         XCTAssertEqual(system.activations.count, 1)
         screen.showsComposer = false
         try await layOut(window)
-        XCTAssertEqual(system.deactivations, 1, "so other apps' audio plays at full volume again")
+        XCTAssertEqual(system.deactivations, 1, "so other apps' audio plays again")
         system.finishActivation()
-        await settle()
 
+        XCTAssertFalse(handler.isRecording)
+        window.isHidden = true
+    }
+
+    func test_switchingDrafts_whileTheMicrophoneIsAsked_dictationDoesNotStart() async throws {
+        system.microphonePermission = .undetermined
+        let handler = SpeechHandler(system: system)
+        let window = show(handler)
+        try await layOut(window)
+
+        handler.start()
+        XCTAssertEqual(system.microphonePermissionRequests.count, 1)
+        screen.viewModel = AIComposerViewModel()
+        try await layOut(window)
+        system.answerMicrophonePermission(true)
+
+        XCTAssertTrue(system.activations.isEmpty, "what the person says would go in the other draft")
         XCTAssertFalse(handler.isRecording)
         window.isHidden = true
     }
@@ -93,7 +111,7 @@ final class AIComposerContentView_Tests: XCTestCase {
     private func show(_ handler: SpeechHandler) -> UIWindow {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 844))
         window.rootViewController = UIHostingController(
-            rootView: ScreenView(screen: screen, viewModel: AIComposerViewModel(), speechHandler: handler)
+            rootView: ScreenView(screen: screen, speechHandler: handler)
         )
         window.makeKeyAndVisible()
         return window

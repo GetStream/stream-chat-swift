@@ -78,9 +78,9 @@ final class AIPendingMessageTracker {
             let exact = AnyHashable(awaited.id)
             let matched = ids.contains(exact) ? exact : earlier
             if let copy = matched ?? copy(of: awaited, in: sent, known: known) {
-                if let earlier, earlier != copy {
-                    copies[earlier] = nil
-                }
+                // Only its copy keeps its row, also when another message that took it is gone
+                // from this update and comes back later.
+                copies = copies.filter { $0.key == copy || $0.value.id != awaited.id }
                 // A message edited again is the copy of its latest edit once it says what that
                 // edit does: an edit that failed brings it back as the edit before left it.
                 let says = sent.contains { AnyHashable($0.id) == copy && $0.text == awaited.text }

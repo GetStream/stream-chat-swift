@@ -210,11 +210,30 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
         let identified = AIPendingMessage(id: "q3", text: "Plan a trip", attachments: [.image(photo)])
         _ = tracker.entries(for: [Message(id: "q1", role: .user)], pending: nil)
         // Another device's message arrives as the person sends theirs, so it takes their row.
-        _ = tracker.entries(for: [Message(id: "q1", role: .user), Message(id: "q2", role: .user)], pending: identified)
+        let taken = tracker.entries(for: [Message(id: "q1", role: .user), Message(id: "q2", role: .user)], pending: identified)
+        XCTAssertEqual(taken.map(\.id), ["q1", "q3"])
+        XCTAssertEqual(taken[1].message?.id, "q2")
 
         let entries = tracker.entries(
             for: [Message(id: "q1", role: .user), Message(id: "q2", role: .user), Message(id: "q3", role: .user)],
             pending: identified
+        )
+
+        XCTAssertEqual(entries.map(\.id), ["q1", "q2", "q3"], "each row once")
+        XCTAssertEqual(entries[1].sentAttachments, [])
+        XCTAssertEqual(entries[2].sentAttachments, [.image(photo)])
+    }
+
+    func test_entries_whenTheCopyArrivesWithThePendingMessagesIDWithoutTheMessageThatTookItsRow_eachKeepsItsOwnRow() {
+        let identified = AIPendingMessage(id: "q3", text: "Plan a trip", attachments: [.image(photo)])
+        _ = tracker.entries(for: [Message(id: "q1", role: .user)], pending: nil)
+        _ = tracker.entries(for: [Message(id: "q1", role: .user), Message(id: "q2", role: .user)], pending: identified)
+        // The copy arrives in an update that leaves out the message that took its row.
+        _ = tracker.entries(for: [Message(id: "q1", role: .user), Message(id: "q3", role: .user)], pending: nil)
+
+        let entries = tracker.entries(
+            for: [Message(id: "q1", role: .user), Message(id: "q2", role: .user), Message(id: "q3", role: .user)],
+            pending: nil
         )
 
         XCTAssertEqual(entries.map(\.id), ["q1", "q2", "q3"], "each row once")

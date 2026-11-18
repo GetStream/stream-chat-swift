@@ -190,7 +190,7 @@ final class AIConversationExchange_Tests: XCTestCase {
             id: 1,
             request: AIConversationRequest<ChatMessage>(kind: .message, text: "Porto?", messageID: "m2"),
             conversation: conversation,
-            earlierMessageID: "m1"
+            earlierMessageIDs: ["m1"]
         )
 
         XCTAssertFalse(exchange.hasMessageArrived(in: conversation + [.user("m1")]), "the message stopped before it arrived")
@@ -199,15 +199,57 @@ final class AIConversationExchange_Tests: XCTestCase {
         XCTAssertNil(exchange.reply(in: conversation + [.user("m1"), .reply("a3", "Hello")]))
     }
 
+    func test_theMessagesOfTheRequestsBeforeThatHaventArrived_areNotItsOwn() {
+        let exchange = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .message, text: "Faro?", messageID: "m3"),
+            conversation: conversation + [.user("m0")],
+            earlierMessageIDs: ["m0", "m1", "m2"]
+        )
+
+        XCTAssertEqual(exchange.earlierMessageIDs, ["m1", "m2"], "m0 arrived")
+        XCTAssertEqual(exchange.messageIDsOnTheirWay, ["m1", "m2", "m3"])
+        XCTAssertFalse(exchange.hasMessageArrived(in: conversation + [.user("m0"), .user("m2"), .user("m1")]))
+        XCTAssertNil(exchange.reply(in: conversation + [.user("m0"), .user("m1"), .reply("a3", "Hello")]), "the reply to m1")
+        XCTAssertTrue(exchange.hasMessageArrived(in: conversation + [.user("m0"), .user("m3")]))
+        XCTAssertTrue(exchange.hasMessageArrived(in: conversation + [.user("m0"), .user("m1"), .user("u3")]))
+    }
+
+    func test_theMessagesOfTheRequestsBefore_areTheLatestFew() {
+        let exchange = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .message, text: "Faro?"),
+            conversation: conversation,
+            earlierMessageIDs: (0..<10).map { "m\($0)" }
+        )
+
+        XCTAssertEqual(exchange.earlierMessageIDs, (2..<10).map { "m\($0)" })
+    }
+
+    func test_aRegeneratedReply_bringsNoMessageOfItsOwn() {
+        let exchange = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .regenerate, text: "", message: .reply("a2"), messageID: "r1"),
+            conversation: conversation,
+            earlierMessageIDs: ["m1"]
+        )
+
+        XCTAssertEqual(exchange.messageIDsOnTheirWay, ["m1"])
+    }
+
     func test_aRetry_keepsMatchingItsOwnMessage() {
         let exchange = AIConversationExchange(
             id: 1,
             request: AIConversationRequest<ChatMessage>(kind: .message, text: "Porto?", messageID: "m1"),
             conversation: conversation,
-            earlierMessageID: "m1"
+            earlierMessageIDs: ["m1"]
         )
 
         XCTAssertFalse(exchange.known.contains("m1"))
+        XCTAssertTrue(
+            exchange.hasMessageArrived(in: [.user("u1"), .reply("a1"), .user("m1"), .user("u2"), .reply("a2")]),
+            "by its id, before the messages there were"
+        )
         XCTAssertTrue(exchange.hasMessageArrived(in: conversation + [.user("u3")]))
     }
 
@@ -223,6 +265,22 @@ final class AIConversationExchange_Tests: XCTestCase {
         XCTAssertFalse(exchange.isOvertaken(in: [.user("u0"), .reply("a0")] + waiting), "older messages loaded above")
         XCTAssertTrue(exchange.isOvertaken(in: waiting + [.user("u3")]))
         XCTAssertFalse(message().isOvertaken(in: conversation + [.user("u3")]), "a new message's own")
+    }
+
+    func test_aNewMessage_isOvertakenByANewerOneAfterIt() {
+        let exchange = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .message, text: "Hi", messageID: "m1"),
+            conversation: conversation
+        )
+
+        XCTAssertFalse(exchange.isOvertaken(in: conversation))
+        XCTAssertFalse(exchange.isOvertaken(in: conversation + [.user("m1"), .reply("a3", "Hello", generating: true)]))
+        XCTAssertTrue(exchange.isOvertaken(in: conversation + [.user("m1"), .user("u4")]))
+        XCTAssertTrue(exchange.isOvertaken(in: conversation + [.user("m1"), .reply("a3", "Hello"), .user("u4")]))
+        XCTAssertFalse(exchange.isOvertaken(in: conversation + [.user("u3"), .reply("a3", "Hello")]), "its message, under another id")
+        XCTAssertTrue(exchange.isOvertaken(in: conversation + [.user("u3"), .user("u4")]), "after its message, under another id")
+        XCTAssertFalse(exchange.isOvertaken(in: [.user("u0"), .reply("a0")] + conversation), "older messages loaded above")
     }
 
     func test_anOldReplyStillBeingWritten_isNotTheNewOne() {
