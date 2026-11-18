@@ -41,8 +41,8 @@ jobs:
     name: Test E2E UI (Debug)
     strategy:
       matrix:
-        # Coverage builds the map that selects e2e tests on pull requests.
-        include: ${{ fromJson(inputs.mock_check && '[{"ios":"26.2","device":"iPhone 17 Pro","setup_runtime":false}]' || '[{"ios":"26.2","device":"iPhone 17 Pro","setup_runtime":false,"coverage":true},{"ios":"17.5","device":"iPhone 15 Pro","setup_runtime":true}]') }}
+        # Coverage builds the map that selects e2e tests on pull requests, only against the main mock server.
+        include: ${{ fromJson(inputs.mock_check && '[{"ios":"26.2","device":"iPhone 17 Pro","setup_runtime":false}]' || (inputs.mock_server_branch || 'main') != 'main' && '[{"ios":"26.2","device":"iPhone 17 Pro","setup_runtime":false},{"ios":"17.5","device":"iPhone 15 Pro","setup_runtime":true}]' || '[{"ios":"26.2","device":"iPhone 17 Pro","setup_runtime":false,"coverage":true},{"ios":"17.5","device":"iPhone 15 Pro","setup_runtime":true}]') }}
       fail-fast: false
     runs-on: macos-15
     env:
@@ -67,10 +67,10 @@ jobs:
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" mock_server_branch:${{ inputs.mock_server_branch }} coverage:${{ matrix.coverage == true && (inputs.mock_server_branch || 'main') == 'main' }} ${{ env.VERBOSE }}
+      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" mock_server_branch:${{ inputs.mock_server_branch }} coverage:${{ matrix.coverage == true }} ${{ env.VERBOSE }}
       timeout-minutes: 120
     - uses: actions/upload-artifact@v7
-      if: matrix.coverage && (inputs.mock_server_branch || 'main') == 'main' && (success() || failure())
+      if: matrix.coverage && (success() || failure())
       with:
         name: e2e-coverage-map
         path: fastlane/test_output/e2e_coverage_map.json
