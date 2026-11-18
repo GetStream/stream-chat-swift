@@ -32,18 +32,33 @@ permissions:
   pull-requests: read
 
 jobs:
+  guard:
+    name: Guard
+    runs-on: ubuntu-24.04
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    permissions:
+      actions: write # to cancel skip-ci runs
+      checks: read # to skip checks already verified
+      contents: read
+      pull-requests: read
+    outputs:
+      checks: ${{ steps.guard.outputs.checks }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: guard
+        uses: ./.github/actions/ci-guard
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
   performance:
     name: Performance Metrics
     runs-on: macos-15
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    needs: guard
+    if: ${{ fromJSON(needs.guard.outputs.checks).xcmetrics }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # to fetch git tags
-
-      - uses: ./.github/actions/ci-guard
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate bot token
         id: bot-token
