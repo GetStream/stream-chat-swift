@@ -12,7 +12,6 @@ struct ActionComponentTests {
     nonisolated static let actions: [(OpenUIValue, Bool)] = [
         (.null, true),
         (["steps": [["type": "continue_conversation"]]], true),
-        (["steps": [["type": "custom_action", "name": "PlaceOrder"]]], true),
         (["steps": [["type": "run", "refType": "mutation"]]], true),
         (["steps": [["type": "run", "refType": "query"]]], false),
         (["steps": [["type": "open_url"]]], false)
@@ -21,6 +20,18 @@ struct ActionComponentTests {
     @Test(arguments: actions)
     func primaryButtonsValidateBeforeActionsThatSendTheForm(_ action: OpenUIValue, _ validates: Bool) {
         #expect(ButtonComponentView.needsValidation(action) == validates)
+    }
+
+    @Test func aCustomActionTheModelCalledValidatesBeforeItRuns() throws {
+        let runtime = OpenUIRuntime(library: OpenUI1RuntimeTests.library)
+        runtime.update(response: #"root = Card([Buttons([Button("Copy", @CopyToClipboard("abc"))])])"#, isStreaming: false)
+        let buttons = try #require(runtime.root?.props["children"]?.arrayValue?.first?.elementValue)
+        let action = try #require(buttons.props["buttons"]?.arrayValue?.first?.elementValue?.props["action"])
+
+        let steps = ActionPlan.steps(of: action)
+        #expect(steps.count == 1)
+        #expect(steps.first?["type"]?.stringValue == ActionStepType.customAction)
+        #expect(ButtonComponentView.needsValidation(action))
     }
 
     @Test func aCardTapKeepsTheActionsOwnContext() {

@@ -47,6 +47,11 @@ struct MarkdownCacheTests {
         _ = value("a")
 
         #expect(made == ["a", "b", "c", "d", "e", "f"], "a text shown again isn't parsed again")
+
+        _ = value("b")
+        _ = value("a")
+
+        #expect(made == ["a", "b", "c", "d", "e", "f", "b"], "a text not shown lately was dropped, and one shown lately wasn't")
         #expect(cache.count <= 6)
     }
 

@@ -157,6 +157,17 @@ struct LibraryAPITests {
         #expect(lists?.notes.contains { $0.contains("FollowUp") } == false)
     }
 
+    @Test func removingKeepsExamplesThatOnlyShowAComponentsNameAsText() {
+        let chat = ComponentLibrary.openUIChat
+        var options = chat.defaultPromptOptions
+        let text = #"root = Card([TextContent("Table \"Col\" view")])"#
+        let table = #"root = Card([Table([Col("Name", ["Ada"])])])"#
+        options.examples = [text, table]
+        let library = ComponentLibrary(root: chat.root, components: chat.components, componentGroups: chat.componentGroups, defaultPromptOptions: options)
+
+        #expect(library.removing(["Table", "Col"]).defaultPromptOptions.examples == [text])
+    }
+
     @Test func removingNamesThatArentComponentsKeepsThePrompt() {
         let library = ComponentLibrary.openUIChat.removing(["Action", "Query", "Card"])
 

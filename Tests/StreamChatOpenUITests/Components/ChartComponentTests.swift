@@ -93,6 +93,14 @@ struct ChartComponentTests {
         #expect(rows.series == ["s"])
     }
 
+    @Test func seriesWithTheSameNameAreDrawnApart() {
+        let rows = ChartData.points(labels: ["day", "Sales", "Sales"], series: [["Mon", 1, 4], ["Tue", 2, 5], ["Wed", 3, 6]])
+
+        #expect(rows.series == ["Sales"])
+        #expect(ChartData.bySeries(rows.points).map { $0.map(\.value) } == [[1, 2, 3], [4, 5, 6]])
+        #expect(ChartData.distinct(["b", "a", "b", "c", "a"]) == ["b", "a", "c"])
+    }
+
     @Test func bubbleSizesFollowTheRangeOfZ() {
         #expect(ScatterChartView.symbolSizes([-5, 0, 5, nil]) == [30, 115, 200, 50])
         #expect(ScatterChartView.symbolSizes([3, 3]) == [50, 50])

@@ -279,6 +279,77 @@ struct RobustnessTests {
         #expect(runtime.errors.contains { $0.message.contains("Evaluation stopped after") })
     }
 
+    @Test func filteringAndSortingALargeQueryResultStopsAtTheEvaluationBudget() async {
+        let numbers = OpenUIValue.array((0..<1_000_000).map { index -> OpenUIValue in .number(Double(index % 1000)) })
+        let tools = FunctionToolProvider(["numbers": { _ in ["rows": numbers] }])
+        let runtime = OpenUIRuntime(library: .openUI, toolProvider: tools)
+        runtime.update(response: """
+        root = Stack([TextContent("" + @Count(@Filter(data.rows, "", ">", 5))), TextContent("" + @First(@Sort(data.rows, "", "desc")))])
+        data = Query("numbers", {}, {rows: []})
+        """, isStreaming: false)
+
+        #expect(await waitUntil { runtime.errors.contains { $0.message.contains("Evaluation stopped after") } })
+        let started = ProcessInfo.processInfo.systemUptime
+        let (_, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
+
+        #expect(ProcessInfo.processInfo.systemUptime - started < 1, "neither runs over the million numbers")
+        #expect(errors.contains { $0.message.contains("Evaluation stopped after") })
+    }
+
+    @Test func filteringAndSortingTwoThousandRowsStaysWithinTheBudget() async {
+        let rows = OpenUIValue.array((0..<2000).map { index -> OpenUIValue in ["name": .string("item \(index)"), "stars": .number(Double(index % 50))] })
+        let tools = FunctionToolProvider(["repos": { _ in ["rows": rows] }])
+        let runtime = OpenUIRuntime(library: .openUI, toolProvider: tools)
+        runtime.update(response: """
+        root = Stack([TextContent("" + @Count(@Filter(data.rows, "stars", ">=", 25))), TextContent(@First(@Sort(data.rows, "stars", "desc")).name), TextContent("" + @Sum(data.rows.stars))])
+        data = Query("repos", {}, {rows: []})
+        """, isStreaming: false)
+
+        #expect(await waitUntil { Self.texts(runtime) == ["1000", "item 49", "49000"] })
+        #expect(!runtime.errors.contains { $0.message.contains("Evaluation stopped") })
+    }
+
+    @Test func pluckingAFieldFromALargeResultSpendsANodeForEachItem() async {
+        let row: OpenUIValue = ["label": "a"]
+        let rows = OpenUIValue.array(Array(repeating: row, count: 50000))
+        let tools = FunctionToolProvider(["rows": { _ in ["rows": rows] }])
+        let runtime = OpenUIRuntime(library: .openUI, toolProvider: tools)
+        runtime.update(response: """
+        root = Stack(@Each([1, 2, 3, 4, 5], "n", TextContent("" + @Count(data.rows.label))))
+        data = Query("rows", {}, {rows: []})
+        """, isStreaming: false)
+
+        #expect(await waitUntil { runtime.errors.contains { $0.message.contains("Evaluation stopped after") } })
+    }
+
+    @Test func eachTemplatesSpendWhatTheyCopyFromTheirItems() async {
+        let blob = OpenUIValue.array(Array(repeating: .number(1), count: 2000))
+        let rows = OpenUIValue.array((0..<300).map { index -> OpenUIValue in ["label": .string("r\(index)"), "blob": blob] })
+        let tools = FunctionToolProvider(["rows": { _ in ["rows": rows] }])
+        let labels = OpenUIRuntime(library: .openUI, toolProvider: tools)
+        labels.update(response: "root = Stack(@Each(data.rows, \"r\", TextContent(r.label)))\ndata = Query(\"rows\", {}, {rows: []})", isStreaming: false)
+        let blobs = OpenUIRuntime(library: .openUI, toolProvider: tools)
+        blobs.update(response: "root = Stack(@Each(data.rows, \"r\", TextContent(\"\" + @Count(r.blob))))\ndata = Query(\"rows\", {}, {rows: []})", isStreaming: false)
+
+        #expect(await waitUntil { Self.texts(labels).count == 300 })
+        #expect(!labels.errors.contains { $0.message.contains("Evaluation stopped") }, "reading a field doesn't copy the rest of the item")
+        #expect(await waitUntil { blobs.errors.contains { $0.message.contains("Evaluation stopped after") } })
+    }
+
+    @Test func componentsNestedTooDeepInAnExpressionStopEvaluating() {
+        let nested = String(repeating: "Stack([", count: 60) + #"TextContent("deep")"# + String(repeating: "])", count: 60)
+        let runtime = OpenUIRuntime(library: .openUI)
+
+        runtime.update(response: "$t = true\nroot = Stack([$t ? \(nested) : TextContent(\"no\")])", isStreaming: false)
+
+        #expect(runtime.root?.typeName == "Stack")
+        #expect(runtime.errors.filter { $0.message.contains("levels of nesting") }.count == 1)
+    }
+
+    private static func texts(_ runtime: OpenUIRuntime) -> [String] {
+        runtime.root?.props["children"]?.arrayValue?.compactMap { $0.elementValue?.props["text"]?.stringValue } ?? []
+    }
+
     @Test func componentsNestedTooDeepStopEvaluatingInsteadOfOverflowingTheStack() {
         let program = "root = " + String(repeating: "Stack([", count: 100) + "TextContent($x)" + String(repeating: "])", count: 100) + "\n$x = \"deep\""
         let runtime = OpenUIRuntime(library: .openUI)

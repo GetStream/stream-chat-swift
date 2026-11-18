@@ -16,6 +16,7 @@ final class FormValidationModel {
     private struct Registration {
         var rules: [ValidationRule]
         var value: @MainActor () -> OpenUIValue?
+        var owner: UUID?
     }
 
     @ObservationIgnored private var fields: [String: Registration] = [:]
@@ -26,11 +27,14 @@ final class FormValidationModel {
         errors[name]
     }
 
-    func register(_ name: String, rules: [ValidationRule], value: @escaping @MainActor () -> OpenUIValue?) {
-        fields[name] = Registration(rules: rules, value: value)
+    func register(_ name: String, rules: [ValidationRule], owner: UUID? = nil, value: @escaping @MainActor () -> OpenUIValue?) {
+        fields[name] = Registration(rules: rules, value: value, owner: owner)
     }
 
-    func unregister(_ name: String) {
+    // Removes the field's rules, unless another field has since registered under its name, such
+    // as when two fields swap names.
+    func unregister(_ name: String, owner: UUID? = nil) {
+        guard owner == nil || fields[name]?.owner == owner else { return }
         fields.removeValue(forKey: name)
     }
 
@@ -95,6 +99,7 @@ struct FieldValidationRegistration: ViewModifier {
     let isStreaming: Bool
     let value: @MainActor () -> OpenUIValue?
     @Environment(\.openUIFormValidation) private var validation
+    @State private var owner = UUID()
 
     func body(content: Content) -> some View {
         content
@@ -108,17 +113,17 @@ struct FieldValidationRegistration: ViewModifier {
                 unregister(previous)
                 register()
             }
-            .onDisappear { validation?.unregister(name) }
+            .onDisappear { validation?.unregister(name, owner: owner) }
     }
 
     private func register() {
         guard let validation, !rules.isEmpty, !isStreaming else { return }
-        validation.register(name, rules: rules, value: value)
+        validation.register(name, rules: rules, owner: owner, value: value)
     }
 
     // The field no longer checks these rules, so their error goes too.
     private func unregister(_ name: String) {
-        validation?.unregister(name)
+        validation?.unregister(name, owner: owner)
         validation?.clearError(name)
     }
 }

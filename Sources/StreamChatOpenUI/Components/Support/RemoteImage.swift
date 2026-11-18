@@ -59,9 +59,16 @@ struct RemoteImage: View {
             }
             .modifier(ImageAccessibility(alt: alt))
         } else {
-            placeholder(systemImage: url != nil && runtime?.isStreaming == true ? nil : "photo")
+            placeholder(systemImage: Self.isLinkPending(url, in: runtime) ? nil : "photo")
                 .modifier(ImageAccessibility(alt: alt))
         }
+    }
+
+    // Whether the model may still be writing the link, which shows progress. A link it finished
+    // that can't load, such as one the host turns down, shows the photo placeholder.
+    @MainActor static func isLinkPending(_ url: String?, in runtime: OpenUIRuntime?) -> Bool {
+        guard let url, let runtime, runtime.isStreaming else { return false }
+        return !runtime.allowsImageLink(url)
     }
 
     private func placeholder(systemImage: String?) -> some View {

@@ -56,11 +56,14 @@ extension ComponentSchema {
         )
     }
 
-    // What a parameter's value must be beyond the type its signature shows.
+    // What a parameter's value must be beyond the type its signature shows, for a parameter of
+    // one type besides null: of several, a value of another type is valid too.
     private static func formatNote(_ schema: OpenUIValue) -> String? {
         let types = schema["type"]?.stringValue.map { [$0] } ?? schema["type"]?.arrayValue?.compactMap(\.stringValue) ?? []
-        if types.contains("integer") { return "a whole number" }
-        guard types.contains("string") else { return nil }
+        let named = types.filter { $0 != "null" }
+        guard named.count == 1 else { return nil }
+        if named[0] == "integer" { return "a whole number" }
+        guard named[0] == "string" else { return nil }
         switch schema["format"]?.stringValue {
         case "date": return "a date as YYYY-MM-DD"
         case "date-time": return "a date and time as YYYY-MM-DDTHH:MM:SSZ"

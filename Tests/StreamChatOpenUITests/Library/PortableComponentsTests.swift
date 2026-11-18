@@ -78,6 +78,22 @@ struct PortableComponentsTests {
         #expect(schema.description == "nights: How long they stay; a whole number. day: a date as YYYY-MM-DD. at: a date and time as YYYY-MM-DDTHH:MM:SSZ.")
     }
 
+    @Test func aParameterOfSeveralTypesGetsNoFormatNote() throws {
+        let schema = try ComponentSchema(portableDefinition: [
+            "name": "lookup",
+            "parameters": [
+                "type": "object",
+                "properties": [
+                    "code": ["type": ["integer", "string"], "description": "The booking code"],
+                    "day": ["type": ["string", "integer"], "format": "date"]
+                ],
+                "x-order": ["code", "day"]
+            ]
+        ])
+
+        #expect(schema.description == "code: The booking code.")
+    }
+
     @Test func aDefinitionNeedsAName() {
         #expect(throws: OpenUIPortableComponentError.self) {
             try ComponentSchema(portableDefinition: ["description": "No name"])

@@ -6,29 +6,31 @@ import SwiftUI
 
 /// Item props shared by `TabItem`, `AccordionItem` and `SectionItem`.
 @available(iOS 17.0, macOS 14.0, *)
-private struct ContainerItem {
-    private(set) var value: String
+struct ContainerItem {
+    // What keeps an item selected or open as the items change: its value, and how many items
+    // before it have the same one, as the model can repeat a value.
+    struct ID: Hashable {
+        let value: String
+        let occurrence: Int
+    }
+
+    let id: ID
     let trigger: String
     let content: OpenUIValue
 
-    init?(_ element: ElementNode, index: Int, requireValue: Bool = true) {
-        let props = ComponentProps(element.props)
-        guard let value = props.text("value") ?? (requireValue ? nil : "\(index)") else { return nil }
-        self.value = value
-        self.trigger = props.text("trigger") ?? ""
-        self.content = element.props["content"] ?? .array([])
-    }
-
-    // The items in order, each with a value of its own: the model can repeat a value, which would
-    // otherwise select or open those items together.
-    static func items(_ elements: [ElementNode]) -> [ContainerItem] {
-        var values = Set<String>()
+    // The items in order. Without `requireValue`, an item without a value has its position as one.
+    static func items(_ elements: [ElementNode], requireValue: Bool = true) -> [ContainerItem] {
+        var occurrences: [String: Int] = [:]
         return elements.enumerated().compactMap { index, element in
-            guard var item = ContainerItem(element, index: index) else { return nil }
-            while !values.insert(item.value).inserted {
-                item.value += "#\(index)"
-            }
-            return item
+            let props = ComponentProps(element.props)
+            guard let value = props.text("value") ?? (requireValue ? nil : "\(index)") else { return nil }
+            let occurrence = occurrences[value, default: 0]
+            occurrences[value] = occurrence + 1
+            return ContainerItem(
+                id: ID(value: value, occurrence: occurrence),
+                trigger: props.text("trigger") ?? "",
+                content: element.props["content"] ?? .array([])
+            )
         }
     }
 
@@ -66,9 +68,9 @@ extension OpenUIValue {
 struct TabsView: View {
     let context: ComponentContext
     @Environment(\.openUITheme) private var theme
-    @State private var selection: String?
+    @State private var selection: ContainerItem.ID?
     @State private var userInteracted = false
-    @State private var previousSizes: [String: Int] = [:]
+    @State private var previousSizes: [ContainerItem.ID: Int] = [:]
 
     private var items: [ContainerItem] {
         ContainerItem.items(context.props.elements("items"))
@@ -77,40 +79,40 @@ struct TabsView: View {
     var body: some View {
         let items = self.items
         if !items.isEmpty {
-            let active = selection.flatMap { value in items.first { $0.value == value }?.value } ?? items[0].value
+            let active = selection.flatMap { id in items.first { $0.id == id }?.id } ?? items[0].id
             let sizes = context.isStreaming ? items.map(\.contentSize) : []
             VStack(alignment: .leading, spacing: theme.spacing.m) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: theme.spacing.xs) {
-                        ForEach(items, id: \.value) { item in
+                        ForEach(items, id: \.id) { item in
                             Button {
                                 userInteracted = true
-                                withAnimation(.snappy(duration: 0.2)) { selection = item.value }
+                                withAnimation(.snappy(duration: 0.2)) { selection = item.id }
                             } label: {
                                 Text(item.trigger)
                                     .font(theme.fonts.bodySmall.weight(.semibold))
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 7)
-                                    .foregroundStyle(item.value == active ? theme.colors.textPrimary : theme.colors.textSecondary)
+                                    .foregroundStyle(item.id == active ? theme.colors.textPrimary : theme.colors.textSecondary)
                                     .background {
-                                        if item.value == active {
+                                        if item.id == active {
                                             Capsule().fill(theme.colors.surface).shadow(color: .black.opacity(0.08), radius: 2, y: 1)
                                         }
                                     }
                             }
                             .buttonStyle(.plain)
-                            .accessibilityAddTraits(item.value == active ? [.isSelected] : [])
+                            .accessibilityAddTraits(item.id == active ? [.isSelected] : [])
                         }
                     }
                     .padding(3)
                     .background(theme.colors.sunkenSurface, in: Capsule())
                 }
-                if let current = items.first(where: { $0.value == active }) {
+                if let current = items.first(where: { $0.id == active }) {
                     VStack(alignment: .leading, spacing: theme.spacing.m) {
                         context.render(current.content)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .id(current.value)
+                    .id(current.id)
                     .transition(.opacity)
                 }
             }
@@ -122,17 +124,17 @@ struct TabsView: View {
     /// While the user hasn't picked a tab, switch to the tab whose content is growing.
     private func followStreamingContent(_ items: [ContainerItem], sizes: [Int]) {
         guard !userInteracted else { return }
-        var candidate: String?
-        var sizesByValue: [String: Int] = [:]
+        var candidate: ContainerItem.ID?
+        var sizesByID: [ContainerItem.ID: Int] = [:]
         for (item, size) in zip(items, sizes) {
-            if size > (previousSizes[item.value] ?? 0) { candidate = item.value }
-            sizesByValue[item.value] = size
+            if size > (previousSizes[item.id] ?? 0) { candidate = item.id }
+            sizesByID[item.id] = size
         }
-        previousSizes = sizesByValue
+        previousSizes = sizesByID
         if context.isStreaming, let candidate, candidate != selection {
             selection = candidate
         } else if selection == nil {
-            selection = items.first?.value
+            selection = items.first?.id
         }
     }
 }
@@ -140,27 +142,26 @@ struct TabsView: View {
 // MARK: - Accordion
 
 /// `Accordion(items)` with `AccordionItem(value, trigger, content)` — one section open at a time.
-/// Sections are told apart by position: the model can repeat a value, or still be writing it.
 @available(iOS 17.0, macOS 14.0, *)
 struct AccordionView: View {
     let context: ComponentContext
     @Environment(\.openUITheme) private var theme
-    @State private var openItem: Int?
+    @State private var openItem: ContainerItem.ID?
     @State private var userInteracted = false
     @State private var previousCount = 0
 
     var body: some View {
-        let items = context.props.elements("items").enumerated().compactMap { ContainerItem($1, index: $0) }
+        let items = ContainerItem.items(context.props.elements("items"))
         if !items.isEmpty {
             VStack(spacing: 0) {
-                ForEach(Array(items.enumerated()), id: \.offset) { index, item in
+                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                     DisclosureRow(
                         title: item.trigger,
                         isExpanded: Binding(
-                            get: { openItem == index },
+                            get: { openItem == item.id },
                             set: { expanded in
                                 userInteracted = true
-                                withAnimation(.snappy(duration: 0.25)) { openItem = expanded ? index : nil }
+                                withAnimation(.snappy(duration: 0.25)) { openItem = expanded ? item.id : nil }
                             }
                         )
                     ) {
@@ -169,16 +170,17 @@ struct AccordionView: View {
                     if index < items.count - 1 { Divider() }
                 }
             }
-            .onChange(of: items.count) { _, count in autoOpen(count: count) }
-            .onAppear { autoOpen(count: items.count) }
+            .onChange(of: items.map(\.id)) { _, _ in autoOpen(items) }
+            .onAppear { autoOpen(items) }
         }
     }
 
-    /// Auto-opens the newest item while it streams in (until the user interacts).
-    private func autoOpen(count: Int) {
-        defer { previousCount = count }
-        guard !userInteracted, count > previousCount, count > 0 else { return }
-        openItem = count - 1
+    /// Auto-opens the newest item while it streams in (until the user interacts), following its
+    /// value as the model writes it.
+    private func autoOpen(_ items: [ContainerItem]) {
+        defer { previousCount = items.count }
+        guard !userInteracted, items.count >= previousCount, let newest = items.last else { return }
+        openItem = newest.id
     }
 }
 
@@ -229,31 +231,30 @@ struct DisclosureRow<Content: View>: View {
 
 // MARK: - Sections
 
-/// `SectionBlock(sections, isFoldable?)` with `SectionItem(value, trigger, content)`. Sections are
-/// told apart by position: the model can repeat a value, or still be writing it.
+/// `SectionBlock(sections, isFoldable?)` with `SectionItem(value, trigger, content)`.
 @available(iOS 17.0, macOS 14.0, *)
 struct SectionBlockView: View {
     let context: ComponentContext
     @Environment(\.openUITheme) private var theme
-    @State private var openItems: Set<Int> = []
+    @State private var openItems: Set<ContainerItem.ID> = []
     @State private var userInteracted = false
     @State private var previousCount = 0
     @State private var wasStreaming = false
 
     var body: some View {
-        let sections = context.props.elements("sections").enumerated().compactMap { ContainerItem($1, index: $0, requireValue: false) }
+        let sections = ContainerItem.items(context.props.elements("sections"), requireValue: false)
         let foldable = context.props.bool("isFoldable") ?? true
         if foldable {
             VStack(spacing: 0) {
-                ForEach(Array(sections.enumerated()), id: \.offset) { index, section in
+                ForEach(Array(sections.enumerated()), id: \.element.id) { index, section in
                     DisclosureRow(
                         title: section.trigger,
                         isExpanded: Binding(
-                            get: { openItems.contains(index) },
+                            get: { openItems.contains(section.id) },
                             set: { expanded in
                                 userInteracted = true
                                 withAnimation(.snappy(duration: 0.25)) {
-                                    if expanded { openItems.insert(index) } else { openItems.remove(index) }
+                                    if expanded { openItems.insert(section.id) } else { openItems.remove(section.id) }
                                 }
                             }
                         ),
@@ -264,7 +265,7 @@ struct SectionBlockView: View {
                     if index < sections.count - 1 { Divider() }
                 }
             }
-            .onChange(of: sections.count) { _, _ in updateOpenSections(sections) }
+            .onChange(of: sections.map(\.id)) { _, _ in updateOpenSections(sections) }
             .onChange(of: context.isStreaming) { _, streaming in streamingChanged(streaming, sections) }
             .onAppear {
                 wasStreaming = context.isStreaming
@@ -288,18 +289,21 @@ struct SectionBlockView: View {
 
     private func updateOpenSections(_ sections: [ContainerItem]) {
         defer { previousCount = sections.count }
-        guard !sections.isEmpty else { return }
-        if context.isStreaming, sections.count > previousCount, !userInteracted {
-            openItems.insert(sections.count - 1)
-        } else if openItems.isEmpty {
-            openItems = [0]
+        guard let first = sections.first, let newest = sections.last else { return }
+        let ids = Set(sections.map(\.id))
+        if context.isStreaming, sections.count >= previousCount, !userInteracted {
+            // The newest section opens as the model writes it, and stays open under the value it
+            // ends up with.
+            openItems = openItems.intersection(ids).union([newest.id])
+        } else if openItems.isDisjoint(with: ids) {
+            openItems = [first.id]
         }
     }
 
     /// When streaming ends, collapse back to the first section (unless the user interacted).
     private func streamingChanged(_ streaming: Bool, _ sections: [ContainerItem]) {
-        if wasStreaming, !streaming, !userInteracted, !sections.isEmpty {
-            withAnimation { openItems = [0] }
+        if wasStreaming, !streaming, !userInteracted, let first = sections.first {
+            withAnimation { openItems = [first.id] }
         }
         wasStreaming = streaming
     }

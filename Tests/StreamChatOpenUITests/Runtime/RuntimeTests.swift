@@ -60,6 +60,13 @@ final class RecordingToolProvider: OpenUIToolProvider, @unchecked Sendable {
     }
 }
 
+// Waits for `released`, so a test can check a fetch while it is in flight.
+func waitForRelease(_ released: OSAllocatedUnfairLock<Bool>) async throws {
+    while !released.withLock({ $0 }) {
+        try await Task.sleep(nanoseconds: 5_000_000)
+    }
+}
+
 struct ToolFailure: Error, LocalizedError {
     var errorDescription: String? { "boom" }
 }
@@ -196,8 +203,9 @@ struct QueryManagerTests {
     }
 
     @Test func argumentsThatComeBackWhileTheirFetchIsInFlightWaitForIt() async {
+        let released = OSAllocatedUnfairLock(initialState: false)
         let provider = RecordingToolProvider { _, args, _ in
-            if args["q"] == "a" { try await Task.sleep(nanoseconds: 400_000_000) }
+            if args["q"] == "a" { try await waitForRelease(released) }
             return ["rows": [args["q"] ?? "none"]]
         }
         let manager = QueryManager(toolProvider: provider)
@@ -210,8 +218,49 @@ struct QueryManagerTests {
 
         #expect(manager.isLoading("data"), "the fetch of a is still on its way")
         #expect(provider.calls.count == 1, "b is never fetched")
+        released.withLock { $0 = true }
         #expect(await waitUntil { manager.result(for: "data") == ["rows": ["a"]] })
         #expect(!manager.isLoading("data"))
+    }
+
+    @Test func aQueryThatJoinsAFetchGetsItsResultAfterTheQueryThatStartedItLeaves() async {
+        let released = OSAllocatedUnfairLock(initialState: false)
+        let provider = RecordingToolProvider { _, args, _ in
+            if args["q"] == "x" { try await waitForRelease(released) }
+            return ["rows": [args["q"] ?? "none"]]
+        }
+        let manager = QueryManager(toolProvider: provider)
+        manager.argumentDebounce = 0
+        manager.evaluateQueries([node("a", args: ["q": "x"]), node("b", args: ["q": "y"])])
+        #expect(await waitUntil { manager.result(for: "b") == ["rows": ["y"]] })
+
+        manager.evaluateQueries([node("a", args: ["q": "x"]), node("b", args: ["q": "x"])])
+        manager.evaluateQueries([node("b", args: ["q": "x"])])
+        #expect(manager.isLoading("b"))
+        released.withLock { $0 = true }
+
+        #expect(await waitUntil { manager.result(for: "b") == ["rows": ["x"]] })
+        #expect(!manager.isLoading("b"))
+        #expect(provider.calls.count == 2)
+    }
+
+    @Test func aRefreshAQueryAsksForWhileItWaitsOnAnotherQuerysFetchRuns() async {
+        let released = OSAllocatedUnfairLock(initialState: false)
+        let provider = RecordingToolProvider { _, _, count in
+            if count == 1 { try await waitForRelease(released) }
+            return ["n": .number(Double(count))]
+        }
+        let manager = QueryManager(toolProvider: provider)
+        manager.evaluateQueries([node("a"), node("b")])
+
+        #expect(manager.snapshot.loading == ["a", "b"], "b waits for the fetch a started")
+        manager.invalidate(["b"])
+        released.withLock { $0 = true }
+
+        #expect(await waitUntil { manager.result(for: "b") == ["n": 2] })
+        #expect(await waitUntil { !manager.isAnyLoading })
+        #expect(manager.result(for: "a") == ["n": 2])
+        #expect(provider.calls.count == 2, "one more fetch for both")
     }
 
     @Test func newQueriesReportOnceForAllTheirFetches() {
@@ -541,6 +590,22 @@ struct RuntimeTests {
 
         #expect(texts(runtime) == ["tick"])
         #expect(evaluations.withLock { $0 } == 1)
+    }
+
+    @Test func aQueryWhoseArgumentsRunOutOfTheBudgetIsNotFetched() async {
+        let provider = RecordingToolProvider { _, _, _ in ["rows": []] }
+        let runtime = OpenUIRuntime(library: .openUI, toolProvider: provider)
+        runtime.queryManager.argumentDebounce = 0
+        runtime.update(response: """
+        root = Stack([])
+        data = Query("search", {q: "x", top: @First(@Sort($xs, ""))}, {rows: []})
+        """, isStreaming: false)
+        #expect(await waitUntil { provider.calls.count == 1 })
+
+        runtime.store.set("$xs", .array((0..<300_000).map { index -> OpenUIValue in .number(Double(index)) }))
+        try? await Task.sleep(nanoseconds: 200_000_000)
+
+        #expect(provider.calls.count == 1, "arguments evaluated only in part aren't sent")
     }
 
     @Test func restoresInitialState() {

@@ -23,6 +23,8 @@ struct EvaluationContext {
     var reportPropError: ((_ component: String, _ statementId: String?, _ prop: String, _ message: String) -> Void)?
     // Shared by every copy of this context, so one evaluation pass stops at the same bound.
     var budget = EvaluationBudget()
+    // The items of the `@Each` loops being evaluated, by their variable names.
+    var loopItems: [String: OpenUIValue] = [:]
 
     init(
         getState: @escaping (String) -> OpenUIValue?,
@@ -59,6 +61,9 @@ final class EvaluationBudget {
     private var reportedDepth = false
 
     var remainingNodes: Int { max(remaining, 0) }
+
+    // Whether the pass ran out, so what it evaluated since is incomplete.
+    var ranOut: Bool { reported }
 
     // Whether a node is left, reporting, once, when none is.
     func hasRemaining(reportError: ((String) -> Void)?) -> Bool {
@@ -98,37 +103,35 @@ final class EvaluationBudget {
         depth -= 1
     }
 
-    // The nodes of `value` walking it visits, counting up to `limit`. Scalars cost nothing.
+    // The nodes of `value` walking it visits, counting up to `limit`. Scalars cost nothing. A node
+    // counts when it is found, so the walk stops at `limit` however wide the value is.
     static func size(of value: OpenUIValue?, limit: Int) -> Int {
-        guard let value, value.isContainer else { return 0 }
-        var count = 0
+        guard let value, value.isContainer, limit > 0 else { return 0 }
+        var count = 1
         var pending = [value]
-        func visit(_ child: OpenUIValue) {
-            if child.isContainer {
-                pending.append(child)
-            } else {
-                count += 1
-            }
-        }
-        while let next = pending.popLast() {
+        func visit(_ child: OpenUIValue) -> Bool {
             count += 1
+            if child.isContainer { pending.append(child) }
+            return count < limit
+        }
+        walk: while count < limit, let next = pending.popLast() {
             switch next {
             case .array(let items):
-                for item in items where count < limit {
-                    visit(item)
+                for item in items {
+                    guard visit(item) else { break walk }
                 }
             case .object(let object):
-                for item in object.values where count < limit {
-                    visit(item)
+                for key in object.keys {
+                    guard let item = object[key] else { continue }
+                    guard visit(item) else { break walk }
                 }
             case .element(let element):
-                visit(.object(element.props))
+                guard visit(.object(element.props)) else { break walk }
             case .null, .bool, .number, .string, .expression:
                 break
             }
-            if count >= limit { return limit }
         }
-        return count
+        return min(count, limit)
     }
 }
 
@@ -243,7 +246,7 @@ enum Evaluator {
                 let params = Builtins.functionParams[name] ?? []
                 let named = mappedProps ?? Materializer.nameArgs(args, params.map { ParamDef(name: $0, required: false) })
                 let values = params.map { param in named.first { $0.key == param }.flatMap { evaluate($0.value, context) } }
-                guard spendCoercions(ofBuiltin: name, values, context) else { return nil }
+                guard spendWork(ofBuiltin: name, values, context) else { return nil }
                 return builtin.function(values)
             }
             if Builtins.actionNames.contains(name) {
@@ -317,7 +320,7 @@ enum Evaluator {
             return JS.isTruthy(evaluate(condition, context)) ? evaluate(then, context) : evaluate(otherwise, context)
 
         case .member(let objectNode, let field):
-            return memberValue(evaluate(objectNode, context), field)
+            return memberValue(evaluate(objectNode, context), field, context)
 
         case .index(let objectNode, let indexNode):
             let object = evaluate(objectNode, context)
@@ -343,24 +346,32 @@ enum Evaluator {
         return cost == 0 || context.budget.spend(cost, reportError: context.reportError)
     }
 
-    // Spends what `@Filter` and `@Sort` walk beyond their items: each item's compared value, and
-    // for `@Filter` the target, which every item is compared with.
-    private static func spendCoercions(ofBuiltin name: String, _ values: [OpenUIValue?], _ context: EvaluationContext) -> Bool {
-        guard name == "Filter" || name == "Sort", case .array(let items)? = values.first ?? nil else { return true }
+    private static let builtinsWalkingItems: Set<String> = ["Sum", "Avg", "Min", "Max", "Filter", "Sort"]
+
+    // Spends what a builtin that walks an array does, before it runs, so one past the budget
+    // doesn't: a node for each item, or for `@Sort` each comparison, whatever the items are, and
+    // the nodes of the arrays and objects `@Filter` and `@Sort` compare, with `@Filter`'s target
+    // compared with every item.
+    private static func spendWork(ofBuiltin name: String, _ values: [OpenUIValue?], _ context: EvaluationContext) -> Bool {
+        guard builtinsWalkingItems.contains(name), case .array(let items)? = values.first ?? nil else { return true }
+        let isSort = name == "Sort"
+        // A sort compares each item about log2(n) times.
+        let comparisons = isSort ? max(1, Int.bitWidth - items.count.leadingZeroBitCount) : 1
+        guard context.budget.spend(saturatingProduct(items.count, comparisons), reportError: context.reportError) else { return false }
+        guard isSort || name == "Filter" else { return true }
         let fieldValue = values.count > 1 ? values[1] : nil
         let field = JS.isNullish(fieldValue) ? "" : JS.toString(fieldValue)
         let limit = context.budget.remainingNodes + 1
-        var cost = 0
-        for item in items where cost < limit {
-            cost += EvaluationBudget.size(of: field.isEmpty ? item : Builtins.resolveField(item, field), limit: limit)
+        var walked = 0
+        for item in items {
+            walked += EvaluationBudget.size(of: field.isEmpty ? item : Builtins.resolveField(item, field), limit: limit)
+            if walked >= limit { break }
         }
-        if name == "Sort" {
-            // A sort compares each item about log2(n) times.
-            cost = saturatingProduct(cost, max(1, Int.bitWidth - items.count.leadingZeroBitCount))
-        } else if values.count > 3 {
-            cost = saturatingProduct(EvaluationBudget.size(of: values[3], limit: limit), items.count).addingReportingOverflow(cost).partialValue
+        var cost = saturatingProduct(walked, comparisons)
+        if !isSort, values.count > 3 {
+            cost = saturatingSum(cost, saturatingProduct(EvaluationBudget.size(of: values[3], limit: limit), items.count))
         }
-        return cost == 0 || context.budget.spend(max(cost, 0), reportError: context.reportError)
+        return cost == 0 || context.budget.spend(cost, reportError: context.reportError)
     }
 
     private static func saturatingProduct(_ lhs: Int, _ rhs: Int) -> Int {
@@ -368,8 +379,19 @@ enum Evaluator {
         return overflow ? Int.max / 2 : product
     }
 
+    private static func saturatingSum(_ lhs: Int, _ rhs: Int) -> Int {
+        let (sum, overflow) = lhs.addingReportingOverflow(rhs)
+        return overflow ? Int.max / 2 : sum
+    }
+
     /// A catalog component call inside an expression (e.g. a ternary branch or `@Each` template).
     private static func evaluateMappedComponent(_ name: String, _ mappedProps: [ASTEntry], _ context: EvaluationContext, _ schema: ReactivePropResolver?) -> OpenUIValue {
+        // Its props can call components of their own, so it is a level of nesting before they
+        // are evaluated.
+        guard context.budget.enter(reportError: context.reportError) else {
+            return .element(ElementNode(typeName: name, hasDynamicProps: false))
+        }
+        defer { context.budget.leave() }
         var props = OpenUIObject()
         for entry in mappedProps {
             let isReactive = schema?.isReactiveProp(component: name, prop: entry.key) ?? false
@@ -525,7 +547,7 @@ enum Evaluator {
             step = ["type": .string(ActionStepType.openURL), "url": .string(stringValue(named["url"]))]
         case "Set":
             if args.count >= 2, case .stateRef(let target) = args[0] {
-                step = ["type": .string(ActionStepType.set), "target": .string(target), "valueAST": .expression(args[1])]
+                step = ["type": .string(ActionStepType.set), "target": .string(target), "valueAST": .expression(capturingLoopItems(args[1], context))]
             } else {
                 step = nil
             }
@@ -553,6 +575,14 @@ enum Evaluator {
     /// `String(value ?? "")`
     private static func stringValue(_ value: OpenUIValue?) -> String {
         JS.isNullish(value) ? "" : JS.toString(value)
+    }
+
+    // A `@Set` value is evaluated when it is tapped, outside its `@Each`, so it keeps the values of
+    // the loop items it reads, even the parts a template keeps as references for their components.
+    private static func capturingLoopItems(_ node: ASTNode, _ context: EvaluationContext) -> ASTNode {
+        context.loopItems.reduce(node) { captured, loop in
+            LoopSubstitution(variableName: loop.key, item: loop.value, keepsComponents: false, context: context).apply(captured)
+        }
     }
 
     // MARK: - Lazy builtins
@@ -587,12 +617,15 @@ enum Evaluator {
             if readsItem {
                 guard context.budget.spend(templateSize, reportError: context.reportError) else { break }
             }
-            let substituted = readsItem ? substituteRef(template, variableName, item) : template
+            let substituted = readsItem
+                ? LoopSubstitution(variableName: variableName, item: item, keepsComponents: true, context: context).apply(template)
+                : template
             var childContext = context
             let parentResolve = context.resolveRef
             childContext.resolveRef = { refName in
                 refName == variableName ? item : parentResolve(refName)
             }
+            childContext.loopItems[variableName] = item
             let result = evaluate(substituted, childContext, schema)
             if let schema, case .element(let element)? = result {
                 results.append(.element(evaluateElementInline(element, childContext, schema)))
@@ -618,92 +651,16 @@ enum Evaluator {
         }
     }
 
-    /// Replaces every `Ref(variableName)` in `node` with the literal form of `value`. A reference to
-    /// a part of `value` that holds a component stays a reference, which the item's context
-    /// resolves: as a literal, the component would be a plain object no view draws.
-    static func substituteRef(_ node: ASTNode, _ variableName: String, _ value: OpenUIValue) -> ASTNode {
-        substituteRef(node, variableName, value, holdsElement: value.containsElement)
-    }
-
-    private static func substituteRef(_ node: ASTNode, _ variableName: String, _ value: OpenUIValue, holdsElement: Bool) -> ASTNode {
-        func substitute(_ node: ASTNode) -> ASTNode {
-            substituteRef(node, variableName, value, holdsElement: holdsElement)
+    // `object.field`, spending a node for each item an array plucks the field from.
+    static func memberValue(_ object: OpenUIValue?, _ field: String, _ context: EvaluationContext) -> OpenUIValue? {
+        if case .array(let items)? = object, field != "length" {
+            guard context.budget.spend(items.count, reportError: context.reportError) else { return nil }
         }
-        switch node {
-        case .ref(let name):
-            return name == variableName && !holdsElement ? literalAST(value) : node
-        case .member(let object, let field):
-            if holdsElement {
-                let reached = chain(node, on: variableName, value)
-                if reached.isChain {
-                    return reached.value?.containsElement == true ? node : literalChain(node, value)
-                }
-            }
-            let substituted = substitute(object)
-            if case .obj(let entries) = substituted, let entry = entries.first(where: { $0.key == field }) {
-                return entry.value
-            }
-            return .member(substituted, field)
-        case .index(let object, let index):
-            return .index(substitute(object), substitute(index))
-        case .binary(let op, let left, let right):
-            return .binary(op, substitute(left), substitute(right))
-        case .unary(let op, let operand):
-            return .unary(op, substitute(operand))
-        case .ternary(let condition, let then, let otherwise):
-            return .ternary(substitute(condition), substitute(then), substitute(otherwise))
-        case .arr(let elements):
-            return .arr(elements.map(substitute))
-        case .obj(let entries):
-            return .obj(entries.map { ASTEntry($0.key, substitute($0.value)) })
-        case .comp(let name, let args, let mappedProps, let isFunction):
-            // An inner `@Each` with the same loop variable shadows this one in its template.
-            if Builtins.lazyNames.contains(name), args.count >= 3, args[1] == .ref(variableName) || args[1] == .str(variableName) {
-                return .comp(
-                    name: name,
-                    args: args.enumerated().map { index, arg in index == 0 ? substitute(arg) : arg },
-                    mappedProps: mappedProps,
-                    isFunction: isFunction
-                )
-            }
-            return .comp(
-                name: name,
-                args: args.map(substitute),
-                mappedProps: mappedProps?.map { ASTEntry($0.key, substitute($0.value)) },
-                isFunction: isFunction
-            )
-        case .assign(let target, let expression):
-            return .assign(target, substitute(expression))
-        case .str, .num, .bool, .null, .placeholder, .stateRef, .runtimeRef:
-            return node
-        }
-    }
-
-    // Whether `node` reads the loop variable or a field path of it, and the value it reads.
-    private static func chain(_ node: ASTNode, on variableName: String, _ value: OpenUIValue) -> (isChain: Bool, value: OpenUIValue?) {
-        switch node {
-        case .ref(let name):
-            return (name == variableName, value)
-        case .member(let object, let field):
-            let base = chain(object, on: variableName, value)
-            return base.isChain ? (true, memberValue(base.value, field)) : (false, nil)
-        default:
-            return (false, nil)
-        }
-    }
-
-    // A field path of the loop variable as a literal, picking the fields from the item's literal.
-    private static func literalChain(_ node: ASTNode, _ value: OpenUIValue) -> ASTNode {
-        guard case .member(let object, let field) = node else { return literalAST(value) }
-        let substituted = literalChain(object, value)
-        if case .obj(let entries) = substituted, let entry = entries.first(where: { $0.key == field }) {
-            return entry.value
-        }
-        return .member(substituted, field)
+        return memberValue(object, field)
     }
 
     // `object.field`: an array plucks the field from each of its items.
-    static func memberValue(_ object: OpenUIValue?, _ field: String) -> OpenUIValue? {
+    private static func memberValue(_ object: OpenUIValue?, _ field: String) -> OpenUIValue? {
         if JS.isNullish(object) { return .null }
         if case .array(let items)? = object {
             if field == "length" { return .number(Double(items.count)) }
@@ -713,6 +670,95 @@ enum Evaluator {
             })
         }
         return JS.property(of: object, key: field)
+    }
+}
+
+// Puts a loop item in place of its variable in an `@Each` template, as literals, so deferred
+// expressions, such as steps that run when tapped, keep the item's values. A field path, such as
+// `item.label`, is read before it becomes a literal, so it doesn't copy the rest of the item, and
+// what becomes a literal is spent, as the template rebuilds it for each item.
+@available(iOS 17.0, macOS 14.0, *)
+private struct LoopSubstitution {
+    let variableName: String
+    let item: OpenUIValue
+    // Whether a part of the item that holds a component stays a reference, which the item's
+    // context resolves: as a literal, the component would be a plain object no view draws.
+    let keepsComponents: Bool
+    let context: EvaluationContext
+
+    // `readsPath` is false for the object of a field access that isn't a path of the variable,
+    // whose own object then isn't either.
+    func apply(_ node: ASTNode, readsPath: Bool = true) -> ASTNode {
+        switch node {
+        case .ref(let name):
+            return name == variableName ? literal(item, orKeeping: node) : node
+        case .member(let object, let field):
+            var objectIsPath = false
+            if readsPath {
+                let reached = read(node)
+                if reached.isPath, let part = reached.value {
+                    return literal(part, orKeeping: node)
+                }
+                objectIsPath = reached.isPath
+            }
+            let substituted = apply(object, readsPath: objectIsPath)
+            if case .obj(let entries) = substituted, let entry = entries.first(where: { $0.key == field }) {
+                return entry.value
+            }
+            return .member(substituted, field)
+        case .index(let object, let index):
+            return .index(apply(object), apply(index))
+        case .binary(let op, let left, let right):
+            return .binary(op, apply(left), apply(right))
+        case .unary(let op, let operand):
+            return .unary(op, apply(operand))
+        case .ternary(let condition, let then, let otherwise):
+            return .ternary(apply(condition), apply(then), apply(otherwise))
+        case .arr(let elements):
+            return .arr(elements.map { apply($0) })
+        case .obj(let entries):
+            return .obj(entries.map { ASTEntry($0.key, apply($0.value)) })
+        case .comp(let name, let args, let mappedProps, let isFunction):
+            // An inner `@Each` with the same loop variable shadows this one in its template.
+            if Builtins.lazyNames.contains(name), args.count >= 3, args[1] == .ref(variableName) || args[1] == .str(variableName) {
+                return .comp(
+                    name: name,
+                    args: args.enumerated().map { index, arg in index == 0 ? apply(arg) : arg },
+                    mappedProps: mappedProps,
+                    isFunction: isFunction
+                )
+            }
+            return .comp(
+                name: name,
+                args: args.map { apply($0) },
+                mappedProps: mappedProps?.map { ASTEntry($0.key, apply($0.value)) },
+                isFunction: isFunction
+            )
+        case .assign(let target, let expression):
+            return .assign(target, apply(expression))
+        case .str, .num, .bool, .null, .placeholder, .stateRef, .runtimeRef:
+            return node
+        }
+    }
+
+    // Whether `node` is the variable or a field path of it, and the value it reads, which is
+    // `nil` when its last field is missing.
+    private func read(_ node: ASTNode) -> (isPath: Bool, value: OpenUIValue?) {
+        switch node {
+        case .ref(let name):
+            return (name == variableName, item)
+        case .member(let object, let field):
+            let base = read(object)
+            return base.isPath ? (true, Evaluator.memberValue(base.value, field, context)) : (false, nil)
+        default:
+            return (false, nil)
+        }
+    }
+
+    private func literal(_ part: OpenUIValue, orKeeping node: ASTNode) -> ASTNode {
+        let size = EvaluationBudget.size(of: part, limit: context.budget.remainingNodes + 1)
+        guard context.budget.spend(size, reportError: context.reportError) else { return .null }
+        return keepsComponents && part.containsElement ? node : Evaluator.literalAST(part)
     }
 }
 

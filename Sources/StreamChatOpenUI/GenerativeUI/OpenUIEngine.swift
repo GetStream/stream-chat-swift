@@ -76,6 +76,9 @@ final class OpenUIEngine: AIUIEngine {
         }
         runtimes[messageID] = runtime
         messageIDs[ObjectIdentifier(runtime)] = messageID
+        // Its queries refresh only while its view shows it, which a reply without a root never
+        // has; they still fetch once.
+        runtime.queryManager.pauseRefreshes()
         runtime.update(response: program, isStreaming: isStreaming)
         return runtime
     }

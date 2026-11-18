@@ -227,17 +227,21 @@ public struct ComponentLibrary: Sendable {
             }
             return OpenUIComponentDefinition(schema, renderer: definition.renderer)
         }
-        // Text that names a removed component would have the model write it.
+        // Text that names a removed component would have the model write it. An example calls it
+        // outside its strings, which can hold its name as plain text.
         func keeps(_ text: String) -> Bool {
             Self.identifiers(in: text).isDisjoint(with: names)
+        }
+        func keepsExample(_ example: String) -> Bool {
+            keeps(Self.withoutStrings(example))
         }
         let groups = componentGroups.compactMap { group -> ComponentGroup? in
             let kept = group.components.filter { !names.contains($0) }
             return kept.isEmpty ? nil : ComponentGroup(name: group.name, components: kept, notes: group.notes.filter(keeps))
         }
         var options = defaultPromptOptions
-        options.examples = options.examples.filter(keeps)
-        options.toolExamples = options.toolExamples.filter(keeps)
+        options.examples = options.examples.filter(keepsExample)
+        options.toolExamples = options.toolExamples.filter(keepsExample)
         options.additionalRules = options.additionalRules.filter(keeps)
         return ComponentLibrary(
             root: root,
@@ -252,6 +256,35 @@ public struct ComponentLibrary: Sendable {
     // The words of `text` that could name a component: runs of letters and digits.
     private static func identifiers(in text: String) -> Set<String> {
         Set(text.split { !($0.isASCII && ($0.isLetter || $0.isNumber)) }.map(String.init))
+    }
+
+    // `text` with its double-quoted strings blanked out. A string ends with its line, so a quote
+    // in an example's prose hides no more than the rest of that line.
+    private static func withoutStrings(_ text: String) -> String {
+        var code = ""
+        var inString = false
+        var escaped = false
+        for character in text {
+            if character.isNewline {
+                inString = false
+                escaped = false
+                code.append(character)
+            } else if inString {
+                if escaped {
+                    escaped = false
+                } else if character == "\\" {
+                    escaped = true
+                } else if character == "\"" {
+                    inString = false
+                }
+            } else if character == "\"" {
+                inString = true
+                code.append(" ")
+            } else {
+                code.append(character)
+            }
+        }
+        return code
     }
 
     // MARK: - Prompt & spec

@@ -215,10 +215,12 @@ final class OpenUIRuntime {
 
     private func runQueryEffects() {
         guard !isStreaming else { return }
-        let context = evaluationContext
         let snapshot = store.snapshot
 
         let queryNodes: [QueryManager.QueryNode] = (parseResult?.queryStatements ?? []).map { statement in
+            // Each query evaluates with a budget of its own. One that runs out of it waits, as if
+            // the model were still writing it, rather than fetching with what it evaluated so far.
+            let context = evaluationContext
             var deps: OpenUIValue?
             if let names = statement.deps, !names.isEmpty {
                 var relevant = OpenUIObject()
@@ -229,14 +231,17 @@ final class OpenUIRuntime {
             if let refreshAST = statement.refreshAST, let value = Evaluator.evaluate(refreshAST, context) {
                 refreshInterval = JS.toNumber(value)
             }
+            let toolName = statement.toolAST.flatMap { Evaluator.evaluate($0, context) }.map { JS.toString($0) } ?? ""
+            let args = statement.argsAST.map { Evaluator.evaluate($0, context) ?? .null } ?? .null
+            let defaults = statement.defaultsAST.map { Evaluator.evaluate($0, context) ?? .null } ?? .null
             return QueryManager.QueryNode(
                 statementId: statement.statementId,
-                toolName: statement.toolAST.flatMap { Evaluator.evaluate($0, context) }.map { JS.toString($0) } ?? "",
-                args: statement.argsAST.map { Evaluator.evaluate($0, context) ?? .null } ?? .null,
-                defaults: statement.defaultsAST.map { Evaluator.evaluate($0, context) ?? .null } ?? .null,
+                toolName: toolName,
+                args: args,
+                defaults: defaults,
                 deps: deps,
                 refreshInterval: refreshInterval,
-                complete: statement.complete
+                complete: statement.complete && !context.budget.ranOut
             )
         }
         queryManager.evaluateQueries(queryNodes)
@@ -244,7 +249,7 @@ final class OpenUIRuntime {
         let mutationNodes = (parseResult?.mutationStatements ?? []).map { statement in
             QueryManager.MutationNode(
                 statementId: statement.statementId,
-                toolName: statement.toolAST.flatMap { Evaluator.evaluate($0, context) }.map { JS.toString($0) } ?? ""
+                toolName: statement.toolAST.flatMap { Evaluator.evaluate($0, evaluationContext) }.map { JS.toString($0) } ?? ""
             )
         }
         queryManager.registerMutations(mutationNodes)
@@ -422,7 +427,10 @@ final class OpenUIRuntime {
                     guard let statementId = step["statementId"]?.stringValue else { continue }
                     if step["refType"] == "mutation" {
                         let argsAST = parseResult?.mutationStatements.first { $0.statementId == statementId }?.argsAST
-                        let arguments = argsAST.flatMap { evaluate($0)?.objectValue } ?? [:]
+                        let context = evaluationContext
+                        let arguments = argsAST.flatMap { Evaluator.evaluate($0, context)?.objectValue } ?? [:]
+                        // Arguments evaluated only in part would run it without some of its fields.
+                        if context.budget.ranOut { return }
                         let succeeded = await queryManager.fireMutation(statementId, arguments: arguments)
                         if !succeeded { return }
                     } else {

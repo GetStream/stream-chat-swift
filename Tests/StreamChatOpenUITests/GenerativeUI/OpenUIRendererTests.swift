@@ -189,8 +189,10 @@ struct OpenUIRendererTests {
         root = Card([TextContent("Health")])
         health = Query("health", {}, {n: 0}, 0.05)
         """
-        _ = engine.view(for: Self.document(program), messageID: "m1")
-        _ = engine.view(for: Self.document(program), messageID: "m2")
+        for messageID in ["m1", "m2"] {
+            // As their views do while they are shown.
+            engine.view(for: Self.document(program), messageID: messageID)?.runtime.queryManager.resumeRefreshes()
+        }
         #expect(await waitUntil { tools.calls.count >= 4 })
 
         engine.remove(messageID: "m1")
@@ -200,6 +202,18 @@ struct OpenUIRendererTests {
 
         #expect(engine.runtimes.isEmpty)
         #expect(tools.calls.count <= calls + 2, "the replies' queries stop refreshing")
+    }
+
+    @Test func aReplyWithoutAViewFetchesItsQueriesOnceAndDoesntRefreshThem() async {
+        let tools = RecordingToolProvider { _, _, count in ["n": .number(Double(count))] }
+        let engine = OpenUIEngine(library: .openUIChat, host: FakeHost(), toolProvider: tools)
+
+        let view = engine.view(for: Self.document(#"health = Query("health", {}, {n: 0}, 0.05)"#), messageID: "m1")
+
+        #expect(view == nil)
+        #expect(await waitUntil { tools.calls.count == 1 })
+        try? await Task.sleep(nanoseconds: 250_000_000)
+        #expect(tools.calls.count == 1)
     }
 
     @Test func aReplyStartsFromTheStateTheHostKept() {
@@ -260,7 +274,7 @@ struct OpenUIRendererTests {
         #expect(await waitUntil { reported.value.count == 3 })
         try? await Task.sleep(nanoseconds: 50_000_000)
 
-        #expect(reported.value == ["unknown-component", "tool-error", "tool-error"])
+        #expect(reported.value.sorted() == ["tool-error", "tool-error", "unknown-component"], "each report is delivered in a task of its own")
     }
 
     @Test func aReplyShowsItsTextUntilItsProgramHasARoot() {
@@ -280,6 +294,16 @@ struct OpenUIRendererTests {
 
         #expect(value.rawJSON == ["amount": .nil, "limit": .nil, "step": ["type": "custom_action", "name": "Export", "params": ["format": "csv"]]])
         #expect(OpenUIJSON.stringify(value).contains(ActionPlan.callTokenKey) == false)
+    }
+
+    @Test func aFieldNamedLikeTheCallTokenIsData() {
+        let value: OpenUIValue = [
+            ActionPlan.callTokenKey: "vendor-id",
+            "step": ActionPlan.customStep(name: "Export", params: [:])
+        ]
+
+        #expect(value.rawJSON == [ActionPlan.callTokenKey: "vendor-id", "step": ["type": "custom_action", "name": "Export", "params": [:]]])
+        #expect(OpenUIJSON.stringify([ActionPlan.callTokenKey: "draft"]) != OpenUIJSON.stringify([ActionPlan.callTokenKey: "final"]))
     }
 
     @Test func toolArgumentsReadInTheSameOrderEachTime() {

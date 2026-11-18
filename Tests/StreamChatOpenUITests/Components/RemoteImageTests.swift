@@ -122,6 +122,20 @@ struct RemoteImageTests {
         }
     }
 
+    @Test func onlyALinkTheModelIsStillWritingShowsProgress() {
+        let runtime = OpenUIRuntime(library: .openUIChat)
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shop"#, isStreaming: true)
+
+        #expect(RemoteImage.isLinkPending("https://cdn.shop", in: runtime))
+
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shop/a.jpg", "#, isStreaming: true)
+        #expect(!RemoteImage.isLinkPending("https://cdn.shop/a.jpg", in: runtime), "complete, so a host that turns it down shows the placeholder")
+
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shop/a.jpg", "A")])"#, isStreaming: false)
+        #expect(!RemoteImage.isLinkPending("https://cdn.shop/b.jpg", in: runtime))
+        #expect(!RemoteImage.isLinkPending(nil, in: runtime))
+    }
+
     @Test func largeImagesAreDownsampled() async throws {
         let loader = Self.loader(data: try Self.png(width: 3000, height: 1500), log: FetchLog())
         let url = try #require(URL(string: "https://example.com/large.png"))

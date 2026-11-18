@@ -269,6 +269,20 @@ struct OpenUI1RuntimeTests {
         #expect(tile.props["children"]?.arrayValue?.first?.elementValue?.typeName == "TextContent")
     }
 
+    @Test func aSetInAnEachKeepsTheValuesOfAnItemThatHoldsAComponent() async throws {
+        let runtime = makeRuntime("""
+        $picked = ""
+        root = Card([Buttons(@Each(people, "p", Button(p[0], @Set($picked, p[0]))))])
+        people = [["Ada", TextContent("badge")]]
+        """)
+        let buttons = try #require(runtime.root?.props["children"]?.arrayValue?.first?.elementValue)
+        let button = try #require(buttons.props["buttons"]?.arrayValue?.first?.elementValue)
+
+        #expect(button.props["label"] == "Ada")
+        await runtime.triggerAction(label: "Ada", action: button.props["action"])
+        #expect(runtime.store.get("$picked") == "Ada")
+    }
+
     @Test func stringEqualityComparesCodeUnitsLikeJavaScript() {
         #expect(!JS.looseEquals("é", "e\u{301}"))
         #expect(JS.looseEquals("é", "é"))

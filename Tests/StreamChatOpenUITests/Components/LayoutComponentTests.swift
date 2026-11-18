@@ -26,6 +26,25 @@ struct LayoutComponentTests {
         #expect(abs((around[1] - around[0] - 50) - (10 + 2 * edge)) < 0.001)
     }
 
+    @Test func itemsKeepTheirIdentityWhenOthersAreAddedOrMoved() {
+        func ids(_ values: [String?], requireValue: Bool = true) -> [ContainerItem.ID] {
+            let elements = values.map { value -> ElementNode in
+                var props: OpenUIObject = ["trigger": "T"]
+                if let value { props["value"] = .string(value) }
+                return ElementNode(typeName: "TabItem", props: props)
+            }
+            return ContainerItem.items(elements, requireValue: requireValue).map(\.id)
+        }
+        typealias ID = ContainerItem.ID
+        let explicit = ID(value: "x#1", occurrence: 0)
+
+        #expect(ids(["x", "x#1", "x"]) == [ID(value: "x", occurrence: 0), explicit, ID(value: "x", occurrence: 1)])
+        #expect(ids(["x", "x", "x#1"]).last == explicit, "a repeated value doesn't take another item's")
+        #expect(ids(["b", "a"]) == Array(ids(["a", "b"]).reversed()), "an item keeps its identity where it moves")
+        #expect(ids(["a", nil]) == [ID(value: "a", occurrence: 0)])
+        #expect(ids(["a", nil], requireValue: false) == [ID(value: "a", occurrence: 0), ID(value: "1", occurrence: 0)])
+    }
+
     @Test func justifyHandlesOneItemAndOverflow() {
         #expect(JustifiedRowLayout.offsets(widths: [50], available: 300, gap: 10, justify: "between") == [0])
         #expect(JustifiedRowLayout.offsets(widths: [200, 200], available: 300, gap: 10, justify: "evenly") == [0, 210])

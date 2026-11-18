@@ -68,6 +68,29 @@ struct FormComponentTests {
         #expect(runtime.fieldValue(formName: "trip", name: "pace") == "fast", "such as a Query's result")
     }
 
+    @Test func requiredFieldsThatSwapNamesAreBothStillValidated() {
+        let validation = FormValidationModel()
+        let first = UUID()
+        let second = UUID()
+        let required = [ValidationRule(type: "required")]
+        validation.register("x", rules: required, owner: first) { nil }
+        validation.register("y", rules: required, owner: second) { nil }
+
+        // Each field moves to the other's name, as its view sees the change.
+        validation.unregister("x", owner: first)
+        validation.register("y", rules: required, owner: first) { nil }
+        validation.unregister("y", owner: second)
+        validation.register("x", rules: required, owner: second) { nil }
+
+        #expect(!validation.validateForm())
+        #expect(validation.error(for: "x") != nil)
+        #expect(validation.error(for: "y") != nil)
+
+        validation.unregister("x", owner: first)
+        validation.unregister("x", owner: second)
+        #expect(validation.validateForm() == false, "y is still registered")
+    }
+
     @Test func selectShowsEachValueOnce() {
         let items = [
             ElementNode(typeName: "SelectItem", props: ["value": "a", "label": "A"]),

@@ -50,6 +50,23 @@ struct EditableTableTests {
         #expect(table.changedCellCount(keys: keys) == 0)
     }
 
+    @Test func rowsALaterStreamWritesAreTheNewBaseline() {
+        var table = EditableTableRows()
+        table.load(complete, keys: keys, isStreaming: false)
+        let rewritten: OpenUIValue = [["id": "1", "values": ["Apples", 9]], ["id": "2", "values": ["Pears", 5]]]
+
+        table.load(rewritten, keys: keys, isStreaming: true)
+        table.load(rewritten, keys: keys, isStreaming: false)
+
+        #expect(table.changedCellCount(keys: keys) == 0)
+        table.reset()
+        #expect(table.rows[0]["qty"] == 9)
+
+        table.rows[0]["qty"] = 4
+        table.load(rewritten, keys: keys, isStreaming: false)
+        #expect(table.changedCellCount(keys: keys) == 1, "reloading the same rows keeps an edit")
+    }
+
     @Test func dataThatArrivesAfterStreamingIsTheNewBaseline() {
         var table = EditableTableRows()
         table.load([], keys: keys, isStreaming: false)

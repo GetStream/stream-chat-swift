@@ -293,23 +293,27 @@ struct EditableTableView: View {
 
 // The edited rows of an `EditableTable`, and the rows they are compared with to count changes.
 // The comparison starts only once the model has finished writing the table, as partial rows
-// would otherwise count as edits, and starts again from rows that arrive after that.
+// would otherwise count as edits, and starts again from rows that arrive after that, or that a
+// later stream wrote.
 @available(iOS 17.0, macOS 14.0, *)
 struct EditableTableRows {
     var rows: [[String: OpenUIValue]] = []
     private(set) var baseline: [[String: OpenUIValue]]?
     private var loadedSource: OpenUIValue?
     private var loadedKeys: [String] = []
+    private var loadedWhileStreaming = false
 
     mutating func load(_ source: OpenUIValue?, keys: [String], isStreaming: Bool) {
         if source != loadedSource || keys != loadedKeys {
             loadedSource = source
             loadedKeys = keys
             rows = Self.rows(from: source, keys: keys)
+            loadedWhileStreaming = isStreaming
             if !isStreaming { baseline = rows }
         }
-        if baseline == nil, !isStreaming {
+        if baseline == nil || loadedWhileStreaming, !isStreaming {
             baseline = rows
+            loadedWhileStreaming = false
         }
     }
 
