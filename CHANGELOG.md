@@ -23,6 +23,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Follow the A2UI 1.0 envelope keys, boolean coercion, regex rules and error codes [#4423](https://github.com/GetStream/stream-chat-swift/pull/4423)
 - Fix modal triggers, date inputs, sliders and media links [#4423](https://github.com/GetStream/stream-chat-swift/pull/4423)
 
+## StreamChatOpenUI
+### 🐞 Fixed
+- Fix programs and tool results that could freeze the app or overflow the stack [#4424](https://github.com/GetStream/stream-chat-swift/pull/4424)
+- Fix forms that couldn't be submitted or lost their values [#4424](https://github.com/GetStream/stream-chat-swift/pull/4424)
+- Fix images loading from partial links and replies showing blank before their UI starts [#4424](https://github.com/GetStream/stream-chat-swift/pull/4424)
+
 # [5.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.17.0)
 _November 12, 2026_
 
