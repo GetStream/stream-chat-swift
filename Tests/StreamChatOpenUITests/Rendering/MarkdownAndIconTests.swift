@@ -28,6 +28,28 @@ struct MarkdownCacheTests {
         #expect(InlineMarkdown.cached("a *b*") == InlineMarkdown.attributed("a *b*"))
     }
 
+    @Test func aFullCacheKeepsTheTextsUsedLately() {
+        var made: [String] = []
+        var cache = RecentValues<Int>(limit: 3)
+        func value(_ key: String) -> Int {
+            cache.value(for: key) { key in
+                made.append(key)
+                return key.count
+            }
+        }
+
+        for key in ["a", "b", "c", "d"] {
+            _ = value(key)
+        }
+        _ = value("a")
+        _ = value("e")
+        _ = value("f")
+        _ = value("a")
+
+        #expect(made == ["a", "b", "c", "d", "e", "f"], "a text shown again isn't parsed again")
+        #expect(cache.count <= 6)
+    }
+
     @Test func unchangedBlocksCompareEqual() {
         let block = MarkdownBlock.heading(level: 1, text: "Title")
 
