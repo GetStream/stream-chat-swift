@@ -43,6 +43,7 @@ final class OpenUIRuntime {
 
     /// The raw response text.
     private(set) var response: String?
+    @ObservationIgnored private var untrackedResponse: String?
     /// Whether the model is still streaming (inputs are disabled and queries wait until it ends).
     private(set) var isStreaming = false
     /// The raw parse result (runtime expressions unevaluated).
@@ -97,6 +98,7 @@ final class OpenUIRuntime {
         let streamingChanged = isStreaming != self.isStreaming
         guard responseChanged || streamingChanged || parseResult == nil else { return }
         self.response = response
+        untrackedResponse = response
         self.isStreaming = isStreaming
 
         // The end of the stream completes a `$name` that was still streaming in.
@@ -348,10 +350,17 @@ final class OpenUIRuntime {
 
     // Whether an image may load from `link`, as the model wrote it: only from a link written out
     // in the program, or one a tool returned. A link built from what the person typed is neither,
-    // so an image can't send it to a server as they type, however it is split or encoded.
+    // so an image can't send it to a server as they type, however it is split or encoded. While
+    // the model writes, a link counts once its closing quote arrives, so nothing loads from the
+    // parts of it written so far. It doesn't follow the response, which images check each render.
     func allowsImageLink(_ link: String) -> Bool {
         guard !link.isEmpty else { return false }
-        if response?.contains(link) == true { return true }
+        if let written = untrackedResponse {
+            let isWritten = isStreaming
+                ? written.contains("\"\(link)\"") || written.contains("'\(link)'")
+                : written.contains(link)
+            if isWritten { return true }
+        }
         return Self.value(.object(queryManager.snapshot.values), contains: link)
     }
 

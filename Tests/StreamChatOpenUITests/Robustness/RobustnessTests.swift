@@ -333,6 +333,23 @@ struct RobustnessTests {
         #expect(!runtime.allowsImageLink(""))
     }
 
+    @Test func whileStreamingAnImageLoadsOnlyOnceItsLinkIsComplete() {
+        let runtime = OpenUIRuntime(library: .openUIChat)
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shop"#, isStreaming: true)
+
+        #expect(!runtime.allowsImageLink("https://cdn.shop"), "the model may still be writing it")
+
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shopify.com/hero.jpg"#, isStreaming: true)
+        #expect(!runtime.allowsImageLink("https://cdn.shopify.com/hero.jpg"))
+
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shopify.com/hero.jpg", "#, isStreaming: true)
+        #expect(runtime.allowsImageLink("https://cdn.shopify.com/hero.jpg"))
+        #expect(!runtime.allowsImageLink("https://cdn.shop"))
+
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shopify.com/hero.jpg", "Hero")])"#, isStreaming: false)
+        #expect(runtime.allowsImageLink("https://cdn.shopify.com/hero.jpg"))
+    }
+
     @Test func passwordsNeverLeaveTheDevice() {
         let form: OpenUIObject = [
             "login": ["pw": ["value": "hunter22", "componentType": "Input", "secret": true], "email": ["value": "a@b.co", "componentType": "Input"]]

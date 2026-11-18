@@ -22,9 +22,14 @@ struct RemoteImage: View {
         let image: CGImage
     }
 
-    // A web link the model wrote or a tool returned, which the host lets load.
+    // A web link the model wrote or a tool returned, which the host lets load. Until the model
+    // finishes writing the link, the view follows the response, to load it once it is complete.
     private var source: URL? {
-        guard let url, runtime?.allowsImageLink(url) != false else { return nil }
+        guard let url else { return nil }
+        if let runtime, !runtime.allowsImageLink(url) {
+            if runtime.isStreaming { _ = runtime.response }
+            return nil
+        }
         return RemoteImageLoader.url(from: url).flatMap(mediaURL)
     }
 
@@ -43,8 +48,10 @@ struct RemoteImage: View {
                 }
             }
             .task(id: resolved) {
-                guard RemoteImageLoader.shared.cachedImage(for: resolved) == nil else { return }
-                if let image = await RemoteImageLoader.shared.image(for: resolved) {
+                // Kept in the view, which the cache may evict it from while it shows.
+                if let cached = RemoteImageLoader.shared.cachedImage(for: resolved) {
+                    loaded = LoadedImage(url: resolved, image: cached)
+                } else if let image = await RemoteImageLoader.shared.image(for: resolved) {
                     withAnimation(.easeInOut(duration: 0.2)) { loaded = LoadedImage(url: resolved, image: image) }
                 } else if !Task.isCancelled {
                     failedURL = resolved
@@ -52,7 +59,7 @@ struct RemoteImage: View {
             }
             .modifier(ImageAccessibility(alt: alt))
         } else {
-            placeholder(systemImage: "photo")
+            placeholder(systemImage: url != nil && runtime?.isStreaming == true ? nil : "photo")
                 .modifier(ImageAccessibility(alt: alt))
         }
     }
