@@ -254,6 +254,8 @@ final class ExpressionEvaluator {
                     catalogId: catalogId
                 )
             )
+        } catch is A2UIReportedFailure {
+            return nil
         } catch {
             // A binding or check that fails resolves to null with an EXPRESSION_ERROR; only an
             // action's own call reports how the function failed.
@@ -309,7 +311,8 @@ final class ExpressionEvaluator {
     /// Interpolates a `formatString` template in the given scope.
     ///
     /// Calls in the template resolve in `catalogId`, the catalog `formatString` resolved to.
-    /// Unresolved expressions become empty strings; a template that doesn't parse throws.
+    /// Missing values and calls still waiting on the agent become empty strings. A template that
+    /// doesn't parse throws, and so does one whose call fails, which has reported its failure.
     func interpolate(_ template: String, in context: DataContext, catalogId: String? = nil) throws -> String {
         if interpolationDepth == 0 {
             interpolationCount = 0
@@ -336,7 +339,10 @@ final class ExpressionEvaluator {
             case let .text(text):
                 output += text
             case let .expression(expression):
-                output += Json.stringify(evaluate(expression, in: context, catalogId: catalogId))
+                let failuresBefore = failureCount
+                let value = evaluate(expression, in: context, catalogId: catalogId)
+                guard failureCount == failuresBefore else { throw A2UIReportedFailure() }
+                output += Json.stringify(value)
             }
         }
         return output
@@ -437,5 +443,14 @@ final class ExpressionEvaluator {
                 )
             )
         }
+    }
+}
+
+// A failure an evaluation has already reported, which the function around it fails with too,
+// without reporting it again. An agent's call to that function is answered with its description.
+@available(iOS 15.0, macOS 12.0, *)
+struct A2UIReportedFailure: LocalizedError {
+    var errorDescription: String? {
+        "A function called in the template failed."
     }
 }

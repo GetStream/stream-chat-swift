@@ -152,8 +152,22 @@ struct A2UIImageView: View {
     // data links, and relative paths that stay on the same host, which `mediaURL` can resolve. A
     // bare name is a relative path, never one of the app's own images.
     static func link(_ source: String) -> URL? {
-        let trimmed = source.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines.union(.controlCharacters))
-        let cleaned = String(trimmed.unicodeScalars.filter { $0 != "\t" && $0 != "\n" && $0 != "\r" })
+        let ignored = CharacterSet.whitespacesAndNewlines.union(.controlCharacters)
+        guard let start = source.unicodeScalars.firstIndex(where: { !ignored.contains($0) }),
+              let end = source.unicodeScalars.lastIndex(where: { !ignored.contains($0) }) else {
+            return nil
+        }
+        let trimmed = Substring(source.unicodeScalars[start...end])
+        // A data link can be megabytes long and is checked on every render, so it is told apart
+        // by its first characters, and copied once, cleaned only when it has to be.
+        let head = String(String.UnicodeScalarView(trimmed.unicodeScalars.lazy.filter { !isBreak($0) }.prefix(5)))
+        if head.lowercased() == "data:" {
+            guard trimmed.unicodeScalars.contains(where: { isBreak($0) || $0 == " " }) else {
+                return URL(string: String(trimmed))
+            }
+            return URL(string: withoutBreaks(trimmed).replacingOccurrences(of: " ", with: "%20"))
+        }
+        let cleaned = withoutBreaks(trimmed)
         guard !cleaned.isEmpty, let url = URL(string: cleaned.replacingOccurrences(of: " ", with: "%20")) else {
             return nil
         }
@@ -164,11 +178,18 @@ struct A2UIImageView: View {
         switch scheme {
         case "http", "https":
             return cleaned.dropFirst(scheme.count + 1).hasPrefix("//") && !(url.host ?? "").isEmpty ? url : nil
-        case "data":
-            return url
         default:
             return nil
         }
+    }
+
+    // Tabs and line breaks, which browsers drop from a link wherever they are.
+    private nonisolated static func isBreak(_ scalar: Unicode.Scalar) -> Bool {
+        scalar == "\t" || scalar == "\n" || scalar == "\r"
+    }
+
+    private static func withoutBreaks(_ text: Substring) -> String {
+        String(String.UnicodeScalarView(text.unicodeScalars.filter { !isBreak($0) }))
     }
 
     var body: some View {

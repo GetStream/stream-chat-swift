@@ -91,9 +91,12 @@ final class SurfaceRenderer {
         var knownReferences: [String: [(id: String, template: DataPath?)]] = [:]
         var ancestors: [String] = []
         var total = 0
+        // A component's children are read once, and only as many as could still fit: the count
+        // only grows, so a list cut short here is still long enough to pass `limit` later.
         func references(of placed: Placement) -> [(id: String, template: DataPath?)] {
             if let known = knownReferences[placed.component.id] { return known }
-            let found = placed.definition.children(of: placed.component).map { (id: $0.id, template: $0.template) }
+            let found = placed.definition.children(of: placed.component, limit: limit - total + 1)
+                .map { (id: $0.id, template: $0.template) }
             knownReferences[placed.component.id] = found
             return found
         }

@@ -9,19 +9,21 @@ import Testing
 @MainActor
 @Suite("Bounded work on untrusted messages")
 struct BoundedWorkTests {
-    @Test("A template that formats itself many times on each level stops early")
-    func selfFormattingTemplateFanOut() throws {
-        let part = "${formatString(value:${/t})}"
-        let template = String(repeating: part, count: 300)
+    @Test("A template that formats others many times on each level stops early")
+    func templateFanOut() {
+        func formatting(_ path: String) -> String {
+            String(repeating: "${formatString(value:${\(path)})}", count: 300)
+        }
         let router = StubRemoteRouter()
-        let (evaluator, model) = makeEvaluator(data: ["t": template], router: router)
+        let (evaluator, model) = makeEvaluator(data: ["t": formatting("/u"), "u": formatting("/v"), "v": "x"], router: router)
+        let call = FunctionCall(name: "formatString", arguments: ["value": ["@path": "/t"] as JsonMap])
         let started = ProcessInfo.processInfo.systemUptime
 
-        _ = try evaluator.interpolate(template, in: DataContext(model, "/"))
+        #expect(evaluator.invoke(call, in: DataContext(model, "/")) == nil)
 
         #expect(ProcessInfo.processInfo.systemUptime - started < 2)
-        #expect(router.errors.allSatisfy { $0.code == RendererError.Code.expressionError })
-        #expect(router.errors.contains { $0.message.contains("more than \(ExpressionEvaluator.maxInterpolations) templates") })
+        #expect(router.errors.map(\.code) == [RendererError.Code.expressionError])
+        #expect(router.errors.first?.message.contains("more than \(ExpressionEvaluator.maxInterpolations) templates") == true)
     }
 
     @Test("The parsed templates kept for reuse are few")
@@ -30,10 +32,25 @@ struct BoundedWorkTests {
         let context = DataContext(model, "/")
         for index in 0..<(ExpressionEvaluator.maxCachedTemplates * 2) {
             _ = try evaluator.interpolate("Item \(index)", in: context)
+            #expect(evaluator.parsedTemplates.count <= ExpressionEvaluator.maxCachedTemplates)
         }
 
         #expect(!evaluator.parsedTemplates.isEmpty)
-        #expect(evaluator.parsedTemplates.count <= ExpressionEvaluator.maxCachedTemplates)
+    }
+
+    @Test("A container listing far more children than the limit reads only as many as could fit")
+    func longChildListStopsAtLimit() throws {
+        let children = Array(repeating: "c", count: 100_000)
+        let renderer = makeRenderer([
+            Component(id: "root", type: "Column", properties: ["children": children]),
+            Component(id: "c", type: "Text", properties: ["text": "c"])
+        ])
+        let column = try #require(renderer.renderer.catalogs.catalog(TestCatalog.catalogId)?.component("Column"))
+        let root = try #require(renderer.renderer.component("root"))
+
+        #expect(column.children(of: root, limit: 10).map(\.pointer) == (0..<10).map { "/children/\($0)" })
+        #expect(column.children(of: root).count == children.count)
+        #expect(renderer.size(limit: SurfaceRenderer.maxExpandedComponents) == SurfaceRenderer.maxExpandedComponents + 1)
     }
 
     @Test("A size cut short by a cycle isn't reused where the component renders in full")

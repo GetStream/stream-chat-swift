@@ -33,6 +33,10 @@ struct Component: Equatable, Sendable {
     /// The type-specific properties of the component.
     let properties: JsonMap
 
+    // The envelope fields read from keys without their `@`, with the values as they came. Where the
+    // component's catalog declares a property of the same name, the property takes the value back.
+    let unprefixedEnvelope: JsonMap
+
     /// Creates a component instance.
     /// `properties` must not contain envelope keys such as `id`.
     init(
@@ -42,7 +46,8 @@ struct Component: Equatable, Sendable {
         accessibility: AccessibilityAttributes? = nil,
         metadata: JsonMap? = nil,
         metadataKey: String = "metadata",
-        properties: JsonMap = [:]
+        properties: JsonMap = [:],
+        unprefixedEnvelope: JsonMap = [:]
     ) {
         self.id = id
         self.type = type
@@ -51,6 +56,7 @@ struct Component: Equatable, Sendable {
         self.metadata = metadata
         self.metadataKey = metadataKey
         self.properties = properties
+        self.unprefixedEnvelope = unprefixedEnvelope
     }
 
     /// Parses a component from a JSON object.
@@ -65,10 +71,16 @@ struct Component: Equatable, Sendable {
         properties.removeValue(forKey: "component")
         // An envelope field the spec writes with an `@` is also read without it, as earlier
         // versions and the conformance suite's messages write it, unless the `@` form is there
-        // too: then the unprefixed key is a catalog property like any other.
+        // too: then the unprefixed key is a catalog property like any other. Without the `@`
+        // form, the catalog decides, in `CatalogRegistry.resolvingEnvelope(of:surfaceCatalogId:)`.
+        var unprefixed: JsonMap = [:]
         func envelope(_ field: String) -> (key: String, value: (any Sendable)?) {
             let key = json["@" + field] == nil ? field : "@" + field
-            return (key, Json.normalized(properties.removeValue(forKey: key)))
+            let value = properties.removeValue(forKey: key)
+            if key == field, let value {
+                unprefixed[field] = value
+            }
+            return (key, Json.normalized(value))
         }
         let catalogId = envelope("catalogId")
         let accessibility = envelope("accessibility")
@@ -80,7 +92,28 @@ struct Component: Equatable, Sendable {
             accessibility: AccessibilityAttributes(accessibility.value),
             metadata: Json.map(metadata.value),
             metadataKey: metadata.key,
-            properties: properties
+            properties: properties,
+            unprefixedEnvelope: unprefixed
+        )
+    }
+
+    // This component with the envelope field it read from the key `field`, without an `@`, read
+    // as the catalog property of that name instead.
+    func claimingProperty(_ field: String) -> Component {
+        guard let value = unprefixedEnvelope[field] else { return self }
+        var properties = self.properties
+        properties[field] = value
+        var unprefixed = unprefixedEnvelope
+        unprefixed.removeValue(forKey: field)
+        return Component(
+            id: id,
+            type: type,
+            catalogId: field == "catalogId" ? nil : catalogId,
+            accessibility: field == "accessibility" ? nil : accessibility,
+            metadata: field == "metadata" ? nil : metadata,
+            metadataKey: metadataKey,
+            properties: properties,
+            unprefixedEnvelope: unprefixed
         )
     }
 
@@ -99,12 +132,6 @@ struct Component: Equatable, Sendable {
     /// Missing properties produce ``DynamicValue/missing``.
     func dynamic(_ key: String) -> DynamicValue {
         DynamicValue(properties[key])
-    }
-
-    /// The validation rules declared by this component, in `@checks`, or in `checks` as this
-    /// renderer's catalog schemas name them.
-    var checks: [CheckRule] {
-        CheckRule.list(properties["@checks"] ?? properties["checks"])
     }
 
     /// The serialized wire representation of the component.

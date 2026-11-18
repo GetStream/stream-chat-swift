@@ -363,7 +363,7 @@ struct ComponentRenderContextTests {
                     properties: [
                         "label": "Email",
                         "value": ["@path": "/email"],
-                        "checks": [
+                        "@checks": [
                             ["condition": ["@call": "email", "args": ["value": ["@path": "/email"]]] as JsonMap]
                         ]
                     ]
@@ -375,6 +375,24 @@ struct ComponentRenderContextTests {
         let context = try #require(result.recorder.context("root"))
         #expect(!context.isValid)
         #expect(context.validationErrors == ["Please enter a valid email address (e.g. user@example.com)."])
+    }
+
+    @Test("A boolean property bound to no value reads as false, and only a property left out reads as its default")
+    func missingBoundBoolean() throws {
+        let result = render(
+            components: [
+                Component(id: "root", type: "Text", properties: ["value": ["@path": "/enabled"]])
+            ]
+        )
+
+        let context = try #require(result.recorder.context("root"))
+        #expect(context.boolBinding(default: true).wrappedValue == false)
+        #expect(context.bool("value", default: true) == false)
+        #expect(context.boolBinding("checked", default: true).wrappedValue == true)
+        #expect(context.bool("checked", default: true) == true)
+
+        result.model.update(at: DataPath("/enabled"), value: true)
+        #expect(context.boolBinding(default: false).wrappedValue == true)
     }
 
     @Test("Style hints are read as literals, ignoring bindings")

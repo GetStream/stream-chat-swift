@@ -63,11 +63,13 @@ struct ValidationFunctionTests {
         )
     }
 
-    @Test("regex matches the pattern and passes empty values")
+    @Test("regex matches the pattern, and an empty value passes only a pattern that matches it")
     func regex() {
         #expect(validate(ValidationFunctions.regex, ["value": "1234567890", "pattern": "^\\d{10}$"]).isValid)
         #expect(!validate(ValidationFunctions.regex, ["value": "12345", "pattern": "^\\d{10}$"]).isValid)
-        #expect(validate(ValidationFunctions.regex, ["value": "", "pattern": "^\\d{10}$"]).isValid)
+        #expect(!validate(ValidationFunctions.regex, ["value": "", "pattern": "^\\d{10}$"]).isValid)
+        #expect(!validate(ValidationFunctions.regex, ["value": NSNull(), "pattern": "^\\d{10}$"]).isValid)
+        #expect(validate(ValidationFunctions.regex, ["value": "", "pattern": "^(\\d{10})?$"]).isValid)
     }
 
     @Test("An invalid pattern is reported as a function failure")

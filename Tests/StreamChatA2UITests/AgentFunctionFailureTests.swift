@@ -42,7 +42,7 @@ struct AgentFunctionFailureTests {
         }
 
         #expect(harness.agentCalls.count == 2)
-        #expect(harness.errors.compactMap(\.functionCallId) == harness.agentCalls.map(\.functionCallId))
+        #expect(harness.errors.map(\.functionCallId) == harness.agentCalls.map { Optional($0.functionCallId) })
         #expect(harness.processor.reportedErrors[""] == nil)
     }
 

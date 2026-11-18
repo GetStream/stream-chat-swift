@@ -137,9 +137,10 @@ public struct ComponentRenderContext {
         evaluator.bool(dynamic(key), in: dataContext)
     }
 
-    /// Evaluates a property and coerces it to a boolean, with a fallback.
+    /// Evaluates a property and coerces it to a boolean, with a fallback for a property the
+    /// component leaves out. A property that resolves to `null` or to no value reads as `false`.
     public func bool(_ key: String, default defaultValue: Bool) -> Bool {
-        bool(key) ?? defaultValue
+        dynamic(key).isMissing ? defaultValue : bool(key) ?? false
     }
 
     /// Evaluates a property and coerces it to a list of strings.
@@ -265,7 +266,7 @@ public struct ComponentRenderContext {
 
     /// The checks of this component that currently fail.
     var failingChecks: [ValidationResult] {
-        evaluator.failingChecks(component.checks, in: dataContext)
+        evaluator.failingChecks(definition.checks(of: component), in: dataContext)
     }
 
     /// The messages of failing checks with error severity.
@@ -289,8 +290,10 @@ public struct ComponentRenderContext {
     }
 
     /// A two-way binding for a bound boolean property.
+    /// `defaultValue` is read for a property the component leaves out; a property that resolves to
+    /// `null` or to no value, such as a binding to a path without data, reads as `false`.
     public func boolBinding(_ key: String = "value", default defaultValue: Bool = false) -> Binding<Bool> {
-        binding(key, default: defaultValue, read: { Json.dynamicBool($0) })
+        binding(key, default: dynamic(key).isMissing ? defaultValue : false, read: { Json.dynamicBool($0) })
     }
 
     /// A two-way binding for a bound numeric property.

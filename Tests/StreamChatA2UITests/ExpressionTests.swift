@@ -104,9 +104,15 @@ struct ExpressionEvaluatorTests {
     func actionFunctionFailure() {
         let router = StubRemoteRouter()
         let (evaluator, model) = makeEvaluator(router: router)
-        let context = DataContext(model, "/")
+        let renderer = SurfaceRenderer(
+            definition: SurfaceDefinition(surfaceId: "surface", catalogId: TestCatalog.catalogId),
+            catalogs: evaluator.catalogs,
+            evaluator: evaluator,
+            onAction: { _ in }
+        )
 
-        #expect(evaluator.withUserActivation { evaluator.invoke(FunctionCall(name: "boom"), in: context) } == nil)
+        renderer.perform(.functionCall(FunctionCall(name: "boom")), componentId: "button", dataContext: DataContext(model, "/"))
+
         #expect(router.errors.map(\.code) == [RendererError.Code.executionError])
     }
 
@@ -343,6 +349,21 @@ struct InterpolationTests {
     func missingValues() throws {
         let (evaluator, model) = makeEvaluator()
         #expect(try evaluator.interpolate("[${/nope}]", in: DataContext(model, "/")) == "[]")
+    }
+
+    @Test("A formatString whose interpolated call fails resolves to null, and the failure is reported once")
+    func failedInterpolatedCall() {
+        let router = StubRemoteRouter()
+        let (evaluator, model) = makeEvaluator(
+            data: ["amount": "unknown"],
+            catalogs: [BasicCatalog.catalog],
+            surfaceCatalogId: BasicCatalog.catalogId,
+            router: router
+        )
+        let call = FunctionCall(name: "formatString", arguments: ["value": "Total: ${formatNumber(value:${/amount})}"])
+
+        #expect(evaluator.invoke(call, in: DataContext(model, "/")) == nil)
+        #expect(router.errors.map(\.code) == [RendererError.Code.expressionError])
     }
 
     @Test("Relative paths interpolate inside a collection scope")

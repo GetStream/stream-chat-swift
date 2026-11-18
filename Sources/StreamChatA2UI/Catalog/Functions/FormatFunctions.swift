@@ -208,7 +208,7 @@ enum A2UIDateParser {
     @MainActor
     static func writtenTimeZone(of string: String) -> TimeZone {
         let utc = TimeZone(secondsFromGMT: 0) ?? .current
-        guard string.contains("T") || string.contains(" ") else { return utc }
+        guard string.contains("T") || string.contains(" ") || isTime(string) else { return utc }
         if string.hasSuffix("Z") || string.hasSuffix("z") { return utc }
         let pattern = "([+-])(\\d{2}):?(\\d{2})$"
         guard let expression = try? A2UIFormatters.expression(pattern),
@@ -245,6 +245,16 @@ enum A2UIDateParser {
                 }
             }
         }
+        // A time with an offset, as JSON Schema's `time` format writes it, such as `09:00:00Z`, is
+        // the time it shows in `timeZone`, read on the day the times without one are.
+        if isTime(string) {
+            for fractionalSeconds in [false, true] {
+                let formatter = A2UIFormatters.isoFormatter(fractionalSeconds: fractionalSeconds, timeZone: A2UIFormatters.utc)
+                if let date = formatter.date(from: "2000-01-01T" + string) {
+                    return clockTime(of: date, timeZone: timeZone)
+                }
+            }
+        }
 
         for pattern in patterns(for: string) {
             let formatter = A2UIFormatters.dateFormatter(pattern: pattern, locale: A2UIFormatters.posix, timeZone: timeZone)
@@ -253,5 +263,18 @@ enum A2UIDateParser {
             if let date = formatter.date(from: string), formatter.string(from: date) == string { return date }
         }
         return nil
+    }
+
+    // The time `date` shows in `timeZone`, on the day a time without a date is read on.
+    @MainActor
+    static func clockTime(of date: Date, timeZone: TimeZone) -> Date? {
+        let formatter = A2UIFormatters.dateFormatter(pattern: "HH:mm:ss", locale: A2UIFormatters.posix, timeZone: timeZone)
+        return formatter.date(from: formatter.string(from: date))
+    }
+
+    // Whether a string is a time of day, such as `09:00`, `09:00:00Z` or `09:00:00-05:00`, rather
+    // than a date, which can also have a `-`.
+    private static func isTime(_ string: String) -> Bool {
+        !string.contains("T") && string.dropFirst(2).hasPrefix(":")
     }
 }

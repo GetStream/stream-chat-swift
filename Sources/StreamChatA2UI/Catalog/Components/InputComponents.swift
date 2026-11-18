@@ -511,32 +511,37 @@ struct A2UISliderView: View {
 
     // A value on the slider's step, in the range, without the noise of floating-point steps, such
     // as 0.30000000000000004: to the decimals of the step and the lower bound, or for a slider
-    // without steps, to two decimals or a thousandth of its range.
+    // without steps, to two decimals or a thousandth of its range. A step or range too small for
+    // those decimals to tell its values apart keeps them as they are.
     static func rounded(_ value: Double, in range: ClosedRange<Double>, step: Double?) -> Double {
         guard value.isFinite else { return range.lowerBound }
         var snapped = min(max(value, range.lowerBound), range.upperBound)
         let places: Int
+        let unit: Double
         if let step {
             snapped = range.lowerBound + ((snapped - range.lowerBound) / step).rounded() * step
             places = max(decimals(of: step), decimals(of: range.lowerBound))
+            unit = step
         } else {
-            places = max(2, decimals(of: (range.upperBound - range.lowerBound) / 1000))
+            unit = (range.upperBound - range.lowerBound) / 1000
+            places = max(2, decimals(of: unit))
         }
         let scale = pow(10, Double(places))
+        guard unit * scale > 1 - 4 * Double.ulpOfOne else { return min(max(snapped, range.lowerBound), range.upperBound) }
         let rounded = (snapped * scale).rounded() / scale
         return rounded.isFinite ? min(max(rounded, range.lowerBound), range.upperBound) : snapped
     }
 
     // How many decimals a number needs, up to 6 past its first significant digit and at most 15,
-    // so the values of a slider over a tiny range stay apart.
+    // so the values of a slider over a tiny range stay apart. A number read from a decimal is off
+    // by about its last binary digit, so only that much is taken for a whole number.
     private static func decimals(of number: Double) -> Int {
         let magnitude = abs(number)
         let firstDigit = magnitude > 0 && magnitude < 1 ? Int((-log10(magnitude)).rounded(.up)) : 0
         let limit = min(firstDigit + 6, 15)
-        var scaled = magnitude
         for places in 0..<limit {
-            if abs(scaled - scaled.rounded()) <= 1e-9 * scaled { return places }
-            scaled *= 10
+            let scaled = magnitude * pow(10, Double(places))
+            if abs(scaled - scaled.rounded()) <= 2 * scaled.ulp { return places }
         }
         return limit
     }
@@ -563,17 +568,17 @@ struct A2UIDateTimeInputView: View {
             minimum: context.string("min"),
             maximum: context.string("max"),
             timeZone: timeZone,
+            showsDate: showsDate,
             showsTime: enableTime
         )
         // A time without a date is read on the day times are, so it compares with the bounds.
         let now = context.services.now()
-        let fallback = showsDate
-            ? now
-            : A2UIDateParser.date(from: Self.formatted(now, pattern: "HH:mm:ss", timeZone: timeZone), timeZone: timeZone) ?? now
+        let fallback = showsDate ? now : A2UIDateParser.clockTime(of: now, timeZone: timeZone) ?? now
 
         let selection = Binding<Date>(
             get: {
-                A2UIDateParser.date(from: context.string("value"), timeZone: timeZone) ?? fallback
+                let date = A2UIDateParser.date(from: context.string("value"), timeZone: timeZone)
+                return (showsDate ? date : date.flatMap { A2UIDateParser.clockTime(of: $0, timeZone: timeZone) }) ?? fallback
             },
             set: { newValue in
                 context.write(
@@ -625,13 +630,24 @@ struct A2UIDateTimeInputView: View {
 
     // The picker's bounds. An input without a time writes a day, read back as its midnight, so its
     // bounds are the days `min` and `max` fall on, or a day it writes could read as out of bounds.
+    // An input without a date writes a time, read back on one day, so its bounds are the times
+    // `min` and `max` show, on that day.
     @MainActor
-    static func range(minimum: String?, maximum: String?, timeZone: TimeZone, showsTime: Bool) -> (lower: Date?, upper: Date?) {
+    static func range(
+        minimum: String?,
+        maximum: String?,
+        timeZone: TimeZone,
+        showsDate: Bool,
+        showsTime: Bool
+    ) -> (lower: Date?, upper: Date?) {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = timeZone
         func bound(_ string: String?) -> Date? {
-            let date = A2UIDateParser.date(from: string, timeZone: timeZone)
-            return showsTime ? date : date.map { calendar.startOfDay(for: $0) }
+            guard let date = A2UIDateParser.date(from: string, timeZone: timeZone) else { return nil }
+            if !showsTime {
+                return calendar.startOfDay(for: date)
+            }
+            return showsDate ? date : A2UIDateParser.clockTime(of: date, timeZone: timeZone)
         }
         return (bound(minimum), bound(maximum))
     }

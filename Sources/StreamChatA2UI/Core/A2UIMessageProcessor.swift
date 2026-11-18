@@ -281,6 +281,9 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     /// Reports the problems of a batch of components that can be found before
     /// rendering, and returns the components to apply.
     ///
+    /// An envelope field a component wrote without its `@` is read here, where its
+    /// catalog is known: as the catalog's property of that name, when it declares one.
+    ///
     /// A batch that repeats an id is an integrity error; only the first
     /// component with that id is applied. `indices` are the components' indices
     /// in their message, which error paths point at, and are returned with the
@@ -294,8 +297,9 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         var seen: Set<String> = []
         var accepted: [Component] = []
         var acceptedIndices: [Int] = []
-        for (offset, component) in components.enumerated() {
+        for (offset, received) in components.enumerated() {
             let index = offset < indices.count ? indices[offset] : offset
+            let component = catalogs.resolvingEnvelope(of: received, surfaceCatalogId: catalogId)
             guard seen.insert(component.id).inserted else {
                 report(
                     RendererError(

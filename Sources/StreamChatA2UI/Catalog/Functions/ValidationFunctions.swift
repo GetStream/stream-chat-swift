@@ -45,9 +45,8 @@ enum ValidationFunctions {
 
     /// Checks that a value matches a regular expression.
     ///
-    /// Empty values pass so that optional fields do not report an error before
-    /// the user has typed anything; combine with `required` to make a field
-    /// mandatory.
+    /// An empty or missing value is matched like any other, so it passes only a
+    /// pattern that matches an empty string, such as `^([0-9]{5})?$`.
     static let regex = FunctionDefinition(
         name: "regex",
         description: "Checks that the value matches a regular expression string.",
@@ -74,7 +73,6 @@ enum ValidationFunctions {
         guard let expression = try? A2UIFormatters.expression(pattern) else {
             throw A2UIExpressionError("regex can't use \(quoted): it isn't a valid regular expression.")
         }
-        guard !value.isEmpty else { return ValidationResult.valid.rawValue }
         guard let matches = firstMatch(of: expression, in: value) else {
             throw A2UIExpressionError("regex can't use \(quoted): it took too long to match.")
         }

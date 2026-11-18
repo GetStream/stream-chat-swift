@@ -37,6 +37,20 @@ struct CatalogEdgeCaseTests {
         #expect(A2UISliderView.rounded(0.00000004, in: range, step: step) == 0.00000005)
         #expect(A2UISliderView.rounded(0.0000001, in: range, step: nil) == 0.0000001)
         #expect(A2UISliderView.rounded(0.000000033, in: range, step: nil) == 0.000000033)
+
+        let smallest = A2UISliderView.range(minimum: 0, maximum: 1e-15)
+        let smallestStep = A2UISliderView.step(in: smallest, steps: 4)
+        #expect(A2UISliderView.rounded(2.5e-16, in: smallest, step: smallestStep) == 2.5e-16)
+        #expect(A2UISliderView.rounded(2.6e-16, in: smallest, step: smallestStep) == 2.5e-16)
+    }
+
+    @Test("A slider over a large range keeps the fraction of its lower bound")
+    func sliderOverALargeRange() {
+        let range = A2UISliderView.range(minimum: 1_000_000_000.25, maximum: 1_000_000_004.25)
+        let step = A2UISliderView.step(in: range, steps: 4)
+
+        #expect(A2UISliderView.rounded(1_000_000_001.25, in: range, step: step) == 1_000_000_001.25)
+        #expect(A2UISliderView.rounded(1_000_000_001.4, in: range, step: step) == 1_000_000_001.25)
     }
 
     @Test("A DateTimeInput without either flag writes a date, and a time-only one a time")
@@ -70,6 +84,7 @@ struct CatalogEdgeCaseTests {
             minimum: "2026-04-01T12:00:00Z",
             maximum: "2026-04-03T08:00:00Z",
             timeZone: utc,
+            showsDate: true,
             showsTime: false
         )
         let lower = try #require(range.lower)
@@ -80,8 +95,52 @@ struct CatalogEdgeCaseTests {
         #expect(try #require(A2UIDateParser.date(from: written, timeZone: utc)) >= lower)
         #expect(range.upper == A2UIDateParser.date(from: "2026-04-03", timeZone: utc))
 
-        let withTime = A2UIDateTimeInputView.range(minimum: "2026-04-01T12:00:00Z", maximum: nil, timeZone: utc, showsTime: true)
+        let withTime = A2UIDateTimeInputView.range(
+            minimum: "2026-04-01T12:00:00Z",
+            maximum: nil,
+            timeZone: utc,
+            showsDate: true,
+            showsTime: true
+        )
         #expect(withTime.lower == A2UIDateParser.date(from: "2026-04-01T12:00:00Z", timeZone: utc))
+    }
+
+    @Test("A time-only input reads offset times and compares its bounds by the time they show")
+    func timeOnlyBoundsWithOffsetsAndDays() throws {
+        let utc = TimeZone(secondsFromGMT: 0) ?? .current
+        let nineAM = try #require(A2UIDateParser.date(from: "09:00:00", timeZone: utc))
+        let fivePM = try #require(A2UIDateParser.date(from: "17:00:00", timeZone: utc))
+
+        #expect(A2UIDateParser.date(from: "09:00:00Z", timeZone: utc) == nineAM)
+        #expect(A2UIDateParser.date(from: "11:00:00+02:00", timeZone: utc) == nineAM)
+        #expect(A2UIDateParser.date(from: "04:00:00-05:00", timeZone: utc) == nineAM)
+        #expect(A2UIDateParser.date(from: "09:00:00.000Z", timeZone: utc) == nineAM)
+        let offset = A2UIDateTimeInputView.range(minimum: "09:00:00Z", maximum: "17:00:00Z", timeZone: utc, showsDate: false, showsTime: true)
+        #expect(offset.lower == nineAM)
+        #expect(offset.upper == fivePM)
+
+        let days = A2UIDateTimeInputView.range(
+            minimum: "2026-01-16T09:00:00Z",
+            maximum: "2026-01-16T17:00:00Z",
+            timeZone: utc,
+            showsDate: false,
+            showsTime: true
+        )
+        #expect(days.lower == nineAM)
+        #expect(days.upper == fivePM)
+        let now = try #require(A2UIDateParser.clockTime(of: TestServices.referenceDate, timeZone: utc))
+        let shown = A2UIDateTimeInputView.shown(now, in: days)
+        let written = A2UIDateTimeInputView.format(shown, showsDate: false, showsTime: true, timeZone: utc)
+        let read = try #require(A2UIDateParser.date(from: written, timeZone: utc))
+        #expect(written == "09:00:00")
+        #expect(read >= nineAM && read <= fivePM)
+    }
+
+    @Test("formatDate shows a time with an offset in the zone it was written in")
+    func formatOffsetTime() {
+        let formatted = callFunction(FormatFunctions.formatDate, ["value": "09:30:00+02:00", "format": "HH:mm"])
+
+        #expect(Json.string(formatted) == "09:30")
     }
 
     @Test("test_evaluate_function_format_date_iso_utc: ISO dates are written in UTC")
@@ -139,6 +198,14 @@ struct CatalogEdgeCaseTests {
         #expect(A2UIRegexSafety.problem(in: "[\\]a-z\\d\\-]+") == nil)
     }
 
+    @Test("A legacy octal escape isn't allowed, while \\0 alone is the null character")
+    func regexOctalEscapes() {
+        #expect(A2UIRegexSafety.problem(in: "^\\0141$") != nil)
+        #expect(A2UIRegexSafety.problem(in: "[\\01]") != nil)
+        #expect(A2UIRegexSafety.problem(in: "^a\\0$") == nil)
+        #expect(A2UIRegexSafety.problem(in: "[\\0a]") == nil)
+    }
+
     @Test("A cached pattern is reused only for the same characters, not a canonically equal spelling")
     func regexCacheKey() throws {
         let composed = try A2UIFormatters.expression("^[\u{E9}]$")
@@ -152,6 +219,9 @@ struct CatalogEdgeCaseTests {
     func mediaLinks() {
         #expect(A2UIImageView.link("  https://ex.com/my photo.jpg ")?.absoluteString == "https://ex.com/my%20photo.jpg")
         #expect(A2UIImageView.link("data:image/png;base64,AAAA")?.scheme == "data")
+        #expect(A2UIImageView.link(" data:image/png;base64,AA\nAA ")?.absoluteString == "data:image/png;base64,AAAA")
+        #expect(A2UIImageView.link("DATA:text/plain,a")?.scheme?.lowercased() == "data")
+        #expect(A2UIImageView.link("da\tta:text/plain,a b")?.absoluteString == "data:text/plain,a%20b")
         #expect(A2UIImageView.link("/media/clip.mp4")?.absoluteString == "/media/clip.mp4")
         #expect(A2UIImageView.link("AppIcon")?.scheme == nil)
         #expect(A2UIImageView.link("AppIcon").flatMap(A2UIRenderer.webURL) == nil)

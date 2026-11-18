@@ -14,12 +14,13 @@ import Testing
 @Suite("Untrusted messages")
 struct RobustnessTests {
     @Test("A formatString template from the data model that formats itself stops")
-    func selfFormattingTemplate() throws {
+    func selfFormattingTemplate() {
         let template = "${formatString(value:${/t})}"
         let router = StubRemoteRouter()
         let (evaluator, model) = makeEvaluator(data: ["t": template], router: router)
+        let call = FunctionCall(name: "formatString", arguments: ["value": template])
 
-        #expect(try evaluator.interpolate(template, in: DataContext(model, "/")) == "")
+        #expect(evaluator.invoke(call, in: DataContext(model, "/")) == nil)
         #expect(router.errors.map(\.code) == [RendererError.Code.expressionError])
     }
 

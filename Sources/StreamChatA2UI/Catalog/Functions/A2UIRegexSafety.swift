@@ -28,7 +28,8 @@ enum A2UIRegexSafety {
             case "\\":
                 guard index + 1 < scalars.count else { return "it ends with a lone backslash." }
                 let escaped = scalars[index + 1]
-                if let problem = escapeProblem(escaped) { return problem }
+                let next = index + 2 < scalars.count ? scalars[index + 2] : nil
+                if let problem = escapeProblem(escaped, followedBy: next) { return problem }
                 index += 2
                 if escaped == "u", index < scalars.count, scalars[index] == "{" {
                     while index < scalars.count, scalars[index] != "}" { index += 1 }
@@ -39,7 +40,8 @@ enum A2UIRegexSafety {
                 while index < scalars.count, scalars[index] != "]" {
                     if scalars[index] == "\\" {
                         guard index + 1 < scalars.count else { return "it ends with a lone backslash." }
-                        if let problem = escapeProblem(scalars[index + 1]) { return problem }
+                        let next = index + 2 < scalars.count ? scalars[index + 2] : nil
+                        if let problem = escapeProblem(scalars[index + 1], followedBy: next) { return problem }
                         index += 2
                     } else {
                         index += 1
@@ -80,9 +82,12 @@ enum A2UIRegexSafety {
         return groups.count == 1 ? nil : "it opens a group it doesn't close."
     }
 
-    // Backreferences, Unicode property escapes and `\c`, which the dialect leaves out, in a
-    // character class or out of one.
-    private static func escapeProblem(_ escaped: Unicode.Scalar) -> String? {
+    // Backreferences, Unicode property escapes, `\c` and legacy octal escapes such as `\012`, which
+    // the dialect leaves out, in a character class or out of one. `\0` alone is the null character.
+    private static func escapeProblem(_ escaped: Unicode.Scalar, followedBy next: Unicode.Scalar?) -> String? {
+        if escaped == "0", let next, ("0"..."9").contains(next) {
+            return "the octal escape '\\0\(next)' isn't allowed."
+        }
         guard ("1"..."9").contains(escaped) || ["k", "p", "P", "c"].contains(escaped) else { return nil }
         return "'\\\(escaped)' isn't allowed."
     }
