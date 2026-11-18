@@ -19,7 +19,7 @@ on:
         default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.mock_server_branch || 'main' }}
   cancel-in-progress: true
 
 env:
