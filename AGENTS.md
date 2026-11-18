@@ -19,7 +19,7 @@ Agents should prioritize backwards compatibility, API stability, and high test c
 - Primary distribution: Swift Package Manager (SPM)
 - Project file: `StreamChat.xcodeproj` (used for builds and tests; SPM manifest does not declare test targets)
 - Xcode: 16.x or newer (Apple Silicon supported)
-- Platforms / deployment targets: iOS 13+, macOS 11+ (see `Package.swift`; do not lower targets without approval)
+- Platforms / deployment targets: iOS 13+, macOS 11+, tvOS 15+ (StreamChat only) (see `Package.swift`; do not lower targets without approval)
 - CI: GitHub Actions + Fastlane (see `.github/workflows/smoke-checks.yml`)
 - Linting: SwiftLint (v0.59.1) — config in `.swiftlint.yml`
 - Formatting: SwiftFormat (v0.58.2) — config in `.swiftformat`
