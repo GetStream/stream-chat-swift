@@ -731,7 +731,8 @@
       { "originalHeight": "Unused" },
       { "originalWidth": "Unused" },
       { "pretext": "Unused" },
-      { "type": "Unused" }
+      { "type": "Unused" },
+      { "voiceTranscript": "Unused" }
     ],
     "HealthCheckEventDTO": [
       { "cid": "Unused" },
@@ -784,6 +785,9 @@
       { "custom": "Unused" },
       { "receivedAt": "Never set by the backend" },
       { "team": "Unused" }
+    ],
+    "MessageAttachmentPayload": [
+      { "voiceTranscript": "Unused" }
     ],
     "MessageDeletedEventDTO": [
       { "channelCustom": "Unused" },
