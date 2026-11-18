@@ -65,12 +65,15 @@ struct AIConversationExchange<Message: AIMessage> {
     }
 
     // The latest message when it is the request's reply: a reply that wasn't there, or one the
-    // request replaces, once it is written again.
+    // request replaces, once it is written again. A new message's reply comes after it: one
+    // before it answers an earlier message, such as one the person stopped.
     func reply(in conversation: [Message]) -> Message? {
         guard let last = conversation.last, last.role != .user else { return nil }
         let id = AnyHashable(last.id)
         let isRewritten = replaced[id].map { last.isRewritten(from: $0) } ?? false
-        return !known.contains(id) || isRewritten ? last : nil
+        guard !known.contains(id) || isRewritten else { return nil }
+        guard request.kind != .message || hasMessageArrived(in: conversation.dropLast()) else { return nil }
+        return last
     }
 
     // Whether its reply has started: it shows something, or it is already finished.
@@ -82,18 +85,22 @@ struct AIConversationExchange<Message: AIMessage> {
     // Whether the person's message is in the conversation: one with its id, or one of theirs
     // after the messages there were.
     func hasMessageArrived(in conversation: [Message]) -> Bool {
+        hasMessageArrived(in: conversation[...])
+    }
+
+    private func hasMessageArrived(in conversation: ArraySlice<Message>) -> Bool {
         if conversation.contains(where: { AnyHashable($0.id) == AnyHashable(request.messageID) }) {
             return true
         }
         let lastKnown = conversation.lastIndex { known.contains(AnyHashable($0.id)) }
-        return conversation[(lastKnown.map { $0 + 1 } ?? 0)...].contains { $0.role == .user }
+        return conversation[(lastKnown.map { $0 + 1 } ?? conversation.startIndex)...].contains { $0.role == .user }
     }
 
     // What `retry()` sends: the request again, or, when the agent had the person's message but
     // couldn't answer it, a request for its reply, since sending it again would add it twice.
     func retryRequest(in conversation: [Message]) -> AIConversationRequest<Message> {
         guard state == .unanswered, request.kind == .message, hasMessageArrived(in: conversation) else { return request }
-        return AIConversationRequest(kind: .regenerate, text: request.text)
+        return AIConversationRequest(kind: .regenerate, text: request.text, chatOption: request.chatOption)
     }
 }
 

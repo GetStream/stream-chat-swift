@@ -159,6 +159,33 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
         XCTAssertEqual(entries.map(\.id), ["q1", "pending", "q3"])
     }
 
+    func test_entries_whenTheCopyIsAlreadyThereTheFirstTimeThePendingMessageIs_itTakesOverTheRow() {
+        let before = [Message(id: "q1", role: .user), Message(id: "a1", role: .assistant)]
+        _ = tracker.entries(for: before, pending: nil)
+
+        let entries = tracker.entries(for: before + [Message(id: "q2", role: .user)], pending: pending)
+
+        XCTAssertEqual(entries.map(\.id), ["q1", "a1", "pending"], "the message shows once")
+    }
+
+    func test_entries_editingAMessageAgain_itsCopyTakesTheLatestEditsRow() {
+        let first = AIPendingMessage(id: "edit1", text: "Plan a trip", attachments: [.image(photo)])
+        let second = AIPendingMessage(id: "edit2", text: "Plan a long trip", attachments: [.image(UIImage())])
+        let conversation = [Message(id: "q1", role: .user), Message(id: "a1", role: .assistant)]
+        _ = tracker.entries(for: conversation, pending: nil)
+
+        // While an edit waits, the message it edits and its reply are left out.
+        _ = tracker.entries(for: [Message](), pending: first)
+        let edited = tracker.entries(for: conversation, pending: nil)
+        XCTAssertEqual(edited.map(\.id), ["edit1", "a1"])
+
+        _ = tracker.entries(for: [Message](), pending: second)
+        let editedAgain = tracker.entries(for: conversation, pending: nil)
+
+        XCTAssertEqual(editedAgain.map(\.id), ["edit2", "a1"], "the row it had while it waited")
+        XCTAssertEqual(editedAgain[0].sentAttachments, second.attachments)
+    }
+
     func test_isAwaitingReply_whileThePendingMessageWaitsForItsCopy() {
         let messages = [Message(id: "q1", role: .user), Message(id: "a1", role: .assistant)]
         _ = tracker.entries(for: messages, pending: pending)

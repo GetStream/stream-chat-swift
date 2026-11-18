@@ -188,6 +188,12 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         let writing = writingReply
         if let writing {
             stopped.insert(writing)
+        } else if exchange == nil, received.last?.role == .user, let request = answerAgainRequest {
+            // The agent works on the person's latest message without a request of this
+            // conversation's, such as one sent before the app relaunched.
+            var unanswered = AIConversationExchange(id: id, request: request, conversation: received)
+            unanswered.state = .stopped
+            exchange = unanswered
         }
         refresh()
         let stop = transport.stop
@@ -347,7 +353,6 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         error = nil
         activity = nil
         ignoresActivity = false
-        stopped = []
         exchange = AIConversationExchange(id: id, request: request, conversation: received)
         refresh()
         let send = transport.send
@@ -375,10 +380,11 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
             self.exchange = nil
         } else if !reply.hasEmptyContent || !reply.isGenerating {
             self.exchange = nil
+            // A reply written again after it was stopped is written once more.
+            stopped.remove(id)
             if exchange.hasFailed {
                 // The agent answered after all.
                 error = nil
-                stopped.remove(id)
             }
         }
     }
@@ -496,8 +502,9 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
             messages = received.filter { message in
                 let id = AnyHashable(message.id)
                 // A reply stopped before it showed anything has nothing to show, and the
-                // conversation would think it is still on its way.
-                return replaced?[id] == nil && !(stopped.contains(id) && message.hasEmptyContent)
+                // conversation would think it is still on its way. Its UI can still show.
+                let showsNothing = stopped.contains(id) && message.hasEmptyContent && message.uiDocument == nil
+                return replaced?[id] == nil && !showsNothing
             }
         }
         let pending = exchange?.shownPending

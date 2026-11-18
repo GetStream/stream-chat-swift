@@ -52,6 +52,8 @@ final class AIPendingMessageTracker {
     // The pending message of the last update, whose copy can arrive in the update that stops
     // passing it.
     private var lastPending: AIPendingMessage?
+    // The person's messages in the last update, nil before the first.
+    private var lastSent: Set<AnyHashable>?
 
     nonisolated init() { /* Nothing to set up. */ }
 
@@ -63,23 +65,25 @@ final class AIPendingMessageTracker {
         ui: (any AIUIDocumentReader)? = nil
     ) -> [AIConversationEntry<Message>] {
         var showsPending = pending != nil
+        let sent = messages.filter { $0.role == .user }
+        let ids = Set(sent.map { AnyHashable($0.id) })
         // A copy that arrives in the update that stops passing its pending message still
         // takes over its row. Only then: a message sent later is not the copy of one that failed.
         if let awaited = pending ?? lastPending {
-            let sent = messages.filter { $0.role == .user }
-            let ids = Set(sent.map { AnyHashable($0.id) })
-            let known = seen[awaited.id] ?? ids
+            // First seen, the copy may already be here: only the messages that were there in
+            // the last update are known. A message being edited is left out while it waits.
+            let known = seen[awaited.id] ?? lastSent.map { $0.intersection(ids) } ?? ids
             let matched = copies.first { $0.value.id == awaited.id && ids.contains($0.key) }?.key
             if let copy = matched ?? copy(of: awaited, in: sent, known: known) {
-                if copies[copy] == nil {
-                    copies[copy] = awaited
-                }
+                // A message edited again is the copy of its latest edit.
+                copies[copy] = awaited
                 showsPending = false
             } else {
                 seen[awaited.id] = known.union(ids)
             }
         }
         lastPending = pending
+        lastSent = ids
         var entries = messages.filter { Self.showsSomething($0, ui: ui) }.map { message in
             let taken = copies[AnyHashable(message.id)]
             return AIConversationEntry(
