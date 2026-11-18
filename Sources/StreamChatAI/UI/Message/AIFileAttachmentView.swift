@@ -44,7 +44,7 @@ struct AIFileAttachmentView: View {
                 .font(fonts.attachmentIcon)
                 .foregroundStyle(Color(colors.attachmentIcon))
                 .frame(width: layout.iconSizeLg, height: layout.iconSizeLg)
-                .background(
+                .backgroundFill(
                     Color(colors.attachmentIconBackground),
                     in: RoundedRectangle(cornerRadius: layout.radiusMd, style: .continuous)
                 )
@@ -65,7 +65,7 @@ struct AIFileAttachmentView: View {
             }
         }
         .padding(layout.spacingSm)
-        .background(
+        .backgroundFill(
             Color(colors.attachmentBackground),
             in: RoundedRectangle(cornerRadius: layout.radiusXl, style: .continuous)
         )

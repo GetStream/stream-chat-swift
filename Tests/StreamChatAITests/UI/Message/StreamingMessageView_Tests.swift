@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChatAI
+import SwiftUI
 import XCTest
 
 @MainActor
@@ -68,5 +69,25 @@ final class StreamingMessageView_Tests: XCTestCase {
         )
 
         XCTAssertEqual(listeners.previousValue, "Already streamed", "so its first change doesn't queue the whole text again")
+    }
+
+    func test_finishedReply_showsItsTextFromItsFirstLayout() {
+        let fitting = CGSize(width: 320, height: CGFloat.greatestFiniteMagnitude)
+        let finished = UIHostingController(rootView: StreamingMessageView(content: "A finished reply", isGenerating: false))
+        let empty = UIHostingController(rootView: StreamingMessageView(content: "", isGenerating: false))
+
+        XCTAssertGreaterThan(
+            finished.sizeThatFits(in: fitting).height,
+            empty.sizeThatFits(in: fitting).height,
+            "a row that starts out empty has no height, so a list makes more rows than fit"
+        )
+    }
+
+    func test_replyBeingWritten_startsEmptyAndIsTypedOut() {
+        let fitting = CGSize(width: 320, height: CGFloat.greatestFiniteMagnitude)
+        let writing = UIHostingController(rootView: StreamingMessageView(content: "A reply being written", isGenerating: true))
+        let empty = UIHostingController(rootView: StreamingMessageView(content: "", isGenerating: true))
+
+        XCTAssertEqual(writing.sizeThatFits(in: fitting).height, empty.sizeThatFits(in: fitting).height)
     }
 }

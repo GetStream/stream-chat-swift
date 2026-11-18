@@ -49,7 +49,7 @@ struct CodeBlockView: View {
                     .padding()
             }
         }
-        .background(Color(colors.codeBlockBackground))
+        .backgroundFill(Color(colors.codeBlockBackground))
         .clipShape(RoundedRectangle(cornerRadius: layout.radiusMd))
         .markdownMargin(top: .zero, bottom: .em(0.8))
     }

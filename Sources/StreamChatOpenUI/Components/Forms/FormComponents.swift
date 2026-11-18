@@ -71,7 +71,7 @@ struct FieldChrome: ViewModifier {
         content
             .padding(.horizontal, theme.spacing.m)
             .padding(.vertical, 10)
-            .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
+            .backgroundFill(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous)
                     .stroke(hasError ? theme.colors.danger : (isFocused ? theme.colors.accent : .clear), lineWidth: 1.5)
@@ -264,7 +264,7 @@ struct DatePickerView: View {
         }
         .padding(.horizontal, theme.spacing.m)
         .padding(.vertical, 6)
-        .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
+        .backgroundFill(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous)
                 .stroke(validation?.error(for: name) != nil ? theme.colors.danger : .clear, lineWidth: 1.5)
@@ -647,7 +647,7 @@ struct SelectionFieldView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 7)
             .foregroundStyle(selected ? theme.colors.accent : theme.colors.textPrimary)
-            .background(selected ? theme.colors.accent.opacity(0.14) : theme.colors.sunkenSurface, in: Capsule())
+            .backgroundFill(selected ? theme.colors.accent.opacity(0.14) : theme.colors.sunkenSurface, in: Capsule())
             .overlay(Capsule().stroke(selected ? theme.colors.accent : .clear, lineWidth: 1))
         }
         .buttonStyle(.plain)
@@ -677,7 +677,7 @@ struct SelectionFieldView: View {
             }
             .padding(theme.spacing.m)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .background(selected ? theme.colors.accent.opacity(0.08) : theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous))
+            .backgroundFill(selected ? theme.colors.accent.opacity(0.08) : theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous)
                     .stroke(selected ? theme.colors.accent : .clear, lineWidth: 1.5)

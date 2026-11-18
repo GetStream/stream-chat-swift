@@ -50,7 +50,7 @@ public struct AIUserMessageView<Factory: AIConversationViewFactory>: View {
                     .foregroundStyle(Color(colors.userMessageText))
                     .padding(.horizontal, layout.spacingMd)
                     .padding(.vertical, layout.spacingSm)
-                    .background(
+                    .backgroundFill(
                         Color(colors.userMessageBackground),
                         in: RoundedRectangle(cornerRadius: layout.radius2xl, style: .continuous)
                     )

@@ -105,7 +105,7 @@ struct TabsView: View {
                         }
                     }
                     .padding(3)
-                    .background(theme.colors.sunkenSurface, in: Capsule())
+                    .backgroundFill(theme.colors.sunkenSurface, in: Capsule())
                 }
                 if let current = items.first(where: { $0.id == active }) {
                     VStack(alignment: .leading, spacing: theme.spacing.m) {
@@ -340,7 +340,7 @@ struct StepsView: View {
                             .monospacedDigit()
                             .foregroundStyle(theme.colors.onAccent)
                             .frame(width: markerSize, height: markerSize)
-                            .background(theme.colors.accent, in: Circle())
+                            .backgroundFill(theme.colors.accent, in: Circle())
                         if index < items.count - 1 {
                             Rectangle()
                                 .fill(theme.colors.border)
