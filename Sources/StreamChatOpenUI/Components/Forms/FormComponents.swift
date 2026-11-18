@@ -94,12 +94,13 @@ struct TextInputView: View {
         let name = props.text("name") ?? ""
         let componentType = multiline ? "TextArea" : "Input"
         let type = props.string("type") ?? "text"
+        let isSecret = !multiline && type == "password"
         let field = context.runtime.stateField(
             name: name,
             binding: props["value"],
             formName: formName,
             componentType: componentType,
-            isSecret: !multiline && type == "password"
+            isSecret: isSecret
         )
         let rules = FormValidation.rules(from: props["rules"])
         let text = Binding<String>(
@@ -138,7 +139,7 @@ struct TextInputView: View {
             }
         }
         .registersValidation(name: name, rules: rules, isStreaming: context.isStreaming) {
-            context.runtime.stateField(name: name, binding: props["value"], formName: formName).value
+            context.runtime.stateField(name: name, binding: props["value"], formName: formName, isSecret: isSecret).value
         }
     }
 
@@ -173,10 +174,7 @@ struct SelectView: View {
         let name = props.text("name") ?? ""
         let field = context.runtime.stateField(name: name, binding: props["value"], formName: formName, componentType: "Select")
         let rules = FormValidation.rules(from: props["rules"])
-        let items: [(value: String, label: String)] = props.elements("items").compactMap { item in
-            guard let value = item.props["value"].map({ JS.toString($0) }), !value.isEmpty, !(item.props["value"]?.isNull ?? true) else { return nil }
-            return (value, item.props["label"].map { JS.toString($0) } ?? value)
-        }
+        let items = Self.items(props.elements("items"))
         let selected = field.value.flatMap { JS.isNullish($0) ? nil : JS.toString($0) }
         let selectedLabel = items.first { $0.value == selected }?.label
 
@@ -204,13 +202,23 @@ struct SelectView: View {
                     .foregroundStyle(theme.colors.textSecondary)
                     .accessibilityHidden(true)
             }
-            .font(props.string("size") == "small" ? theme.fonts.bodySmall : .body)
+            .font(props.string("size") == "small" ? theme.fonts.bodySmall : theme.fonts.body)
             .contentShape(Rectangle())
             .modifier(FieldChrome(hasError: validation?.error(for: name) != nil, isFocused: false))
         }
         .disabled(context.isStreaming)
         .registersValidation(name: name, rules: rules, isStreaming: context.isStreaming) {
             context.runtime.stateField(name: name, binding: props["value"], formName: formName).value
+        }
+    }
+
+    // The options with a value, each value once.
+    static func items(_ elements: [ElementNode]) -> [(value: String, label: String)] {
+        var values = Set<String>()
+        return elements.compactMap { item in
+            guard let value = item.props["value"].map({ JS.toString($0) }), !value.isEmpty, !(item.props["value"]?.isNull ?? true),
+                  values.insert(value).inserted else { return nil }
+            return (value, item.props["label"].map { JS.toString($0) } ?? value)
         }
     }
 }
@@ -347,7 +355,7 @@ struct SliderView: View {
             .accessibilityHidden(true)
         }
         .disabled(context.isStreaming)
-        .savesDefault(isStreaming: context.isStreaming) {
+        .savesDefault(isStreaming: context.isStreaming, defaultValue: SliderValues.stored(stored)) {
             guard !field.isReactive else { return }
             FieldDefault.save(SliderValues.stored(stored), runtime: context.runtime, formName: formName, componentType: "Slider", name: name)
         }
@@ -455,7 +463,7 @@ struct ToggleGroupView: View {
             }
             .openUISurface(isSwitch ? (props.string("variant") ?? "clear") : "clear", padding: theme.spacing.m)
             .disabled(context.isStreaming)
-            .savesDefault(isStreaming: context.isStreaming) {
+            .savesDefault(isStreaming: context.isStreaming, defaultValue: .object(aggregate)) {
                 guard !field.isReactive, !aggregate.isEmpty else { return }
                 FieldDefault.save(.object(aggregate), runtime: context.runtime, formName: formName, componentType: componentType, name: name)
             }
@@ -544,7 +552,7 @@ struct RadioGroupView: View {
                 }
             }
             .disabled(context.isStreaming)
-            .savesDefault(isStreaming: context.isStreaming) {
+            .savesDefault(isStreaming: context.isStreaming, defaultValue: shown.map(OpenUIValue.string)) {
                 guard !field.isReactive, let shown else { return }
                 FieldDefault.save(.string(shown), runtime: context.runtime, formName: formName, componentType: "RadioGroup", name: name)
             }
@@ -590,7 +598,7 @@ struct SelectionFieldView: View {
                 }
             }
         }
-        .savesDefault(isStreaming: context.isStreaming) {
+        .savesDefault(isStreaming: context.isStreaming, defaultValue: SelectionField.storedDefault(single: single, defaultValue: props["defaultValue"])) {
             SelectionField.hydrateDefault(runtime: runtime, formName: formName, componentType: componentType, name: name, single: single, defaultValue: props["defaultValue"])
         }
         .registersValidation(name: name, rules: rules, isStreaming: context.isStreaming) {

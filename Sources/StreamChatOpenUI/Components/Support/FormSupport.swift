@@ -100,13 +100,26 @@ struct FieldValidationRegistration: ViewModifier {
         content
             .onAppear(perform: register)
             .onChange(of: isStreaming) { _, _ in register() }
-            .onChange(of: rules) { _, _ in register() }
+            .onChange(of: rules) { _, rules in
+                if rules.isEmpty { unregister(name) }
+                register()
+            }
+            .onChange(of: name) { previous, _ in
+                unregister(previous)
+                register()
+            }
             .onDisappear { validation?.unregister(name) }
     }
 
     private func register() {
         guard let validation, !rules.isEmpty, !isStreaming else { return }
         validation.register(name, rules: rules, value: value)
+    }
+
+    // The field no longer checks these rules, so their error goes too.
+    private func unregister(_ name: String) {
+        validation?.unregister(name)
+        validation?.clearError(name)
     }
 }
 
@@ -130,9 +143,12 @@ enum FieldDefault {
     }
 }
 
+// It saves again when the default changes, such as when a Query's result arrives after the model
+// finished writing, while nothing is stored yet (useHydrateDefaultFieldValues).
 @available(iOS 17.0, macOS 14.0, *)
 private struct SavesDefault: ViewModifier {
     let isStreaming: Bool
+    let defaultValue: OpenUIValue?
     let save: @MainActor () -> Void
 
     func body(content: Content) -> some View {
@@ -141,13 +157,14 @@ private struct SavesDefault: ViewModifier {
             .onChange(of: isStreaming) { _, isStreaming in
                 if !isStreaming { save() }
             }
+            .onChange(of: defaultValue) { _, _ in save() }
     }
 }
 
 @available(iOS 17.0, macOS 14.0, *)
 extension View {
-    func savesDefault(isStreaming: Bool, _ save: @escaping @MainActor () -> Void) -> some View {
-        modifier(SavesDefault(isStreaming: isStreaming, save: save))
+    func savesDefault(isStreaming: Bool, defaultValue: OpenUIValue?, _ save: @escaping @MainActor () -> Void) -> some View {
+        modifier(SavesDefault(isStreaming: isStreaming, defaultValue: defaultValue, save: save))
     }
 }
 

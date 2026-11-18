@@ -48,6 +48,38 @@ struct FormComponentTests {
         #expect(runtime.fieldValue(formName: "trip", name: "pace") == "slow")
     }
 
+    @Test func aDefaultThatChangesAfterStreamingIsSaved() async {
+        let runtime = OpenUIRuntime(library: .openUIChat)
+        runtime.update(response: """
+        $pace = ""
+        root = Card([form])
+        form = Form("trip", Buttons([Button("Go")]), [pace])
+        pace = FormControl("Pace", Chips("pace", "single", [ChipItem("slow", "Slow"), ChipItem("fast", "Fast")], null, $pace))
+        """, isStreaming: false)
+        let host = HostedView(OpenUIView(runtime: runtime))
+        defer { host.close() }
+        await host.settle()
+
+        #expect(runtime.fieldValue(formName: "trip", name: "pace") == nil)
+
+        runtime.store.set("$pace", "fast")
+        await host.settle()
+
+        #expect(runtime.fieldValue(formName: "trip", name: "pace") == "fast", "such as a Query's result")
+    }
+
+    @Test func selectShowsEachValueOnce() {
+        let items = [
+            ElementNode(typeName: "SelectItem", props: ["value": "a", "label": "A"]),
+            ElementNode(typeName: "SelectItem", props: ["value": "a", "label": "Again"]),
+            ElementNode(typeName: "SelectItem", props: ["value": "", "label": "Empty"]),
+            ElementNode(typeName: "SelectItem", props: ["value": "b"])
+        ]
+
+        #expect(SelectView.items(items).map(\.value) == ["a", "b"])
+        #expect(SelectView.items(items).map(\.label) == ["A", "b"])
+    }
+
     @Test func selectionDefaultIsSavedWhenTheFieldAppearsAfterStreaming() {
         let runtime = OpenUIRuntime(library: .openUIChat)
         runtime.update(response: Self.selectionForm, isStreaming: false)
