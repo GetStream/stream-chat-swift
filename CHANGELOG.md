@@ -10,10 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Make the errors of the schedule calls public, for example `ClientError.ScheduledMessagesChannelLimitReached` [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
 - Add `ScheduledMessageFailure.ServerRejection.Reason.init(error:)` for reading the reason of the server from an error [#4416](https://github.com/GetStream/stream-chat-swift/pull/4416)
 - Add `ScheduledMessageSentEvent.isSentNow` for a scheduled message the server sent right away [#4417](https://github.com/GetStream/stream-chat-swift/pull/4417)
+- Add rescheduling a scheduled message the server failed to send, which schedules it again as a new message [#4418](https://github.com/GetStream/stream-chat-swift/pull/4418)
 ### 🐞 Fixed
 - Fix scheduled messages of an open channel going stale after a reconnect [#4409](https://github.com/GetStream/stream-chat-swift/pull/4409)
 - Fix scheduled messages that were already sent or deleted on another device staying in the list as failed [#4416](https://github.com/GetStream/stream-chat-swift/pull/4416)
 - Fix a scheduled message being marked as failed when it was already sent [#4417](https://github.com/GetStream/stream-chat-swift/pull/4417)
+- Fix a rescheduled or resent scheduled message getting stuck after an attachment upload failed [#4418](https://github.com/GetStream/stream-chat-swift/pull/4418)
+- Fix a rescheduled or edited scheduled message losing its quote [#4418](https://github.com/GetStream/stream-chat-swift/pull/4418)
 
 ## StreamChatCommonUI
 ### ✅ Added
