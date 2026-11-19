@@ -26,28 +26,37 @@ final class GIFFrameBuffer: Sendable {
     }
 
     static let defaultByteBudget = 16 * 1024 * 1024
+    // Caps the decoded bytes that all fully cached GIFs hold together.
+    static let sharedByteBudget = 50 * 1024 * 1024
+    static let sharedReservedBytes = AllocatedUnfairLock(0)
 
     private static let windowLength = 4
 
     private let source: GIFFrameSource
-    private let memoryBudget: GIFMemoryBudget
+    private let sharedReservedBytes: AllocatedUnfairLock<Int>
     private let queue = DispatchQueue(label: "io.getstream.StreamChatCommonUI.GIFFrameBuffer", qos: .userInitiated)
     private let state: AllocatedUnfairLock<State>
 
     init(
         source: GIFFrameSource,
         byteBudget: Int = GIFFrameBuffer.defaultByteBudget,
-        memoryBudget: GIFMemoryBudget = .shared
+        sharedByteBudget: Int = GIFFrameBuffer.sharedByteBudget,
+        sharedReservedBytes: AllocatedUnfairLock<Int> = GIFFrameBuffer.sharedReservedBytes
     ) {
         self.source = source
-        self.memoryBudget = memoryBudget
+        self.sharedReservedBytes = sharedReservedBytes
         let totalBytes = source.frameCount * source.bytesPerFrame
-        let cachesAll = totalBytes <= byteBudget && memoryBudget.reserve(totalBytes)
+        let cachesAll = totalBytes <= byteBudget && sharedReservedBytes.withLock { reservedBytes in
+            guard reservedBytes + totalBytes <= sharedByteBudget else { return false }
+            reservedBytes += totalBytes
+            return true
+        }
         state = AllocatedUnfairLock(State(mode: cachesAll ? .cacheAll : .window, reservedBytes: cachesAll ? totalBytes : 0))
     }
 
     deinit {
-        memoryBudget.release(state.withLock { $0.reservedBytes })
+        let releasedBytes = state.withLock { $0.reservedBytes }
+        sharedReservedBytes.withLock { $0 -= releasedBytes }
     }
 
     func cachedFrame(at index: Int) -> UIImage? {
@@ -100,7 +109,7 @@ final class GIFFrameBuffer: Sendable {
             defer { state.reservedBytes = 0 }
             return state.reservedBytes
         }
-        memoryBudget.release(releasedBytes)
+        sharedReservedBytes.withLock { $0 -= releasedBytes }
     }
 
     static func windowIndices(around index: Int, frameCount: Int) -> [Int] {

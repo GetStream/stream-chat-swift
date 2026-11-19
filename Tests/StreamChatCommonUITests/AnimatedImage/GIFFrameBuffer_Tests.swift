@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 @testable import StreamChatCommonUI
 import UIKit
 import XCTest
@@ -89,8 +90,7 @@ final class GIFFrameBuffer_Tests: XCTestCase {
     }
 
     func test_init_whenTheSharedBudgetIsFull_cachesOnlyTheWindow() {
-        let memoryBudget = GIFMemoryBudget(limit: 1)
-        let buffer = makeBuffer(frameCount: 6, memoryBudget: memoryBudget)
+        let buffer = makeBuffer(frameCount: 6, sharedByteBudget: 1)
 
         buffer.updatePlaybackIndex(0)
 
@@ -100,23 +100,24 @@ final class GIFFrameBuffer_Tests: XCTestCase {
     }
 
     func test_deinit_releasesTheReservedBytes() {
-        let memoryBudget = GIFMemoryBudget(limit: totalBytes(frameCount: 6))
-        var buffer: GIFFrameBuffer? = makeBuffer(frameCount: 6, memoryBudget: memoryBudget)
+        let reservedBytes = AllocatedUnfairLock(0)
+        var buffer: GIFFrameBuffer? = makeBuffer(frameCount: 6, sharedReservedBytes: reservedBytes)
         XCTAssertNotNil(buffer)
-        XCTAssertFalse(memoryBudget.reserve(1))
+        XCTAssertEqual(reservedBytes.withLock { $0 }, totalBytes(frameCount: 6))
 
         buffer = nil
 
-        XCTAssertTrue(memoryBudget.reserve(totalBytes(frameCount: 6)))
+        XCTAssertEqual(reservedBytes.withLock { $0 }, 0)
     }
 
     func test_purge_releasesTheReservedBytes() {
-        let memoryBudget = GIFMemoryBudget(limit: totalBytes(frameCount: 6))
-        let buffer = makeBuffer(frameCount: 6, memoryBudget: memoryBudget)
+        let reservedBytes = AllocatedUnfairLock(0)
+        let buffer = makeBuffer(frameCount: 6, sharedReservedBytes: reservedBytes)
+        XCTAssertEqual(reservedBytes.withLock { $0 }, totalBytes(frameCount: 6))
 
         buffer.purge(keeping: 0)
 
-        XCTAssertTrue(memoryBudget.reserve(totalBytes(frameCount: 6)))
+        XCTAssertEqual(reservedBytes.withLock { $0 }, 0)
     }
 
     // MARK: - Helpers
@@ -124,9 +125,15 @@ final class GIFFrameBuffer_Tests: XCTestCase {
     private func makeBuffer(
         frameCount: Int,
         byteBudget: Int = GIFFrameBuffer.defaultByteBudget,
-        memoryBudget: GIFMemoryBudget = GIFMemoryBudget(limit: 1024 * 1024)
+        sharedByteBudget: Int = 1024 * 1024,
+        sharedReservedBytes: AllocatedUnfairLock<Int> = AllocatedUnfairLock(0)
     ) -> GIFFrameBuffer {
-        GIFFrameBuffer(source: makeSource(frameCount: frameCount), byteBudget: byteBudget, memoryBudget: memoryBudget)
+        GIFFrameBuffer(
+            source: makeSource(frameCount: frameCount),
+            byteBudget: byteBudget,
+            sharedByteBudget: sharedByteBudget,
+            sharedReservedBytes: sharedReservedBytes
+        )
     }
 
     private func makeSource(frameCount: Int) -> GIFFrameSource {
