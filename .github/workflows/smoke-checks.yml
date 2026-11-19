@@ -42,16 +42,25 @@ permissions:
 jobs:
   guard:
     name: Guard
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: write # to cancel skip-ci runs
+      checks: read # to skip checks already verified
+      contents: read
+      pull-requests: read
+    outputs:
+      checks: ${{ steps.guard.outputs.checks }}
     steps:
       - uses: actions/checkout@v7
-      - uses: ./.github/actions/ci-guard
+      - id: guard
+        uses: ./.github/actions/ci-guard
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    if: ${{ fromJSON(needs.guard.outputs.checks).ui || fromJSON(needs.guard.outputs.checks).common_ui || fromJSON(needs.guard.outputs.checks).e2e }}
     needs: guard
     outputs:
       e2e_batches: ${{ steps.select_e2e_tests.outputs.e2e_batches }}
@@ -65,6 +74,7 @@ jobs:
       run: bundle exec fastlane build_test_app_and_frameworks ${{ env.VERBOSE }}
       timeout-minutes: 60
     - name: Select E2E Tests
+      if: ${{ fromJSON(needs.guard.outputs.checks).e2e }}
       id: select_e2e_tests
       run: bundle exec fastlane select_e2e_tests ${{ env.VERBOSE }}
     - uses: actions/upload-artifact@v7
@@ -92,8 +102,10 @@ jobs:
           INSTALL_INTERFACE_ANALYZER: true
       - run: bundle exec fastlane lint_pr
       - run: bundle exec fastlane rubocop
+        if: ${{ fromJSON(needs.guard.outputs.checks).ruby }}
       - run: bundle exec fastlane run_swift_format strict:true
       - run: bundle exec fastlane validate_public_interface
+        if: ${{ fromJSON(needs.guard.outputs.checks).public_interface }}
 
   validate-generated-code:
     name: Validate Generated Code
@@ -110,7 +122,7 @@ jobs:
   build-old-xcode:
     name: Build SDKs (Old Xcode)
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && (fromJSON(needs.guard.outputs.checks).llc || fromJSON(needs.guard.outputs.checks).ui || fromJSON(needs.guard.outputs.checks).common_ui || fromJSON(needs.guard.outputs.checks).ai || fromJSON(needs.guard.outputs.checks).a2ui || fromJSON(needs.guard.outputs.checks).openui) }}
     needs: guard
     env:
       XCODE_VERSION: "16.4"
@@ -121,28 +133,34 @@ jobs:
     - name: List Xcode versions
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
     - name: Build LLC
+      if: ${{ fromJSON(needs.guard.outputs.checks).llc }}
       run: bundle exec fastlane test destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
     - name: Build UI
+      if: ${{ fromJSON(needs.guard.outputs.checks).ui }}
       run: bundle exec fastlane test_ui destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
     - name: Build Common UI
+      if: ${{ fromJSON(needs.guard.outputs.checks).common_ui }}
       run: bundle exec fastlane test_common_ui destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
     - name: Build AI
+      if: ${{ fromJSON(needs.guard.outputs.checks).ai }}
       run: bundle exec fastlane test_ai destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
     - name: Build A2UI
+      if: ${{ fromJSON(needs.guard.outputs.checks).a2ui }}
       run: bundle exec fastlane test_a2ui destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
     - name: Build OpenUI
+      if: ${{ fromJSON(needs.guard.outputs.checks).openui }}
       run: bundle exec fastlane test_openui destination:"generic/platform=iOS Simulator" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
 
   test-llc-debug:
     name: Test LLC (Debug)
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).llc }}
     needs: guard
     steps:
     - uses: actions/checkout@v7
@@ -191,6 +209,7 @@ jobs:
   test-ui-debug:
     name: Test UI (Debug)
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    if: ${{ !cancelled() && !failure() && fromJSON(needs.guard.outputs.checks).ui }}
     needs:
       - guard
       - build-test-app-and-frameworks
@@ -237,6 +256,7 @@ jobs:
   test-common-ui-debug:
     name: Test Common UI (Debug)
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    if: ${{ !cancelled() && !failure() && fromJSON(needs.guard.outputs.checks).common_ui }}
     needs:
       - guard
       - build-test-app-and-frameworks
@@ -278,7 +298,7 @@ jobs:
   test-ai-debug:
     name: Test AI (Debug)
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).ai }}
     needs: guard
     steps:
     - uses: actions/checkout@v7
@@ -314,7 +334,7 @@ jobs:
   test-a2ui-debug:
     name: Test A2UI (Debug)
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).a2ui }}
     needs: guard
     steps:
     - uses: actions/checkout@v7
@@ -350,7 +370,7 @@ jobs:
   test-openui-debug:
     name: Test OpenUI (Debug)
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).openui }}
     needs: guard
     steps:
     - uses: actions/checkout@v7
@@ -386,7 +406,7 @@ jobs:
   allure_testops_launch:
     name: Launch Allure TestOps
     runs-on: ubuntu-24.04
-    if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' }}
+    if: ${{ !cancelled() && !failure() && github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' && fromJSON(needs.guard.outputs.checks).e2e }}
     needs:
       - guard
       - build-test-app-and-frameworks
@@ -407,7 +427,7 @@ jobs:
   test-e2e-debug:
     name: Test E2E UI (Debug)
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' }}
+    if: ${{ !cancelled() && !failure() && github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' && fromJSON(needs.guard.outputs.checks).e2e }}
     needs:
       - guard
       - allure_testops_launch
@@ -490,7 +510,7 @@ jobs:
   build-apps:
     name: Build Demo App + Example Apps
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).sample_apps }}
     needs: guard
     steps:
     - uses: actions/checkout@v7
@@ -515,7 +535,7 @@ jobs:
   test-integration:
     name: Test Integration
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).integration }}
     needs: guard
     steps:
     - uses: actions/checkout@v7
@@ -528,7 +548,7 @@ jobs:
   build-tvos:
     name: Build LLC (tvOS)
     runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).tvos }}
     needs: guard
     steps:
     - uses: actions/checkout@v7

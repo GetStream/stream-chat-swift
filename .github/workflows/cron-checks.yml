@@ -19,7 +19,7 @@ on:
         default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}:${{ inputs.mock_server_branch || 'main' }}
   cancel-in-progress: true
 
 env:
@@ -36,14 +36,17 @@ jobs:
     name: Test E2E UI (Debug)
     strategy:
       matrix:
-        include:
-          - ios: "26.2"
-            device: "iPhone 17 Pro"
-            setup_runtime: false
-            coverage: true # builds the map that selects e2e tests on pull requests
-          - ios: "17.5"
-            device: "iPhone 15 Pro"
-            setup_runtime: true
+        # Coverage builds the map that selects e2e tests on pull requests, only against the main mock server.
+        include: |-
+          ${{ fromJson(
+            (inputs.mock_server_branch || 'main') != 'main' && '[
+              { "ios": "26.2", "device": "iPhone 17 Pro", "setup_runtime": false }
+            ]'
+            || '[
+              { "ios": "26.2", "device": "iPhone 17 Pro", "setup_runtime": false, "coverage": true },
+              { "ios": "17.5", "device": "iPhone 15 Pro", "setup_runtime": true }
+            ]'
+          ) }}
       fail-fast: false
     runs-on: macos-15
     env:
@@ -354,6 +357,7 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
+    if: ${{ (inputs.mock_server_branch || 'main') == 'main' }}
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v7

@@ -1,11 +1,16 @@
 name: Guard
 description: >
   Loads the current PR title (not the stale event payload) and cancels the workflow when it
-  contains skip-ci, case-insensitive. No-op when the event is not pull_request.
+  contains skip-ci, case-insensitive. Then outputs which checks the PR needs, so macOS jobs
+  can be skipped before a runner is taken.
 inputs:
   github_token:
     description: Token with actions:write and pull-requests:read
     required: true
+outputs:
+  checks:
+    description: JSON map of check name to boolean, from `fastlane required_checks`
+    value: ${{ steps.checks.outputs.checks }}
 runs:
   using: composite
   steps:
@@ -21,3 +26,12 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github_token }}
+
+    - uses: ./.github/actions/ruby-cache
+
+    - id: checks
+      run: bundle exec fastlane required_checks
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
