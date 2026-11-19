@@ -23,7 +23,8 @@ struct UPoint: Identifiable, Hashable {
 
 @available(iOS 15.0, macOS 12.0, *)
 final class USeries: Identifiable {
-    let id = UUID()
+    // Its position in the chart, so a chart parsed again keeps its series' identities.
+    fileprivate(set) var id = 0
     let name: String
     let points: [UPoint]
     init(name: String, points: [UPoint]) { self.name = name; self.points = points }
@@ -39,5 +40,8 @@ final class USpec {
     let series: [USeries]
     init(title: String?, kind: ChartKind, xLabel: String? = nil, yLabel: String? = nil, beginAtZeroY: Bool = false, series: [USeries]) {
         self.title = title; self.kind = kind; self.xLabel = xLabel; self.yLabel = yLabel; self.beginAtZeroY = beginAtZeroY; self.series = series
+        for (index, series) in series.enumerated() {
+            series.id = index
+        }
     }
 }

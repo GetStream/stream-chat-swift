@@ -7,6 +7,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix the composer sending typing events when attachments are added or removed [#4407](https://github.com/GetStream/stream-chat-swift/pull/4407)
 
+## StreamChatAI
+### ✅ Added
+- Add `transcription.error.speech_recognition_denied`, `transcription.error.microphone_denied` and `sidebar.button.close` localization keys [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
+### 🐞 Fixed
+- Fix late replies, stops and repeated edits showing the wrong state in `AIConversation` [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
+- Fix streamed answers freezing, repeating or dropping characters [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
+- Fix picked photos being sent without the person's edits, and attachments needing text to send [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
+- Fix dictation starting without speech or microphone permission, or after the composer went away [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
+- Fix charts crashing on extreme values [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
+
 # [5.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.17.0)
 _November 12, 2026_
 

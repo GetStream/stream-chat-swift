@@ -43,7 +43,7 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     @Published public private(set) var status: AIConversationStatus = .ready
     /// Why the latest request failed, or, as an ``AIAgentError``, what the agent said when it
     /// couldn't answer or that it didn't answer in time. It stays until the next request, or
-    /// until a reply starts after all.
+    /// until it turns out the agent had the request after all.
     @Published public private(set) var error: (any Error)?
     /// What the agent says it is doing besides what its reply shows, such as checking sources.
     @Published public private(set) var activity: AIAgentActivity?
@@ -83,6 +83,11 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     private var ignoresActivity = false
     // The latest stop, which the next request waits for: the agent would stop that one too.
     private var stopping: Task<Void, Never>?
+    // The latest request, which the next stop waits for: the agent can stop it only once it
+    // has it.
+    private var requesting: Task<Void, Never>?
+    // The stops the transport hasn't answered, oldest first.
+    private var pendingStops: [PendingStop] = []
     // Ends the wait for the latest request's reply when the agent says nothing for too long.
     private var replyTimer: Task<Void, Never>?
     private var edited: Message?
@@ -99,6 +104,14 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         let stop: @MainActor () async throws -> Void
         let loadOlderMessages: @MainActor () async throws -> Void
         let rate: @MainActor (Message, AIMessageRating?) async throws -> Void
+    }
+
+    // A stop on its way to the transport.
+    private struct PendingStop {
+        let id: Int
+        // The replies it stopped, and no other stop had, which the agent goes on writing if
+        // neither the transport nor a later stop can stop it.
+        var replies: Set<AnyHashable>
     }
 
     // A rating the person gave a reply on this device, shown in place of the reply's own.
@@ -184,18 +197,35 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         ignoresActivity = true
         if exchange?.state == .waiting {
             exchange?.state = .stopped
+        } else if let exchange, exchange.hasFailed, exchange.isBeingAnswered(in: received) {
+            // The agent had the request after all, such as one the transport timed out on.
+            self.exchange?.state = .stopped
+            error = nil
         }
-        let writing = writingReply
-        if let writing {
-            stopped.insert(writing)
+        var replies: Set<AnyHashable> = []
+        if let writing = writingReply {
+            if stopped.insert(writing).inserted {
+                replies.insert(writing)
+            }
+        } else if exchange == nil, received.last?.role == .user, let request = answerAgainRequest {
+            // The agent works on the person's latest message without a request of this
+            // conversation's, such as one sent before the app relaunched.
+            var unanswered = AIConversationExchange(id: id, request: request, conversation: received)
+            unanswered.state = .stopped
+            exchange = unanswered
         }
+        pendingStops.append(PendingStop(id: id, replies: replies))
         refresh()
         let stop = transport.stop
+        let previousRequest = requesting
         stopping = Task { [weak self] in
+            // The agent would go on answering a request that reaches it after the stop.
+            await previousRequest?.value
             do {
                 try await stop()
+                self?.stopFinished(id)
             } catch {
-                self?.stopFailed(id, writing: writing, error: error)
+                self?.stopFailed(id, error: error)
             }
         }
     }
@@ -275,6 +305,15 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
 
     func receive(messages: [Message]) {
         received = messages
+        // A stop of the reply to a message of the person's is over once a newer message of
+        // theirs arrives after it: the replies after it answer that one. The stopped reply can
+        // arrive with it, such as after a reconnect.
+        if let exchange, exchange.state == .stopped, let newer = exchange.overtakingMessageIndex(in: messages) {
+            if let reply = exchange.reply(in: Array(messages[..<newer])) {
+                receive(reply, to: exchange)
+            }
+            self.exchange = nil
+        }
         if let exchange, let reply = exchange.reply(in: messages) {
             receive(reply, to: exchange)
         }
@@ -328,6 +367,11 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         actions.contains(.regenerate) && isLatestReply && !status.isAnswering
     }
 
+    // Whether a reply is still being written: one the person stopped is finished, whatever it says.
+    func isGenerating(_ reply: Message) -> Bool {
+        reply.isGenerating && !stopped.contains(AnyHashable(reply.id))
+    }
+
     // Edits a message of the person's, when it is their latest and the agent isn't answering.
     func editAction(for message: Message) -> (@MainActor () -> Void)? {
         guard offersEdit(message) else { return nil }
@@ -347,12 +391,17 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         error = nil
         activity = nil
         ignoresActivity = false
-        stopped = []
-        exchange = AIConversationExchange(id: id, request: request, conversation: received)
+        // The requests before can still bring their messages, such as ones stopped before they arrived.
+        exchange = AIConversationExchange(
+            id: id,
+            request: request,
+            conversation: received,
+            earlierMessageIDs: exchange?.messageIDsOnTheirWay ?? []
+        )
         refresh()
         let send = transport.send
         let previousStop = stopping
-        Task { [weak self] in
+        requesting = Task { [weak self] in
             // The agent would stop a request that reaches it before the stop made before it.
             await previousStop?.value
             do {
@@ -369,16 +418,17 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
     private func receive(_ reply: Message, to exchange: AIConversationExchange<Message>) {
         let id = AnyHashable(reply.id)
         if exchange.state == .stopped {
-            if reply.isGenerating {
-                stopped.insert(id)
+            if reply.isGenerating, stopped.insert(id).inserted, let latest = pendingStops.indices.last {
+                pendingStops[latest].replies.insert(id)
             }
             self.exchange = nil
         } else if !reply.hasEmptyContent || !reply.isGenerating {
             self.exchange = nil
+            // A reply written again after it was stopped is written once more.
+            stopped.remove(id)
             if exchange.hasFailed {
                 // The agent answered after all.
                 error = nil
-                stopped.remove(id)
             }
         }
     }
@@ -402,18 +452,32 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
         refresh()
     }
 
-    // The agent goes on answering, and the composer offers to stop it again.
-    private func stopFailed(_ id: Int, writing: AnyHashable?, error: any Error) {
-        guard id == generation, !(error is CancellationError) else { return }
+    // The agent stopped what it was writing, which includes what the stops before it stopped.
+    private func stopFinished(_ id: Int) {
+        pendingStops.removeAll { $0.id <= id }
+    }
+
+    // The agent goes on answering, and the composer offers to stop it again: what it was
+    // writing, and a reply that arrived while the stop was on its way, even after the person
+    // asked for something else. A later stop on its way can still stop them.
+    private func stopFailed(_ id: Int, error: any Error) {
+        // Missing once a later stop stopped what it had.
+        guard let index = pendingStops.firstIndex(where: { $0.id == id }) else { return }
+        let failed = pendingStops.remove(at: index)
+        guard !(error is CancellationError) else { return }
         log.error("Couldn't stop the agent", error: error)
-        if let writing {
-            stopped.remove(writing)
+        if index < pendingStops.endIndex {
+            pendingStops[index].replies.formUnion(failed.replies)
+        } else {
+            stopped.subtract(failed.replies)
         }
-        if let exchange, exchange.state == .stopped {
-            self.exchange?.state = .waiting
-            waitForReply(to: exchange.id)
+        if id == generation {
+            if let exchange, exchange.state == .stopped {
+                self.exchange?.state = .waiting
+                waitForReply(to: exchange.id)
+            }
+            ignoresActivity = false
         }
-        ignoresActivity = false
         refresh()
     }
 
@@ -496,8 +560,9 @@ public final class AIConversation<Message: AIMessage>: ObservableObject {
             messages = received.filter { message in
                 let id = AnyHashable(message.id)
                 // A reply stopped before it showed anything has nothing to show, and the
-                // conversation would think it is still on its way.
-                return replaced?[id] == nil && !(stopped.contains(id) && message.hasEmptyContent)
+                // conversation would think it is still on its way. Its UI can still show.
+                let showsNothing = stopped.contains(id) && message.hasEmptyContent && message.uiDocument == nil
+                return replaced?[id] == nil && !showsNothing
             }
         }
         let pending = exchange?.shownPending

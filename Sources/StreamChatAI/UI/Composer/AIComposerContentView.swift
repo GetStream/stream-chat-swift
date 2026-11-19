@@ -46,5 +46,15 @@ struct AIComposerContentView<ComposerFactory: AIComposerViewFactory>: View {
                 picker
             }
         }
+        .onDisappear {
+            // Ends dictation, which silences other audio while it is active, or cancels it while
+            // it still waits for a permission or the audio session, so it doesn't start off screen.
+            speechHandler.stop()
+        }
+        .onChange(of: ObjectIdentifier(viewModel)) { _ in
+            // What the person says belongs in the draft they started it in, not another
+            // conversation's.
+            speechHandler.stop()
+        }
     }
 }

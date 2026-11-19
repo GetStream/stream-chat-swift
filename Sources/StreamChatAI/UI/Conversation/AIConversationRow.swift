@@ -41,7 +41,7 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
                         options: AIAssistantMessageViewOptions(
                             message: message,
                             text: generated == nil ? message.text : "",
-                            isGenerating: message.isGenerating,
+                            isGenerating: isGenerating(message),
                             parts: message.parts,
                             attachments: message.attachments,
                             reasoningText: message.reasoningText(for:),
@@ -81,6 +81,11 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
     // written out.
     private func showsActions(under message: Message) -> Bool {
         let hasAnswer = !message.text.isEmpty || !message.attachments.isEmpty || generated != nil
-        return !message.isGenerating && hasAnswer && isWriting != true
+        return !isGenerating(message) && hasAnswer && isWriting != true
+    }
+
+    // Whether the agent still writes the message. A reply the person stopped is finished.
+    private func isGenerating(_ message: Message) -> Bool {
+        conversation?.isGenerating(message) ?? message.isGenerating
     }
 }
