@@ -280,7 +280,7 @@ private struct A2UITextFieldView: View {
             input(variant: variant, placeholder: placeholder.isEmpty ? label : placeholder, binding: binding)
                 .font(theme.body)
                 .padding(10)
-                .backgroundFill(theme.subtleSurface)
+                .background(theme.subtleSurface)
                 .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous)
@@ -352,7 +352,7 @@ private struct A2UIChoicePickerView: View {
                 TextField("Search", text: $filter)
                     .font(theme.body)
                     .padding(8)
-                    .backgroundFill(theme.subtleSurface)
+                    .background(theme.subtleSurface)
                     .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
             }
             if usesChips {
@@ -430,7 +430,7 @@ private struct A2UIChoicePickerView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .frame(maxWidth: .infinity)
-                .backgroundFill(selected ? theme.accent.opacity(0.18) : theme.subtleSurface)
+                .background(selected ? theme.accent.opacity(0.18) : theme.subtleSurface)
                 .foregroundColor(selected ? theme.accent : theme.text)
                 .clipShape(Capsule())
         }

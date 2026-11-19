@@ -65,7 +65,7 @@ public struct AIToolApprovalCard: View {
         .font(font ?? fonts.messagePart)
         .padding(layout.spacingSm)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .backgroundFill(Color(colors.toolApprovalBackground), in: RoundedRectangle(cornerRadius: layout.radiusLg, style: .continuous))
+        .background(Color(colors.toolApprovalBackground), in: RoundedRectangle(cornerRadius: layout.radiusLg, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: layout.radiusLg, style: .continuous).strokeBorder(Color(colors.toolApprovalBorder)))
         .accessibilityElement(children: .contain)
     }

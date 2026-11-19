@@ -26,11 +26,11 @@ struct SurfaceBackground: ViewModifier {
         case "sunk":
             content
                 .padding(padding ?? theme.spacing.l)
-                .backgroundFill(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous))
+                .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous))
         default:
             content
                 .padding(padding ?? theme.spacing.l)
-                .backgroundFill(theme.colors.surface, in: RoundedRectangle(cornerRadius: theme.radius.large, style: .continuous))
+                .background(theme.colors.surface, in: RoundedRectangle(cornerRadius: theme.radius.large, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: theme.radius.large, style: .continuous)
                         .stroke(theme.colors.border.opacity(0.6), lineWidth: 0.5)

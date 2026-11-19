@@ -168,7 +168,7 @@ struct SourcesStrip: View {
                                     .font(theme.fonts.caption.weight(.bold))
                                     .foregroundStyle(theme.colors.onAccent)
                                     .frame(width: badgeSize, height: badgeSize)
-                                    .backgroundFill(theme.colors.accent, in: Circle())
+                                    .background(theme.colors.accent, in: Circle())
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(source["title"]?.stringValue ?? L10n.Sources.untitled)
                                         .font(theme.fonts.caption.weight(.medium))
@@ -182,7 +182,7 @@ struct SourcesStrip: View {
                             }
                             .frame(width: cardWidth, alignment: .leading)
                             .padding(theme.spacing.s)
-                            .backgroundFill(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
+                            .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
                         }
                         .buttonStyle(.plain)
                     }
@@ -424,7 +424,7 @@ struct TextCalloutView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .fixedSize(horizontal: false, vertical: true)
-        .backgroundFill(color.opacity(0.08))
+        .background(color.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
     }
 }

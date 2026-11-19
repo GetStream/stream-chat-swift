@@ -216,7 +216,7 @@ struct MarkdownTableView: View {
                     ForEach(Array(table.header.enumerated()), id: \.offset) { column, title in
                         cell(title, column: column)
                             .font(font.weight(.semibold))
-                            .backgroundFill(theme.colors.subtleFill)
+                            .background(theme.colors.subtleFill)
                     }
                 }
                 ForEach(Array(table.rows.enumerated()), id: \.offset) { _, row in
@@ -295,7 +295,7 @@ struct CodeBlockView: View {
                     .fixedSize(horizontal: true, vertical: true)
             }
         }
-        .backgroundFill(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small))
+        .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small))
     }
 }
 

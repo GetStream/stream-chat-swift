@@ -83,7 +83,7 @@ struct TableView: View {
                         .padding(.vertical, theme.spacing.s)
                 }
             }
-            .backgroundFill(theme.colors.subtleFill)
+            .background(theme.colors.subtleFill)
             ForEach(rows, id: \.self) { row in
                 Divider().gridCellUnsizedAxes(.horizontal)
                 GridRow {
@@ -196,7 +196,7 @@ struct EditableTableView: View {
                                 .padding(.vertical, theme.spacing.s)
                         }
                     }
-                    .backgroundFill(theme.colors.subtleFill)
+                    .background(theme.colors.subtleFill)
                     ForEach(table.rows.indices, id: \.self) { rowIndex in
                         Divider().gridCellUnsizedAxes(.horizontal)
                         GridRow {

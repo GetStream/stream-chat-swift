@@ -111,7 +111,7 @@ private struct A2UIButtonLabelStyle: ViewModifier {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .foregroundColor(theme.onAccent)
-                .backgroundFill(theme.accent)
+                .background(theme.accent)
                 .clipShape(RoundedRectangle(cornerRadius: theme.buttonCornerRadius, style: .continuous))
         case "borderless":
             content
@@ -121,7 +121,7 @@ private struct A2UIButtonLabelStyle: ViewModifier {
             content
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
-                .backgroundFill(theme.subtleSurface)
+                .background(theme.subtleSurface)
                 .clipShape(RoundedRectangle(cornerRadius: theme.buttonCornerRadius, style: .continuous))
         }
     }

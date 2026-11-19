@@ -16,24 +16,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix picked photos being sent without the person's edits, and attachments needing text to send [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 - Fix dictation starting without speech or microphone permission, or after the composer went away [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 - Fix charts crashing on extreme values [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
-### 🔄 Changed
-- Improve the scrolling of `AIConversationView`, and show finished replies at their full height as they scroll in [#4425](https://github.com/GetStream/stream-chat-swift/pull/4425)
+- Fix finished replies growing as they scroll into `AIConversationView` [#4425](https://github.com/GetStream/stream-chat-swift/pull/4425)
 
 ## StreamChatA2UI
 ### 🐞 Fixed
 - Fix agent messages that could freeze the app or bypass the component limit [#4423](https://github.com/GetStream/stream-chat-swift/pull/4423)
 - Follow the A2UI 1.0 envelope keys, boolean coercion, regex rules and error codes [#4423](https://github.com/GetStream/stream-chat-swift/pull/4423)
 - Fix modal triggers, date inputs, sliders and media links [#4423](https://github.com/GetStream/stream-chat-swift/pull/4423)
-### 🔄 Changed
-- Improve the scrolling of conversations with A2UI replies on iOS 27 [#4425](https://github.com/GetStream/stream-chat-swift/pull/4425)
 
 ## StreamChatOpenUI
 ### 🐞 Fixed
 - Fix programs and tool results that could freeze the app or overflow the stack [#4424](https://github.com/GetStream/stream-chat-swift/pull/4424)
 - Fix forms that couldn't be submitted or lost their values [#4424](https://github.com/GetStream/stream-chat-swift/pull/4424)
 - Fix images loading from partial links and replies showing blank before their UI starts [#4424](https://github.com/GetStream/stream-chat-swift/pull/4424)
-### 🔄 Changed
-- Improve the scrolling of conversations with OpenUI replies on iOS 27 [#4425](https://github.com/GetStream/stream-chat-swift/pull/4425)
 
 # [5.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.17.0)
 _November 12, 2026_

@@ -255,7 +255,7 @@ struct ListBlockView: View {
                             .monospacedDigit()
                             .foregroundStyle(theme.colors.accent)
                             .frame(width: (small ? 20 : 24) * scale, height: (small ? 20 : 24) * scale)
-                            .backgroundFill(theme.colors.accent.opacity(0.12), in: Circle())
+                            .background(theme.colors.accent.opacity(0.12), in: Circle())
                     }
                     VStack(alignment: .leading, spacing: 2) {
                         Text(InlineMarkdown.cached(title))
@@ -339,7 +339,7 @@ struct TagPill: View {
         .foregroundStyle(color)
         .padding(.horizontal, size == "lg" ? 12 : size == "md" ? 10 : 8)
         .padding(.vertical, size == "lg" ? 6 : size == "md" ? 4 : 3)
-        .backgroundFill(
+        .background(
             (variant == nil || variant == "neutral" ? theme.colors.subtleFill : color.opacity(0.14)),
             in: Capsule()
         )

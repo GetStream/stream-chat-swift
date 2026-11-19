@@ -231,7 +231,7 @@ private struct A2UICardView: View {
         context.childView(context.childId())
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .backgroundFill(theme.surface)
+            .background(theme.surface)
             .clipShape(RoundedRectangle(cornerRadius: theme.cornerRadius, style: .continuous))
     }
 }

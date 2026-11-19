@@ -80,7 +80,7 @@ struct IconBadge: View {
             .font(.system(size: dimension * 0.45, weight: .semibold))
             .foregroundStyle(variant == "soft" ? theme.colors.accent : color)
             .frame(width: dimension, height: dimension)
-            .backgroundFill(background, in: RoundedRectangle(cornerRadius: dimension * 0.28, style: .continuous))
+            .background(background, in: RoundedRectangle(cornerRadius: dimension * 0.28, style: .continuous))
             .accessibilityHidden(true)
     }
 
@@ -197,7 +197,7 @@ struct TrendBadge: View {
             .foregroundStyle(color)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .backgroundFill(color.opacity(0.12), in: Capsule())
+            .background(color.opacity(0.12), in: Capsule())
             .accessibilityLabel(Text(up ? L10n.Trend.up(NumberFormatting.decimal(abs(value))) : L10n.Trend.down(NumberFormatting.decimal(abs(value)))))
         }
     }
@@ -404,7 +404,7 @@ struct SnippetCardBlockView: View {
             }
             .padding(theme.spacing.m)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .backgroundFill(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous))
+            .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous))
         }
     }
 }
@@ -455,7 +455,7 @@ struct OverviewCardBlockView: View {
             }
             .padding(theme.spacing.m)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .backgroundFill(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous))
+            .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous))
         }
     }
 }
@@ -631,7 +631,7 @@ private struct CompositeCard: View {
         }
         .padding(theme.spacing.m)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .backgroundFill(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous))
+        .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.medium, style: .continuous))
     }
 
     enum Location { case body, footer }
@@ -729,7 +729,7 @@ private struct VisualCard: View {
         .overlay(alignment: .topLeading) {
             if let tag = props.element("tag") {
                 TagPill(text: tag.props["text"].map { JS.toString($0) } ?? "", icon: tag.props["icon"]?.elementValue, size: "sm", variant: tag.props["variant"]?.stringValue ?? "neutral")
-                    .backgroundFill(theme.colors.surface.opacity(0.92), in: Capsule())
+                    .background(theme.colors.surface.opacity(0.92), in: Capsule())
                     .padding(theme.spacing.s)
             }
         }
