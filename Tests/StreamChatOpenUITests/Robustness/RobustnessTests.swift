@@ -310,6 +310,30 @@ struct RobustnessTests {
         #expect(errors.contains { $0.message.contains("Evaluation stopped after") })
     }
 
+    @Test func comparingALargeValueWithNullOrUsingItAsANumberDoesntSpendItsNodes() {
+        let runtime = OpenUIRuntime(library: .openUI)
+        runtime.update(response: """
+        root = Stack([TextContent($xs == null ? "none" : "some"), TextContent("" + ($xs != null)), TextContent("" + ($xs * 2 > 1))])
+        """, isStreaming: false)
+        runtime.store.set("$xs", .array((0..<300_000).map { index -> OpenUIValue in .number(Double(index)) }))
+
+        let (root, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
+
+        #expect(!errors.contains { $0.message.contains("Evaluation stopped") })
+        #expect(root?.props["children"]?.arrayValue?.compactMap { $0.elementValue?.props["text"] } == ["some", "true", "false"])
+    }
+
+    @Test(arguments: [#"TextContent("" + $xs)"#, #"TextContent("" + ($xs == [1]))"#])
+    func turningALargeValueIntoTextOrComparingItStopsAtTheEvaluationBudget(_ text: String) {
+        let runtime = OpenUIRuntime(library: .openUI)
+        runtime.update(response: "root = Stack([\(text)])", isStreaming: false)
+        runtime.store.set("$xs", .array((0..<300_000).map { index -> OpenUIValue in .number(Double(index)) }))
+
+        let (_, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
+
+        #expect(errors.contains { $0.message.contains("Evaluation stopped after") })
+    }
+
     @Test func readingAFieldAnEachItemLacksDoesntCopyTheItem() {
         let row: OpenUIValue = ["blob": .array(Array(repeating: .number(1), count: 2000))]
         let rows = OpenUIValue.array(Array(repeating: row, count: 300))
