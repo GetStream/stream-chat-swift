@@ -111,8 +111,12 @@ final class ConversationTransport: AIConversationTransport {
         }
     }
 
-    func finishStop(_ index: Int) {
-        heldStops[index].resume()
+    func finishStop(_ index: Int, throwing error: (any Error)? = nil) {
+        if let error {
+            heldStops[index].resume(throwing: error)
+        } else {
+            heldStops[index].resume()
+        }
     }
 
     func finishRating(_ index: Int, throwing error: (any Error)? = nil) {
