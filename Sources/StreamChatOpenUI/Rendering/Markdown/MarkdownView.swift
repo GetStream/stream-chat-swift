@@ -195,8 +195,8 @@ struct MarkdownBlockView: View, Equatable {
 
     private func headingFont(_ level: Int) -> Font {
         switch level {
-        case 1: return theme.fonts.title.weight(.bold)
-        case 2: return theme.fonts.bodyLarge.weight(.semibold)
+        case 1: return theme.fonts.titleLarge
+        case 2: return theme.fonts.title
         case 3: return theme.fonts.heading
         default: return theme.fonts.bodySmall.weight(.semibold)
         }
