@@ -70,6 +70,15 @@ struct ChartComponentTests {
         #expect(RenderingTests.render(runtime) != nil)
     }
 
+    @Test func horizontalBarsGrowWithTheirCategories() {
+        #expect(CartesianChartView.height(kind: .horizontalBar, categories: 3, requested: nil) == 160)
+        #expect(CartesianChartView.height(kind: .horizontalBar, categories: 60, requested: nil) == 2080, "past 1200 points, bars keep their room")
+        #expect(CartesianChartView.height(kind: .horizontalBar, categories: 100_000, requested: nil) == 10000)
+        #expect(CartesianChartView.height(kind: .bar, categories: 60, requested: nil) == 220)
+        #expect(CartesianChartView.height(kind: .horizontalBar, categories: 60, requested: 1e9) == 1200)
+        #expect(CartesianChartView.height(kind: .horizontalBar, categories: 3, requested: .nan) == 220)
+    }
+
     @Test func chartValuesAreKeptFiniteAndInRange() {
         let series = OpenUIValue.element(ElementNode(typeName: "Series", props: ["category": "s", "values": [1e308, .number(.nan), -1e308, 3]]))
         let (points, _) = ChartData.points(labels: ["a", "b", "c", "d"], series: [series])
