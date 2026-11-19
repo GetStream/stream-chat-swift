@@ -120,6 +120,19 @@ enum Json {
         return nil
     }
 
+    // Reads a `DynamicBoolean`, coerced as the specification's table says: a validation result
+    // reads as its `valid` flag, `"true"` and `"false"` in any case as themselves and any other
+    // string as false, zero as false and any other number as true, and any other object or array
+    // as false. Returns `nil` for `null` or a missing value, so a property's default applies.
+    static func dynamicBool(_ value: (any Sendable)?) -> Bool? {
+        guard let value = normalized(value) else { return nil }
+        if let bool = value as? Bool { return bool }
+        if let number = value as? NSNumber { return number.doubleValue != 0 }
+        if let string = value as? String { return string.lowercased() == "true" }
+        if let map = value as? JsonMap, let isValid = normalized(map["valid"]) as? Bool { return isValid }
+        return false
+    }
+
     /// Reads an array value from a JSON payload.
     /// Returns `nil` when the value is not an array.
     static func array(_ value: (any Sendable)?) -> JsonArray? {

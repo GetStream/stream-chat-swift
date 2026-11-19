@@ -48,11 +48,7 @@ enum ActionFunctions {
             )
         }
         guard allowedUrlSchemes.contains(scheme) else {
-            throw A2UIFunctionError.invalidArgument(
-                "url",
-                function: "openUrl",
-                reason: "The '\(scheme)' scheme is not allowed."
-            )
+            throw A2UIExpressionError("openUrl can't open '\(scheme)' links.")
         }
         invocation.services.openUrl(url)
         return nil

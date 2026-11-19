@@ -86,6 +86,20 @@ struct AgentPromptTests {
         ])
     }
 
+    @Test("An entry that isn't a component is a problem, in a create and in an update")
+    func malformedComponentProblems() {
+        let catalog = BasicCatalog.catalog.adding(components: [], catalogId: "app")
+        let text = """
+        {"version":"1.0","createSurface":{"surfaceId":"s","catalogId":"app","components":[{"id":"root","component":"Text","text":"Hi"},{"id":"title"}]}}
+        {"version":"1.0","updateComponents":{"surfaceId":"s","components":["nope"]}}
+        """
+
+        #expect(A2UIProgram.problems(in: text, catalog: catalog) == [
+            "surface s can't read /components/1/component: Component 'title' needs a non-empty string 'component' naming its type.",
+            "surface s can't read /components/0: A component must be an object."
+        ])
+    }
+
     @Test("A portable component is named with a Unicode identifier other than Surface")
     func portableComponentNames() {
         for name in ["surface", "9_lives", "place card!"] {

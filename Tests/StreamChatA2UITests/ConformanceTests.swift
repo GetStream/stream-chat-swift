@@ -71,8 +71,11 @@ private final class ConformanceHarness {
 
     /// Evaluates the failing checks of a component.
     func failingChecks(_ componentId: String) -> [ValidationResult] {
-        guard let component = definition?.component(componentId) else { return [] }
-        return evaluator.failingChecks(component.checks, in: rootScope)
+        guard let component = definition?.component(componentId),
+              let componentDefinition = processor.catalogs.component(component, surfaceCatalogId: definition?.catalogId) else {
+            return []
+        }
+        return evaluator.failingChecks(componentDefinition.checks(of: component), in: rootScope)
     }
 
     /// Asserts every component of the surface resolves against the catalog.
@@ -104,9 +107,9 @@ struct ConformanceTests {
         // formatString with a nested formatDate call.
         #expect(harness.string("welcome_text", "text") == "Hello! Today is Monday, December 15.")
 
-        // Empty optional fields pass their format checks.
+        // An empty email passes its format check, while regex matches an empty value like any other.
         #expect(harness.failingChecks("email_field").isEmpty)
-        #expect(harness.failingChecks("phone_field").isEmpty)
+        #expect(harness.failingChecks("phone_field").map(\.message) == ["Invalid phone format"])
 
         // The submit button is disabled until the composed condition holds.
         let blocked = harness.failingChecks("submit_btn")

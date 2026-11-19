@@ -77,6 +77,13 @@ struct CreateSurfaceMessage: Sendable {
     /// Components to render immediately, allowing single-message UI creation.
     let components: [Component]
 
+    // The index of each of `components` in the message's `components`, which entries that
+    // aren't components are missing from.
+    let componentIndices: [Int]
+
+    // The entries of the message's `components` that aren't components.
+    let malformedComponents: [MalformedComponent]
+
     /// The initial data model of the surface.
     let dataModel: JsonMap?
 
@@ -93,10 +100,30 @@ struct CreateSurfaceMessage: Sendable {
         dataModel: JsonMap? = nil,
         metadata: JsonMap? = nil
     ) {
+        self.init(
+            surfaceId: surfaceId,
+            catalogId: catalogId,
+            sendDataModel: sendDataModel,
+            batch: ComponentBatch(components: components),
+            dataModel: dataModel,
+            metadata: metadata
+        )
+    }
+
+    private init(
+        surfaceId: String,
+        catalogId: String?,
+        sendDataModel: Bool,
+        batch: ComponentBatch,
+        dataModel: JsonMap?,
+        metadata: JsonMap?
+    ) {
         self.surfaceId = surfaceId
         self.catalogId = catalogId
         self.sendDataModel = sendDataModel
-        self.components = components
+        components = batch.components
+        componentIndices = batch.indices
+        malformedComponents = batch.malformed
         self.dataModel = dataModel
         self.metadata = metadata
     }
@@ -119,7 +146,7 @@ struct CreateSurfaceMessage: Sendable {
             surfaceId: surfaceId,
             catalogId: json["catalogId"] as? String,
             sendDataModel: Json.bool(json["sendDataModel"]) ?? false,
-            components: A2UIMessageDecoder.components(from: json["components"]),
+            batch: A2UIMessageDecoder.componentBatch(from: json["components"]),
             dataModel: Json.map(json["dataModel"]),
             metadata: Json.map(json["metadata"])
         )
@@ -146,11 +173,24 @@ struct UpdateComponentsMessage: Sendable {
     /// The components to add or replace.
     let components: [Component]
 
+    // The index of each of `components` in the message's `components`, which entries that
+    // aren't components are missing from.
+    let componentIndices: [Int]
+
+    // The entries of the message's `components` that aren't components.
+    let malformedComponents: [MalformedComponent]
+
     /// Creates an `updateComponents` payload.
     /// One component of the surface must eventually use the id `root`.
     init(surfaceId: String, components: [Component]) {
+        self.init(surfaceId: surfaceId, batch: ComponentBatch(components: components))
+    }
+
+    private init(surfaceId: String, batch: ComponentBatch) {
         self.surfaceId = surfaceId
-        self.components = components
+        components = batch.components
+        componentIndices = batch.indices
+        malformedComponents = batch.malformed
     }
 
     /// Parses the payload of an `updateComponents` message.
@@ -164,7 +204,7 @@ struct UpdateComponentsMessage: Sendable {
         }
         return UpdateComponentsMessage(
             surfaceId: surfaceId,
-            components: A2UIMessageDecoder.components(from: json["components"])
+            batch: A2UIMessageDecoder.componentBatch(from: json["components"])
         )
     }
 
@@ -622,9 +662,55 @@ enum A2UIMessageDecoder {
 
     /// Parses a `components` array, skipping malformed entries.
     static func components(from raw: (any Sendable)?) -> [Component] {
-        (Json.array(raw) ?? []).compactMap { entry in
-            guard let json = Json.map(entry) else { return nil }
-            return Component.fromJson(json)
+        componentBatch(from: raw).components
+    }
+
+    // The components of a message's `components`, each with its index there, and the entries
+    // that aren't components.
+    static func componentBatch(from raw: (any Sendable)?) -> ComponentBatch {
+        var batch = ComponentBatch(components: [])
+        for (index, entry) in (Json.array(raw) ?? []).enumerated() {
+            guard let json = Json.map(entry) else {
+                batch.malformed.append(MalformedComponent(
+                    pointer: "/components/\(index)",
+                    message: "A component must be an object."
+                ))
+                continue
+            }
+            guard let component = Component.fromJson(json) else {
+                let missesId = (json["id"] as? String)?.isEmpty ?? true
+                batch.malformed.append(MalformedComponent(
+                    pointer: "/components/\(index)/" + (missesId ? "id" : "component"),
+                    message: missesId
+                        ? "A component needs a non-empty string 'id'."
+                        : "Component '\(json["id"] as? String ?? "")' needs a non-empty string 'component' naming its type."
+                ))
+                continue
+            }
+            batch.components.append(component)
+            batch.indices.append(index)
         }
+        return batch
+    }
+}
+
+// A `components` entry of a message that isn't a component, which the renderer reports, with
+// the JSON pointer to what is wrong in the message's payload.
+@available(iOS 15.0, macOS 12.0, *)
+struct MalformedComponent: Equatable, Sendable {
+    let pointer: String
+    let message: String
+}
+
+// The components of a message, with the index of each in the message.
+@available(iOS 15.0, macOS 12.0, *)
+struct ComponentBatch: Sendable {
+    var components: [Component]
+    var indices: [Int]
+    var malformed: [MalformedComponent] = []
+
+    init(components: [Component]) {
+        self.components = components
+        indices = Array(components.indices)
     }
 }

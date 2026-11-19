@@ -17,6 +17,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix dictation starting without speech or microphone permission, or after the composer went away [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 - Fix charts crashing on extreme values [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 
+## StreamChatA2UI
+### 🐞 Fixed
+- Fix agent messages that could freeze the app or bypass the component limit [#4423](https://github.com/GetStream/stream-chat-swift/pull/4423)
+- Follow the A2UI 1.0 envelope keys, boolean coercion, regex rules and error codes [#4423](https://github.com/GetStream/stream-chat-swift/pull/4423)
+- Fix modal triggers, date inputs, sliders and media links [#4423](https://github.com/GetStream/stream-chat-swift/pull/4423)
+
 # [5.17.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.17.0)
 _November 12, 2026_
 

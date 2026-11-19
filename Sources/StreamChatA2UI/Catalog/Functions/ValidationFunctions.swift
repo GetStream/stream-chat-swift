@@ -43,18 +43,23 @@ enum ValidationFunctions {
             : ValidationResult(isValid: false).rawValue
     }
 
-    /// Checks that a value matches a regular expression.
+    /// Checks that a value contains a match for a pattern in the A2UI regex dialect.
     ///
-    /// Empty values pass so that optional fields do not report an error before
-    /// the user has typed anything; combine with `required` to make a field
-    /// mandatory.
+    /// An empty or missing value is matched like any other, so it passes only a
+    /// pattern that matches an empty string, such as `^([0-9]{5})?$`.
     static let regex = FunctionDefinition(
         name: "regex",
         description: "Checks that the value matches a regular expression string.",
         arguments: JsonSchema.object(
             properties: [
                 "value": JsonSchema.dynamicString(),
-                "pattern": JsonSchema.string(description: "The regex pattern to match against.")
+                "pattern": JsonSchema.string(
+                    description: "The regular expression to search for in the value. Uses the A2UI regex dialect: a portable subset "
+                        + "of ECMAScript pattern syntax in Unicode mode with no flags. Matching is case-sensitive, '.' excludes line "
+                        + "terminators, and '^' and '$' match only at the ends of the value. Backreferences, lookbehind, named groups "
+                        + "and '\\p{...}' are not allowed. Patterns longer than 256 code points or that could backtrack "
+                        + "catastrophically are rejected."
+                )
             ],
             required: ["value", "pattern"],
             additionalProperties: false
@@ -63,21 +68,19 @@ enum ValidationFunctions {
     ) { invocation in
         let pattern = try invocation.requireString("pattern")
         let value = invocation.string("value") ?? ""
-        guard !value.isEmpty else { return ValidationResult.valid.rawValue }
-
-        guard let expression = try? NSRegularExpression(pattern: pattern) else {
-            throw A2UIFunctionError.invalidArgument(
-                "pattern",
-                function: "regex",
-                reason: "'\(pattern)' is not a valid regular expression."
-            )
+        // A value that is too long doesn't match, and no error is reported for its pattern.
+        guard value.unicodeScalars.dropFirst(A2UIRegex.maxValueLength).isEmpty else {
+            return ValidationResult(isValid: false).rawValue
+        }
+        let quoted = pattern.unicodeScalars.dropFirst(A2UIRegex.maxPatternLength).isEmpty ? "'\(pattern)'" : "its pattern"
+        let expression: NSRegularExpression
+        do {
+            expression = try A2UIFormatters.dialectExpression(pattern)
+        } catch let rejection as A2UIRegex.Rejection {
+            throw A2UIExpressionError("\(rejection.code.rawValue): regex can't use \(quoted): \(rejection.reason)")
         }
         guard let matches = firstMatch(of: expression, in: value) else {
-            throw A2UIFunctionError.invalidArgument(
-                "pattern",
-                function: "regex",
-                reason: "'\(pattern)' took too long to match, so it can't be checked."
-            )
+            throw A2UIExpressionError("regex can't use \(quoted): it took too long to match.")
         }
         return matches
             ? ValidationResult.valid.rawValue

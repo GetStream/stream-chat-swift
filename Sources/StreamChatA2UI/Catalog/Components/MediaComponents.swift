@@ -14,7 +14,7 @@ enum MediaComponents {
         [image, video, audioPlayer]
     }
 
-    /// Displays a remote or bundled image.
+    /// Displays an image from a URL.
     static let image = ComponentDefinition(
         name: "Image",
         description: "Displays an image from a URL.",
@@ -85,8 +85,8 @@ enum MediaComponents {
     ) { context in
         AnyView(
             A2UIMediaPlayerView(
-                url: URL(string: context.string("url", default: "")).flatMap(context.services.mediaURL),
-                posterUrl: context.string("posterUrl").flatMap { URL(string: $0) }.flatMap(context.services.mediaURL),
+                url: A2UIImageView.link(context.string("url", default: "")).flatMap(context.services.mediaURL),
+                posterUrl: context.string("posterUrl").flatMap(A2UIImageView.link).flatMap(context.services.mediaURL),
                 title: nil,
                 isAudioOnly: false
             )
@@ -115,7 +115,7 @@ enum MediaComponents {
     ) { context in
         AnyView(
             A2UIMediaPlayerView(
-                url: URL(string: context.string("url", default: "")).flatMap(context.services.mediaURL),
+                url: A2UIImageView.link(context.string("url", default: "")).flatMap(context.services.mediaURL),
                 posterUrl: nil,
                 title: context.string("description"),
                 isAudioOnly: true
@@ -147,6 +147,51 @@ struct A2UIImageView: View {
         description == nil && label.isMissing
     }
 
+    // The link of a media URL the agent wrote, checked as the basic catalog says: trimmed, without
+    // tabs and line breaks, with spaces encoded, and only http and https links with `//` and a host,
+    // data links, and relative paths that stay on the same host, which `mediaURL` can resolve. A
+    // bare name is a relative path, never one of the app's own images.
+    static func link(_ source: String) -> URL? {
+        let ignored = CharacterSet.whitespacesAndNewlines.union(.controlCharacters)
+        guard let start = source.unicodeScalars.firstIndex(where: { !ignored.contains($0) }),
+              let end = source.unicodeScalars.lastIndex(where: { !ignored.contains($0) }) else {
+            return nil
+        }
+        let trimmed = Substring(source.unicodeScalars[start...end])
+        // A data link can be megabytes long and is checked on every render, so it is told apart
+        // by its first characters, and copied once, cleaned only when it has to be.
+        let head = String(String.UnicodeScalarView(trimmed.unicodeScalars.lazy.filter { !isBreak($0) }.prefix(5)))
+        if head.lowercased() == "data:" {
+            guard trimmed.unicodeScalars.contains(where: { isBreak($0) || $0 == " " }) else {
+                return URL(string: String(trimmed))
+            }
+            return URL(string: withoutBreaks(trimmed).replacingOccurrences(of: " ", with: "%20"))
+        }
+        let cleaned = withoutBreaks(trimmed)
+        guard !cleaned.isEmpty, let url = URL(string: cleaned.replacingOccurrences(of: " ", with: "%20")) else {
+            return nil
+        }
+        guard let scheme = url.scheme?.lowercased() else {
+            let leading = cleaned.unicodeScalars.prefix(2).map { $0 == "\\" ? "/" : $0 }
+            return leading == ["/", "/"] ? nil : url
+        }
+        switch scheme {
+        case "http", "https":
+            return cleaned.dropFirst(scheme.count + 1).hasPrefix("//") && !(url.host ?? "").isEmpty ? url : nil
+        default:
+            return nil
+        }
+    }
+
+    // Tabs and line breaks, which browsers drop from a link wherever they are.
+    private nonisolated static func isBreak(_ scalar: Unicode.Scalar) -> Bool {
+        scalar == "\t" || scalar == "\n" || scalar == "\r"
+    }
+
+    private static func withoutBreaks(_ text: Substring) -> String {
+        String(String.UnicodeScalarView(text.unicodeScalars.filter { !isBreak($0) }))
+    }
+
     var body: some View {
         box
             .overlay(content)
@@ -171,21 +216,14 @@ struct A2UIImageView: View {
 
     @ViewBuilder
     private var content: some View {
-        if source.isEmpty {
-            EmptyView()
-        } else if let url = URL(string: source), url.scheme != nil {
-            if let allowed = mediaURL(url) {
-                A2UIRemoteImage(url: allowed) { image in
-                    scaled(image)
-                } placeholder: { failed in
-                    if !failed {
-                        ProgressView()
-                    }
+        if let allowed = Self.link(source).flatMap(mediaURL) {
+            A2UIRemoteImage(url: allowed) { image in
+                scaled(image)
+            } placeholder: { failed in
+                if !failed {
+                    ProgressView()
                 }
             }
-        } else {
-            // Names without a scheme are resolved from the app's asset catalog.
-            scaled(Image(source))
         }
     }
 

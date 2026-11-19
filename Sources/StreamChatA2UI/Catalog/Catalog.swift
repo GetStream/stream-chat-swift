@@ -106,9 +106,35 @@ extension ComponentDefinition {
     // catalog's schema: a ComponentId, a ChildList, or either one in an array or object, such as
     // each of a Tabs' tabs.
     func childReferences(of component: Component) -> [(pointer: String, id: String)] {
-        propertySchema.keys.sorted().flatMap { key in
-            Self.references(in: component.properties[key], schema: propertySchema[key] ?? [:], pointer: "/" + Self.escape(key))
+        children(of: component).map { ($0.pointer, $0.id) }
+    }
+
+    // The children a component holds, as `childReferences`, with the collection a template
+    // repeats its child over: the first `limit` of them, so a list too long to render isn't read whole.
+    func children(of component: Component, limit: Int = .max) -> [(pointer: String, id: String, template: DataPath?)] {
+        var found: [(pointer: String, id: String, template: DataPath?)] = []
+        for key in propertySchema.keys.sorted() where found.count < limit {
+            found += Self.references(
+                in: component.properties[key],
+                schema: propertySchema[key] ?? [:],
+                pointer: "/" + Self.escape(key),
+                limit: limit - found.count
+            )
         }
+        return found
+    }
+
+    // The validation rules of a component: its `@checks`, or its `checks` where this definition
+    // declares them as a list of checks, as this renderer's catalog schemas name them. Elsewhere
+    // `checks` is a catalog property like any other.
+    func checks(of component: Component) -> [CheckRule] {
+        if let checks = component.properties["@checks"] {
+            return CheckRule.list(checks)
+        }
+        guard (Json.map(propertySchema["checks"]?["items"])?["$ref"] as? String)?.hasSuffix("/CheckRule") == true else {
+            return []
+        }
+        return CheckRule.list(component.properties["checks"])
     }
 
     // A child list is component ids, or a template with a `componentId` and a `path`.
@@ -125,30 +151,38 @@ extension ComponentDefinition {
         }
     }
 
-    private static func references(in value: (any Sendable)?, schema: JsonMap, pointer: String) -> [(pointer: String, id: String)] {
+    private static func references(
+        in value: (any Sendable)?,
+        schema: JsonMap,
+        pointer: String,
+        limit: Int
+    ) -> [(pointer: String, id: String, template: DataPath?)] {
+        guard limit > 0 else { return [] }
         if let reference = schema["$ref"] as? String {
             if reference.hasSuffix("/ComponentId") {
-                return (value as? String).map { [(pointer, $0)] } ?? []
+                return (value as? String).map { [(pointer, $0, nil)] } ?? []
             }
             if reference.hasSuffix("/ChildList") {
                 switch ChildList(value) {
-                case let .ids(ids): return ids.enumerated().map { ("\(pointer)/\($0)", $1) }
-                case let .template(componentId, _): return [("\(pointer)/componentId", componentId)]
+                case let .ids(ids): return ids.prefix(limit).enumerated().map { ("\(pointer)/\($0)", $1, nil) }
+                case let .template(componentId, path): return [("\(pointer)/componentId", componentId, path)]
                 case .none: return []
                 }
             }
         }
+        var found: [(pointer: String, id: String, template: DataPath?)] = []
         if let items = Json.map(schema["items"]), let array = Json.array(value) {
-            return array.enumerated().flatMap { index, item in
-                references(in: item, schema: items, pointer: "\(pointer)/\(index)")
+            for (index, item) in array.enumerated() where found.count < limit {
+                found += references(in: item, schema: items, pointer: "\(pointer)/\(index)", limit: limit - found.count)
+            }
+        } else if let properties = Json.map(schema["properties"]), let object = Json.map(value) {
+            for key in properties.keys.sorted() where found.count < limit {
+                if let property = Json.map(properties[key]) {
+                    found += references(in: object[key], schema: property, pointer: "\(pointer)/" + escape(key), limit: limit - found.count)
+                }
             }
         }
-        if let properties = Json.map(schema["properties"]), let object = Json.map(value) {
-            return properties.keys.sorted().flatMap { key in
-                Json.map(properties[key]).map { references(in: object[key], schema: $0, pointer: "\(pointer)/" + escape(key)) } ?? []
-            }
-        }
-        return []
+        return found
     }
 
     private static func escape(_ key: String) -> String {
@@ -451,6 +485,28 @@ struct CatalogRegistry: Sendable {
     func component(_ component: Component, surfaceCatalogId: String?) -> ComponentDefinition? {
         resolveCatalog(entityCatalogId: component.catalogId, surfaceCatalogId: surfaceCatalogId)?
             .component(component.type)
+    }
+
+    // `component` with each envelope field it wrote without its `@`, such as `catalogId`, read as
+    // the catalog property of that name where the component's definition declares one, and as the
+    // envelope field otherwise. A `catalogId` property is looked for in the catalog the component
+    // resolves in without an override, the surface's.
+    func resolvingEnvelope(of component: Component, surfaceCatalogId: String?) -> Component {
+        guard !component.unprefixedEnvelope.isEmpty else { return component }
+        var resolved = component
+        if component.unprefixedEnvelope["catalogId"] != nil,
+           resolveCatalog(entityCatalogId: nil, surfaceCatalogId: surfaceCatalogId)?
+           .component(component.type)?.propertySchema["catalogId"] != nil {
+            resolved = resolved.claimingProperty("catalogId")
+        }
+        guard let definition = resolveCatalog(entityCatalogId: resolved.catalogId, surfaceCatalogId: surfaceCatalogId)?
+            .component(resolved.type) else {
+            return resolved
+        }
+        for field in ["accessibility", "metadata"] where definition.propertySchema[field] != nil {
+            resolved = resolved.claimingProperty(field)
+        }
+        return resolved
     }
 
     /// Resolves a function definition for a function call.

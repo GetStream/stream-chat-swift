@@ -125,16 +125,10 @@ enum FormatFunctions {
             return ""
         }
         if pattern == "ISO" {
-            let formatter = ISO8601DateFormatter()
-            formatter.timeZone = timeZone
-            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-            return formatter.string(from: date)
+            return A2UIFormatters.isoFormatter(fractionalSeconds: true, timeZone: A2UIFormatters.utc).string(from: date)
         }
-        let formatter = DateFormatter()
-        formatter.locale = invocation.services.locale
-        formatter.timeZone = timeZone
-        formatter.dateFormat = pattern
-        return formatter.string(from: date)
+        return A2UIFormatters.dateFormatter(pattern: pattern, locale: invocation.services.locale, timeZone: timeZone)
+            .string(from: date)
     }
 
     /// Selects a string based on the plural category of a count.
@@ -172,6 +166,7 @@ enum FormatFunctions {
         return other
     }
 
+    @MainActor
     private static func numberFormatter(
         style: NumberFormatter.Style,
         currencyCode: String?,
@@ -179,49 +174,44 @@ enum FormatFunctions {
         grouping: Bool,
         locale: Locale
     ) -> NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.locale = locale
-        formatter.numberStyle = style
-        formatter.usesGroupingSeparator = grouping
-        if let currencyCode {
-            formatter.currencyCode = currencyCode
-        }
-        if let decimals {
-            let clamped = min(max(decimals, 0), 15)
-            formatter.minimumFractionDigits = clamped
-            formatter.maximumFractionDigits = clamped
-        } else if style == .decimal {
-            formatter.minimumFractionDigits = 0
-            formatter.maximumFractionDigits = 3
-        }
-        return formatter
+        A2UIFormatters.numberFormatter(
+            style: style,
+            currencyCode: currencyCode,
+            decimals: decimals.map { min(max($0, 0), 15) },
+            grouping: grouping,
+            locale: locale
+        )
     }
 }
 
 /// Parses the date representations accepted by A2UI payloads.
 @available(iOS 15.0, macOS 12.0, *)
 enum A2UIDateParser {
-    private static let patterns = [
-        "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
-        "yyyy-MM-dd'T'HH:mm:ssXXXXX",
-        "yyyy-MM-dd'T'HH:mm:ss",
-        "yyyy-MM-dd HH:mm:ss",
-        "yyyy-MM-dd HH:mm",
-        "yyyy-MM-dd",
-        "HH:mm:ss",
-        "HH:mm"
-    ]
+    // The patterns a string of each shape can have, tried in order.
+    private static func patterns(for string: String) -> [String] {
+        if string.contains("T") {
+            return ["yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", "yyyy-MM-dd'T'HH:mm:ssXXXXX", "yyyy-MM-dd'T'HH:mm:ss"]
+        }
+        if string.contains(" ") {
+            return ["yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm"]
+        }
+        if string.contains("-") {
+            return ["yyyy-MM-dd"]
+        }
+        return ["HH:mm:ss", "HH:mm"]
+    }
 
     /// The time zone a date string was written in.
     ///
     /// A trailing `Z` or `±hh:mm` offset names it; a string without one is a
     /// wall-clock time, read and formatted in UTC so it never shifts.
+    @MainActor
     static func writtenTimeZone(of string: String) -> TimeZone {
         let utc = TimeZone(secondsFromGMT: 0) ?? .current
-        guard string.contains("T") || string.contains(" ") else { return utc }
+        guard string.contains("T") || string.contains(" ") || isTime(string) else { return utc }
         if string.hasSuffix("Z") || string.hasSuffix("z") { return utc }
         let pattern = "([+-])(\\d{2}):?(\\d{2})$"
-        guard let expression = try? NSRegularExpression(pattern: pattern),
+        guard let expression = try? A2UIFormatters.expression(pattern),
               let match = expression.firstMatch(in: string, range: NSRange(string.startIndex..., in: string)),
               let signRange = Range(match.range(at: 1), in: string),
               let hoursRange = Range(match.range(at: 2), in: string),
@@ -238,6 +228,7 @@ enum A2UIDateParser {
     ///
     /// Numbers are treated as epoch seconds, or milliseconds when the value is
     /// large enough that seconds would be implausible.
+    @MainActor
     static func date(from value: (any Sendable)?, timeZone: TimeZone = .current) -> Date? {
         guard let value = Json.normalized(value) else { return nil }
         if let date = value as? Date { return date }
@@ -247,18 +238,43 @@ enum A2UIDateParser {
             return Date(timeIntervalSince1970: seconds)
         }
         guard let string = Json.string(value), !string.isEmpty else { return nil }
-        if let date = A2UITimestamp.date(from: string) { return date }
+        if string.contains("T") {
+            for fractionalSeconds in [false, true] {
+                if let date = A2UIFormatters.isoFormatter(fractionalSeconds: fractionalSeconds, timeZone: A2UIFormatters.utc).date(from: string) {
+                    return date
+                }
+            }
+        }
+        // A time with an offset, as JSON Schema's `time` format writes it, such as `09:00:00Z`, is
+        // the time it shows in `timeZone`, read on the day the times without one are.
+        if isTime(string) {
+            for fractionalSeconds in [false, true] {
+                let formatter = A2UIFormatters.isoFormatter(fractionalSeconds: fractionalSeconds, timeZone: A2UIFormatters.utc)
+                if let date = formatter.date(from: "2000-01-01T" + string) {
+                    return clockTime(of: date, timeZone: timeZone)
+                }
+            }
+        }
 
-        for pattern in patterns {
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.timeZone = timeZone
-            formatter.isLenient = false
-            formatter.dateFormat = pattern
+        for pattern in patterns(for: string) {
+            let formatter = A2UIFormatters.dateFormatter(pattern: pattern, locale: A2UIFormatters.posix, timeZone: timeZone)
             // A non-lenient formatter still rolls "2026-02-30" over to March, so
             // the date must format back to the string it was read from.
             if let date = formatter.date(from: string), formatter.string(from: date) == string { return date }
         }
         return nil
+    }
+
+    // The time `date` shows in `timeZone`, on the day a time without a date is read on.
+    @MainActor
+    static func clockTime(of date: Date, timeZone: TimeZone) -> Date? {
+        let formatter = A2UIFormatters.dateFormatter(pattern: "HH:mm:ss", locale: A2UIFormatters.posix, timeZone: timeZone)
+        return formatter.date(from: formatter.string(from: date))
+    }
+
+    // Whether a string is a time of day, such as `09:00`, `09:00:00Z` or `09:00:00-05:00`, rather
+    // than a date, which can also have a `-`.
+    private static func isTime(_ string: String) -> Bool {
+        !string.contains("T") && string.dropFirst(2).hasPrefix(":")
     }
 }
