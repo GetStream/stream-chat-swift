@@ -103,6 +103,24 @@ struct EditableTableTests {
         #expect(DateFormatting.date(from: "2025-09-07xyz") == nil)
     }
 
+    @Test func datesAndTimesReadAsInJavaScript() throws {
+        let local = Calendar(identifier: .gregorian).date(from: DateComponents(year: 2024, month: 1, day: 15, hour: 10, minute: 30))
+        let utc = Date(timeIntervalSince1970: 1_705_314_600)
+
+        for text in ["2024-01-15 10:30:00", "2024-01-15T10:30", "2024-01-15 10:30", "2024-01-15T10:30:00.000"] {
+            #expect(DateFormatting.date(from: text) == local, "\(text)")
+        }
+        for text in ["2024-01-15T10:30:00.000Z", "2024-01-15 10:30:00Z", "2024-01-15t10:30:00z", "2024-01-15T12:30:00+0200", "2024-01-15T05:00-05:30"] {
+            #expect(DateFormatting.date(from: text) == utc, "\(text)")
+        }
+        #expect(DateFormatting.date(from: "2024-01-15T10:30:00.5Z") == utc.addingTimeInterval(0.5))
+        let milliseconds = try #require(DateFormatting.date(from: "2024-01-15T10:30:00.123456Z"))
+        #expect(abs(milliseconds.timeIntervalSince(utc) - 0.123) < 0.0001, "JavaScript keeps milliseconds")
+        for text in ["2024-01-15T", "2024-01-15T10:30+24:00", "2024-01-15T10:61"] {
+            #expect(DateFormatting.date(from: text) == nil, "\(text)")
+        }
+    }
+
     @Test func rowsFollowTheColumns() {
         var table = EditableTableRows()
         table.load(complete, keys: ["name"], isStreaming: true)

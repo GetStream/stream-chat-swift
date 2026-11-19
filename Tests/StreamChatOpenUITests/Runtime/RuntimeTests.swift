@@ -725,6 +725,32 @@ struct RuntimeTests {
         try? await Task.sleep(nanoseconds: 100_000_000)
 
         #expect(Set(provider.calls.compactMap { $0.1["n"]?.numberValue }) == [0, 1, 2, 3], "the ones past it wait")
+        #expect(runtime.errors.filter { $0.source == .query }.compactMap(\.statementId) == ["q4", "q5"])
+    }
+
+    @Test func aQueryWhoseArgumentsRunOutReportsWhyItDoesntFetch() async {
+        let provider = RecordingToolProvider { _, _, _ in ["rows": []] }
+        let numbers = OpenUIValue.array((0..<300_000).map { index -> OpenUIValue in .number(Double(index)) })
+        let runtime = OpenUIRuntime(library: .openUI, toolProvider: provider, initialState: ["$xs": numbers])
+        runtime.queryManager.argumentDebounce = 0
+        var reported: [OpenUIError] = []
+        runtime.onError = { reported = $0 }
+        runtime.update(response: """
+        root = Stack([])
+        data = Query("search", {top: @First(@Sort($xs, ""))}, {rows: []})
+        """, isStreaming: false)
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        #expect(provider.calls.isEmpty)
+        #expect(reported.map(\.code) == ["runtime-error"])
+        #expect(reported.first?.source == .query)
+        #expect(reported.first?.statementId == "data")
+        #expect(reported.first?.toolName == "search")
+
+        runtime.store.set("$xs", [3, 1, 2])
+
+        #expect(await waitUntil { provider.calls.count == 1 })
+        #expect(await waitUntil { reported.isEmpty }, "the error clears once its arguments fit")
     }
 
     @Test func aMutationWhoseArgumentsRunOutReportsWhyItDidntRun() async {

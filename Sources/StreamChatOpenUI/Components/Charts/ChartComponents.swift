@@ -132,8 +132,7 @@ struct CartesianChartView: View {
         let (points, seriesNames) = ChartData.points(labels: props.array("labels"), series: props.array("series"))
         if !points.isEmpty {
             let variant = props.string("variant")
-            let fitting = kind == .horizontalBar ? Double(max(160, Set(points.map(\.category)).count * 34 + 40)) : 220
-            let height = clampedDimension(props.number("height") ?? fitting, in: 80...1200, default: 220)
+            let height = Self.height(kind: kind, categories: Set(points.map(\.category)).count, requested: props.number("height"))
             ChartFrame(height: height, xLabel: props.text("xLabel"), yLabel: props.text("yLabel")) {
                 Chart(points) { point in
                     mark(point, variant: variant)
@@ -195,6 +194,15 @@ struct CartesianChartView: View {
                 .interpolationMethod(interpolation)
                 .lineStyle(StrokeStyle(lineWidth: 2))
         }
+    }
+
+    // A height the model writes is kept within reason. Horizontal bars otherwise grow with their
+    // categories, up to about 290 of them, as fitting more than about 30 into 1200 points hides
+    // the bars behind their labels.
+    static func height(kind: Kind, categories: Int, requested: Double?) -> CGFloat {
+        if let requested { return clampedDimension(requested, in: 80...1200, default: 220) }
+        guard kind == .horizontalBar else { return 220 }
+        return CGFloat(min(max(160, categories * 34 + 40), 10000))
     }
 
     static func summary(points: [ChartPoint]) -> String {

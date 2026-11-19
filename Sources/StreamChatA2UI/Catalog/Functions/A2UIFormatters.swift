@@ -20,6 +20,7 @@ enum A2UIFormatters {
     // Keyed by the pattern's bytes: Swift compares strings by canonical equivalence, so `[é]` and
     // `[e\u{301}]` are equal strings, but ICU reads them as different character classes.
     private static var expressions: [Data: NSRegularExpression] = [:]
+    private static var dialectExpressions: [Data: NSRegularExpression] = [:]
 
     static func dateFormatter(pattern: String, locale: Locale, timeZone: TimeZone, isLenient: Bool = false) -> DateFormatter {
         let key = [pattern, locale.identifier, timeZone.identifier, String(isLenient)].joined(separator: "|")
@@ -73,23 +74,23 @@ enum A2UIFormatters {
     }
 
     static func expression(_ pattern: String) throws -> NSRegularExpression {
-        let key = Data(pattern.utf8)
-        if let expression = expressions[key] {
-            return expression
+        try cached(Data(pattern.utf8), in: &expressions) {
+            try NSRegularExpression(pattern: pattern)
         }
-        let expression = try NSRegularExpression(pattern: pattern)
-        if expressions.count >= limit {
-            expressions.removeAll()
-        }
-        expressions[key] = expression
-        return expression
     }
 
-    private static func cached<Value>(_ key: String, in cache: inout [String: Value], make: () -> Value) -> Value {
+    // A pattern in the A2UI regex dialect, throwing an `A2UIRegex.Rejection` for one it can't use.
+    static func dialectExpression(_ pattern: String) throws -> NSRegularExpression {
+        try cached(Data(pattern.utf8), in: &dialectExpressions) {
+            try A2UIRegex.expression(for: pattern)
+        }
+    }
+
+    private static func cached<Key: Hashable, Value>(_ key: Key, in cache: inout [Key: Value], make: () throws -> Value) rethrows -> Value {
         if let value = cache[key] {
             return value
         }
-        let value = make()
+        let value = try make()
         if cache.count >= limit {
             cache.removeAll()
         }

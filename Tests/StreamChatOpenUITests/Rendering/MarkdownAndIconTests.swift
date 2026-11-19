@@ -62,3 +62,16 @@ struct MarkdownCacheTests {
         #expect(MarkdownBlockView(block: block, baseFont: .body, foreground: nil) != MarkdownBlockView(block: .paragraph("Title"), baseFont: .body, foreground: nil))
     }
 }
+
+@MainActor
+@Suite("Markdown headings")
+struct MarkdownHeadingTests {
+    @Test func headingsGetSmallerFromTheFirstLevelDown() throws {
+        let heights = try (1...4).map { level in
+            try #require(RenderingTests.render(MarkdownBlockView(block: .heading(level: level, text: "Heading"), baseFont: .body, foreground: nil))).height
+        }
+
+        #expect(heights == heights.sorted(by: >))
+        #expect(Set(heights).count == heights.count, "\(heights)")
+    }
+}

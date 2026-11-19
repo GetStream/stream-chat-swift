@@ -13,6 +13,20 @@ private func callFunction(_ definition: FunctionDefinition, _ arguments: JsonMap
     return evaluator.execute(definition, arguments: evaluator.resolveArguments(arguments, in: context), in: context)
 }
 
+private func regexRejection(_ pattern: String) -> A2UIRegex.Rejection.Code? {
+    do {
+        _ = try A2UIRegex.icuPattern(for: pattern)
+        return nil
+    } catch {
+        return (error as? A2UIRegex.Rejection)?.code
+    }
+}
+
+@MainActor
+private func regexMatches(_ pattern: String, _ value: String) -> Bool {
+    ValidationResult(coercing: callFunction(ValidationFunctions.regex, ["value": value, "pattern": pattern])).isValid
+}
+
 @MainActor
 @Suite("Catalog edge cases")
 struct CatalogEdgeCaseTests {
@@ -150,20 +164,83 @@ struct CatalogEdgeCaseTests {
         #expect(Json.string(formatted) == "2026-09-05T04:30:00.000Z")
     }
 
-    @Test("regex rejects patterns that are too long or repeat an unbounded group, and long values don't match")
-    func regexSafety() {
-        #expect(A2UIRegexSafety.problem(in: "^\\d{10}$") == nil)
-        #expect(A2UIRegexSafety.problem(in: "^\\+?[0-9]{10,15}$") == nil)
-        #expect(A2UIRegexSafety.problem(in: "^(a|b)?c$") == nil)
-        #expect(A2UIRegexSafety.problem(in: "^(a+)+$") != nil)
-        #expect(A2UIRegexSafety.problem(in: "^([a-zA-Z0-9]+\\s?)*$") != nil)
-        #expect(A2UIRegexSafety.problem(in: "(?:x*){2}") != nil)
-        #expect(A2UIRegexSafety.problem(in: "(a)\\1") != nil)
-        #expect(A2UIRegexSafety.problem(in: "(?<=a)b") != nil)
-        #expect(A2UIRegexSafety.problem(in: String(repeating: "a", count: 257)) != nil)
+    @Test("regex safety rule 2: a quantifier above 1 can't repeat a part that repeats without bound")
+    func regexNestedQuantifiers() {
+        for pattern in ["^([a-zA-Z0-9]+\\s?)*$", "(?:x*){2}", "(a|b+)+", "((?:a+))+", "(\\d+){2,}", "(?:(?=a+)b)*"] {
+            #expect(regexRejection(pattern) == .nestedQuantifier, "\(pattern)")
+        }
+        for pattern in ["^\\d{10}$", "^\\+?[0-9]{10,15}$", "^(a|b)?c$", "(a+){0,1}", "(\\d{1,3}){1,4}", "(a{1,2})+"] {
+            #expect(regexRejection(pattern) == nil, "\(pattern)")
+        }
+    }
 
-        let value = String(repeating: "a", count: 4097)
-        #expect(!ValidationResult(coercing: callFunction(ValidationFunctions.regex, ["value": value, "pattern": "a"])).isValid)
+    @Test("regex safety rule 3: an unbounded quantifier can't repeat a choice whose options start alike")
+    func regexOverlappingAlternation() {
+        for pattern in ["(a|ab)+", "(\\w|\\d)+", "([a-m]|[g-z])*", "(?:(a)|a?b)*", "(x|y|.)*"] {
+            #expect(regexRejection(pattern) == .overlappingAlternation, "\(pattern)")
+        }
+        for pattern in ["(cat|dog)+", "(a|ab)", "(a|ab)?", "(a|ab){1,3}", "(\\d|[a-f])+", "(|a)*"] {
+            #expect(regexRejection(pattern) == nil, "\(pattern)")
+        }
+    }
+
+    @Test("regex safety rule 4: parts that repeat without bound and match the same characters can't be adjacent")
+    func regexAdjacentOverlap() {
+        for pattern in [".*.*", "\\w+\\d+", "a+a+", "(\\d+)(\\d+)", "\\d+\\b\\d+", "\\d+(?=x)\\d*", "a*b?a+", "[^x]+\\s*y*\\d+"] {
+            #expect(regexRejection(pattern) == .adjacentOverlap, "\(pattern)")
+        }
+        for pattern in ["^\\d+-\\d+$", "\\d+[a-z]+\\d+", "\\d{1,3}\\d+", "a*b*c*", "\\d+(?:x\\d+)"] {
+            #expect(regexRejection(pattern) == nil, "\(pattern)")
+        }
+    }
+
+    @Test("regex reports the rules in order, and the length before the syntax")
+    func regexRuleOrder() {
+        #expect(regexRejection("\\d+\\d+(a+)+") == .nestedQuantifier)
+        #expect(regexRejection("\\d+\\d+(a|ab)*") == .overlappingAlternation)
+        #expect(regexRejection("(" + String(repeating: "a", count: 256)) == .patternTooLong)
+        #expect(regexRejection(String(repeating: "\u{1F600}", count: 256)) == nil)
+        #expect(regexRejection(String(repeating: "\u{1F600}", count: 257)) == .patternTooLong)
+    }
+
+    @Test("regex translates the dialect's classes, anchors and escapes onto ICU")
+    func regexDialect() {
+        #expect(!regexMatches("^[\\d]+$", "\u{663}"))
+        #expect(!regexMatches("^[\\w]+$", "\u{E9}"))
+        #expect(regexMatches("^[^\\W]+$", "Word_42"))
+        #expect(regexMatches("^\\s+$", "\u{0B}\u{FEFF}\u{2029}\u{3000}"))
+        #expect(!regexMatches("^\\s$", "\u{85}"))
+        #expect(regexMatches("^.$", "\u{0B}"))
+        #expect(regexMatches("^.$", "\u{85}"))
+        #expect(!regexMatches("^.$", "\r"))
+        #expect(!regexMatches("^.$", "\u{2028}"))
+        #expect(regexMatches("\\Bb", "ab"))
+        #expect(!regexMatches("\\Bb", "\u{E9}b"))
+        #expect(regexMatches("\\bcat\\b", "\u{E9}cat"))
+        #expect(!regexMatches("^a$", "a\n"))
+        #expect(regexMatches("^\\uD83D\\uDE00$", "\u{1F600}"))
+        #expect(regexMatches("^\\u{00000041}\\x42\\u0043$", "ABC"))
+        #expect(regexMatches("^[\\u{1F600}-\\u{1F64F}]$", "\u{1F642}"))
+        #expect(regexMatches("^[\\b]$", "\u{08}"))
+        #expect(regexMatches("^\\/\\$\\{\\}$", "/${}"))
+        #expect(regexMatches("^[a-]+$", "a-a"))
+        #expect(regexMatches("^a+?b??c{2}?$", "acc"))
+        #expect(regexMatches("", "anything"))
+        #expect(!regexMatches("[^\\s\\S]", "anything"))
+    }
+
+    @Test("regex rejects what the dialect leaves out or doesn't parse")
+    func regexUnsupportedSyntax() {
+        let patterns = [
+            "\\k<n>", "(?<!a)b", "(?i:a)", "(?>a)", "\\P{L}", "\\cA", "\\A", "\\z", "\\a", "\\-", "\\uD800", "\\u{D800}",
+            "\\u{110000}", "\\u{}", "\\x4", "\\", "a**", "a++", "a{2}{3}", "^*", "(?=a)+", "\\b+", "{2}", "a{", "a{x}", "a{,3}",
+            "a{5,3}", "a{65536}", "a{1,65536}", "a{99999999999999999999}", "}", "]", "(a", "a)", "[a", "[]", "[^]", "[z-a]", "[\\d-z]",
+            "[a-\\w]", "[a--b]", "[a&&b]", "[[:alpha:]]", "[\\B]"
+        ]
+        for pattern in patterns {
+            #expect(regexRejection(pattern) == .unsupportedSyntax, "\(pattern)")
+        }
+        #expect(regexRejection("a{65535}") == nil)
     }
 
     @Test("test_evaluate_function_regex_v10_value_exceeding_4096_code_points_returns_invalid, even with a pattern that is too long")
@@ -188,22 +265,36 @@ struct CatalogEdgeCaseTests {
 
         _ = evaluator.execute(ValidationFunctions.regex, arguments: evaluator.resolveArguments(arguments, in: context), in: context)
 
-        #expect(router.errors.map(\.message) == ["regex can't use its pattern: it is longer than 256 characters."])
+        #expect(router.errors.map(\.message) == ["PATTERN_TOO_LONG: regex can't use its pattern: it is longer than 256 code points."])
+    }
+
+    @Test("A rejected pattern's error starts with the specification's code")
+    func regexErrorCodes() {
+        let router = StubRemoteRouter()
+        let (evaluator, model) = makeEvaluator(catalogs: [BasicCatalog.catalog], surfaceCatalogId: BasicCatalog.catalogId, router: router)
+        let context = DataContext(model, "/")
+
+        _ = evaluator.execute(ValidationFunctions.regex, arguments: ["value": "12", "pattern": "\\d+\\d+"], in: context)
+        _ = evaluator.execute(ValidationFunctions.regex, arguments: ["value": "a", "pattern": "(?<n>a)"], in: context)
+
+        #expect(router.errors.map(\.code) == [RendererError.Code.expressionError, RendererError.Code.expressionError])
+        #expect(router.errors.first?.message.hasPrefix("ADJACENT_OVERLAP: regex can't use '\\d+\\d+': two parts") == true)
+        #expect(router.errors.last?.message == "UNSUPPORTED_SYNTAX: regex can't use '(?<n>a)': named groups aren't allowed.")
     }
 
     @Test("A character class can't hold an escape the regex dialect leaves out")
     func regexEscapesInClasses() {
-        #expect(A2UIRegexSafety.problem(in: "[\\p{L}]") != nil)
-        #expect(A2UIRegexSafety.problem(in: "[\\1]") != nil)
-        #expect(A2UIRegexSafety.problem(in: "[\\]a-z\\d\\-]+") == nil)
+        #expect(regexRejection("[\\p{L}]") == .unsupportedSyntax)
+        #expect(regexRejection("[\\1]") == .unsupportedSyntax)
+        #expect(regexRejection("[\\]a-z\\d\\-]+") == nil)
     }
 
     @Test("A legacy octal escape isn't allowed, while \\0 alone is the null character")
     func regexOctalEscapes() {
-        #expect(A2UIRegexSafety.problem(in: "^\\0141$") != nil)
-        #expect(A2UIRegexSafety.problem(in: "[\\01]") != nil)
-        #expect(A2UIRegexSafety.problem(in: "^a\\0$") == nil)
-        #expect(A2UIRegexSafety.problem(in: "[\\0a]") == nil)
+        #expect(regexRejection("^\\0141$") == .unsupportedSyntax)
+        #expect(regexRejection("[\\01]") == .unsupportedSyntax)
+        #expect(regexRejection("^a\\0$") == nil)
+        #expect(regexRejection("[\\0a]") == nil)
     }
 
     @Test("A cached pattern is reused only for the same characters, not a canonically equal spelling")
@@ -213,6 +304,8 @@ struct CatalogEdgeCaseTests {
 
         #expect(composed !== decomposed)
         #expect(decomposed.firstMatch(in: "e", range: NSRange(location: 0, length: 1)) != nil)
+        #expect(try A2UIFormatters.dialectExpression("^[\u{E9}]$") !== A2UIFormatters.dialectExpression("^[e\u{301}]$"))
+        #expect(regexMatches("^[e\u{301}]$", "e"))
     }
 
     @Test("A media link follows the basic catalog's URL rules, and a relative path is left to the media resolver")

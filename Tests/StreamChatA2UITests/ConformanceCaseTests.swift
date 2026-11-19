@@ -391,3 +391,125 @@ struct FunctionConformanceTests {
         #expect(evaluator.failingChecks([numeric], in: context).first?.code == nil)
     }
 }
+
+@Suite("The regex function's dialect and safety check")
+struct RegexConformanceTests {
+    struct Case: Sendable, CustomTestStringConvertible {
+        enum Expected: Sendable {
+            case valid(Bool)
+            case error(code: String)
+        }
+
+        let name: String
+        let pattern: String
+        let value: String
+        let expected: Expected
+        var testDescription: String { name }
+    }
+
+    // The regex cases of conformance/core/functions.yaml, without the two for protocol v0.9.
+    static let cases: [Case] = [
+        Case(name: "test_evaluate_function_regex_match", pattern: "^[0-9]+$", value: "12345", expected: .valid(true)),
+        Case(name: "test_evaluate_function_regex_mismatch", pattern: "^[0-9]+$", value: "abc", expected: .valid(false)),
+        Case(name: "test_evaluate_function_regex_invalid_pattern", pattern: "[invalid(", value: "abc", expected: .error(code: "UNSUPPORTED_SYNTAX")),
+        Case(
+            name: "test_evaluate_function_regex_v10_dollar_does_not_match_before_trailing_newline",
+            pattern: "^abc$",
+            value: "abc\n",
+            expected: .valid(false)
+        ),
+        Case(name: "test_evaluate_function_regex_v10_digit_class_ascii_only", pattern: "^\\d+$", value: "١٢٣", expected: .valid(false)),
+        Case(name: "test_evaluate_function_regex_v10_word_class_ascii_only", pattern: "^\\w+$", value: "café", expected: .valid(false)),
+        Case(name: "test_evaluate_function_regex_v10_dot_excludes_newline", pattern: "^a.b$", value: "a\nb", expected: .valid(false)),
+        Case(name: "test_evaluate_function_regex_v10_case_sensitive", pattern: "^abc$", value: "ABC", expected: .valid(false)),
+        Case(name: "test_evaluate_function_regex_v10_word_boundary_ascii_only", pattern: "\\b", value: "é", expected: .valid(false)),
+        Case(name: "test_evaluate_function_regex_v10_search_semantics", pattern: "abc", value: "xxabcxx", expected: .valid(true)),
+        Case(name: "test_evaluate_function_regex_v10_astral_dot_matches_single_code_point", pattern: "^.$", value: "😀", expected: .valid(true)),
+        Case(name: "test_evaluate_function_regex_v10_braced_unicode_escape", pattern: "^\\u{1F600}+$", value: "😀😀", expected: .valid(true)),
+        Case(name: "test_evaluate_function_regex_v10_rejects_backreference", pattern: "(a)\\1", value: "aa", expected: .error(code: "UNSUPPORTED_SYNTAX")),
+        Case(name: "test_evaluate_function_regex_v10_rejects_lookbehind", pattern: "(?<=a)b", value: "ab", expected: .error(code: "UNSUPPORTED_SYNTAX")),
+        Case(name: "test_evaluate_function_regex_v10_rejects_named_group", pattern: "(?<n>a)", value: "a", expected: .error(code: "UNSUPPORTED_SYNTAX")),
+        Case(name: "test_evaluate_function_regex_v10_rejects_inline_flag", pattern: "(?i)a", value: "a", expected: .error(code: "UNSUPPORTED_SYNTAX")),
+        Case(name: "test_evaluate_function_regex_v10_rejects_unicode_property", pattern: "\\p{L}", value: "a", expected: .error(code: "UNSUPPORTED_SYNTAX")),
+        Case(name: "test_evaluate_function_regex_v10_rejects_nested_quantifier_plus", pattern: "(a+)+$", value: "aaa", expected: .error(code: "NESTED_QUANTIFIER")),
+        Case(
+            name: "test_evaluate_function_regex_v10_rejects_nested_quantifier_bounded_outer",
+            pattern: "(a*){2,5}",
+            value: "aaa",
+            expected: .error(code: "NESTED_QUANTIFIER")
+        ),
+        Case(
+            name: "test_evaluate_function_regex_v10_rejects_overlapping_alternation_prefix",
+            pattern: "(a|ab)*c",
+            value: "abc",
+            expected: .error(code: "OVERLAPPING_ALTERNATION")
+        ),
+        Case(
+            name: "test_evaluate_function_regex_v10_rejects_overlapping_alternation_class",
+            pattern: "(\\d|[0-5])+",
+            value: "123",
+            expected: .error(code: "OVERLAPPING_ALTERNATION")
+        ),
+        Case(name: "test_evaluate_function_regex_v10_rejects_adjacent_overlap_direct", pattern: "\\d+\\d+", value: "12", expected: .error(code: "ADJACENT_OVERLAP")),
+        Case(
+            name: "test_evaluate_function_regex_v10_rejects_adjacent_overlap_across_nullable",
+            pattern: "\\d+\\s*\\d+",
+            value: "12",
+            expected: .error(code: "ADJACENT_OVERLAP")
+        ),
+        Case(name: "test_evaluate_function_regex_v10_accepts_optional_outer_group", pattern: "(?:ab+)?c", value: "abbc", expected: .valid(true)),
+        Case(name: "test_evaluate_function_regex_v10_accepts_disjoint_alternation", pattern: "(a|b)*c", value: "abac", expected: .valid(true)),
+        Case(name: "test_evaluate_function_regex_v10_accepts_non_nullable_separator", pattern: "\\w+\\s+\\w+", value: "hello world", expected: .valid(true)),
+        Case(
+            name: "test_evaluate_function_regex_v10_accepts_anchored_email_like",
+            pattern: "^[a-z]+@[a-z]+\\.com$",
+            value: "ada@example.com",
+            expected: .valid(true)
+        ),
+        Case(name: "test_evaluate_function_regex_v10_accepts_lookahead_password_like", pattern: "^(?=.*\\d).{8,}$", value: "secret42", expected: .valid(true)),
+        Case(
+            name: "test_evaluate_function_regex_v10_accepts_256_code_point_pattern",
+            pattern: String(repeating: "a", count: 256),
+            value: String(repeating: "a", count: 256),
+            expected: .valid(true)
+        ),
+        Case(
+            name: "test_evaluate_function_regex_v10_rejects_257_code_point_pattern",
+            pattern: String(repeating: "a", count: 257),
+            value: "a",
+            expected: .error(code: "PATTERN_TOO_LONG")
+        ),
+        Case(
+            name: "test_evaluate_function_regex_v10_accepts_4096_code_point_value",
+            pattern: "^a+$",
+            value: String(repeating: "a", count: 4096),
+            expected: .valid(true)
+        ),
+        Case(
+            name: "test_evaluate_function_regex_v10_value_exceeding_4096_code_points_returns_invalid",
+            pattern: "^a+$",
+            value: String(repeating: "a", count: 4097),
+            expected: .valid(false)
+        )
+    ]
+
+    @MainActor
+    @Test(arguments: cases)
+    func regex(_ testCase: Case) {
+        let router = StubRemoteRouter()
+        let (evaluator, model) = makeEvaluator(catalogs: [BasicCatalog.catalog], surfaceCatalogId: BasicCatalog.catalogId, router: router)
+        let context = DataContext(model, "/")
+
+        let result = evaluator.execute(ValidationFunctions.regex, arguments: ["pattern": testCase.pattern, "value": testCase.value], in: context)
+
+        switch testCase.expected {
+        case let .valid(isValid):
+            #expect(router.errors.isEmpty)
+            #expect(ValidationResult(coercing: result).isValid == isValid)
+        case let .error(code):
+            #expect(result == nil)
+            #expect(router.errors.map(\.code) == [RendererError.Code.expressionError])
+            #expect(router.errors.first?.message.hasPrefix("\(code): regex can't use ") == true)
+        }
+    }
+}

@@ -213,7 +213,8 @@ final class QueryManager {
                     entry.data = data
                     for (_, query) in waiting {
                         query.everFetched = true
-                        query.error = nil
+                        // One that can't evaluate its arguments keeps saying so.
+                        if !query.isSuspended { query.error = nil }
                         if let previousKey = query.previousCacheKey, previousKey != cacheKey {
                             query.previousCacheKey = nil
                             cleanupCacheEntry(previousKey)
@@ -222,7 +223,7 @@ final class QueryManager {
                 }
             }
         case .failure(let error):
-            for (id, query) in waiting {
+            for (id, query) in waiting where !query.isSuspended {
                 query.error = Self.queryError(error, source: .query, statementId: id, toolName: toolName)
             }
         }
@@ -340,11 +341,11 @@ final class QueryManager {
         }
         queryOrder.removeAll { queries[$0] == nil }
 
-        for node in nodes where !node.complete {
-            if let query = queries[node.statementId] { suspend(query) }
-        }
-
-        for node in nodes where node.complete {
+        for node in nodes {
+            guard node.complete else {
+                suspend(node)
+                continue
+            }
             let cacheKey = Self.cacheKey(toolName: node.toolName, args: node.args, deps: node.deps)
             let query: QueryEntry
             var argumentsChanged = false
@@ -356,6 +357,7 @@ final class QueryManager {
                     existing.needsRefetch = false
                     argumentsChanged = true
                 }
+                if existing.isSuspended { existing.error = nil }
                 existing.isSuspended = false
                 existing.toolName = node.toolName
                 existing.args = node.args
@@ -412,8 +414,25 @@ final class QueryManager {
 
     // Arguments that can't be evaluated, such as ones that ran out of the evaluation budget, mustn't
     // be stood in for by the ones it had: it keeps what it shows, but fetches nothing, after a
-    // pause, on refresh or when invalidated, until they can be.
-    private func suspend(_ query: QueryEntry) {
+    // pause, on refresh or when invalidated, until they can be, and reports why.
+    private func suspend(_ node: QueryNode) {
+        let query: QueryEntry
+        if let existing = queries[node.statementId] {
+            query = existing
+        } else {
+            let cacheKey = Self.cacheKey(toolName: node.toolName, args: node.args, deps: node.deps)
+            query = QueryEntry(toolName: node.toolName, args: node.args, defaults: .null, cacheKey: cacheKey)
+            queries[node.statementId] = query
+            queryOrder.append(node.statementId)
+        }
+        query.error = OpenUIError(
+            source: .query,
+            code: "runtime-error",
+            message: "Query \"\(node.toolName)\" did not fetch: its arguments were too large or nested too deeply to evaluate",
+            statementId: node.statementId,
+            component: "Query",
+            toolName: node.toolName
+        )
         query.isSuspended = true
         query.pendingFetch?.cancel()
         query.pendingFetch = nil

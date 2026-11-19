@@ -285,10 +285,10 @@ enum Evaluator {
             }
             let left = evaluate(leftNode, context)
             let right = evaluate(rightNode, context)
-            guard spendCoercion(of: left, right, context) else { return nil }
             switch op {
             case "+":
                 if JS.typeOf(left) == "string" || JS.typeOf(right) == "string" {
+                    guard spendCoercion(of: left, right, context) else { return nil }
                     let lhs = JS.isNullish(left) ? "" : JS.toString(left)
                     let rhs = JS.isNullish(right) ? "" : JS.toString(right)
                     return .string(lhs + rhs)
@@ -305,10 +305,10 @@ enum Evaluator {
             case "%":
                 let divisor = JS.toNumber(right)
                 return .number(divisor == 0 ? 0 : JS.toNumber(left).truncatingRemainder(dividingBy: divisor))
-            case "==":
-                return .bool(JS.looseEquals(left, right))
-            case "!=":
-                return .bool(!JS.looseEquals(left, right))
+            case "==", "!=":
+                // A comparison with null doesn't walk the other side.
+                guard JS.isNullish(left) || JS.isNullish(right) || spendCoercion(of: left, right, context) else { return nil }
+                return .bool(JS.looseEquals(left, right) == (op == "=="))
             case ">":
                 return .bool(JS.toNumber(left) > JS.toNumber(right))
             case "<":
@@ -340,8 +340,9 @@ enum Evaluator {
         }
     }
 
-    // Spends what coercing or comparing the operands walks: arrays and objects, which a string,
-    // number or `==` turns into text or compares field by field.
+    // Spends what turning the operands into text or comparing them walks: arrays and objects,
+    // which a string or `==` turns into text or compares field by field. A number doesn't walk
+    // them, as `JS.toNumber` makes them 0.
     private static func spendCoercion(of left: OpenUIValue?, _ right: OpenUIValue?, _ context: EvaluationContext) -> Bool {
         let limit = context.budget.remainingNodes + 1
         let cost = EvaluationBudget.size(of: left, limit: limit) + EvaluationBudget.size(of: right, limit: limit)

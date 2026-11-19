@@ -365,44 +365,59 @@ enum DateFormatting {
         return formatter
     }()
 
-    // Reads the day in UTC, which has no daylight saving, so a day whose midnight is skipped
-    // where the person is still reads.
-    private static let dayFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(identifier: "UTC")
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
-
-    private static let isoStyle = Date.ISO8601FormatStyle()
-
-    // A time without an offset is one where the person is, as in JavaScript.
-    private static let localTimeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        return formatter
+    // The ISO 8601 dates and times JavaScript's `Date` reads: a day, then optionally a time to the
+    // minute, second or fraction of one, and an offset. Before the time, V8 also takes a space,
+    // as RFC 3339 allows.
+    private static let dateTime: NSRegularExpression = {
+        let pattern = #"^([0-9]{4})-([0-9]{2})-([0-9]{2})(?:[Tt ]([0-9]{2}):([0-9]{2})(?::([0-9]{2})(?:\.([0-9]+))?)?([Zz]|[+-][0-9]{2}:?[0-9]{2})?)?\z"#
+        do {
+            return try NSRegularExpression(pattern: pattern)
+        } catch {
+            preconditionFailure("Invalid pattern \(pattern): \(error)")
+        }
     }()
 
     static func string(from date: Date) -> String {
         formatter.string(from: date)
     }
 
-    // A day is noon of it where the person is, which daylight saving never skips, and a time is
-    // the moment it names.
+    // A time without an offset is one where the person is, as in JavaScript. A day without a time
+    // is noon of it where the person is, which daylight saving never skips, rather than midnight
+    // in UTC, which is the day before west of it. A day past the month's end isn't one, where
+    // JavaScript rolls it over into the next month.
     static func date(from string: String?) -> Date? {
-        guard let string, !string.isEmpty else { return nil }
-        // The formatter rolls a day past the month's end over into the next month.
-        if string.count == 10, let day = dayFormatter.date(from: string), dayFormatter.string(from: day) == string {
-            var utc = Calendar(identifier: .gregorian)
-            utc.timeZone = TimeZone(identifier: "UTC") ?? utc.timeZone
-            var components = utc.dateComponents([.year, .month, .day], from: day)
-            components.hour = 12
-            return Calendar(identifier: .gregorian).date(from: components)
+        guard let string, let match = dateTime.firstMatch(in: string, range: NSRange(string.startIndex..., in: string)) else { return nil }
+        func part(_ index: Int) -> Substring? {
+            Range(match.range(at: index), in: string).map { string[$0] }
         }
-        return (try? isoStyle.parse(string)) ?? localTimeFormatter.date(from: string)
+        func number(_ index: Int) -> Int? {
+            part(index).flatMap { Int($0) }
+        }
+        var utc = Calendar(identifier: .gregorian)
+        utc.timeZone = TimeZone(secondsFromGMT: 0) ?? utc.timeZone
+        var components = DateComponents(year: number(1), month: number(2), day: number(3), hour: 12)
+        if let hour = number(4) {
+            components.hour = hour
+            components.minute = number(5)
+            components.second = number(6) ?? 0
+        }
+        guard components.isValidDate(in: utc) else { return nil }
+        var calendar = Calendar(identifier: .gregorian)
+        if let offset = part(8) {
+            guard let zone = timeZone(offset) else { return nil }
+            calendar.timeZone = zone
+        }
+        guard let date = calendar.date(from: components) else { return nil }
+        // JavaScript keeps milliseconds.
+        let fraction = part(7).flatMap { Double("0." + $0) } ?? 0
+        return date.addingTimeInterval((fraction * 1000).rounded(.down) / 1000)
+    }
+
+    private static func timeZone(_ offset: Substring) -> TimeZone? {
+        guard offset.uppercased() != "Z" else { return TimeZone(secondsFromGMT: 0) }
+        let digits = offset.dropFirst().filter { $0 != ":" }
+        guard let hours = Int(digits.prefix(2)), let minutes = Int(digits.suffix(2)), hours < 24, minutes < 60 else { return nil }
+        let seconds = (hours * 60 + minutes) * 60
+        return TimeZone(secondsFromGMT: offset.hasPrefix("-") ? -seconds : seconds)
     }
 }
