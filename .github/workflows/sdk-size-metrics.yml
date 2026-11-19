@@ -29,9 +29,33 @@ permissions:
   pull-requests: read
 
 jobs:
+  guard:
+    name: Guard
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: write # to cancel skip-ci runs
+      checks: read # to skip checks already verified
+      contents: read
+      pull-requests: read
+    env:
+      GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+      GITHUB_EVENT_ACTION: ${{ github.event.action }}
+      GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+      GITHUB_EVENT_AFTER: ${{ github.event.after }}
+    outputs:
+      checks: ${{ steps.guard.outputs.checks }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: guard
+        uses: ./.github/actions/ci-guard
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
   sdk_size:
     name: Size Metrics
     runs-on: macos-15
+    needs: guard
+    if: ${{ fromJSON(needs.guard.outputs.checks).size }}
     env:
       GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
       GITHUB_EVENT_ACTION: ${{ github.event.action }}
@@ -39,10 +63,6 @@ jobs:
       GITHUB_EVENT_AFTER: ${{ github.event.after }}
     steps:
       - uses: actions/checkout@v7
-
-      - uses: ./.github/actions/ci-guard
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate bot token
         id: bot-token

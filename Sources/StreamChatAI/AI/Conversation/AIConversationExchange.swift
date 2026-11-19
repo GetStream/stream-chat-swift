@@ -95,16 +95,29 @@ struct AIConversationExchange<Message: AIMessage> {
         return last
     }
 
-    // Whether a new message, or a request for the reply to the person's latest message, which
-    // has none, is overtaken by a newer message of theirs, which the replies after it answer.
-    func isOvertaken(in conversation: [Message]) -> Bool {
+    // Where the newer message of the person's is that overtakes a new message, a reply written
+    // again or an edit, which the replies after it answer: their first after its own message,
+    // or after the messages there were. An edit's own copy can arrive as a new message.
+    func overtakingMessageIndex(in conversation: [Message]) -> Int? {
         if request.kind == .message {
-            guard let own = ownMessageIndex(in: conversation[...]) else { return false }
-            return conversation[(own + 1)...].contains { $0.role == .user }
+            guard let own = ownMessageIndex(in: conversation[...]) else { return nil }
+            return conversation[(own + 1)...].firstIndex { $0.role == .user }
         }
-        guard request.kind == .regenerate, request.message == nil,
-              let latest = conversation.last(where: { $0.role == .user }) else { return false }
-        return !known.contains(AnyHashable(latest.id))
+        guard request.kind == .regenerate || request.kind == .edit else { return nil }
+        let lastKnown = conversation.lastIndex { known.contains(AnyHashable($0.id)) }
+        return conversation[(lastKnown.map { $0 + 1 } ?? 0)...].firstIndex { $0.role == .user && !isOwn($0) }
+    }
+
+    // Whether the agent answers it, such as a request the transport failed to send that the
+    // agent had after all: its reply is there, or the person's latest message is the one it asks
+    // the agent to answer.
+    func isBeingAnswered(in conversation: [Message]) -> Bool {
+        guard reply(in: conversation) == nil else { return true }
+        guard let last = conversation.indices.last, conversation[last].role == .user else { return false }
+        if request.kind == .message {
+            return ownMessageIndex(in: conversation[...]) == last
+        }
+        return known.contains(AnyHashable(conversation[last].id)) || isOwn(conversation[last])
     }
 
     // Whether its reply has started: it shows something, or it is already finished.
@@ -126,11 +139,16 @@ struct AIConversationExchange<Message: AIMessage> {
     // Where the person's message is: the one with its id, or else their first after the
     // messages there were.
     private func ownMessageIndex(in conversation: ArraySlice<Message>) -> Int? {
-        if let exact = conversation.firstIndex(where: { AnyHashable($0.id) == AnyHashable(request.messageID) }) {
+        if let exact = conversation.firstIndex(where: { isOwn($0) }) {
             return exact
         }
         let lastKnown = conversation.lastIndex { known.contains(AnyHashable($0.id)) }
         return conversation[(lastKnown.map { $0 + 1 } ?? conversation.startIndex)...].firstIndex { $0.role == .user }
+    }
+
+    // Whether it is the person's message created with the request's id.
+    private func isOwn(_ message: Message) -> Bool {
+        AnyHashable(message.id) == AnyHashable(request.messageID)
     }
 
     // What `retry()` sends: the request again, or, when the agent had the person's message but

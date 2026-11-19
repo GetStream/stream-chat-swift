@@ -261,10 +261,10 @@ final class AIConversationExchange_Tests: XCTestCase {
             conversation: waiting
         )
 
-        XCTAssertFalse(exchange.isOvertaken(in: waiting + [.reply("a2", generating: true)]))
-        XCTAssertFalse(exchange.isOvertaken(in: [.user("u0"), .reply("a0")] + waiting), "older messages loaded above")
-        XCTAssertTrue(exchange.isOvertaken(in: waiting + [.user("u3")]))
-        XCTAssertFalse(message().isOvertaken(in: conversation + [.user("u3")]), "a new message's own")
+        XCTAssertNil(exchange.overtakingMessageIndex(in: waiting + [.reply("a2", generating: true)]))
+        XCTAssertNil(exchange.overtakingMessageIndex(in: [.user("u0"), .reply("a0")] + waiting), "older messages loaded above")
+        XCTAssertEqual(exchange.overtakingMessageIndex(in: waiting + [.user("u3")]), 3)
+        XCTAssertNil(message().overtakingMessageIndex(in: conversation + [.user("u3")]), "a new message's own")
     }
 
     func test_aNewMessage_isOvertakenByANewerOneAfterIt() {
@@ -274,13 +274,59 @@ final class AIConversationExchange_Tests: XCTestCase {
             conversation: conversation
         )
 
-        XCTAssertFalse(exchange.isOvertaken(in: conversation))
-        XCTAssertFalse(exchange.isOvertaken(in: conversation + [.user("m1"), .reply("a3", "Hello", generating: true)]))
-        XCTAssertTrue(exchange.isOvertaken(in: conversation + [.user("m1"), .user("u4")]))
-        XCTAssertTrue(exchange.isOvertaken(in: conversation + [.user("m1"), .reply("a3", "Hello"), .user("u4")]))
-        XCTAssertFalse(exchange.isOvertaken(in: conversation + [.user("u3"), .reply("a3", "Hello")]), "its message, under another id")
-        XCTAssertTrue(exchange.isOvertaken(in: conversation + [.user("u3"), .user("u4")]), "after its message, under another id")
-        XCTAssertFalse(exchange.isOvertaken(in: [.user("u0"), .reply("a0")] + conversation), "older messages loaded above")
+        XCTAssertNil(exchange.overtakingMessageIndex(in: conversation))
+        XCTAssertNil(exchange.overtakingMessageIndex(in: conversation + [.user("m1"), .reply("a3", "Hello", generating: true)]))
+        XCTAssertEqual(exchange.overtakingMessageIndex(in: conversation + [.user("m1"), .user("u4")]), 5)
+        XCTAssertEqual(exchange.overtakingMessageIndex(in: conversation + [.user("m1"), .reply("a3", "Hello"), .user("u4")]), 6)
+        XCTAssertNil(exchange.overtakingMessageIndex(in: conversation + [.user("u3"), .reply("a3", "Hello")]), "its message, under another id")
+        XCTAssertEqual(exchange.overtakingMessageIndex(in: conversation + [.user("u3"), .user("u4")]), 5, "after its message, under another id")
+        XCTAssertNil(exchange.overtakingMessageIndex(in: [.user("u0"), .reply("a0")] + conversation), "older messages loaded above")
+    }
+
+    func test_aReplyWrittenAgainOrAnEdit_isOvertakenByANewerMessage() {
+        let regenerate = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .regenerate, text: "", message: .reply("a2")),
+            conversation: conversation
+        )
+        let edit = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .edit, text: "Porto for two", message: .user("u2"), messageID: "e1"),
+            conversation: conversation
+        )
+        let replaced: [ChatMessage] = [.user("u1"), .reply("a1"), .user("u2")]
+        let editedAsNewMessage: [ChatMessage] = [.user("u1"), .reply("a1"), .user("e1", "Porto for two")]
+
+        XCTAssertNil(regenerate.overtakingMessageIndex(in: replaced + [.reply("a3", generating: true)]))
+        XCTAssertEqual(regenerate.overtakingMessageIndex(in: replaced + [.user("u3"), .reply("a3", generating: true)]), 3)
+        XCTAssertEqual(regenerate.overtakingMessageIndex(in: conversation + [.user("u3")]), 4, "the reply wasn't removed")
+        XCTAssertNil(regenerate.overtakingMessageIndex(in: [.user("u0"), .reply("a0")] + replaced), "older messages loaded above")
+        XCTAssertNil(edit.overtakingMessageIndex(in: [.user("u1"), .reply("a1"), .user("u2", "Porto for two")]), "the edited message keeps its id")
+        XCTAssertEqual(edit.overtakingMessageIndex(in: [.user("u1"), .reply("a1"), .user("u2", "Porto for two"), .user("u3")]), 3)
+        XCTAssertNil(edit.overtakingMessageIndex(in: editedAsNewMessage + [.reply("a3", generating: true)]), "its own copy, under its id")
+        XCTAssertEqual(edit.overtakingMessageIndex(in: editedAsNewMessage + [.user("u3")]), 3)
+        XCTAssertTrue(edit.isBeingAnswered(in: editedAsNewMessage), "its own copy is the latest")
+    }
+
+    func test_aFailedRequest_isBeingAnsweredWhenTheAgentWorksOnIt() {
+        let message = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .message, text: "Hi", messageID: "m1"),
+            conversation: conversation
+        )
+        let regenerate = AIConversationExchange(
+            id: 1,
+            request: AIConversationRequest<ChatMessage>(kind: .regenerate, text: "", message: .reply("a2")),
+            conversation: conversation
+        )
+
+        XCTAssertFalse(message.isBeingAnswered(in: conversation), "its message isn't there")
+        XCTAssertTrue(message.isBeingAnswered(in: conversation + [.user("m1")]))
+        XCTAssertTrue(message.isBeingAnswered(in: conversation + [.user("m1"), .reply("a3", "", generating: true)]))
+        XCTAssertFalse(message.isBeingAnswered(in: conversation + [.user("m1"), .user("u4")]), "a newer message is the latest")
+        XCTAssertTrue(regenerate.isBeingAnswered(in: [.user("u1"), .reply("a1"), .user("u2")]), "the reply was removed")
+        XCTAssertFalse(regenerate.isBeingAnswered(in: [.user("u1"), .reply("a1"), .user("u2"), .user("u3")]))
+        XCTAssertFalse(regenerate.isBeingAnswered(in: conversation), "the reply as it was")
     }
 
     func test_anOldReplyStillBeingWritten_isNotTheNewOne() {
