@@ -55,6 +55,6 @@ final class StreamAnimatedImage_Tests: XCTestCase {
 
         XCTAssertNil(view.animatedImageData)
         XCTAssertNil(view.image)
-        XCTAssertEqual(engine.stopCallCount, 1)
+        XCTAssertEqual(engine.unloadCallCount, 1)
     }
 }

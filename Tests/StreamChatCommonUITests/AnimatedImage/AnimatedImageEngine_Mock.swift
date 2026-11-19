@@ -8,12 +8,14 @@ import UIKit
 @MainActor
 final class AnimatedImageEngine_Mock: AnimatedImageEngine {
     var onFrame: ((UIImage) -> Void)?
+    var visibilityCheck: (() -> Bool)?
     var isPlaying = false
 
     var loadResult = true
     var loadedData: [Data] = []
     var playCallCount = 0
     var stopCallCount = 0
+    var unloadCallCount = 0
 
     var loadCallCount: Int { loadedData.count }
 
@@ -33,7 +35,11 @@ final class AnimatedImageEngine_Mock: AnimatedImageEngine {
         isPlaying = false
     }
 
-    /// Simulates a frame arriving from the engine.
+    func unload() {
+        unloadCallCount += 1
+        isPlaying = false
+    }
+
     func deliver(frame: UIImage) {
         onFrame?(frame)
     }

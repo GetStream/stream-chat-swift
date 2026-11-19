@@ -115,14 +115,14 @@ final class StreamAnimatedImageView_Tests: XCTestCase {
         XCTAssertEqual(view.image, frame)
     }
 
-    func test_clearAnimatedImage_stopsPlaybackAndKeepsImage() {
+    func test_clearAnimatedImage_unloadsTheAnimationAndKeepsImage() {
         window.addSubview(view)
         view.setAnimatedImage(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1]))
         let visibleImage = view.image
 
         view.clearAnimatedImage()
 
-        XCTAssertEqual(engine.stopCallCount, 1)
+        XCTAssertEqual(engine.unloadCallCount, 1)
         XCTAssertNil(view.animatedImageData)
         XCTAssertEqual(view.image, visibleImage)
     }
@@ -195,47 +195,41 @@ final class StreamAnimatedImageView_Tests: XCTestCase {
         XCTAssertFalse(view.isAnimating)
     }
 
-    // MARK: - Hidden ancestors
+    // MARK: - Visibility
 
-    func test_onFrame_whenViewHasHiddenAncestor_stopsPlayback() {
-        let container = UIView()
+    func test_visibilityCheck_whenOnScreen_isTrue() {
+        view.frame = CGRect(x: 10, y: 10, width: 20, height: 20)
+        window.addSubview(view)
+        view.setAnimatedImage(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1]))
+
+        XCTAssertEqual(engine.visibilityCheck?(), true)
+    }
+
+    func test_visibilityCheck_whenAnAncestorIsHidden_isFalse() {
+        let container = UIView(frame: window.bounds)
+        view.frame = CGRect(x: 10, y: 10, width: 20, height: 20)
         window.addSubview(container)
         container.addSubview(view)
         view.setAnimatedImage(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1]))
-        let poster = view.image
 
         container.isHidden = true
-        engine.deliver(frame: GIFFixtures.solidColorImage(size: CGSize(width: 4, height: 4), color: .blue))
 
-        XCTAssertEqual(engine.stopCallCount, 1)
-        XCTAssertEqual(view.image, poster)
+        XCTAssertEqual(engine.visibilityCheck?(), false)
     }
 
-    func test_layoutSubviews_afterUnhiding_resumesPlayback() {
-        let container = UIView()
-        window.addSubview(container)
-        container.addSubview(view)
+    func test_visibilityCheck_whenScrolledOffScreen_isFalse() {
+        view.frame = CGRect(x: 10, y: 200, width: 20, height: 20)
+        window.addSubview(view)
         view.setAnimatedImage(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1]))
-        container.isHidden = true
-        engine.deliver(frame: GIFFixtures.solidColorImage(size: CGSize(width: 4, height: 4), color: .blue))
 
-        container.isHidden = false
-        view.setNeedsLayout()
-        view.layoutIfNeeded()
-
-        XCTAssertEqual(engine.playCallCount, 2)
+        XCTAssertEqual(engine.visibilityCheck?(), false)
     }
 
-    func test_setAnimatedImage_whenViewHasHiddenAncestor_doesNotPlay() {
-        let container = UIView()
-        container.isHidden = true
-        window.addSubview(container)
-        container.addSubview(view)
+    func test_visibilityCheck_whenNotInWindow_isFalse() {
+        view.frame = CGRect(x: 10, y: 10, width: 20, height: 20)
+        view.setAnimatedImage(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1]))
 
-        let didLoad = view.setAnimatedImage(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1]))
-
-        XCTAssertTrue(didLoad)
-        XCTAssertEqual(engine.playCallCount, 0)
+        XCTAssertEqual(engine.visibilityCheck?(), false)
     }
 
     // MARK: - Application state

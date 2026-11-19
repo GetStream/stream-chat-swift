@@ -6,11 +6,10 @@ import UIKit
 
 /// An image view that renders animated GIF data.
 ///
-/// Pass the raw bytes to ``setAnimatedImage(data:fallbackImage:)``. Playback starts
-/// automatically while the view is in a window, visible, and the app is in the foreground,
-/// and pauses when any of those stops being true — including while the view sits hidden in
-/// a reuse pool. ``stopAnimating()`` opts out until ``startAnimating()`` or a new animation
-/// is set.
+/// Pass the raw bytes to ``setAnimatedImage(data:fallbackImage:)``. Playback runs while the
+/// view is in a window and the app is in the foreground. It pauses while the view is hidden,
+/// for example in a reuse pool, or scrolled off screen. ``stopAnimating()`` opts out until
+/// ``startAnimating()`` or a new animation is set.
 ///
 /// Assigning `image` directly does not stop playback: call ``clearAnimatedImage()`` first
 /// when switching the view back to a static image.
@@ -72,7 +71,7 @@ open class StreamAnimatedImageView: UIImageView {
 
     /// Stops playback and discards the loaded animation, leaving `image` as it is.
     open func clearAnimatedImage() {
-        engine.stop()
+        engine.unload()
         animatedImageData = nil
         nonAnimatableData = nil
         isPlaybackEnabled = false
@@ -102,26 +101,18 @@ open class StreamAnimatedImageView: UIImageView {
         }
     }
 
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-        playIfPossible()
-    }
-
     // MARK: - Private
 
     private func configureEngineIfNeeded() {
         guard !isEngineConfigured else { return }
         isEngineConfigured = true
         engine.onFrame = { [weak self] frame in
-            guard let self else { return }
-            // Reuse pools keep cells hidden but window-attached, so hidden views receive no
-            // lifecycle callback: frame delivery is the only place the pause can be detected.
-            // `layoutSubviews` resumes playback once the view becomes visible again.
-            guard !hasHiddenAncestor else {
-                engine.stop()
-                return
-            }
-            image = frame
+            self?.image = frame
+        }
+        // Reuse pools and scroll views hide views without any lifecycle callback, so the engine
+        // asks on every tick.
+        engine.visibilityCheck = { [weak self] in
+            self?.isVisibleOnScreen ?? false
         }
         NotificationCenter.default.addObserver(
             self,
@@ -137,15 +128,16 @@ open class StreamAnimatedImageView: UIImageView {
         )
     }
 
-    private var hasHiddenAncestor: Bool {
+    private var isVisibleOnScreen: Bool {
+        guard let window else { return false }
         var view: UIView? = self
         while let current = view {
             if current.isHidden {
-                return true
+                return false
             }
             view = current.superview
         }
-        return false
+        return convert(bounds, to: window).intersects(window.bounds)
     }
 
     private func playIfPossible() {
@@ -153,8 +145,7 @@ open class StreamAnimatedImageView: UIImageView {
               !engine.isPlaying,
               animatedImageData != nil,
               window != nil,
-              !isApplicationInBackground,
-              !hasHiddenAncestor else { return }
+              !isApplicationInBackground else { return }
         engine.play()
     }
 

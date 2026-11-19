@@ -40,6 +40,28 @@ final class StreamAnimatedImageEngine_Tests: XCTestCase {
         XCTAssertFalse(engine.isPlaying)
     }
 
+    func test_load_doesNotDecodeFramesBeforePlayback() {
+        let engine = makeEngine(frameCount: 3)
+        waitForDecoding()
+        var delivered: UIImage?
+        engine.onFrame = { delivered = $0 }
+
+        engine.play()
+        engine.advance(by: 0)
+
+        XCTAssertNil(delivered)
+    }
+
+    func test_unload_stopsPlaybackAndDiscardsTheAnimation() {
+        let engine = makeEngine(frameCount: 3)
+        engine.play()
+
+        engine.unload()
+        engine.play()
+
+        XCTAssertFalse(engine.isPlaying)
+    }
+
     // MARK: - Playback
 
     func test_play_deliversTheFirstFrameOnceItIsDecoded() {
@@ -139,6 +161,71 @@ final class StreamAnimatedImageEngine_Tests: XCTestCase {
         XCTAssertFalse(engine.isPlaying)
     }
 
+    // MARK: - Ticks
+
+    func test_handleTick_advancesByTheTimeSinceThePreviousTick() {
+        let engine = makeEngine(frameCount: 5)
+        engine.play()
+        XCTAssertNotNil(advanceUntilFrameIsDelivered(engine, by: 0))
+        waitForDecoding()
+        var delivered: [UIImage] = []
+        engine.onFrame = { delivered.append($0) }
+
+        engine.handleTick(timestamp: 10)
+        engine.handleTick(timestamp: 10.35)
+
+        XCTAssertEqual(delivered.count, 1)
+        XCTAssertTrue(delivered.first.map { GIFFixtures.isFrame($0, at: 3) } ?? false)
+    }
+
+    func test_handleTick_whileInvisible_doesNotAdvance() {
+        let engine = makeEngine(frameCount: 5)
+        engine.play()
+        XCTAssertNotNil(advanceUntilFrameIsDelivered(engine, by: 0))
+        waitForDecoding()
+        var delivered: [UIImage] = []
+        engine.onFrame = { delivered.append($0) }
+        engine.visibilityCheck = { false }
+
+        engine.handleTick(timestamp: 10)
+        engine.handleTick(timestamp: 10.35)
+
+        XCTAssertTrue(delivered.isEmpty)
+    }
+
+    func test_handleTick_whileInvisible_doesNotDecode() {
+        let engine = makeEngine(frameCount: 3)
+        engine.visibilityCheck = { false }
+        engine.play()
+        engine.handleTick(timestamp: 10)
+        waitForDecoding()
+        var delivered: UIImage?
+        engine.onFrame = { delivered = $0 }
+        engine.visibilityCheck = { true }
+
+        engine.handleTick(timestamp: 10.1)
+
+        XCTAssertNil(delivered)
+    }
+
+    func test_handleTick_afterBecomingVisible_resumesWithoutSkippingFrames() {
+        let engine = makeEngine(frameCount: 5)
+        engine.play()
+        XCTAssertNotNil(advanceUntilFrameIsDelivered(engine, by: 0))
+        waitForDecoding()
+        var delivered: [UIImage] = []
+        engine.onFrame = { delivered.append($0) }
+        engine.visibilityCheck = { false }
+        engine.handleTick(timestamp: 10)
+        engine.visibilityCheck = { true }
+
+        engine.handleTick(timestamp: 13)
+        engine.handleTick(timestamp: 13.15)
+
+        XCTAssertEqual(delivered.count, 1)
+        XCTAssertTrue(delivered.first.map { GIFFixtures.isFrame($0, at: 1) } ?? false)
+    }
+
     // MARK: - Helpers
 
     private func makeEngine(frameCount: Int) -> StreamAnimatedImageEngine {
@@ -148,10 +235,8 @@ final class StreamAnimatedImageEngine_Tests: XCTestCase {
         return engine
     }
 
-    /// Advances playback and keeps retrying until the frame it should show is decoded.
-    ///
-    /// Frames are decoded off the main thread, so a tick that arrives before the next frame is
-    /// ready holds the current one and delivers as soon as decoding finishes.
+    // Frames are decoded off the main thread, so this keeps advancing by zero until the frame
+    // that `delta` leads to is decoded and delivered.
     private func advanceUntilFrameIsDelivered(
         _ engine: StreamAnimatedImageEngine,
         by delta: TimeInterval,
@@ -169,7 +254,6 @@ final class StreamAnimatedImageEngine_Tests: XCTestCase {
         return delivered
     }
 
-    /// Gives the buffer time to decode the frames of a small fixture.
     private func waitForDecoding() {
         Thread.sleep(forTimeInterval: 0.3)
     }

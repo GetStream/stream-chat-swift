@@ -6,26 +6,16 @@ import ImageIO
 import UIKit
 import UniformTypeIdentifiers
 
-/// Frame metadata and on-demand frame decoding for a single GIF.
-///
-/// The metadata is parsed once at init and immutable afterwards. `decodeFrame(at:)` is
-/// confined to ``GIFFrameBuffer``'s serial queue, which is its only caller.
+// The metadata is parsed once at init and immutable afterwards. `decodeFrame(at:)` runs only
+// on `GIFFrameBuffer`'s serial queue.
 final class GIFFrameSource: @unchecked Sendable {
-    /// The number of frames in the animation.
     let frameCount: Int
-    /// The display duration of each frame, in seconds.
     let frameDelays: [TimeInterval]
-    /// The number of loops the file asks for: `0` means infinite, and files without a looping
-    /// extension are reported as `1` by ImageIO. Unused while playback always loops forever.
-    let loopCount: Int
-    /// The size of one decoded frame in bytes.
     let bytesPerFrame: Int
 
-    /// The delay used when a frame carries no usable timing information.
     private static let defaultDelay: TimeInterval = 0.1
-    /// Delays at or below this are treated as "as fast as possible" by browsers, which cap them.
+    // Browsers treat delays at or below this as "as fast as possible" and replace them.
     private static let minimumDelay: TimeInterval = 0.01
-    /// The largest frame we are willing to decode at native size.
     private static let maximumPixelSize = 4096
 
     private let source: CGImageSource
@@ -33,22 +23,20 @@ final class GIFFrameSource: @unchecked Sendable {
 
     init?(data: Data, targetPixelSize: CGSize?) {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil),
-              Self.isGIF(source) else { return nil }
+              Self.isGIF(source),
+              let pixelSize = Self.pixelSize(of: source) else { return nil }
         let frameCount = CGImageSourceGetCount(source)
         guard frameCount > 0 else { return nil }
 
         self.source = source
         self.frameCount = frameCount
         frameDelays = (0..<frameCount).map { Self.delay(of: source, at: $0) }
-        loopCount = Self.loopCount(of: source)
 
-        let pixelSize = Self.pixelSize(of: source) ?? .zero
         maxPixelSize = Self.maxPixelSize(pixelSize: pixelSize, targetPixelSize: targetPixelSize)
         let decodedSize = Self.decodedSize(pixelSize: pixelSize, maxPixelSize: maxPixelSize)
         bytesPerFrame = Int(decodedSize.width * decodedSize.height) * 4
     }
 
-    /// Decodes the frame at the given index, or returns `nil` when it cannot be decoded.
     func decodeFrame(at index: Int) -> UIImage? {
         guard index >= 0, index < frameCount else { return nil }
         let cgImage: CGImage?
@@ -88,15 +76,6 @@ final class GIFFrameSource: @unchecked Sendable {
         return delay
     }
 
-    private static func loopCount(of source: CGImageSource) -> Int {
-        guard let properties = CGImageSourceCopyProperties(source, nil) as? [CFString: Any],
-              let gifProperties = properties[kCGImagePropertyGIFDictionary] as? [CFString: Any],
-              let loopCount = (gifProperties[kCGImagePropertyGIFLoopCount] as? NSNumber)?.intValue else {
-            return 1
-        }
-        return loopCount
-    }
-
     private static func pixelSize(of source: CGImageSource) -> CGSize? {
         guard let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
               let width = (properties[kCGImagePropertyPixelWidth] as? NSNumber)?.doubleValue,
@@ -107,10 +86,9 @@ final class GIFFrameSource: @unchecked Sendable {
         return CGSize(width: width, height: height)
     }
 
-    /// The longest side the decoded frames may have, or `nil` to decode at native size.
+    // The longest side the decoded frames may have, or `nil` to decode at native size.
     private static func maxPixelSize(pixelSize: CGSize, targetPixelSize: CGSize?) -> Int? {
         let nativeLongestSide = max(pixelSize.width, pixelSize.height)
-        guard nativeLongestSide > 0 else { return nil }
         guard let targetPixelSize, targetPixelSize != .zero else {
             return nativeLongestSide > CGFloat(maximumPixelSize) ? maximumPixelSize : nil
         }

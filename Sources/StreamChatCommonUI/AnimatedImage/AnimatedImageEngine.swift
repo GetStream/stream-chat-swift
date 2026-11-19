@@ -4,39 +4,31 @@
 
 import UIKit
 
-/// The playback engine behind ``StreamAnimatedImageView``.
-///
-/// The view owns the engine strongly and only ever holds it through this seam, so the
-/// rendering strategy can be swapped without touching the view.
+// The playback engine behind `StreamAnimatedImageView`. The view only holds it through this
+// protocol, so tests can replace it.
 @MainActor
 protocol AnimatedImageEngine: AnyObject {
-    /// Called with each frame, in display order.
-    ///
-    /// Fires only between `play()` and `stop()`, never after `stop()` (or a new `load`) returns.
+    // Called with each frame, in display order, only between `play()` and `stop()`.
     var onFrame: ((UIImage) -> Void)? { get set }
 
-    /// Parses `data` synchronously and reports whether it can be animated.
-    ///
-    /// Returns `false` when the data is not an animatable GIF (not a GIF, corrupt, or fewer
-    /// than two frames), in which case the caller falls back to a static image. Implies
-    /// `stop()` and discards any previously loaded animation. Never delivers a frame itself.
-    ///
-    /// - Parameter targetPixelSize: A decode size hint: maximum bounds, aspect ratio preserved,
-    ///   never upscaled. Engines are free to ignore it.
+    // Checked on every tick. While it returns false, the engine neither advances nor decodes.
+    var visibilityCheck: (() -> Bool)? { get set }
+
+    // Parses `data` synchronously and returns false when it is not an animatable GIF, so the
+    // caller can fall back to a static image. Discards the previous animation and never
+    // delivers a frame itself. `targetPixelSize` is a decode size hint the engine may ignore.
     @discardableResult
     func load(data: Data, targetPixelSize: CGSize?) -> Bool
 
-    /// Starts or resumes playback, looping forever.
-    ///
-    /// A no-op when already playing or when nothing is loaded. The first frame is delivered
-    /// asynchronously.
+    // Starts or resumes looping playback. Does nothing when already playing or when nothing
+    // is loaded. The first frame arrives asynchronously.
     func play()
 
-    /// Pauses playback, keeping the loaded animation so `play()` can resume it.
-    ///
-    /// The resume position is best-effort and engine specific.
+    // Pauses playback and keeps the animation, so `play()` can resume it.
     func stop()
 
-    /// Whether playback is running, i.e. between a successful `play()` and `stop()`.
+    // Stops playback and frees the loaded animation.
+    func unload()
+
     var isPlaying: Bool { get }
 }

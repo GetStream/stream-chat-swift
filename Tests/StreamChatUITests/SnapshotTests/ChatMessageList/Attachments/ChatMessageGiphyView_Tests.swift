@@ -78,10 +78,24 @@ final class ChatMessageGiphyView_Tests: XCTestCase {
         view.content = giphyAttachment(previewURL: URL(string: "https://example.com/first.gif")!)
 
         view.content = giphyAttachment(previewURL: URL(string: "https://example.com/second.gif")!)
-        mediaLoader.completePendingRequests(with: .success(MediaLoaderImage(image: solidImage())))
 
-        XCTAssertEqual(mediaLoader.loadImageCallCount, 2)
+        XCTAssertEqual(mediaLoader.loadTasks.count, 2)
+        XCTAssertEqual(mediaLoader.loadTasks.first?.isCancelled, true)
+        XCTAssertEqual(mediaLoader.loadTasks.last?.isCancelled, false)
+    }
+
+    func test_content_whenCancelledLoadingCompletesLast_keepsTheNewImage() {
+        mediaLoader.completesImmediately = false
+        view.content = giphyAttachment(previewURL: URL(string: "https://example.com/first.gif")!)
+        view.content = giphyAttachment(previewURL: URL(string: "https://example.com/second.gif")!)
+        let secondImage = solidImage()
+
+        mediaLoader.completePendingRequest(at: 1, with: .success(MediaLoaderImage(image: secondImage)))
+        mediaLoader.completePendingRequest(at: 0, with: .success(MediaLoaderImage(image: solidImage())))
+
+        XCTAssertEqual(view.imageView.image, secondImage)
         XCTAssertFalse(view.hasFailed)
+        XCTAssertTrue(view.loadingIndicator.isHidden)
     }
 
     // MARK: - Helpers
@@ -121,15 +135,28 @@ private final class MediaLoader_Stub: MediaLoader, @unchecked Sendable {
     var result: Result<MediaLoaderImage, Error> = .failure(TestError())
     var completesImmediately = true
     var loadImageCallCount = 0
+    var loadTasks: [ImageLoadingTask] = []
 
     private var pendingCompletions: [@MainActor (Result<MediaLoaderImage, Error>) -> Void] = []
 
-    func completePendingRequests(with result: Result<MediaLoaderImage, Error>) {
-        let completions = pendingCompletions
-        pendingCompletions = []
+    func completePendingRequest(at index: Int, with result: Result<MediaLoaderImage, Error>) {
+        let completion = pendingCompletions[index]
         MainActor.assumeIsolated {
-            completions.forEach { $0(result) }
+            completion(result)
         }
+    }
+
+    func loadImageTask(
+        url: URL?,
+        options: ImageLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    ) -> ImageLoadingTask {
+        let task = ImageLoadingTask()
+        loadTasks.append(task)
+        loadImage(url: url, options: options) { result in
+            completion(task.isCancelled ? .failure(CancellationError()) : result)
+        }
+        return task
     }
 
     func loadImage(

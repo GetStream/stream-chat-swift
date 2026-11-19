@@ -66,10 +66,9 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
         imageView.stopAnimating()
         loadingIndicator.isHidden = false
 
-        let task = ImageLoadingTask()
-        imageTask = task
-        components.mediaLoader.loadImage(url: url, options: ImageLoadOptions()) { [weak self] result in
-            guard let self, !task.isCancelled else { return }
+        imageTask = components.mediaLoader.loadImageTask(url: url, options: ImageLoadOptions()) { [weak self] result in
+            guard let self else { return }
+            if case let .failure(error) = result, error is CancellationError { return }
             loadingIndicator.isHidden = true
             switch result {
             case let .success(loadedImage):

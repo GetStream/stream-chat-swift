@@ -27,19 +27,8 @@ final class GIFFrameSource_Tests: XCTestCase {
         XCTAssertEqual(source?.frameDelays ?? [], [0.1, 0.25, 0.02])
     }
 
-    func test_loopCount_whenFileSpecifiesIt_isParsed() {
-        let infinite = GIFFrameSource(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1], loopCount: 0), targetPixelSize: nil)
-        let finite = GIFFrameSource(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1], loopCount: 5), targetPixelSize: nil)
-
-        XCTAssertEqual(infinite?.loopCount, 0)
-        XCTAssertEqual(finite?.loopCount, 5)
-    }
-
-    func test_loopCount_whenFileHasNoLoopingExtension_isOne() {
-        let source = GIFFrameSource(data: GIFFixtures.gifDataWithoutLoopExtension, targetPixelSize: nil)
-
-        XCTAssertEqual(source?.frameCount, 2)
-        XCTAssertEqual(source?.loopCount, 1)
+    func test_init_withoutPixelSize_returnsNil() {
+        XCTAssertNil(GIFFrameSource(data: GIFFixtures.gifDataWithoutPixelSize(), targetPixelSize: nil))
     }
 
     func test_decodeFrame_returnsTheFrameAtTheGivenIndex() {

@@ -63,15 +63,83 @@ final class GIFFrameBuffer_Tests: XCTestCase {
         XCTAssertNil(buffer.cachedFrame(at: 5))
     }
 
-    // MARK: - Helpers
+    func test_cancelPendingDecoding_discardsQueuedWork() {
+        let buffer = makeBuffer(frameCount: 6)
+        buffer.updatePlaybackIndex(0)
 
-    private func makeBuffer(frameCount: Int, byteBudget: Int = GIFFrameBuffer.defaultByteBudget) -> GIFFrameBuffer {
-        let data = GIFFixtures.gifData(frameDelays: Array(repeating: 0.1, count: frameCount))
-        let source = GIFFrameSource(data: data, targetPixelSize: nil)!
-        return GIFFrameBuffer(source: source, byteBudget: byteBudget)
+        buffer.cancelPendingDecoding()
+
+        XCTAssertFalse(waitForFrames(buffer, at: [0], timeout: 0.3))
+        XCTAssertTrue((0..<6).allSatisfy { buffer.cachedFrame(at: $0) == nil })
     }
 
-    /// Waits for the given frames to finish decoding on the buffer's queue.
+    func test_updatePlaybackIndex_afterCancelPendingDecoding_schedulesTheFramesAgain() {
+        let buffer = makeBuffer(frameCount: 6)
+        buffer.updatePlaybackIndex(0)
+        buffer.cancelPendingDecoding()
+
+        buffer.updatePlaybackIndex(0)
+
+        XCTAssertTrue(waitForFrames(buffer, at: [0, 1, 2, 3, 4, 5]))
+    }
+
+    func test_windowIndices_listsTheUpcomingFramesBeforeTheFirstOne() {
+        XCTAssertEqual(GIFFrameBuffer.windowIndices(around: 1, frameCount: 6), [1, 2, 3, 4, 0])
+        XCTAssertEqual(GIFFrameBuffer.windowIndices(around: 4, frameCount: 6), [4, 5, 0, 1])
+    }
+
+    func test_init_whenTheSharedBudgetIsFull_cachesOnlyTheWindow() {
+        let memoryBudget = GIFMemoryBudget(limit: 1)
+        let buffer = makeBuffer(frameCount: 6, memoryBudget: memoryBudget)
+
+        buffer.updatePlaybackIndex(0)
+
+        XCTAssertTrue(waitForFrames(buffer, at: [0, 1, 2, 3]))
+        XCTAssertNil(buffer.cachedFrame(at: 4))
+        XCTAssertNil(buffer.cachedFrame(at: 5))
+    }
+
+    func test_deinit_releasesTheReservedBytes() {
+        let memoryBudget = GIFMemoryBudget(limit: totalBytes(frameCount: 6))
+        var buffer: GIFFrameBuffer? = makeBuffer(frameCount: 6, memoryBudget: memoryBudget)
+        XCTAssertNotNil(buffer)
+        XCTAssertFalse(memoryBudget.reserve(1))
+
+        buffer = nil
+
+        XCTAssertTrue(memoryBudget.reserve(totalBytes(frameCount: 6)))
+    }
+
+    func test_purge_releasesTheReservedBytes() {
+        let memoryBudget = GIFMemoryBudget(limit: totalBytes(frameCount: 6))
+        let buffer = makeBuffer(frameCount: 6, memoryBudget: memoryBudget)
+
+        buffer.purge(keeping: 0)
+
+        XCTAssertTrue(memoryBudget.reserve(totalBytes(frameCount: 6)))
+    }
+
+    // MARK: - Helpers
+
+    private func makeBuffer(
+        frameCount: Int,
+        byteBudget: Int = GIFFrameBuffer.defaultByteBudget,
+        memoryBudget: GIFMemoryBudget = GIFMemoryBudget(limit: 1024 * 1024)
+    ) -> GIFFrameBuffer {
+        GIFFrameBuffer(source: makeSource(frameCount: frameCount), byteBudget: byteBudget, memoryBudget: memoryBudget)
+    }
+
+    private func makeSource(frameCount: Int) -> GIFFrameSource {
+        let data = GIFFixtures.gifData(frameDelays: Array(repeating: 0.1, count: frameCount))
+        return GIFFrameSource(data: data, targetPixelSize: nil)!
+    }
+
+    private func totalBytes(frameCount: Int) -> Int {
+        let source = makeSource(frameCount: frameCount)
+        return source.frameCount * source.bytesPerFrame
+    }
+
+    // Waits for the given frames to finish decoding on the buffer's queue.
     private func waitForFrames(_ buffer: GIFFrameBuffer, at indices: [Int], timeout: TimeInterval = 5) -> Bool {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
