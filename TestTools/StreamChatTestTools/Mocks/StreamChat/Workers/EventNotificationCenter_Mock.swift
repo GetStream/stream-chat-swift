@@ -14,7 +14,7 @@ final class EventNotificationCenter_Mock: PersistentEventNotificationCenter, @un
     var newMessageIdsMock: Set<MessageId>?
 
     lazy var mock_process = MockFunc<([Event], Bool, (@Sendable () -> Void)?), Void>.mock(for: process)
-    var mock_processCalledWithEvents: [Event] = []
+    @Atomic var mock_processCalledWithEvents: [Event] = []
 
     var registerManualEventHandling_calledWith: ChannelId?
     var registerManualEventHandling_callCount = 0

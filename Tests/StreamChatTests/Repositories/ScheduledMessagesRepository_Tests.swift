@@ -295,6 +295,48 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertNil(sentMessage?.localState)
     }
 
+    func test_sendPendingChanges_whenScheduled_doesNotReportItAsSentNow() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        apiClient.test_mockResponseResult(.success(sendMessageResponse(.dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId)))))
+
+        nonisolated(unsafe) var event: ScheduledMessageSentEvent?
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", didSendNow: { event = $0 }, completion: $0) }
+
+        XCTAssertNil(event)
+    }
+
+    func test_sendPendingChanges_whenTheMessageAlreadyExists_treatsItAsSentNow() throws {
+        try database.createChannel(cid: cid)
+        _ = try schedule(id: "scheduled-id", content: content(text: "Hello")).get()
+        // The message arrived through an event while the first request was in flight, and its response was lost.
+        try database.writeSynchronously { [cid, userId] session in
+            let message = session.scheduledMessage(id: "scheduled-id")?.message
+            message?.localMessageState = .sending
+            _ = try session.saveMessage(
+                payload: .dummy(messageId: "scheduled-id", authorUserId: userId!, text: "Hello", cid: cid!),
+                syncOwnReactions: false,
+                skipDraftUpdate: false,
+                cache: nil
+            )
+            message?.localMessageState = .pendingSend
+        }
+        let error = ClientError(with: APIError(code: 4, message: "Message scheduled-id already exists.", statusCode: 400))
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
+
+        nonisolated(unsafe) var event: ScheduledMessageSentEvent?
+        let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", didSendNow: { event = $0 }, completion: $0) }
+
+        XCTAssertNil(try result.get())
+        XCTAssertEqual(try storedMessages(), [])
+        XCTAssertEqual(event?.isSentNow, true)
+        XCTAssertEqual(event?.messageId, "scheduled-id")
+        let sentMessage = try database.readSynchronously { session in
+            try session.message(id: "scheduled-id")?.asModel()
+        }
+        XCTAssertEqual(sentMessage?.cid, cid)
+        XCTAssertNil(sentMessage?.localState)
+    }
+
     func test_sendPendingChanges_whenItWasAlreadySent_removesIt() throws {
         try assertSendPendingChangesRemovesTheMessage(code: 123, reason: "scheduled_message_already_sent")
     }
@@ -741,7 +783,15 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_asModel_exposesTheChannelSummaryOfTheResponse() throws {
         let response = ScheduledMessageResponse.dummy(
             cid: cid,
-            channel: .init(cid: cid.rawValue, id: cid.id, image: "https://example.com/channel.png", name: "General", type: cid.type.rawValue)
+            channel: channelSummary(
+                image: "https://example.com/channel.png",
+                memberCount: 12,
+                members: [
+                    .dummy(user: .dummy(userId: "bob"), createdAt: Date(timeIntervalSince1970: 2), role: .moderator),
+                    .dummy(user: .dummy(userId: "alice"), createdAt: Date(timeIntervalSince1970: 1))
+                ],
+                name: "General"
+            )
         )
 
         let message = try XCTUnwrap(model(from: response))
@@ -751,6 +801,45 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(message.channel.id, cid.id)
         XCTAssertEqual(message.channel.name, "General")
         XCTAssertEqual(message.channel.imageURL, URL(string: "https://example.com/channel.png"))
+        XCTAssertEqual(message.channel.memberCount, 12)
+        XCTAssertEqual(message.channel.members.map(\.id), ["alice", "bob"])
+        XCTAssertEqual(message.channel.members.map(\.memberRole), [.member, .moderator])
+    }
+
+    func test_asModel_ofADeletedChannel_hasNoMembers() throws {
+        _ = try XCTUnwrap(model(from: .dummy(id: "scheduled-id", cid: cid, channel: channelSummary(memberCount: 2, members: [.dummy(), .dummy()]))))
+        let message = try XCTUnwrap(model(from: .dummy(id: "scheduled-id", cid: cid, channel: channelSummary(memberCount: 0, members: []))))
+        XCTAssertEqual(message.channel.memberCount, 0)
+        XCTAssertEqual(message.channel.members, [])
+    }
+
+    func test_asModel_withoutChannelInALaterResponse_keepsTheMembers() throws {
+        _ = try XCTUnwrap(model(from: .dummy(id: "scheduled-id", cid: cid, channel: channelSummary(memberCount: 3, members: [.dummy(user: .dummy(userId: "alice"))]))))
+        let message = try XCTUnwrap(model(from: .dummy(id: "scheduled-id", cid: cid)))
+        XCTAssertEqual(message.channel.memberCount, 3)
+        XCTAssertEqual(message.channel.members.map(\.id), ["alice"])
+    }
+
+    func test_asModel_ofAReply_savesTheQuotedMessageOfTheResponse() throws {
+        try database.createChannel(cid: cid)
+        let content = ScheduledMessageContentResponse.dummy(
+            quotedMessage: .dummy(type: .deleted, messageId: "quoted-id", text: "See you at 5", cid: cid),
+            quotedMessageId: "quoted-id"
+        )
+        let message = try XCTUnwrap(model(from: .dummy(cid: cid, message: content)))
+        XCTAssertEqual(message.message.quotedMessage?.id, "quoted-id")
+        XCTAssertEqual(message.message.quotedMessage?.text, "See you at 5")
+        XCTAssertEqual(message.message.quotedMessage?.type, .deleted)
+    }
+
+    func test_asModel_ofAReply_withoutALocalChannel_keepsOnlyTheIdOfTheQuotedMessage() throws {
+        let content = ScheduledMessageContentResponse.dummy(
+            quotedMessage: .dummy(messageId: "quoted-id", text: "See you at 5", cid: cid),
+            quotedMessageId: "quoted-id"
+        )
+        let message = try XCTUnwrap(model(from: .dummy(cid: cid, message: content)))
+        XCTAssertNil(message.message.quotedMessage)
+        XCTAssertEqual(message.quotedMessageId, "quoted-id")
     }
 
     func test_asModel_withoutChannelInTheResponse_usesTheLocalChannel() throws {
@@ -804,7 +893,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     func test_decoding_theBackendResponse() throws {
         let json = """
-        {"scheduled_messages":[{"id":"ed08342b","cid":"messaging:sdk-general","user":{"id":"alice","name":"Alice","image":"https://example.com/alice.png","custom":{"birthland":"Staging"},"language":"","role":"user","teams":[],"created_at":1792418880247724000,"updated_at":1792421345756446000,"banned":false,"online":true,"last_active":1792425445149728740,"blocked_user_ids":[]},"message":{"text":"Reminder","custom":{}},"scheduled_at":1792678087853949000,"status":"scheduled","created_at":1792418888352383000,"updated_at":1792418888352383000,"channel":{"cid":"messaging:sdk-general","type":"messaging","id":"sdk-general","name":"General"}}],"next":"cursor","duration":"5.67ms"}
+        {"scheduled_messages":[{"id":"ed08342b","cid":"messaging:sdk-general","user":{"id":"alice","name":"Alice","image":"https://example.com/alice.png","custom":{"birthland":"Staging"},"language":"","role":"user","teams":[],"created_at":1792418880247724000,"updated_at":1792421345756446000,"banned":false,"online":true,"last_active":1792425445149728740,"blocked_user_ids":[]},"message":{"text":"Reminder","custom":{},"quoted_message_id":"quoted-id","quoted_message":{"id":"quoted-id","text":"See you at 5","html":"<p>See you at 5</p>\\n","type":"regular","user":{"id":"alice","name":"Alice","image":"https://example.com/alice.png","custom":{"birthland":"Staging"},"language":"","role":"user","teams":[],"created_at":1792418880247724000,"updated_at":1792421345756446000,"banned":false,"online":true,"last_active":1792425445149728740,"blocked_user_ids":[]},"attachments":[],"latest_reactions":[],"own_reactions":[],"mentioned_users":[],"reaction_counts":{},"reaction_scores":{},"reply_count":0,"deleted_reply_count":0,"cid":"messaging:sdk-general","created_at":1792418870247724000,"updated_at":1792418870247724000,"shadowed":false,"silent":false,"pinned":false,"custom":{}}},"scheduled_at":1792678087853949000,"status":"scheduled","created_at":1792418888352383000,"updated_at":1792418888352383000,"channel":{"cid":"messaging:sdk-general","type":"messaging","id":"sdk-general","name":"General","member_count":2,"members":[{"user_id":"alice","user":{"id":"alice","name":"Alice","image":"https://example.com/alice.png","custom":{"birthland":"Staging"},"language":"","role":"user","teams":[],"created_at":1792418880247724000,"updated_at":1792421345756446000,"banned":false,"online":true,"last_active":1792425445149728740,"blocked_user_ids":[]},"status":"member","created_at":1792418880247724000,"updated_at":1792418880247724000,"banned":false,"shadow_banned":false,"role":"owner","channel_role":"channel_moderator","notifications_muted":false}]}}],"next":"cursor","duration":"5.67ms"}
         """
 
         let response = try JSONDecoder.stream.decode(QueryScheduledMessagesResponse.self, from: Data(json.utf8))
@@ -816,6 +905,10 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(message.message.text, "Reminder")
         XCTAssertEqual(message.message.author.id, "alice")
         XCTAssertEqual(message.channel.name, "General")
+        XCTAssertEqual(message.channel.memberCount, 2)
+        XCTAssertEqual(message.channel.members.map(\.id), ["alice"])
+        XCTAssertEqual(message.channel.members.first?.memberRole, .moderator)
+        XCTAssertEqual(response.scheduledMessages.first?.message.quotedMessage?.text, "See you at 5")
         XCTAssertEqual(message.status, .scheduled)
         XCTAssertEqual(message.scheduledAt.timeIntervalSince1970, 1_792_678_087.853949, accuracy: 0.001)
     }
@@ -953,13 +1046,47 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_delete_whenTheRequestFails_failsAndKeepsTheMessage() throws {
         try saveOnServer(id: "scheduled-id")
         let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
-        let error = ClientError(with: APIError(code: 4, message: "This scheduled message no longer exists", statusCode: 404))
+        let error = ClientError(with: APIError(code: -1, message: "Internal error", statusCode: 500))
         apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(error))
 
         let result = try waitFor { repository.delete(id: message.id, completion: $0) }
 
         XCTAssertNotNil(result)
         XCTAssertEqual(try storedMessages(), [message])
+    }
+
+    func test_delete_whenTheServerNoLongerHasTheMessage_removesItAndFails() throws {
+        try saveOnServer(id: "scheduled-id")
+        apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(notFoundError()))
+        let error = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
+        XCTAssertTrue(error is ClientError.ScheduledMessageDoesNotExist, "\(String(describing: error))")
+        XCTAssertEqual(try storedMessages(), [])
+    }
+
+    func test_delete_whenItWasAlreadySentOrCanceled_removesItAndFails() throws {
+        for (code, reason) in [(123, "scheduled_message_already_sent"), (124, "scheduled_message_canceled")] {
+            try saveOnServer(id: "scheduled-id")
+            let apiError = APIError(code: code, message: reason, statusCode: 400)
+            apiError.exceptionFields = ["reason": reason]
+            apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(ClientError(with: apiError)))
+            let error = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
+            if code == 123 {
+                XCTAssertTrue(error is ClientError.ScheduledMessageAlreadySent, "\(reason): \(String(describing: error))")
+            } else {
+                XCTAssertTrue(error is ClientError.ScheduledMessageDoesNotExist, "\(reason): \(String(describing: error))")
+            }
+            XCTAssertEqual(try storedMessages(), [])
+        }
+    }
+
+    func test_delete_whenTheServerIsSendingTheMessage_failsAndKeepsIt() throws {
+        try saveOnServer(id: "scheduled-id")
+        let apiError = APIError(code: 121, message: "scheduled message scheduled-id is being sent", statusCode: 409)
+        apiError.exceptionFields = ["reason": "scheduled_message_sending"]
+        apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(ClientError(with: apiError)))
+        let error = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
+        XCTAssertTrue(error is ClientError.ScheduledMessageIsBeingSent, "\(String(describing: error))")
+        XCTAssertEqual(try storedMessages().map(\.id), ["scheduled-id"])
     }
 
     // MARK: - Send now
@@ -1198,6 +1325,41 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try storedMessages(query: channelsQuery).map(\.id), [otherChannel.id])
     }
 
+    // MARK: - Usage
+
+    func test_usage_countsThePendingMessagesOfTheChannelAndOfAllChannels() throws {
+        let otherCid = ChannelId.unique
+        try saveChannel(config: .mock(scheduledMessagesMaxPerChannel: 2, scheduledMessagesMaxPerUser: 5))
+        _ = try schedule().get()
+        _ = try waitFor {
+            repository.schedule(
+                id: .unique,
+                cid: otherCid,
+                content: content(),
+                scheduledAt: Date().addingTimeInterval(3600),
+                completion: $0
+            )
+        }.get()
+
+        let usage = try waitFor { repository.usage(cid: cid, completion: $0) }.get()
+
+        XCTAssertEqual(usage, ScheduledMessagesUsage(channelCount: 1, channelLimit: 2, userCount: 2, userLimit: 5))
+    }
+
+    func test_usage_countsAFailedEditButNotAFailedSchedule() throws {
+        _ = try schedule().get()
+        _ = try schedule(id: "failed-id").get()
+        let apiError = APIError(code: 4, message: "banned", statusCode: 403)
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
+        _ = try waitFor { repository.sendPendingChanges(id: "failed-id", completion: $0) }
+        try saveOnServer(id: "edit-failed-id")
+        try database.writeSynchronously { session in
+            session.scheduledMessage(id: "edit-failed-id")?.message?.localMessageState = .syncingFailed
+        }
+        let usage = try waitFor { repository.usage(cid: cid, completion: $0) }.get()
+        XCTAssertEqual(usage, ScheduledMessagesUsage(channelCount: 2, channelLimit: nil, userCount: 2, userLimit: nil))
+    }
+
     // MARK: - Helpers
 
     private func saveMessage(id: MessageId) throws {
@@ -1261,6 +1423,15 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     private func sendNowResponse(id: String) -> SendScheduledMessageNowResponse {
         SendScheduledMessageNowResponse(scheduledMessage: .dummy(id: id, cid: cid, user: .dummy(userId: userId), status: .sending))
+    }
+
+    private func channelSummary(
+        image: String? = nil,
+        memberCount: Int = 0,
+        members: [MemberPayload] = [],
+        name: String? = nil
+    ) -> ScheduledMessageChannelResponse {
+        .init(cid: cid.rawValue, id: cid.id, image: image, memberCount: memberCount, members: members, name: name, type: cid.type.rawValue)
     }
 
     private func saveOnServer(id: String) throws {
@@ -1376,6 +1547,7 @@ extension ScheduledMessageContentResponse {
         parentId: String? = nil,
         pinExpires: Date? = nil,
         pinned: Bool? = nil,
+        quotedMessage: MessageResponse? = nil,
         quotedMessageId: String? = nil,
         showInChannel: Bool? = nil
     ) -> ScheduledMessageContentResponse {
@@ -1389,6 +1561,7 @@ extension ScheduledMessageContentResponse {
             parentId: parentId,
             pinExpires: pinExpires,
             pinned: pinned,
+            quotedMessage: quotedMessage,
             quotedMessageId: quotedMessageId,
             showInChannel: showInChannel,
             text: text

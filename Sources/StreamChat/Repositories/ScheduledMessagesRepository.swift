@@ -72,6 +72,10 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         }
     }
 
+    func usage(cid: ChannelId, completion: @escaping @Sendable (Result<ScheduledMessagesUsage, Error>) -> Void) {
+        database.read({ try $0.scheduledMessagesUsage(cid: cid) }, completion: completion)
+    }
+
     /// Schedules a message locally.
     ///
     /// The message is in the list right away. The `MessageScheduler` sends it to the server once its attachments are uploaded.
@@ -145,13 +149,24 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             switch result {
             case .success(true):
                 apiClient.request(endpoint: .deleteScheduledMessage(id: id)) { [weak self] result in
-                    if let error = result.error {
-                        completion(error)
+                    let apiError = (result.error as? ClientError)?.apiError
+                    let reason = apiError.flatMap(ScheduledMessageFailure.ServerRejection.Reason.init(apiError:))
+                    let isGoneFromServer = result.error?.isBackendNotFound404StatusCode == true
+                        || reason == .scheduledMessageAlreadySent || reason == .scheduledMessageCanceled
+                    if let error = result.error, !isGoneFromServer {
+                        completion(reason == .scheduledMessageSending ? ClientError.ScheduledMessageIsBeingSent(id: id) : error)
                         return
                     }
                     self?.database.write({ session in
                         session.deleteScheduledMessage(id: id)
-                    }, completion: completion)
+                    }, completion: { error in
+                        guard error == nil, isGoneFromServer else { return completion(error) }
+                        completion(
+                            reason == .scheduledMessageAlreadySent
+                                ? ClientError.ScheduledMessageAlreadySent(id: id)
+                                : ClientError.ScheduledMessageDoesNotExist(id: id)
+                        )
+                    })
                 }
             case .success(false):
                 completion(nil)
@@ -181,7 +196,14 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     /// Called by the `MessageScheduler` once the attachments of the message are uploaded. Completes with `nil` when the
     /// message is no longer scheduled: the server sent it right away because its date passed while offline, it was
     /// already sent, or it was deleted on another device.
-    func sendPendingChanges(id: String, completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void) {
+    ///
+    /// `didSendNow` is called before the completion when the server sent the message right away. The server sends
+    /// no event for it.
+    func sendPendingChanges(
+        id: String,
+        didSendNow: (@Sendable (ScheduledMessageSentEvent) -> Void)? = nil,
+        completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void
+    ) {
         enum Request {
             case schedule(cid: ChannelId, request: SendMessageRequest)
             case update(UpdateScheduledMessageRequest)
@@ -223,7 +245,12 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 apiClient.request(endpoint: endpoint) { [weak self] result in
                     if case let .success(response) = result, response.scheduledMessage == nil {
                         // A date in the past is sent right away as a normal message.
-                        self?.saveSentMessage(response.message, scheduledMessageId: id, completion: completion)
+                        self?.saveSentMessage(response.message, scheduledMessageId: id, didSendNow: didSendNow, completion: completion)
+                        return
+                    }
+                    if let error = result.error, error.isMessageAlreadyExistsError {
+                        // The response of an earlier attempt, which sent the message right away, was lost.
+                        self?.saveSentMessage(nil, scheduledMessageId: id, didSendNow: didSendNow, completion: completion)
                         return
                     }
                     self?.complete(
@@ -339,43 +366,83 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     }
 
     private func saveSentMessage(
-        _ message: MessageResponse,
+        // `nil` when the server only told that the message already exists.
+        _ message: MessageResponse?,
         scheduledMessageId: String,
+        didSendNow: (@Sendable (ScheduledMessageSentEvent) -> Void)?,
         completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void
     ) {
-        database.write({ session in
+        database.write(converting: { session -> ScheduledMessageSentEvent? in
+            let scheduledMessage = try? session.scheduledMessage(id: scheduledMessageId)?.asModel()
             // Saved first: when the sent message has the id of the scheduled one, it keeps its content.
-            let messageDTO = try session.saveMessage(payload: message, syncOwnReactions: false, skipDraftUpdate: false, cache: nil)
-            if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
-                messageDTO.markMessageAsSent()
+            let messageDTO = try message.map {
+                try session.saveMessage(payload: $0, syncOwnReactions: false, skipDraftUpdate: false, cache: nil)
+            } ?? session.message(id: scheduledMessageId)
+            if messageDTO?.localMessageState == .sending || messageDTO?.localMessageState == .sendingFailed {
+                messageDTO?.markMessageAsSent()
             }
             session.deleteScheduledMessage(id: scheduledMessageId)
-        }, completion: { error in
-            completion(error.map { .failure($0) } ?? .success(nil))
+            return scheduledMessage.map {
+                ScheduledMessageSentEvent(
+                    scheduledMessage: $0,
+                    messageId: message?.id ?? scheduledMessageId,
+                    sentNow: true,
+                    createdAt: Date()
+                )
+            }
+        }, completion: { result in
+            switch result {
+            case let .success(event):
+                if let event {
+                    didSendNow?(event)
+                }
+                completion(.success(nil))
+            case let .failure(error):
+                completion(.failure(error))
+            }
         })
     }
 }
 
 extension ClientError {
-    final class ScheduledMessageDoesNotExist: ClientError, @unchecked Sendable {
+    /// There is no scheduled message with the given id: it is not in the local database, or the server no longer
+    /// has it, for example because it was deleted on another device.
+    public final class ScheduledMessageDoesNotExist: ClientError, @unchecked Sendable {
         init(id: String) {
             super.init("There is no scheduled message with id: \(id).")
         }
     }
 
-    final class ScheduledMessageHasACommand: ClientError, @unchecked Sendable {
+    /// The scheduled message was already sent, so the server no longer has it.
+    public final class ScheduledMessageAlreadySent: ClientError, @unchecked Sendable {
+        init(id: String) {
+            super.init("The scheduled message with id: \(id) was already sent.")
+        }
+    }
+
+    /// The server is sending the scheduled message right now, so it can't be changed or deleted.
+    public final class ScheduledMessageIsBeingSent: ClientError, @unchecked Sendable {
+        init(id: String) {
+            super.init("The scheduled message with id: \(id) is being sent.")
+        }
+    }
+
+    /// The message starts with a slash command, which cannot be scheduled.
+    public final class ScheduledMessageHasACommand: ClientError, @unchecked Sendable {
         init() {
             super.init("Slash commands cannot be scheduled.")
         }
     }
 
-    final class ScheduledMessageQuotesADeletedMessage: ClientError, @unchecked Sendable {
+    /// The scheduled message quotes a message that was deleted.
+    public final class ScheduledMessageQuotesADeletedMessage: ClientError, @unchecked Sendable {
         init() {
             super.init("The quoted message was deleted. Remove the quote and try again.")
         }
     }
 
-    final class ScheduledMessageIsTooFarAhead: ClientError, @unchecked Sendable {
+    /// The date is further ahead than the app allows.
+    public final class ScheduledMessageIsTooFarAhead: ClientError, @unchecked Sendable {
         init(maxLeadTime: TimeInterval) {
             let formatter = DateComponentsFormatter()
             formatter.allowedUnits = [.day, .hour, .minute]
@@ -386,13 +453,15 @@ extension ClientError {
         }
     }
 
-    final class ScheduledMessagesChannelLimitReached: ClientError, @unchecked Sendable {
+    /// The current user has as many pending scheduled messages in the channel as the app allows.
+    public final class ScheduledMessagesChannelLimitReached: ClientError, @unchecked Sendable {
         init(limit: Int) {
             super.init("You can have at most \(limit) scheduled messages in this channel.")
         }
     }
 
-    final class ScheduledMessagesUserLimitReached: ClientError, @unchecked Sendable {
+    /// The current user has as many pending scheduled messages as the app allows.
+    public final class ScheduledMessagesUserLimitReached: ClientError, @unchecked Sendable {
         init(limit: Int) {
             super.init("You can have at most \(limit) scheduled messages.")
         }
@@ -465,6 +534,10 @@ extension ScheduledMessagesRepository {
         try await withCheckedThrowingContinuation { continuation in
             loadScheduledMessages(query: query) { continuation.resume(with: $0) }
         }
+    }
+
+    func usage(cid: ChannelId) async throws -> ScheduledMessagesUsage {
+        try await database.read { try $0.scheduledMessagesUsage(cid: cid) }
     }
 
     func schedule(id: String, cid: ChannelId, content: ScheduledMessageContent, scheduledAt: Date) async throws -> ScheduledMessage {

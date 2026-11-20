@@ -1952,6 +1952,23 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     // MARK: - Scheduled Messages
 
+    /// Loads how many scheduled messages the current user has in the channel and in all channels, next to the limits of the app.
+    ///
+    /// Use it to tell whether a limit is reached before scheduling a message, for example to disable scheduling in the UI.
+    /// The counts come from the local database. The server can still reject a scheduled message later.
+    ///
+    /// - Parameter completion: Called with the usage, with `ClientError.ChannelNotCreatedYet` when the channel is not created
+    /// yet, or with an error reading the local database.
+    public func scheduledMessagesUsage(completion: @escaping @MainActor (Result<ScheduledMessagesUsage, Error>) -> Void) {
+        guard let cid else {
+            callback { completion(.failure(ClientError.ChannelNotCreatedYet())) }
+            return
+        }
+        client.scheduledMessagesRepository.usage(cid: cid) { result in
+            self.callback { completion(result) }
+        }
+    }
+
     /// Schedules a new message to be sent to the channel at a later date.
     ///
     /// The message is not added to the channel until it is sent. Local attachments are uploaded when scheduling.
@@ -2065,7 +2082,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - completion: Called when the message is deleted, with an error if it failed.
+    ///   - completion: Called when the message is deleted, with an error if it failed. The error is
+    ///   `ClientError.ScheduledMessageAlreadySent` when the server already sent the message, and `ClientError.ScheduledMessageDoesNotExist`
+    ///   when the server no longer has it, for example because it was deleted on another device. In both cases the message is removed locally.
+    ///   It is `ClientError.ScheduledMessageIsBeingSent` when the server is sending the message right now.
     public func deleteScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
         client.scheduledMessagesRepository.delete(id: id) { error in
             self.callback { completion?(error) }
