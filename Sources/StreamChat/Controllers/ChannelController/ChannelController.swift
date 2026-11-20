@@ -1976,9 +1976,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - messageId: The id of the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
     ///   - text: Text of the message.
+    ///   - silent: A flag indicating whether the message is a silent message.
     ///   - attachments: An array of the attachments for the message.
     ///   - mentionedUserIds: An array of the users mentioned in the message.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel.
+    ///   - mentionedChannel: If true, the message mentions all members of the channel.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message.
+    ///   - mentionedRoles: The list of roles mentioned in the message.
     ///   - quotedMessageId: An id of the message the new message quotes.
+    ///   - skipPush: If true, skips sending push notification to channel members.
     ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the message right away.
     ///   - extraData: Additional extra data of the message object.
@@ -1988,9 +1994,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     public func scheduleMessage(
         messageId: MessageId? = nil,
         text: String,
+        silent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
         scheduledAt: Date,
         extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
@@ -2003,9 +2015,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             text: text,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             parentId: nil,
             showReplyInChannel: false,
+            isSilent: silent,
+            skipPush: skipPush,
             extraData: extraData
         )
         client.scheduledMessagesRepository.schedule(
@@ -2022,11 +2040,19 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// A failed scheduled message can not be changed: delete it and schedule a new one.
     ///
+    /// - Important: The update replaces the message, so arguments that are left out are cleared, except `skipPush`, which
+    /// keeps the value the message was scheduled with.
+    ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
     ///   - text: The new text of the message.
+    ///   - silent: A flag indicating whether the message is a silent message.
     ///   - attachments: The new attachments of the message.
     ///   - mentionedUserIds: The new mentioned users of the message.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel.
+    ///   - mentionedChannel: If true, the message mentions all members of the channel.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message.
+    ///   - mentionedRoles: The list of roles mentioned in the message.
     ///   - quotedMessageId: The new quoted message of the message.
     ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
@@ -2038,8 +2064,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     public func updateScheduledMessage(
         id: String,
         text: String,
+        silent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId? = nil,
         scheduledAt: Date? = nil,
         extraData: [String: RawJSON] = [:],
@@ -2049,9 +2080,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             text: text,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             parentId: nil,
             showReplyInChannel: false,
+            isSilent: silent,
             extraData: extraData
         )
         client.scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt) { result in

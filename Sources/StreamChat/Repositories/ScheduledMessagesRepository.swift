@@ -9,9 +9,15 @@ struct ScheduledMessageContent: Sendable {
     var text: String
     var attachments: [AnyAttachmentPayload]
     var mentionedUserIds: [UserId]
+    var mentionedHere = false
+    var mentionedChannel = false
+    var mentionedGroupIds: [String] = []
+    var mentionedRoles: [String] = []
     var quotedMessageId: MessageId?
     var parentId: MessageId?
     var showReplyInChannel: Bool
+    var isSilent = false
+    var skipPush = false
     var extraData: [String: RawJSON]
 }
 
@@ -220,7 +226,11 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             case .pendingSend:
                 message.localMessageState = .sending
                 let cid = try ChannelId(cid: dto.cid)
-                return .schedule(cid: cid, request: SendMessageRequest(message: message.asMessageRequest(quotedMessageId: dto.quotedMessageId), scheduledAt: scheduledAt))
+                return .schedule(cid: cid, request: SendMessageRequest(
+                    message: message.asMessageRequest(quotedMessageId: dto.quotedMessageId),
+                    scheduledAt: scheduledAt,
+                    skipPush: message.skipPush
+                ))
             case .pendingSync:
                 message.localMessageState = .syncing
                 // The backend ignores the id of the message.
