@@ -6063,6 +6063,34 @@ final class ChannelController_Tests: XCTestCase {
 
     // MARK: - Scheduled Messages
 
+    func test_scheduledMessagesUsage_whenTheChannelIsNotCreatedYet_fails() throws {
+        controller = ChatChannelController(
+            channelQuery: ChannelQuery(type: .messaging, id: nil, channelInput: ChannelInput()),
+            channelListQuery: nil,
+            client: client,
+            isChannelAlreadyCreated: false
+        )
+
+        let result = try waitFor { controller.scheduledMessagesUsage(completion: $0) }
+
+        XCTAssertTrue(result.error is ClientError.ChannelNotCreatedYet, "\(String(describing: result.error))")
+    }
+
+    func test_scheduledMessagesUsage_returnsTheCountsAndLimits() throws {
+        let config = ChannelConfig.mock(scheduledMessagesMaxPerChannel: 1, scheduledMessagesMaxPerUser: 5)
+        try client.databaseContainer.createCurrentUser()
+        try client.databaseContainer.writeSynchronously { [channelId] session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId!, config: config)))
+        }
+        _ = try waitFor {
+            controller.scheduleMessage(text: "Later", scheduledAt: Date().addingTimeInterval(3600), completion: $0)
+        }.get()
+
+        let usage = try waitFor { controller.scheduledMessagesUsage(completion: $0) }.get()
+
+        XCTAssertEqual(usage, ScheduledMessagesUsage(channelCount: 1, channelLimit: 1, userCount: 1, userLimit: 5))
+    }
+
     func test_startWatching_whenTheQueryIncludesScheduledMessages_includesThemInTheRequest() {
         var query = ChannelQuery(cid: channelId)
         query.includeScheduledMessages = true

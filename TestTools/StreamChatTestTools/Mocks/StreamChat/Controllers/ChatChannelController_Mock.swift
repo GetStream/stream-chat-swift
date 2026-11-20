@@ -76,6 +76,13 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
         createNewMessageCallCount += 1
     }
 
+    @Atomic var scheduledMessagesUsage_result: Result<ScheduledMessagesUsage, Error> = .success(
+        ScheduledMessagesUsage(channelCount: 0, channelLimit: nil, userCount: 0, userLimit: nil)
+    )
+    override func scheduledMessagesUsage(completion: @escaping @MainActor (Result<ScheduledMessagesUsage, Error>) -> Void) {
+        callback { completion(self.scheduledMessagesUsage_result) }
+    }
+
     var hasLoadedAllNextMessages_mock: Bool? = true
     override var hasLoadedAllNextMessages: Bool {
         hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages

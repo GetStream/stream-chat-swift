@@ -24,8 +24,14 @@ class MessageScheduler: Worker, @unchecked Sendable {
 
     private let observer: StateLayerDatabaseObserver<ListResult, String, ScheduledMessageDTO>
     private let scheduledMessagesRepository: ScheduledMessagesRepository
+    private let eventNotificationCenter: EventNotificationCenter
 
-    init(scheduledMessagesRepository: ScheduledMessagesRepository, database: DatabaseContainer, apiClient: APIClient) {
+    init(
+        scheduledMessagesRepository: ScheduledMessagesRepository,
+        eventNotificationCenter: EventNotificationCenter,
+        database: DatabaseContainer,
+        apiClient: APIClient
+    ) {
         observer = StateLayerDatabaseObserver(
             database: database,
             fetchRequest: ScheduledMessageDTO.pendingRequestsFetchRequest(),
@@ -33,6 +39,7 @@ class MessageScheduler: Worker, @unchecked Sendable {
             itemReuseKeyPaths: nil
         )
         self.scheduledMessagesRepository = scheduledMessagesRepository
+        self.eventNotificationCenter = eventNotificationCenter
         super.init(database: database, apiClient: apiClient)
 
         startObserving()
@@ -77,7 +84,10 @@ class MessageScheduler: Worker, @unchecked Sendable {
         }
         guard let id = nextId else { return }
 
-        scheduledMessagesRepository.sendPendingChanges(id: id) { [weak self] result in
+        let didSendNow: @Sendable (ScheduledMessageSentEvent) -> Void = { [eventNotificationCenter] event in
+            eventNotificationCenter.process(event)
+        }
+        scheduledMessagesRepository.sendPendingChanges(id: id, didSendNow: didSendNow) { [weak self] result in
             guard let self else { return }
             if let error = result.error, ClientError.isEphemeral(error: error) {
                 isWaitingForConnection = true
