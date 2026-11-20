@@ -646,6 +646,32 @@ public extension Appearance {
             config: UIImage.SymbolConfiguration(pointSize: 13)
         )
 
+        // MARK: - V5 - Scheduled Message Icons
+
+        /// The icon of the scheduled messages row in the channel info.
+        public var channelInfoScheduledMessages: UIImage = loadSafely(systemName: "clock")
+        /// The icon of the reschedule action of a scheduled message.
+        public var messageActionReschedule: UIImage = loadSafely(systemName: "clock")
+        /// The icon shown when there are no scheduled messages.
+        public var noScheduledMessages: UIImage = loadSafely(systemName: "clock")
+        /// The icon next to the failure of a scheduled message.
+        public var scheduledMessageFailedIndicator: UIImage = loadSafely(systemName: "exclamationmark.triangle.fill")
+        /// The icon of the scheduled messages banner in the composer.
+        public var scheduledMessagesBanner: UIImage = loadSafely(systemName: "clock")
+        /// The icon of the scheduled messages banner in the composer when a scheduled message failed.
+        public var scheduledMessagesBannerFailed: UIImage = loadSafely(systemName: "exclamationmark.circle")
+        /// The icon shown when the scheduled messages fail to load.
+        public var scheduledMessagesLoadError: UIImage = loadSafely(systemName: "exclamationmark.circle")
+        /// The icon of a time to schedule a message at.
+        public var scheduleMessageTime: UIImage = loadSafely(systemName: "clock")
+
+        // MARK: - V5 - Notification Icons
+
+        /// The icon of an error notification.
+        public var notificationError: UIImage = loadSafely(systemName: "exclamationmark.circle")
+        /// The icon of an informational notification.
+        public var notificationInfo: UIImage = loadSafely(systemName: "info.circle")
+
         // MARK: - Mention Suggestion Icons
 
         public var mentionHere: UIImage = loadSafely(

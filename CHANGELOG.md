@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix the composer sending typing events when attachments are added or removed [#4407](https://github.com/GetStream/stream-chat-swift/pull/4407)
 
+## StreamChatCommonUI
+### ✅ Added
+- Add scheduled message date and failure formatters, icons, colors and localization keys [#4427](https://github.com/GetStream/stream-chat-swift/pull/4427)
+
 ## StreamChatAI
 ### ✅ Added
 - Add `transcription.error.speech_recognition_denied`, `transcription.error.microphone_denied` and `sidebar.button.close` localization keys [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
