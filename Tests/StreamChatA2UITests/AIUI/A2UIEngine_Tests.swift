@@ -339,6 +339,16 @@ final class A2UIEngine_Tests: XCTestCase {
         XCTAssertEqual(errors.first?.error.path, "/p")
     }
 
+    func test_aMessageThatDoesNotRead_isReportedByItsNumberWithoutItsText() {
+        var errors: [A2UIError] = []
+        let renderer = A2UIRenderer(onError: { error, _ in errors.append(error) })
+        let engine = A2UIEngine(renderer: renderer, host: host)
+
+        _ = engine.view(for: document([createSurface, #"{"name": Ada Lovelace}"#].joined(separator: "\n")), messageID: "m1")
+
+        XCTAssertEqual(errors.map(\.message), ["Message 2 of the reply couldn't be read as a JSON object."])
+    }
+
     func test_aReplyWithNoSurfacesOfItsOwn_showsItsText() {
         let updateOnly = #"{"version": "1.0", "updateDataModel": {"surfaceId": "elsewhere", "value": {"a": 1}}}"#
 

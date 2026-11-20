@@ -33,7 +33,9 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     private let rendererMessagesSubject = PassthroughSubject<RendererMessage, Never>()
     private var remoteCalls: [RemoteCallKey: RemoteCallState] = [:]
     private var remoteCallIds: [String: RemoteCallKey] = [:]
-    private var reportedErrors: Set<String> = []
+    // The errors reported so far, by surface ("" for those of none), so a surface created again
+    // reports its problems again.
+    private(set) var reportedErrors: [String: Set<String>] = [:]
     private var callIdCounter = 0
 
     /// Creates a processor for the given catalogs.
@@ -199,9 +201,20 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
             sendDataModel: message.sendDataModel,
             metadata: message.metadata
         )
-        let components = validated(message.components, surfaceId: message.surfaceId, catalogId: message.catalogId)
-        definition.merge(components)
-        for error in CompositionValidator.errors(in: definition, batch: message.components, catalogs: catalogs) {
+        reportMalformed(message.malformedComponents, surfaceId: message.surfaceId)
+        let accepted = validated(
+            message.components,
+            indices: message.componentIndices,
+            surfaceId: message.surfaceId,
+            catalogId: message.catalogId
+        )
+        definition.merge(accepted.components)
+        for error in CompositionValidator.errors(
+            in: definition,
+            batch: accepted.components,
+            indices: accepted.indices,
+            catalogs: catalogs
+        ) {
             report(error)
         }
 
@@ -233,24 +246,60 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
             )
             return
         }
-        viewModel.merge(components: validated(message.components, surfaceId: message.surfaceId, catalogId: current.catalogId))
+        reportMalformed(message.malformedComponents, surfaceId: message.surfaceId)
+        let accepted = validated(
+            message.components,
+            indices: message.componentIndices,
+            surfaceId: message.surfaceId,
+            catalogId: current.catalogId
+        )
+        viewModel.merge(components: accepted.components)
         guard let definition = viewModel.definition else { return }
-        for error in CompositionValidator.errors(in: definition, batch: message.components, catalogs: catalogs) {
+        for error in CompositionValidator.errors(
+            in: definition,
+            batch: accepted.components,
+            indices: accepted.indices,
+            catalogs: catalogs
+        ) {
             report(error)
         }
         a2uiLogger.debug("Updated \(message.components.count) component(s) on surface '\(message.surfaceId)'.")
         surfaceUpdatesSubject.send(SurfaceUpdated(surfaceId: message.surfaceId, definition: definition))
     }
 
+    private func reportMalformed(_ entries: [MalformedComponent], surfaceId: String) {
+        for entry in entries {
+            report(RendererError(
+                code: RendererError.Code.validationFailed,
+                message: entry.message,
+                surfaceId: surfaceId,
+                path: entry.pointer
+            ))
+        }
+    }
+
     /// Reports the problems of a batch of components that can be found before
     /// rendering, and returns the components to apply.
     ///
+    /// An envelope field a component wrote without its `@` is read here, where its
+    /// catalog is known: as the catalog's property of that name, when it declares one.
+    ///
     /// A batch that repeats an id is an integrity error; only the first
-    /// component with that id is applied.
-    private func validated(_ components: [Component], surfaceId: String, catalogId: String?) -> [Component] {
+    /// component with that id is applied. `indices` are the components' indices
+    /// in their message, which error paths point at, and are returned with the
+    /// components applied.
+    private func validated(
+        _ components: [Component],
+        indices: [Int],
+        surfaceId: String,
+        catalogId: String?
+    ) -> (components: [Component], indices: [Int]) {
         var seen: Set<String> = []
         var accepted: [Component] = []
-        for (index, component) in components.enumerated() {
+        var acceptedIndices: [Int] = []
+        for (offset, received) in components.enumerated() {
+            let index = offset < indices.count ? indices[offset] : offset
+            let component = catalogs.resolvingEnvelope(of: received, surfaceCatalogId: catalogId)
             guard seen.insert(component.id).inserted else {
                 report(
                     RendererError(
@@ -279,7 +328,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
                         code: RendererError.Code.validationFailed,
                         message: violation.reason,
                         surfaceId: surfaceId,
-                        path: "/components/\(index)/metadata\(violation.pointer)"
+                        path: "/components/\(index)/\(component.metadataKey)\(violation.pointer)"
                     )
                 )
                 continue
@@ -357,8 +406,9 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
                 }
             }
             accepted.append(component)
+            acceptedIndices.append(index)
         }
-        return accepted
+        return (accepted, acceptedIndices)
     }
 
     // A call that can't resolve its catalog, or whose literal arguments break its function's schema.
@@ -447,6 +497,7 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
             remoteCalls.removeValue(forKey: key)
         }
         remoteCallIds = remoteCallIds.filter { !staleCalls.contains($0.value) }
+        reportedErrors[message.surfaceId] = nil
         a2uiLogger.debug("Deleted surface '\(message.surfaceId)'.")
         surfaceUpdatesSubject.send(SurfaceRemoved(surfaceId: message.surfaceId))
     }
@@ -531,6 +582,8 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
         if let error = response.error {
             a2uiLogger.error("Agent function '\(key.name)' failed: \(error.code) \(error.message)")
             remoteCalls[key] = .failed(error)
+            // The call's id is gone, so it can't fail again and needs no entry among the errors reported.
+            send(.error(RendererError(code: RendererError.Code.expressionError, message: error.message, functionCallId: response.functionCallId)))
         } else {
             remoteCalls[key] = .resolved(Json.normalized(response.value))
         }
@@ -600,8 +653,8 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     /// Rendering runs on every state change, so identical errors are collapsed
     /// to keep the agent's context clean.
     func report(_ error: RendererError) {
-        let key = [error.code, error.message, error.surfaceId ?? "", error.path ?? ""].joined(separator: "|")
-        guard reportedErrors.insert(key).inserted else { return }
+        let key = [error.code, error.message, error.path ?? "", error.functionCallId ?? ""].joined(separator: "|")
+        guard reportedErrors[error.surfaceId ?? "", default: []].insert(key).inserted else { return }
         send(.error(error))
     }
 
@@ -638,9 +691,13 @@ final class A2UIMessageProcessor: A2UIHost, RemoteFunctionRouter {
     private func timeOut(_ callId: String) {
         guard let key = remoteCallIds.removeValue(forKey: callId) else { return }
         a2uiLogger.warning("Agent function '\(key.name)' did not answer within \(agentFunctionTimeout) seconds.")
-        remoteCalls[key] = .failed(
-            FunctionResponse.Failure(code: RendererError.Code.timeout, message: "The agent did not answer in time.")
-        )
+        let failure = FunctionResponse.Failure(code: RendererError.Code.timeout, message: "The agent did not answer in time.")
+        remoteCalls[key] = .failed(failure)
+        send(.error(RendererError(
+            code: RendererError.Code.expressionError,
+            message: "Function '\(key.name)' got no answer from the agent in time.",
+            functionCallId: callId
+        )))
         surfaces[key.surfaceId]?.touch()
     }
 }

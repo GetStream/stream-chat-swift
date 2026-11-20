@@ -308,13 +308,17 @@ enum ChartSpecParser {
         // Without inline values there is nothing to draw, and no other format is tried.
         guard let values else { throw ParseError.unsupported }
 
-        // Group by colorField into series
+        // Group by colorField into series, in the order they first appear
         var groups: [String: [UPoint]] = [:]
+        var keys: [String] = []
         for value in values {
             let row: [String: RawJSON] = if case let .dictionary(fields) = value { fields } else { [:] }
             let x = looseString(row[xField]) ?? String(looseNumber(row[xField]) ?? 0)
             let key = colorField.flatMap { looseString(row[$0]) } ?? L10n.Charts.series
             let size = sizeField.flatMap { looseNumber(row[$0]) }
+            if groups[key] == nil {
+                keys.append(key)
+            }
             groups[key, default: []].append(UPoint(x: x, y: looseNumber(row[yField]) ?? 0, size: size))
         }
 
@@ -327,7 +331,7 @@ enum ChartSpecParser {
         case "rect": .heatmap
         default: .line
         }
-        return USpec(title: nil, kind: kind, series: groups.map { USeries(name: $0.key, points: $0.value) })
+        return USpec(title: nil, kind: kind, series: keys.map { USeries(name: $0, points: groups[$0] ?? []) })
     }
 
     // MARK: - Plotly (Heatmap)

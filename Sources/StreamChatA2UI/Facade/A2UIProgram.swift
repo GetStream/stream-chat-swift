@@ -30,6 +30,7 @@ enum A2UIProgram {
             }
             switch message {
             case let .createSurface(created):
+                problems += malformed(created.malformedComponents, on: created.surfaceId)
                 problems += duplicates(in: created.components, on: created.surfaceId)
                 if let catalogId = created.catalogId, catalogId != catalog.catalogId {
                     problems.append("surface \(created.surfaceId) names the catalog \(catalogId), not \(catalog.catalogId)")
@@ -41,6 +42,7 @@ enum A2UIProgram {
                     problems.append("surface \(update.surfaceId) gets components before it is created")
                     continue
                 }
+                problems += malformed(update.malformedComponents, on: update.surfaceId)
                 problems += duplicates(in: update.components, on: update.surfaceId)
                 for component in update.components {
                     surfaces[update.surfaceId]?[component.id] = component
@@ -76,7 +78,7 @@ enum A2UIProgram {
             for missing in definition.requiredProperties where component.properties[missing] == nil {
                 problems.append("\(component.id) is a \(component.type) without its \(missing)")
             }
-            let known = Set(definition.propertySchema.keys).union(["checks", "weight"])
+            let known = Set(definition.propertySchema.keys).union(["checks", "@checks", "weight"])
             for property in component.properties.keys.sorted() where !known.contains(property) {
                 problems.append("\(component.id) is a \(component.type), which has no \(property)")
             }
@@ -100,6 +102,10 @@ enum A2UIProgram {
             problems.append("\(id) is defined but nothing holds it")
         }
         return problems + nestingProblems(references, on: surfaceId)
+    }
+
+    private static func malformed(_ entries: [MalformedComponent], on surfaceId: String) -> [String] {
+        entries.map { "surface \(surfaceId) can't read \($0.pointer): \($0.message)" }
     }
 
     private static func duplicates(in components: [Component], on surfaceId: String) -> [String] {

@@ -29,11 +29,34 @@ permissions:
   pull-requests: read
 
 jobs:
+  guard:
+    name: Guard
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: write # to cancel skip-ci runs
+      checks: read # to skip checks already verified
+      contents: read
+      pull-requests: read
+    env:
+      GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+      GITHUB_EVENT_ACTION: ${{ github.event.action }}
+      GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+      GITHUB_EVENT_AFTER: ${{ github.event.after }}
+    outputs:
+      checks: ${{ steps.guard.outputs.checks }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: guard
+        uses: ./.github/actions/ci-guard
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
   sdk_size:
     name: Size Metrics
     runs-on: macos-15
+    needs: guard
+    if: ${{ fromJSON(needs.guard.outputs.checks).size }}
     env:
-      GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'
       GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
       GITHUB_EVENT_ACTION: ${{ github.event.action }}
       GITHUB_EVENT_BEFORE: ${{ github.event.before }}
@@ -41,23 +64,58 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: ./.github/actions/ci-guard
+      - name: Generate bot token
+        id: bot-token
+        uses: actions/create-github-app-token@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Connect Bot
-        uses: webfactory/ssh-agent@v0.10.0
-        with:
-          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
+          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ios-certificates
+          permission-contents: read
 
       - uses: ./.github/actions/bootstrap
+
+      # App tokens last 1 hour, so mint one right before each lane.
+      - name: Generate release bot token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }},stream-internal-metrics
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Use release bot token
+        run: echo "GITHUB_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+        env:
+          TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: Run General SDK Size Metrics
         run: bundle exec fastlane show_frameworks_sizes
         timeout-minutes: 30
         env:
+          MATCH_GIT_TOKEN: ${{ steps.bot-token.outputs.token }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
+
+      - name: Generate release bot token
+        id: app-token-2
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }},stream-internal-metrics
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Use release bot token
+        run: echo "GITHUB_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+        env:
+          TOKEN: ${{ steps.app-token-2.outputs.token }}
 
       - name: Run Detailed SDK Size Metrics
         run: bundle exec fastlane size_analyze ${{ env.VERBOSE }}

@@ -15,12 +15,13 @@ final class ProcessorHarness {
     private(set) var outgoing: [RendererMessage] = []
     private var cancellables: Set<AnyCancellable> = []
 
-    init(catalogs: [Catalog]? = nil, defaultCatalogId: String? = nil) {
+    init(catalogs: [Catalog]? = nil, defaultCatalogId: String? = nil, agentFunctionTimeout: TimeInterval = 30) {
         let recorder = RenderRecorder()
         processor = A2UIMessageProcessor(
             catalogs: catalogs ?? [TestCatalog.make(recorder: recorder)],
             defaultCatalogId: defaultCatalogId,
-            services: TestServices.make()
+            services: TestServices.make(),
+            agentFunctionTimeout: agentFunctionTimeout
         )
         processor.surfaceUpdates.sink { [weak self] in self?.updates.append($0) }.store(in: &cancellables)
         processor.rendererMessages.sink { [weak self] in self?.outgoing.append($0) }.store(in: &cancellables)
@@ -87,6 +88,25 @@ struct A2UIMessageProcessorTests {
         #expect(harness.updates[0] is SurfaceAdded)
         #expect(harness.processor.surfaceIds == ["main"])
         #expect(harness.errors.isEmpty)
+    }
+
+    @Test("A composition error points at the parent's slot, not at a component the update rejected")
+    func compositionErrorSkipsRejectedComponent() {
+        let harness = ProcessorHarness()
+        harness.createSurface(components: [
+            Component(id: "root", type: "Menu", properties: ["children": ["item"]]),
+            Component(id: "item", type: "MenuItem")
+        ])
+        harness.processor.handle(.updateComponents(UpdateComponentsMessage(
+            surfaceId: "main",
+            components: [
+                Component(id: "root", type: "Column", properties: ["children": ["item"]]),
+                Component(id: "item", type: "MenuItem", metadata: ["owner": "me"])
+            ]
+        )))
+
+        #expect(harness.errors.map(\.code) == [RendererError.Code.validationFailed, RendererError.Code.unallowedParent])
+        #expect(harness.errors.map(\.path) == ["/components/1/metadata/owner", "/components/0/children/0"])
     }
 
     @Test("updateComponents merges into an existing surface")

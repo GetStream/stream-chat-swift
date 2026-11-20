@@ -56,6 +56,20 @@ enum ButtonComponent {
     ) { context in
         AnyView(A2UIButtonView(context: context))
     }
+
+    // A modal's trigger opens the modal in place of telling the agent, though a call it makes still
+    // runs. Any other button, such as one inside a trigger that isn't a button, acts as usual.
+    @MainActor
+    static func activate(_ context: ComponentRenderContext, in modalPresenter: A2UIModalPresenter?) {
+        guard let modalPresenter, modalPresenter.triggerId == context.id else {
+            context.performAction()
+            return
+        }
+        modalPresenter.present()
+        if case .functionCall = context.action {
+            context.performAction()
+        }
+    }
 }
 
 @available(iOS 15.0, macOS 12.0, *)
@@ -70,8 +84,7 @@ private struct A2UIButtonView: View {
 
         VStack(alignment: .leading, spacing: 4) {
             Button {
-                modalPresenter?.present()
-                context.performAction()
+                ButtonComponent.activate(context, in: modalPresenter)
             } label: {
                 context.childView(context.childId())
                     .modifier(A2UIButtonLabelStyle(variant: context.option("variant", default: "default")))

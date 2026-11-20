@@ -4,7 +4,6 @@
 
 import Combine
 import Foundation
-import StreamChatAI
 
 /// One reply's surfaces, which follow its messages as the agent writes them.
 @available(iOS 15.0, macOS 12.0, *)
@@ -14,6 +13,7 @@ final class A2UIReply: ObservableObject {
     @Published private(set) var surfaceIds: [String] = []
     @Published private(set) var isStreaming = false
     private var applied: [String] = []
+    private var scanner = A2UIStreamScanner()
     private var messages: AnyCancellable?
 
     init(processor: A2UIMessageProcessor, onMessage: @escaping @MainActor (RendererMessage) -> Void) {
@@ -34,14 +34,19 @@ final class A2UIReply: ObservableObject {
                 processor.surfaceViewModel(surfaceId).touch()
             }
         }
-        let messages = A2UIStream.messages(in: source)
-        if !messages.starts(with: applied) {
+        // Only text that doesn't carry on from the last can change messages already applied.
+        if !scanner.scan(source), !scanner.messages.starts(with: applied) {
             processor.clearSurfaces(emitUpdates: false)
             applied = []
         }
-        for raw in messages.dropFirst(applied.count) {
+        let messages = scanner.messages
+        for (offset, raw) in messages.enumerated().dropFirst(applied.count) {
+            // The message's text can hold what the person wrote, so the error leaves it out.
             guard var json = Json.decodeMap(raw) else {
-                log.error("A reply's A2UI message isn't a JSON object")
+                processor.report(RendererError(
+                    code: RendererError.Code.validationFailed,
+                    message: "Message \(offset + 1) of the reply couldn't be read as a JSON object."
+                ))
                 continue
             }
             if let version = json[A2UIProtocol.versionKey] as? String, Self.versionSpellings.contains(version) {
@@ -50,6 +55,12 @@ final class A2UIReply: ObservableObject {
             processor.handle(json: json)
         }
         applied = messages
+        if !isStreaming, scanner.hasOpenMessage {
+            processor.report(RendererError(
+                code: RendererError.Code.validationFailed,
+                message: "The reply ends in the middle of a message, which is left out."
+            ))
+        }
         if surfaceIds != processor.surfaceIds {
             surfaceIds = processor.surfaceIds
         }

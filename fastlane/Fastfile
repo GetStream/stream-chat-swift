@@ -15,7 +15,6 @@ github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
-metrics_git = 'git@github.com:GetStream/stream-internal-metrics.git'
 xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
@@ -29,12 +28,18 @@ e2e_selection_path = File.expand_path("../#{derived_data_path}/Build/e2e_selecti
 @impact = nil
 xcodebuild_formatter = FastlaneCore::Globals.verbose? ? '' : nil
 
+# These lanes do not build anything, so they can run on Linux.
+lanes_without_xcode = [
+  :sonar_upload, :allure_launch, :allure_upload, :copyright, :merge_main, :merge_release, :publish_release,
+  :lint_pr, :rubocop, :run_swift_format, :validate_public_interface, :required_checks
+]
+
 before_all do |lane|
   @impact = impact_analysis
   if is_ci
     setup_ci
     setup_git_config
-    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :copyright, :merge_main].include?(lane)
+    select_xcode(version: xcode_version) unless lanes_without_xcode.include?(lane)
   end
 end
 
@@ -106,7 +111,7 @@ end
 
 private_lane :appstore_api_key do
   @appstore_api_key ||= app_store_connect_api_key(
-    key_id: 'MT3PRT8TB7',
+    key_id: '8KCMZF773S',
     issuer_id: '69a6de96-0738-47e3-e053-5b8c7c11a4d1',
     key_content: ENV.fetch('APPSTORE_API_KEY', nil),
     in_house: false
@@ -179,8 +184,6 @@ end
 
 desc 'Runs tests in Debug config'
 lane :test do |options|
-  next unless is_check_required(sources: @impact[:llc][:sources], force_check: @force_check, required_checks: @impact[:llc][:checks])
-
   scheme = 'StreamChat'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}FlakyTests.xctestplan")
 
@@ -267,8 +270,6 @@ lane :build_test_app_and_frameworks do
 end
 
 lane :xcmetrics do |options|
-  next unless is_check_required(sources: @impact[:xcmetrics][:sources], force_check: @force_check, required_checks: @impact[:xcmetrics][:checks])
-
   ['test_output/', 'metrics/', "../#{derived_data_path}/Build/Products"].each { |dir| FileUtils.remove_dir(dir, force: true) }
 
   match_me
@@ -308,7 +309,7 @@ lane :xcmetrics do |options|
   fail_status = '🔴' # Failure if a branch is more than #{max_tolerance} less performant than the benchmark
   success_status = '🟢' # Success if a branch is more performant or equals to the benchmark
 
-  sh("git clone #{metrics_git} #{File.dirname(xcmetrics_path)}")
+  clone_internal_metrics(path: File.expand_path(File.dirname(xcmetrics_path)))
   performance_benchmarks = JSON.parse(File.read(xcmetrics_path))
   expected_performance = performance_benchmarks['benchmark']
   actual_performance = xcmetrics_log_parser(log: xcodebuild_output)
@@ -439,8 +440,6 @@ end
 
 desc 'Runs e2e ui tests using mock server in Debug config'
 lane :test_e2e_mock do |options|
-  next unless is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
-
   start_mock_server(local_server: options[:local_server], branch: options[:mock_server_branch])
   allow_photo_library_access(device: options[:device])
 
@@ -504,7 +503,7 @@ lane :select_e2e_tests do |options|
     UI.important("Running all #{all_tests.size} tests: #{run_all_reason}")
     tests = all_tests
     File.write(e2e_selection_path, JSON.generate(run_all: true, tests: tests, reasons: [run_all_reason]))
-  elsif is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
+  else
     selection = select_impacted_tests(
       all_tests: all_tests,
       coverage_map: options[:coverage_map],
@@ -529,8 +528,6 @@ lane :select_e2e_tests do |options|
       output_path: e2e_selection_path
     )
     tests = selection['tests']
-  else
-    File.write(e2e_selection_path, JSON.generate(run_all: false, tests: [], reasons: ['no e2e sources changed']))
   end
 
   # Up to 3 batches, none bigger than a third of the suite, so a small selection takes fewer runners.
@@ -644,8 +641,6 @@ end
 
 desc 'Runs ui tests in Debug config'
 lane :test_ui do |options|
-  next unless is_check_required(sources: @impact[:ui][:sources], force_check: @force_check, required_checks: @impact[:ui][:checks])
-
   record_mode = options[:record].to_s == 'true'
   scheme = 'StreamChatUI'
   remove_snapshots if record_mode
@@ -691,8 +686,6 @@ end
 
 desc 'Runs common ui tests in Debug config'
 lane :test_common_ui do |options|
-  next unless is_check_required(sources: @impact[:common_ui][:sources], force_check: @force_check, required_checks: @impact[:common_ui][:checks])
-
   scheme = 'StreamChatCommonUI'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
@@ -718,8 +711,6 @@ end
 
 desc 'Runs AI tests in Debug config'
 lane :test_ai do |options|
-  next unless is_check_required(sources: @impact[:ai][:sources], force_check: @force_check, required_checks: @impact[:ai][:checks])
-
   scheme = 'StreamChatAI'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
@@ -745,8 +736,6 @@ end
 
 desc 'Runs A2UI tests in Debug config'
 lane :test_a2ui do |options|
-  next unless is_check_required(sources: @impact[:a2ui][:sources], force_check: @force_check, required_checks: @impact[:a2ui][:checks])
-
   scheme = 'StreamChatA2UI'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
@@ -772,8 +761,6 @@ end
 
 desc 'Runs OpenUI tests in Debug config'
 lane :test_openui do |options|
-  next unless is_check_required(sources: @impact[:openui][:sources], force_check: @force_check, required_checks: @impact[:openui][:checks])
-
   scheme = 'StreamChatOpenUI'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
@@ -862,8 +849,6 @@ lane :build_youtube_clone do |options|
 end
 
 private_lane :build_example_app do |options|
-  next unless is_check_required(sources: @impact[:sample_apps][:sources], force_check: @force_check, required_checks: @impact[:sample_apps][:checks])
-
   scan(
     project: xcode_project,
     scheme: options[:scheme],
@@ -878,8 +863,6 @@ end
 
 desc 'Test SPM Integration'
 lane :spm_integration do
-  next unless is_check_required(sources: @impact[:integration][:sources], force_check: @force_check, required_checks: @impact[:integration][:checks])
-
   gym(
     project: 'Integration/SPM/SwiftPackageManager.xcodeproj',
     scheme: 'SwiftPackageManager',
@@ -895,8 +878,6 @@ end
 
 desc 'Builds StreamChat for tvOS'
 lane :build_tvos do
-  next unless is_check_required(sources: @impact[:tvos][:sources], force_check: @force_check, required_checks: @impact[:tvos][:checks])
-
   sh('xcrun simctl list runtimes | grep -q "tvOS $(xcrun --sdk appletvsimulator --show-sdk-version)" || xcodebuild -downloadPlatform tvOS') if is_ci
   gym(
     project: xcode_project,
@@ -917,8 +898,6 @@ end
 
 desc 'Run fastlane linting'
 lane :rubocop do
-  next unless is_check_required(sources: @impact[:ruby][:sources], force_check: @force_check, required_checks: @impact[:ruby][:checks])
-
   sh('bundle exec rubocop')
 end
 
@@ -988,7 +967,7 @@ lane :impact_analysis do
       checks: ['Test OpenUI (Debug)', 'Build SDKs (Old Xcode)']
     },
     sample_apps: {
-      sources: ['Sources', 'Examples', 'DemoApp', 'Package.swift'],
+      sources: ['Sources', 'Examples', 'DemoApp', 'Package.swift', 'StreamChat.xcodeproj'],
       checks: ['Build Demo App + Example Apps']
     },
     integration: {
@@ -1012,6 +991,20 @@ lane :impact_analysis do
       checks: ['Performance Metrics']
     }
   }
+end
+
+desc 'Writes the checks this PR needs to GITHUB_OUTPUT, so CI can skip macOS jobs early'
+lane :required_checks do
+  checks = @impact.transform_values do |impact|
+    begin
+      is_check_required(sources: impact[:sources], force_check: @force_check, required_checks: impact[:checks])
+    rescue StandardError => e
+      UI.important("Lookup failed, so the check runs: #{e.message}")
+      true
+    end
+  end
+  UI.important("Required checks: #{checks}")
+  File.write(ENV.fetch('GITHUB_OUTPUT'), "checks=#{checks.to_json}\n", mode: 'a')
 end
 
 lane :copyright do
@@ -1039,8 +1032,6 @@ lane :validate_generated_code do
 end
 
 lane :validate_public_interface do
-  next unless is_check_required(sources: @impact[:public_interface][:sources], force_check: @force_check, required_checks: @impact[:public_interface][:checks])
-
   # Get branch names
   original_branch = current_branch
   target_branch = ENV['GITHUB_BASE_REF'] || (original_branch.include?('release/') ? 'main' : 'develop')
@@ -1081,8 +1072,6 @@ lane :validate_public_interface do
 end
 
 lane :show_frameworks_sizes do |options|
-  next unless is_check_required(sources: @impact[:size][:sources], force_check: @force_check, required_checks: @impact[:size][:checks])
-
   sizes = options[:sizes] || frameworks_sizes
   show_sdk_size(branch_sizes: sizes, github_repo: github_repo)
   update_img_shields_sdk_sizes(sizes: sizes, open_pr: options[:open_pr]) if options[:update_readme]
@@ -1176,8 +1165,6 @@ private_lane :linked_objects_size do |options|
 end
 
 lane :size_analyze do
-  next unless is_check_required(sources: @impact[:size][:sources], force_check: @force_check, required_checks: @impact[:size][:checks])
-
   gym(
     scheme: 'DemoApp',
     configuration: 'Release',

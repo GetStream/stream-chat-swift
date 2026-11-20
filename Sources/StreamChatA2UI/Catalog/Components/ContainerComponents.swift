@@ -60,8 +60,9 @@ enum ContainerComponents {
     /// A dialog opened by a trigger component.
     ///
     /// The trigger is rendered inline; interacting with it presents the content
-    /// as a sheet. The trigger's own action, if it has one, still fires, and a
-    /// disabled button trigger doesn't open the modal.
+    /// as a sheet. A button trigger's function call still runs, but its event
+    /// isn't sent to the agent, and a disabled button trigger doesn't open the
+    /// modal.
     static let modal = ComponentDefinition(
         name: "Modal",
         description: "A dialog that appears over the main content, triggered by a component in the main content.",
@@ -94,6 +95,7 @@ enum ContainerComponents {
             A2UIModalView(
                 trigger: context.childView(triggerId),
                 content: context.childView(context.childId("content")),
+                triggerId: triggerId,
                 triggerIsButton: triggerId.flatMap { context.renderer.component($0)?.type } == ButtonComponent.button.name
             )
         )
@@ -153,19 +155,20 @@ private struct A2UITabsView: View {
     }
 }
 
-// Buttons in the trigger open the modal from their own action, so VoiceOver, keyboard and pointer
+// A Button trigger opens the modal from its own action, so VoiceOver, keyboard and pointer
 // activation all open it. Any other trigger is made a button for assistive technologies.
 @available(iOS 15.0, macOS 12.0, *)
 private struct A2UIModalView: View {
     let trigger: AnyView
     let content: AnyView
+    let triggerId: String?
     let triggerIsButton: Bool
 
     @State private var isPresented = false
 
     var body: some View {
         interactiveTrigger
-            .environment(\.a2uiModalPresenter, A2UIModalPresenter { isPresented = true })
+            .environment(\.a2uiModalPresenter, A2UIModalPresenter(triggerId: triggerId) { isPresented = true })
             .sheet(isPresented: $isPresented) {
                 sheet.environment(\.a2uiModalPresenter, nil)
             }
@@ -211,6 +214,8 @@ private struct A2UIModalView: View {
 
 @available(iOS 15.0, macOS 12.0, *)
 struct A2UIModalPresenter {
+    // The component that opens the modal: of the buttons in it, only that one, if it is one.
+    let triggerId: String?
     let present: @MainActor () -> Void
 }
 

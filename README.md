@@ -7,6 +7,7 @@
 </p>
 <p align="center">
   <a href="https://getstream.io/chat/docs/sdk/ios/"><img src="https://img.shields.io/badge/iOS-13%2B-lightblue" /></a>
+  <a href="https://getstream.io/chat/docs/ios-swift/"><img src="https://img.shields.io/badge/tvOS-15%2B-lightblue" /></a>
   <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-6.0%2B-orange.svg" /></a>
   <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
@@ -21,7 +22,7 @@ This is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios
 
 ## Low Level Client (LLC)
 
-The **StreamChat SDK** is a low level client for Stream chat service that doesn't contain any UI components. It is meant to be used when you want to build a fully custom UI. For the majority of use cases though, we recommend using our highly customizable UI SDK's.
+The **StreamChat SDK** is a low level client for Stream chat service that doesn't contain any UI components. It is meant to be used when you want to build a fully custom UI. For the majority of use cases though, we recommend using our highly customizable UI SDK's. It runs on iOS 13+, macOS 11+ and tvOS 15+.
 
 ## UIKit SDK
 
@@ -44,7 +45,7 @@ Our SwiftUI SDK has a brand new design, please check our [docs](https://getstrea
   - `UIKit` SDK is part of this repository whereas `SwiftUI` SDK is available [here](https://github.com/GetStream/stream-chat-swiftui).
 - **First-class support for `Combine` and `Structured Concurrency`**: Refer to our getting started guides for [Combine](https://getstream.io/chat/docs/sdk/ios/combine/) and [Structured Concurrency](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 - **Fully open-source implementation:** You have access to the complete source code of the SDK here on GitHub.
-- **Supports iOS 13+:** We proudly support older versions of iOS, so your app can stay available to almost everyone.
+- **Supports iOS 13+ and tvOS 15+:** We proudly support older versions of iOS, so your app can stay available to almost everyone. On tvOS, use the low-level client.
 
 ## **Quick Links**
 

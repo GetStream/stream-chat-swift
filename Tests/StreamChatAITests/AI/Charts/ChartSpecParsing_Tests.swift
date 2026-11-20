@@ -65,6 +65,18 @@ final class ChartSpecParsing_Tests: XCTestCase {
         XCTAssertThrowsError(try parse(#"{"data":{"url":"data.csv"},"mark":"line","encoding":{}}"#), "a spec without inline values can't be drawn")
     }
 
+    func testVegaLiteSeriesKeepTheOrderTheyFirstAppearIn() throws {
+        let keys = (0..<12).map { "g\($0)" }
+        let rows = keys.map { #"{"a":"A","b":1,"c":"\#($0)"}"# }.joined(separator: ",")
+        let json = #"{"data":{"values":[\#(rows)]},"mark":"line","encoding":{"x":{"field":"a"},"y":{"field":"b"},"color":{"field":"c"}}}"#
+
+        for _ in 0..<5 {
+            let spec = try parse(json)
+            XCTAssertEqual(spec.series.map(\.name), keys)
+            XCTAssertEqual(spec.series.map(\.id), Array(0..<12), "a chart parsed again keeps its series")
+        }
+    }
+
     func testPlotlyHeatmaps() throws {
         let single = try parse(#"{"type":"heatmap","data":{"z":[[1,2],[3,4]],"x":["a","b"],"y":["r1"]},"layout":{"title":"Heat","xaxis":{"title":{"text":"X"}}}}"#)
         XCTAssertEqual(single.kind, .heatmap)

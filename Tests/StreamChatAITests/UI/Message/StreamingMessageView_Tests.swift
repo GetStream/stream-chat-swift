@@ -25,6 +25,40 @@ final class StreamingMessageView_Tests: XCTestCase {
         XCTAssertEqual(view.getNewChunk(oldText: "Same", newText: "Same"), "")
     }
 
+    func test_getNewChunk_whenAChunkEndsInsideACharacter_returnsTheRestOfIt() {
+        let cases: [(old: String, new: String)] = [
+            ("Hello\r", "Hello\r\nWorld"),
+            ("Nice 👍", "Nice 👍🏽 work"),
+            ("🇺", "🇺🇸 flag"),
+            ("family 👨", "family 👨‍👩‍👧 ok"),
+            ("cafe", "cafe\u{301} au lait")
+        ]
+        for (old, new) in cases {
+            let chunk = view.getNewChunk(oldText: old, newText: new)
+            XCTAssertEqual(old + chunk, new, "\(old) + \(chunk)")
+        }
+    }
+
+    func test_typing_showsAFewLettersAFrameAtThePaceOfTheLetterInterval() {
+        XCTAssertEqual(StreamingMessageView.tickInterval(letterInterval: 0.005), 0.02, accuracy: 1e-12)
+        XCTAssertEqual(StreamingMessageView.charactersPerTick(letterInterval: 0.005), 4)
+        XCTAssertEqual(StreamingMessageView.tickInterval(letterInterval: 0.05), 0.05)
+        XCTAssertEqual(StreamingMessageView.charactersPerTick(letterInterval: 0.05), 1)
+        XCTAssertEqual(StreamingMessageView.charactersPerTick(letterInterval: 0), .max, "everything at once")
+        XCTAssertEqual(StreamingMessageView.tickInterval(letterInterval: .infinity), 1.0 / 60)
+        XCTAssertEqual(StreamingMessageView.charactersPerTick(letterInterval: .infinity), 1)
+    }
+
+    func test_typing_keepsThePaceOfTheLetterInterval() {
+        for letterInterval in [0.001, 0.005, 0.009, 0.016, 1.0 / 60, 0.05] {
+            let tick = StreamingMessageView.tickInterval(letterInterval: letterInterval)
+            let letters = Double(StreamingMessageView.charactersPerTick(letterInterval: letterInterval))
+
+            XCTAssertEqual(letters / tick, 1 / letterInterval, accuracy: 1e-6, "\(letterInterval)")
+            XCTAssertGreaterThanOrEqual(tick, 1.0 / 60, "at most once a frame")
+        }
+    }
+
     func test_changeListeners_startFromTheTextTheViewAppearedWith() {
         let listeners = StreamingMessageViewChangeListeners(
             text: "Already streamed",

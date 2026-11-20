@@ -315,6 +315,33 @@ final class AIConversationViewAIConversation_Tests: XCTestCase {
         XCTAssertNil(row(.user("u1"), conversation: conversation).shown.rating)
     }
 
+    func test_row_ofAStoppedReply_isFinishedWhateverItSays() {
+        let writing = ChatMessage.reply("a1", "Day one", generating: true)
+        let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1"), writing]))
+        let before = row(writing, latest: true, conversation: conversation)
+
+        conversation.stop()
+
+        XCTAssertTrue(before.shown.isGenerating)
+        XCTAssertFalse(row(writing, latest: true, conversation: conversation).shown.isGenerating)
+        XCTAssertTrue(row(writing, latest: true, conversation: nil).shown.isGenerating, "without its conversation it says what the message says")
+    }
+
+    func test_rows_offerTheActionsOfAStoppedReply() throws {
+        guard #available(iOS 16, *) else { throw XCTSkip("Rows render with ImageRenderer") }
+        let writing = ChatMessage.reply("a1", "Day one", generating: true)
+        let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1"), writing]))
+        let factory = RecordingFactory()
+        conversation.stop()
+
+        let entry = AIConversationEntry(id: AnyHashable(writing.id), message: writing, sentAttachments: [])
+        entry.isLatestReply = true
+        render(AIConversationEntryView(entry: entry, factory: factory, approver: nil, conversation: conversation))
+
+        XCTAssertNotNil(factory.actions["a1"], "the person stopped it, however long the transport says it is written")
+        XCTAssertNotNil(factory.actions["a1"]?.onRegenerate)
+    }
+
     func test_row_changesWithItsConversation() {
         let conversation = AIConversation(transport: ConversationTransport(messages: [.user("u1"), .reply("a1")]))
 

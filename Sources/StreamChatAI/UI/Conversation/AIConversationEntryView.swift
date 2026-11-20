@@ -86,7 +86,7 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
             isPending = false
             role = message.role
             text = message.text
-            isGenerating = message.isGenerating
+            isGenerating = conversation?.isGenerating(message) ?? message.isGenerating
             parts = message.parts
             reasoning = message.parts.map { $0.reasoning.flatMap(message.reasoningText(for:)) }
             attachments = entry.sentAttachments + message.attachments

@@ -27,6 +27,9 @@ struct FunctionInvocation {
     /// Host capabilities such as URL opening and the current locale.
     let services: RendererServices
 
+    // The catalog the call resolved to, where the calls of a template it formats resolve too.
+    let catalogId: String?
+
     private let evaluator: ExpressionEvaluator
 
     /// Creates an invocation.
@@ -36,13 +39,15 @@ struct FunctionInvocation {
         arguments: [String: any Sendable],
         context: DataContext,
         services: RendererServices,
-        evaluator: ExpressionEvaluator
+        evaluator: ExpressionEvaluator,
+        catalogId: String? = nil
     ) {
         self.name = name
         self.arguments = arguments
         self.context = context
         self.services = services
         self.evaluator = evaluator
+        self.catalogId = catalogId
     }
 
     /// Reads a raw argument value.
@@ -66,14 +71,10 @@ struct FunctionInvocation {
         Json.int(value(key))
     }
 
-    /// Reads an argument as a boolean.
+    /// Reads a `DynamicBoolean` argument, coerced as the specification says.
     /// A validation result reads as its `valid` flag.
     func bool(_ key: String) -> Bool? {
-        guard let value = value(key) else { return nil }
-        if let map = Json.map(value), map["valid"] != nil {
-            return Json.bool(map["valid"])
-        }
-        return Json.bool(value)
+        Json.dynamicBool(value(key))
     }
 
     /// Reads an argument as an array.
@@ -102,7 +103,7 @@ struct FunctionInvocation {
     /// Evaluates a nested expression in the invocation's scope.
     /// Used by `formatString` to resolve interpolated expressions.
     func evaluateInterpolation(_ template: String) throws -> String {
-        try evaluator.interpolate(template, in: context)
+        try evaluator.interpolate(template, in: context, catalogId: catalogId)
     }
 }
 

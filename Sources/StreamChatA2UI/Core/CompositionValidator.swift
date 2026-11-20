@@ -27,10 +27,16 @@ enum CompositionValidator {
     }
 
     // Only the root is checked against `Surface`: a component nothing holds has no parent yet.
-    static func errors(in surface: SurfaceDefinition, batch: [Component], catalogs: CatalogRegistry) -> [RendererError] {
+    // `indices` are the batch's components' indices in their message, their offsets by default.
+    static func errors(
+        in surface: SurfaceDefinition,
+        batch: [Component],
+        indices: [Int]? = nil,
+        catalogs: CatalogRegistry
+    ) -> [RendererError] {
         var batchIndex: [String: Int] = [:]
-        for (index, component) in batch.enumerated() where batchIndex[component.id] == nil {
-            batchIndex[component.id] = index
+        for (offset, component) in batch.enumerated() where batchIndex[component.id] == nil {
+            batchIndex[component.id] = indices.flatMap { offset < $0.count ? $0[offset] : nil } ?? offset
         }
         func definition(of component: Component) -> ComponentDefinition? {
             catalogs.resolveCatalog(entityCatalogId: component.catalogId, surfaceCatalogId: surface.catalogId)?
