@@ -157,19 +157,20 @@ struct EditableTableView: View {
         let type: String
         let key: String
         let header: String
-        let width: Double?
+        let width: CGFloat
         let options: [(value: String, label: String)]
     }
 
     private var columns: [Column] {
         context.props.array("columns").compactMap(\.objectValue).map { column in
-            Column(
+            var values = Set<String>()
+            return Column(
                 type: column["type"]?.stringValue ?? "text",
                 key: column["key"]?.stringValue ?? "default",
                 header: column["header"]?.stringValue ?? "",
-                width: column["width"]?.numberValue,
+                width: clampedDimension(column["width"]?.numberValue, in: 40...600, default: 150),
                 options: (column["options"]?.arrayValue ?? []).compactMap { option in
-                    guard let value = option["value"]?.stringValue else { return nil }
+                    guard let value = option["value"]?.stringValue, values.insert(value).inserted else { return nil }
                     return (value, option["label"]?.stringValue ?? value)
                 }
             )
@@ -190,7 +191,7 @@ struct EditableTableView: View {
                             Text(column.header)
                                 .font(theme.fonts.caption.weight(.semibold))
                                 .foregroundStyle(theme.colors.textSecondary)
-                                .frame(width: CGFloat(column.width ?? 150), alignment: .leading)
+                                .frame(width: column.width, alignment: .leading)
                                 .padding(.horizontal, theme.spacing.s)
                                 .padding(.vertical, theme.spacing.s)
                         }
@@ -201,7 +202,7 @@ struct EditableTableView: View {
                         GridRow {
                             ForEach(Array(columns.enumerated()), id: \.offset) { _, column in
                                 editor(column, row: rowIndex)
-                                    .frame(width: CGFloat(column.width ?? 150), alignment: .leading)
+                                    .frame(width: column.width, alignment: .leading)
                                     .padding(.horizontal, theme.spacing.s)
                                     .padding(.vertical, theme.spacing.xs)
                             }
@@ -292,22 +293,27 @@ struct EditableTableView: View {
 
 // The edited rows of an `EditableTable`, and the rows they are compared with to count changes.
 // The comparison starts only once the model has finished writing the table, as partial rows
-// would otherwise count as edits.
+// would otherwise count as edits, and starts again from rows that arrive after that, or that a
+// later stream wrote.
 @available(iOS 17.0, macOS 14.0, *)
 struct EditableTableRows {
     var rows: [[String: OpenUIValue]] = []
     private(set) var baseline: [[String: OpenUIValue]]?
     private var loadedSource: OpenUIValue?
     private var loadedKeys: [String] = []
+    private var loadedWhileStreaming = false
 
     mutating func load(_ source: OpenUIValue?, keys: [String], isStreaming: Bool) {
         if source != loadedSource || keys != loadedKeys {
             loadedSource = source
             loadedKeys = keys
             rows = Self.rows(from: source, keys: keys)
+            loadedWhileStreaming = isStreaming
+            if !isStreaming { baseline = rows }
         }
-        if baseline == nil, !isStreaming {
+        if baseline == nil || loadedWhileStreaming, !isStreaming {
             baseline = rows
+            loadedWhileStreaming = false
         }
     }
 
@@ -359,13 +365,59 @@ enum DateFormatting {
         return formatter
     }()
 
+    // The ISO 8601 dates and times JavaScript's `Date` reads: a day, then optionally a time to the
+    // minute, second or fraction of one, and an offset. Before the time, V8 also takes a space,
+    // as RFC 3339 allows.
+    private static let dateTime: NSRegularExpression = {
+        let pattern = #"^([0-9]{4})-([0-9]{2})-([0-9]{2})(?:[Tt ]([0-9]{2}):([0-9]{2})(?::([0-9]{2})(?:\.([0-9]+))?)?([Zz]|[+-][0-9]{2}:?[0-9]{2})?)?\z"#
+        do {
+            return try NSRegularExpression(pattern: pattern)
+        } catch {
+            preconditionFailure("Invalid pattern \(pattern): \(error)")
+        }
+    }()
+
     static func string(from date: Date) -> String {
         formatter.string(from: date)
     }
 
+    // A time without an offset is one where the person is, as in JavaScript. A day without a time
+    // is noon of it where the person is, which daylight saving never skips, rather than midnight
+    // in UTC, which is the day before west of it. A day past the month's end isn't one, where
+    // JavaScript rolls it over into the next month.
     static func date(from string: String?) -> Date? {
-        guard let string, !string.isEmpty else { return nil }
-        if let date = formatter.date(from: String(string.prefix(10))) { return date }
-        return ISO8601DateFormatter().date(from: string)
+        guard let string, let match = dateTime.firstMatch(in: string, range: NSRange(string.startIndex..., in: string)) else { return nil }
+        func part(_ index: Int) -> Substring? {
+            Range(match.range(at: index), in: string).map { string[$0] }
+        }
+        func number(_ index: Int) -> Int? {
+            part(index).flatMap { Int($0) }
+        }
+        var utc = Calendar(identifier: .gregorian)
+        utc.timeZone = TimeZone(secondsFromGMT: 0) ?? utc.timeZone
+        var components = DateComponents(year: number(1), month: number(2), day: number(3), hour: 12)
+        if let hour = number(4) {
+            components.hour = hour
+            components.minute = number(5)
+            components.second = number(6) ?? 0
+        }
+        guard components.isValidDate(in: utc) else { return nil }
+        var calendar = Calendar(identifier: .gregorian)
+        if let offset = part(8) {
+            guard let zone = timeZone(offset) else { return nil }
+            calendar.timeZone = zone
+        }
+        guard let date = calendar.date(from: components) else { return nil }
+        // JavaScript keeps milliseconds.
+        let fraction = part(7).flatMap { Double("0." + $0) } ?? 0
+        return date.addingTimeInterval((fraction * 1000).rounded(.down) / 1000)
+    }
+
+    private static func timeZone(_ offset: Substring) -> TimeZone? {
+        guard offset.uppercased() != "Z" else { return TimeZone(secondsFromGMT: 0) }
+        let digits = offset.dropFirst().filter { $0 != ":" }
+        guard let hours = Int(digits.prefix(2)), let minutes = Int(digits.suffix(2)), hours < 24, minutes < 60 else { return nil }
+        let seconds = (hours * 60 + minutes) * 60
+        return TimeZone(secondsFromGMT: offset.hasPrefix("-") ? -seconds : seconds)
     }
 }

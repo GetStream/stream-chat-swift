@@ -99,19 +99,28 @@ public final class OpenUIRenderer: AIUIRenderer {
     }
 
     // The app's components the agent can place with `library`, each with its OpenUI schema. One
-    // whose definition can't be read, or whose OpenUI name the library already has, is left out
-    // of both the instructions and the engine, so it never replaces one of OpenUI's own.
+    // whose definition can't be read, whose OpenUI name a program can't call, or whose name the
+    // library already has, is left out of both the instructions and the engine, so it never
+    // replaces one of OpenUI's own.
     static func placeableSchemas(
         of components: [any AIUIComponent],
         in library: ComponentLibrary
     ) -> [(component: any AIUIComponent, schema: ComponentSchema)] {
-        var names = Set(library.componentNames)
+        var names = Set(library.componentNames + library.functions.map(\.name) + library.customActions.map(\.name))
         return components.compactMap { component in
             let schema: ComponentSchema
             do {
                 schema = try Self.schema(of: component.definition)
             } catch {
                 log.error("Couldn't read the component \(component.name) for OpenUI", error: error)
+                return nil
+            }
+            guard ComponentLibrary.isCallableName(schema.name) else {
+                log.error("The component \(component.name) is left out of OpenUI: a program can't call \(schema.name), which must be letters and digits")
+                return nil
+            }
+            guard !Builtins.isBuiltin(schema.name), !Builtins.isReservedCall(schema.name) else {
+                log.error("The component \(component.name) is left out of OpenUI: \(schema.name) is one of OpenUI's own calls")
                 return nil
             }
             guard names.insert(schema.name).inserted else {

@@ -251,6 +251,175 @@ struct RobustnessTests {
         #expect(runtime.errors.filter { $0.message.contains("Evaluation stopped") }.count == 1)
     }
 
+    @Test func eachTemplatesThatDontReadTheItemAreNotRebuiltForEachItem() {
+        let runtime = OpenUIRuntime(library: .openUI)
+        let started = ProcessInfo.processInfo.systemUptime
+
+        runtime.update(response: Self.doublingArrays(
+            root: #"root = Stack([TextContent("" + @Count(@Each(xs, "x", $off ? b14 : 1)))])"#,
+            items: 4000,
+            levels: 14
+        ), isStreaming: false)
+
+        #expect(ProcessInfo.processInfo.systemUptime - started < 2)
+        #expect(runtime.root?.props["children"]?.arrayValue?.first?.elementValue?.props["text"] == "4000")
+    }
+
+    @Test func comparingEachItemWithALargeValueStopsAtTheEvaluationBudget() {
+        let runtime = OpenUIRuntime(library: .openUI)
+        let started = ProcessInfo.processInfo.systemUptime
+
+        runtime.update(response: Self.doublingArrays(
+            root: #"root = Stack([TextContent("" + @Count(@Filter(xs, "", "==", b13)))])"#,
+            items: 4000,
+            levels: 13
+        ), isStreaming: false)
+
+        #expect(ProcessInfo.processInfo.systemUptime - started < 2)
+        #expect(runtime.errors.contains { $0.message.contains("Evaluation stopped after") })
+    }
+
+    @Test(arguments: [
+        #"TextContent("" + @Count(@Filter(data.rows, "", ">", 5)))"#,
+        #"TextContent("" + @First(@Sort(data.rows, "", "desc")))"#
+    ])
+    func filteringOrSortingALargeQueryResultStopsAtTheEvaluationBudget(_ text: String) async {
+        let numbers = OpenUIValue.array((0..<1_000_000).map { index -> OpenUIValue in .number(Double(index % 1000)) })
+        let tools = FunctionToolProvider(["numbers": { _ in ["rows": numbers] }])
+        let runtime = OpenUIRuntime(library: .openUI, toolProvider: tools)
+        runtime.update(response: """
+        root = Stack([\(text)])
+        data = Query("numbers", {}, {rows: []})
+        """, isStreaming: false)
+
+        #expect(await waitUntil { runtime.errors.contains { $0.message.contains("Evaluation stopped after") } })
+        let started = ProcessInfo.processInfo.systemUptime
+        let (_, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
+
+        #expect(ProcessInfo.processInfo.systemUptime - started < 1, "it doesn't run over the million numbers")
+        #expect(errors.contains { $0.message.contains("Evaluation stopped after") })
+    }
+
+    @Test func aFieldNameThatIsALargeArrayStopsAtTheEvaluationBudget() {
+        let runtime = OpenUIRuntime(library: .openUI)
+        runtime.update(response: #"root = Stack([TextContent("" + @Count(@Sort([2, 1], $field)))])"#, isStreaming: false)
+        runtime.store.set("$field", .array((0..<300_000).map { index -> OpenUIValue in .number(Double(index)) }))
+
+        let (_, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
+
+        #expect(errors.contains { $0.message.contains("Evaluation stopped after") })
+    }
+
+    @Test func comparingALargeValueWithNullOrUsingItAsANumberDoesntSpendItsNodes() {
+        let runtime = OpenUIRuntime(library: .openUI)
+        runtime.update(response: """
+        root = Stack([TextContent($xs == null ? "none" : "some"), TextContent("" + ($xs != null)), TextContent("" + ($xs * 2 > 1))])
+        """, isStreaming: false)
+        runtime.store.set("$xs", .array((0..<300_000).map { index -> OpenUIValue in .number(Double(index)) }))
+
+        let (root, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
+
+        #expect(!errors.contains { $0.message.contains("Evaluation stopped") })
+        #expect(root?.props["children"]?.arrayValue?.compactMap { $0.elementValue?.props["text"] } == ["some", "true", "false"])
+    }
+
+    @Test(arguments: [#"TextContent("" + $xs)"#, #"TextContent("" + ($xs == [1]))"#])
+    func turningALargeValueIntoTextOrComparingItStopsAtTheEvaluationBudget(_ text: String) {
+        let runtime = OpenUIRuntime(library: .openUI)
+        runtime.update(response: "root = Stack([\(text)])", isStreaming: false)
+        runtime.store.set("$xs", .array((0..<300_000).map { index -> OpenUIValue in .number(Double(index)) }))
+
+        let (_, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
+
+        #expect(errors.contains { $0.message.contains("Evaluation stopped after") })
+    }
+
+    @Test func readingAFieldAnEachItemLacksDoesntCopyTheItem() {
+        let row: OpenUIValue = ["blob": .array(Array(repeating: .number(1), count: 2000))]
+        let rows = OpenUIValue.array(Array(repeating: row, count: 300))
+        let runtime = OpenUIRuntime(library: .openUI)
+        runtime.update(response: #"root = Stack(@Each($rows, "r", TextContent("" + r.label)))"#, isStreaming: false)
+        runtime.store.set("$rows", rows)
+
+        let (root, errors) = PropEvaluator.evaluateRoot(runtime.parseResult, runtime.evaluationContext, runtime.library)
+
+        #expect(!errors.contains { $0.message.contains("Evaluation stopped") })
+        #expect(root?.props["children"]?.arrayValue?.compactMap { $0.elementValue?.props["text"] } == [OpenUIValue](repeating: "", count: 300))
+    }
+
+    @Test func filteringAndSortingTwoThousandRowsStaysWithinTheBudget() async {
+        let rows = OpenUIValue.array((0..<2000).map { index -> OpenUIValue in ["name": .string("item \(index)"), "stars": .number(Double(index % 50))] })
+        let tools = FunctionToolProvider(["repos": { _ in ["rows": rows] }])
+        let runtime = OpenUIRuntime(library: .openUI, toolProvider: tools)
+        runtime.update(response: """
+        root = Stack([TextContent("" + @Count(@Filter(data.rows, "stars", ">=", 25))), TextContent(@First(@Sort(data.rows, "stars", "desc")).name), TextContent("" + @Sum(data.rows.stars))])
+        data = Query("repos", {}, {rows: []})
+        """, isStreaming: false)
+
+        #expect(await waitUntil { Self.texts(runtime) == ["1000", "item 49", "49000"] })
+        #expect(!runtime.errors.contains { $0.message.contains("Evaluation stopped") })
+    }
+
+    @Test func pluckingAFieldFromALargeResultSpendsANodeForEachItem() async {
+        let row: OpenUIValue = ["label": "a"]
+        let rows = OpenUIValue.array(Array(repeating: row, count: 50000))
+        let tools = FunctionToolProvider(["rows": { _ in ["rows": rows] }])
+        let runtime = OpenUIRuntime(library: .openUI, toolProvider: tools)
+        runtime.update(response: """
+        root = Stack(@Each([1, 2, 3, 4, 5], "n", TextContent("" + @Count(data.rows.label))))
+        data = Query("rows", {}, {rows: []})
+        """, isStreaming: false)
+
+        #expect(await waitUntil { runtime.errors.contains { $0.message.contains("Evaluation stopped after") } })
+    }
+
+    @Test func eachTemplatesSpendWhatTheyCopyFromTheirItems() async {
+        let blob = OpenUIValue.array(Array(repeating: .number(1), count: 2000))
+        let rows = OpenUIValue.array((0..<300).map { index -> OpenUIValue in ["label": .string("r\(index)"), "blob": blob] })
+        let tools = FunctionToolProvider(["rows": { _ in ["rows": rows] }])
+        let labels = OpenUIRuntime(library: .openUI, toolProvider: tools)
+        labels.update(response: "root = Stack(@Each(data.rows, \"r\", TextContent(r.label)))\ndata = Query(\"rows\", {}, {rows: []})", isStreaming: false)
+        let blobs = OpenUIRuntime(library: .openUI, toolProvider: tools)
+        blobs.update(response: "root = Stack(@Each(data.rows, \"r\", TextContent(\"\" + @Count(r.blob))))\ndata = Query(\"rows\", {}, {rows: []})", isStreaming: false)
+
+        #expect(await waitUntil { Self.texts(labels).count == 300 })
+        #expect(!labels.errors.contains { $0.message.contains("Evaluation stopped") }, "reading a field doesn't copy the rest of the item")
+        #expect(await waitUntil { blobs.errors.contains { $0.message.contains("Evaluation stopped after") } })
+    }
+
+    @Test func componentsNestedTooDeepInAnExpressionStopEvaluating() {
+        let nested = String(repeating: "Stack([", count: 60) + #"TextContent("deep")"# + String(repeating: "])", count: 60)
+        let runtime = OpenUIRuntime(library: .openUI)
+
+        runtime.update(response: "$t = true\nroot = Stack([$t ? \(nested) : TextContent(\"no\")])", isStreaming: false)
+
+        #expect(runtime.root?.typeName == "Stack")
+        #expect(runtime.errors.filter { $0.message.contains("levels of nesting") }.count == 1)
+    }
+
+    private static func texts(_ runtime: OpenUIRuntime) -> [String] {
+        runtime.root?.props["children"]?.arrayValue?.compactMap { $0.elementValue?.props["text"]?.stringValue } ?? []
+    }
+
+    @Test func componentsNestedTooDeepStopEvaluatingInsteadOfOverflowingTheStack() {
+        let program = "root = " + String(repeating: "Stack([", count: 100) + "TextContent($x)" + String(repeating: "])", count: 100) + "\n$x = \"deep\""
+        let runtime = OpenUIRuntime(library: .openUI)
+
+        runtime.update(response: program, isStreaming: false)
+
+        #expect(runtime.root?.typeName == "Stack")
+        #expect(runtime.errors.filter { $0.message.contains("levels of nesting") }.count == 1)
+    }
+
+    // `xs` holds `items` zeros, and `b<levels>` an array that doubles with each level.
+    private static func doublingArrays(root: String, items: Int, levels: Int) -> String {
+        var lines = [root, "xs = [" + Array(repeating: "0", count: items).joined(separator: ",") + "]", "b0 = [1, 1]"]
+        for level in 1...levels {
+            lines.append("b\(level) = [b\(level - 1), b\(level - 1)]")
+        }
+        return lines.joined(separator: "\n")
+    }
+
     @Test func eachLoopsWithinTheBudgetAreKept() {
         let items = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
         let runtime = OpenUIRuntime(library: .openUI)
@@ -284,6 +453,23 @@ struct RobustnessTests {
         #expect(!runtime.allowsImageLink("https://attacker.example/p?pw=hunter22"))
         #expect(!runtime.allowsImageLink("https://cdn.example/logo.png?q=h"), "a written link with typed text after it")
         #expect(!runtime.allowsImageLink(""))
+    }
+
+    @Test func whileStreamingAnImageLoadsOnlyOnceItsLinkIsComplete() {
+        let runtime = OpenUIRuntime(library: .openUIChat)
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shop"#, isStreaming: true)
+
+        #expect(!runtime.allowsImageLink("https://cdn.shop"), "the model may still be writing it")
+
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shopify.com/hero.jpg"#, isStreaming: true)
+        #expect(!runtime.allowsImageLink("https://cdn.shopify.com/hero.jpg"))
+
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shopify.com/hero.jpg", "#, isStreaming: true)
+        #expect(runtime.allowsImageLink("https://cdn.shopify.com/hero.jpg"))
+        #expect(!runtime.allowsImageLink("https://cdn.shop"))
+
+        runtime.update(response: #"root = Card([ImageBlock("https://cdn.shopify.com/hero.jpg", "Hero")])"#, isStreaming: false)
+        #expect(runtime.allowsImageLink("https://cdn.shopify.com/hero.jpg"))
     }
 
     @Test func passwordsNeverLeaveTheDevice() {

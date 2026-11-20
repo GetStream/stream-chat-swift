@@ -425,7 +425,7 @@ enum JS {
 
     private static func writeJSONObject(_ entries: [(key: String, value: OpenUIValue)], into output: inout String) {
         output += "{"
-        for (index, entry) in entries.enumerated() {
+        for (index, entry) in entries.filter({ !ActionPlan.isCallToken(key: $0.key, value: $0.value) }).enumerated() {
             if index > 0 { output += "," }
             writeJSONString(entry.key, into: &output)
             output += ":"

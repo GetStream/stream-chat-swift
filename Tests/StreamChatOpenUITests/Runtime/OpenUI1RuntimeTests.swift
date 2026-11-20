@@ -253,6 +253,70 @@ struct OpenUI1RuntimeTests {
         #expect(texts.contains(#""text":"c""#))
     }
 
+    @Test func anEachItemThatHoldsAComponentDrawsIt() throws {
+        let runtime = makeRuntime("""
+        root = Stack([list, tiles])
+        list = Stack(@Each(items, "i", Card([i.icon, TextContent(i.label)])))
+        tiles = Stack(@Each([TextContent("a")], "c", Card([c])))
+        items = [{icon: TextContent("star"), label: "A"}]
+        """, library: .openUI)
+
+        let card = try #require(element(runtime, "list")?.props["children"]?.arrayValue?.first?.elementValue)
+        let children = card.props["children"]?.arrayValue ?? []
+        #expect(children.map { $0.elementValue?.typeName } == ["TextContent", "TextContent"])
+        #expect(children.map { $0.elementValue?.props["text"] } == ["star", "A"])
+        let tile = try #require(element(runtime, "tiles")?.props["children"]?.arrayValue?.first?.elementValue)
+        #expect(tile.props["children"]?.arrayValue?.first?.elementValue?.typeName == "TextContent")
+    }
+
+    @Test func aSetInAnEachKeepsTheValuesOfAnItemThatHoldsAComponent() async throws {
+        let runtime = makeRuntime("""
+        $picked = ""
+        root = Card([Buttons(@Each(people, "p", Button(p[0], @Set($picked, p[0]))))])
+        people = [["Ada", TextContent("badge")]]
+        """)
+        let buttons = try #require(runtime.root?.props["children"]?.arrayValue?.first?.elementValue)
+        let button = try #require(buttons.props["buttons"]?.arrayValue?.first?.elementValue)
+
+        #expect(button.props["label"] == "Ada")
+        await runtime.triggerAction(label: "Ada", action: button.props["action"])
+        #expect(runtime.store.get("$picked") == "Ada")
+    }
+
+    @Test func aSetInAnEachReadsAFixedIndexWithoutCopyingTheRestOfTheItem() async throws {
+        let rest = OpenUIValue.array(Array(repeating: .number(0), count: 60000) + [.element(ElementNode(typeName: "TextContent", props: ["text": "badge"]))])
+        let runtime = OpenUIRuntime(library: Self.library, initialState: ["$people": [["Ada", rest], ["Grace", rest]]])
+        runtime.update(response: """
+        $picked = ""
+        root = Card([Buttons(@Each($people, "p", Button(p[0], @Set($picked, p[0]))))])
+        """, isStreaming: false)
+        let buttons = try #require(runtime.root?.props["children"]?.arrayValue?.first?.elementValue)
+        let items = buttons.props["buttons"]?.arrayValue?.compactMap(\.elementValue) ?? []
+
+        #expect(items.map { $0.props["label"] } == ["Ada", "Grace"])
+        #expect(!runtime.errors.contains { $0.message.contains("Evaluation stopped") })
+        await runtime.triggerAction(label: "Grace", action: items.last?.props["action"])
+        #expect(runtime.store.get("$picked") == "Grace")
+    }
+
+    @Test func aSetWhoseItemRunsOutOfTheBudgetIsLeftOutRatherThanSettingNull() async {
+        let badge = OpenUIValue.element(ElementNode(typeName: "TextContent", props: ["text": "badge"]))
+        let person = OpenUIValue.array(Array(repeating: .number(0), count: 120_000) + [badge])
+        let runtime = OpenUIRuntime(library: Self.library, initialState: ["$people": [person]])
+        runtime.update(response: """
+        $picked = "none"
+        root = Card([Buttons(@Each($people, "p", Button("Pick", @Set($picked, p))))])
+        """, isStreaming: false)
+        // Running out of the budget can leave out the button too; either way no step sets null.
+        let buttons = runtime.root?.props["children"]?.arrayValue?.first?.elementValue
+        let button = buttons?.props["buttons"]?.arrayValue?.first?.elementValue
+
+        await runtime.triggerAction(label: "Pick", action: button?.props["action"])
+
+        #expect(runtime.store.get("$picked") == "none")
+        #expect(runtime.errors.contains { $0.message.contains("Evaluation stopped") })
+    }
+
     @Test func stringEqualityComparesCodeUnitsLikeJavaScript() {
         #expect(!JS.looseEquals("é", "e\u{301}"))
         #expect(JS.looseEquals("é", "é"))

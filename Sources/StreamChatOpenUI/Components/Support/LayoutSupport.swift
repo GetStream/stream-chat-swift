@@ -4,6 +4,14 @@
 
 import SwiftUI
 
+// A size the model writes, such as a chart's height: kept within `range`, or the default when it
+// is missing or not finite.
+@available(iOS 17.0, macOS 14.0, *)
+func clampedDimension(_ value: Double?, in range: ClosedRange<CGFloat>, default defaultValue: CGFloat) -> CGFloat {
+    guard let value, value.isFinite else { return defaultValue }
+    return min(max(CGFloat(value), range.lowerBound), range.upperBound)
+}
+
 /// Container surfaces used by `Card`, `MarkDownRenderer`, `SwitchGroup`, ... (`card` | `sunk` | `clear`).
 @available(iOS 17.0, macOS 14.0, *)
 struct SurfaceBackground: ViewModifier {
