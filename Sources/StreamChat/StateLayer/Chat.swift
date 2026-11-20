@@ -1502,11 +1502,15 @@ public class Chat: @unchecked Sendable {
 
     /// Updates the content of a scheduled message, and optionally when it is sent.
     ///
-    /// A scheduled reply stays in its thread. A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// A scheduled reply stays in its thread.
     /// The changes are sent to the server once its attachments are uploaded, see `ScheduledMessage.status`.
     ///
     /// - Important: The update replaces the message, so arguments that are left out are cleared, except
     /// `skipPushNotification`, which keeps the value the message was scheduled with.
+    ///
+    /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
+    /// with a new id, which is returned. The failed one is deleted. This needs a new `scheduledAt`. Without one, the
+    /// update fails. A message whose channel was deleted can't be scheduled again.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
@@ -1559,7 +1563,11 @@ public class Chat: @unchecked Sendable {
         return try await scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt)
     }
 
-    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// Changes when a scheduled message is sent.
+    ///
+    /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
+    /// with a new id, which is returned. The failed one is deleted. A message whose channel was deleted can't be
+    /// rescheduled.
     ///
     /// The new date is sent to the server right after it is saved locally, see `ScheduledMessage.status`.
     ///
