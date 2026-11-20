@@ -67,6 +67,59 @@ class ChatMessageController_Mock: ChatMessageController, @unchecked Sendable {
         loadPageAroundReplyId_completion = completion
     }
 
+    @Atomic var scheduleReplyCallCount = 0
+    @Atomic var scheduleReply_text: String?
+    @Atomic var scheduleReply_showReplyInChannel: Bool?
+    @Atomic var scheduleReply_scheduledAt: Date?
+    override func scheduleReply(
+        messageId: MessageId? = nil,
+        text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
+        showReplyInChannel: Bool = false,
+        silent: Bool = false,
+        quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
+        scheduledAt: Date,
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
+    ) {
+        scheduleReplyCallCount += 1
+        scheduleReply_text = text
+        scheduleReply_showReplyInChannel = showReplyInChannel
+        scheduleReply_scheduledAt = scheduledAt
+    }
+
+    @Atomic var updateScheduledReplyCallCount = 0
+    @Atomic var updateScheduledReply_id: String?
+    @Atomic var updateScheduledReply_text: String?
+    @Atomic var updateScheduledReply_showReplyInChannel: Bool?
+    override func updateScheduledReply(
+        id: String,
+        text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
+        showReplyInChannel: Bool = false,
+        silent: Bool = false,
+        quotedMessageId: MessageId? = nil,
+        scheduledAt: Date? = nil,
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
+    ) {
+        updateScheduledReplyCallCount += 1
+        updateScheduledReply_id = id
+        updateScheduledReply_text = text
+        updateScheduledReply_showReplyInChannel = showReplyInChannel
+    }
+
     var hasLoadedAllNextReplies_mock: Bool?
     override var hasLoadedAllNextReplies: Bool {
         hasLoadedAllNextReplies_mock ?? super.hasLoadedAllNextReplies

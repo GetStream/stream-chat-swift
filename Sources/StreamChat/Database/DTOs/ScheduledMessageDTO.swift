@@ -212,6 +212,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
 
         let message = contentMessage(of: dto)
         try saveContent(content, to: message, cid: cid, user: currentUserDTO.user)
+        // Set when scheduling only, because the update request has no field for it.
+        message.skipPush = content.skipPush
         message.locallyCreatedAt = now.bridgeDate
         message.createdAt = scheduledAt.bridgeDate
         message.updatedAt = now.bridgeDate
@@ -321,6 +323,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.mentionedUsers = Set(message.mentionedUserIds.compactMap { self.user(id: $0) })
         message.mentionedHere = content.mentionedHere ?? false
         message.mentionedChannel = content.mentionedChannel ?? false
+        message.mentionedGroupIds = content.mentionedGroupIds ?? []
+        message.mentionedGroups = Set(message.mentionedGroupIds.compactMap { UserGroupDTO.load(id: $0, context: self) })
         message.mentionedRoles = content.mentionedRoles ?? []
         if let quotedMessage = content.quotedMessage, let channel = dto.channel {
             message.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channel, syncOwnReactions: false, cache: nil)
@@ -469,8 +473,12 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.user = user
         message.mentionedUserIds = content.mentionedUserIds
         message.mentionedUsers = Set(content.mentionedUserIds.compactMap { self.user(id: $0) })
-        message.mentionedHere = false
-        message.mentionedChannel = false
+        message.mentionedHere = content.mentionedHere
+        message.mentionedChannel = content.mentionedChannel
+        message.mentionedGroupIds = content.mentionedGroupIds
+        message.mentionedGroups = Set(content.mentionedGroupIds.compactMap { UserGroupDTO.load(id: $0, context: self) })
+        message.mentionedRoles = content.mentionedRoles
+        message.isSilent = content.isSilent
         message.quotedMessage = content.quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
 
         message.attachments.forEach { delete($0) }
