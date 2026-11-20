@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix picked photos being sent without the person's edits, and attachments needing text to send [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 - Fix dictation starting without speech or microphone permission, or after the composer went away [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 - Fix charts crashing on extreme values [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
+- Fix finished replies growing as they scroll into `AIConversationView` [#4425](https://github.com/GetStream/stream-chat-swift/pull/4425)
 
 ## StreamChatA2UI
 ### 🐞 Fixed

@@ -12,12 +12,12 @@ public struct StreamingMessageView: View {
     
     private let letterInterval: TimeInterval
     
-    @State private var displayedText: String = ""
+    @State private var displayedText: String
     @State private var characterQueue: [Character] = []
     @State private var typingTimer: Timer?
     // Whether the reply is finished, which the typing timer reads: it was made with an earlier
     // copy of the view, whose `isGenerating` it keeps.
-    @State private var isFinished = false
+    @State private var isFinished: Bool
 
     @Environment(\.aiThinkingTurn) private var turn
     @Injected(\.aiAppearance.colors) private var colors
@@ -32,6 +32,10 @@ public struct StreamingMessageView: View {
         self.content = content
         self.isGenerating = isGenerating
         self.letterInterval = letterInterval
+        // A finished reply shows its text from its first layout: a row that starts out empty has
+        // no height, so a list makes many more rows than fit, and they grow as they scroll in.
+        _displayedText = State(initialValue: isGenerating ? "" : content)
+        _isFinished = State(initialValue: !isGenerating)
     }
     
     public var body: some View {

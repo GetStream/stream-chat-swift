@@ -113,7 +113,7 @@ jobs:
     needs: guard
     env:
       XCODE_VERSION: "16.1"
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).generated_code }}
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/bootstrap
