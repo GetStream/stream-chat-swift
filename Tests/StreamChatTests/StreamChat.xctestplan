@@ -77,6 +77,13 @@
         "identifier" : "799C9450247D59B1001F1104",
         "name" : "StreamChatTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:StreamChat.xcodeproj",
+        "identifier" : "76D34A93ED14DC9D0973AAA5",
+        "name" : "StreamChatDocsSnippets"
+      }
     }
   ],
   "version" : 1
