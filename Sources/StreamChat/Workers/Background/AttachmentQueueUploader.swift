@@ -228,7 +228,8 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
             
             // If attachment failed upload, mark message as failed
             if newState == .uploadingFailed {
-                message.localMessageState = .sendingFailed
+                // A scheduled message already on the server keeps its changes as an update.
+                message.localMessageState = message.scheduledMessage?.isLocalOnly == false ? .syncingFailed : .sendingFailed
             }
 
             if var uploadedAttachment = uploadedAttachment {

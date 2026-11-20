@@ -111,7 +111,7 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func watch() async throws {
-        try await channelUpdater.startWatching(cid: cid, isInRecoveryMode: false)
+        try await channelUpdater.startWatching(cid: cid, includeScheduledMessages: state.channelQuery.includeScheduledMessages, isInRecoveryMode: false)
         client.syncRepository.startTrackingChat(self)
     }
     
@@ -1516,7 +1516,8 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Parameter id: The id of the scheduled message.
     ///
-    /// - Throws: An error while deleting the scheduled message.
+    /// - Throws: An error while deleting the scheduled message. It is `ClientError.ScheduledMessageDoesNotExist` when
+    /// the server no longer has the message, because it was already sent or deleted on another device. The message is then removed locally.
     public func deleteScheduledMessage(id: String) async throws {
         try await scheduledMessagesRepository.delete(id: id)
     }

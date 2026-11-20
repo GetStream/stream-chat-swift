@@ -2172,6 +2172,15 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(true, isPendingSendNow)
     }
 
+    func test_watch_whenTheQueryIncludesScheduledMessages_thenTheyAreIncludedInTheRequest() async throws {
+        var query = ChannelQuery(cid: channelId)
+        query.includeScheduledMessages = true
+        await chat.state.setChannelQuery(query)
+        env.channelUpdaterMock.startWatching_completion_result = .success(())
+        try await chat.watch()
+        XCTAssertEqual(true, env.channelUpdaterMock.startWatching_includeScheduledMessages)
+    }
+
     // MARK: - Test Data
     
     /// Configures chat for testing.

@@ -129,6 +129,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             dto.syncErrorReason = nil
             dto.syncErrorMessage = nil
             dto.isSyncErrorLocal = false
+            message.restartFailedUploads()
             return try dto.asModel()
         }, completion: completion)
     }
@@ -145,13 +146,16 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             switch result {
             case .success(true):
                 apiClient.request(endpoint: .deleteScheduledMessage(id: id)) { [weak self] result in
-                    if let error = result.error {
+                    let isGoneFromServer = result.error?.isBackendNotFound404StatusCode == true
+                    if let error = result.error, !isGoneFromServer {
                         completion(error)
                         return
                     }
                     self?.database.write({ session in
                         session.deleteScheduledMessage(id: id)
-                    }, completion: completion)
+                    }, completion: { error in
+                        completion(error ?? (isGoneFromServer ? ClientError.ScheduledMessageDoesNotExist(id: id) : nil))
+                    })
                 }
             case .success(false):
                 completion(nil)
@@ -197,12 +201,12 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             case .pendingSend:
                 message.localMessageState = .sending
                 let cid = try ChannelId(cid: dto.cid)
-                return .schedule(cid: cid, request: SendMessageRequest(message: message.asMessageRequest(), scheduledAt: scheduledAt))
+                return .schedule(cid: cid, request: SendMessageRequest(message: message.asMessageRequest(quotedMessageId: dto.quotedMessageId), scheduledAt: scheduledAt))
             case .pendingSync:
                 message.localMessageState = .syncing
                 // The backend ignores the id of the message.
                 return .update(UpdateScheduledMessageRequest(
-                    message: message.asMessageRequest(),
+                    message: message.asMessageRequest(quotedMessageId: dto.quotedMessageId),
                     scheduledAt: dto.hasPendingScheduledAt ? scheduledAt : nil
                 ))
             case nil where dto.isPendingSendNow:
@@ -313,7 +317,10 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             let isEphemeral = ClientError.isEphemeral(error: error)
             let apiError = (error as? ClientError)?.apiError
             let reason = apiError.flatMap(ScheduledMessageFailure.ServerRejection.Reason.init(apiError:))
-            if reason == .scheduledMessageAlreadySent || reason == .scheduledMessageCanceled {
+            // A 404 means the message is gone only when sending now. Scheduling and updating also fail with it for a
+            // deleted quoted message, or a missing parent message or channel.
+            let isGoneFromServer = pendingState == nil && error.isBackendNotFound404StatusCode
+            if reason == .scheduledMessageAlreadySent || reason == .scheduledMessageCanceled || isGoneFromServer {
                 // It went out at its date, or was deleted on another device, while this device was offline.
                 database.write({ session in
                     session.deleteScheduledMessage(id: id)
@@ -354,7 +361,9 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
 }
 
 extension ClientError {
-    final class ScheduledMessageDoesNotExist: ClientError, @unchecked Sendable {
+    /// There is no scheduled message with the given id: it is not in the local database, or the server no longer
+    /// has it because it was already sent or deleted on another device.
+    public final class ScheduledMessageDoesNotExist: ClientError, @unchecked Sendable {
         init(id: String) {
             super.init("There is no scheduled message with id: \(id).")
         }

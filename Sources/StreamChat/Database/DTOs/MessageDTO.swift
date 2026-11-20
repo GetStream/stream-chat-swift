@@ -1667,7 +1667,7 @@ extension MessageDTO {
     }
 
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
-    func asMessageRequest() -> MessageRequest {
+    func asMessageRequest(quotedMessageId: MessageId? = nil) -> MessageRequest {
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
@@ -1703,7 +1703,7 @@ extension MessageDTO {
             pinExpires: pinExpires?.bridgeDate,
             pinned: pinned,
             pollId: poll?.id,
-            quotedMessageId: quotedMessage?.id,
+            quotedMessageId: quotedMessageId ?? quotedMessage?.id,
             restrictedVisibility: restrictedVisibilityArray,
             sharedLocation: location.map {
                 .init(

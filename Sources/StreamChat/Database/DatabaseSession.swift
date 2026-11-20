@@ -660,6 +660,9 @@ protocol ScheduledMessageDatabaseSession {
     /// Deletes the scheduled message with the specified id.
     func deleteScheduledMessage(id: String)
 
+    /// Saves the scheduled messages of a channel query, which are all the scheduled messages of the channel.
+    func saveScheduledMessages(payload: [ScheduledMessageResponse], cid: ChannelId)
+
     /// Deletes the scheduled messages missing from the whole list of the server, except the ones that are not on the server yet.
     func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?)
 

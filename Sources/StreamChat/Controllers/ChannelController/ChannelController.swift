@@ -1630,7 +1630,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         client.syncRepository.startTrackingChannelController(self)
 
-        updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
+        updater.startWatching(cid: cid, includeScheduledMessages: channelQuery.includeScheduledMessages, isInRecoveryMode: isInRecoveryMode) { error in
             self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
             self.callback {
                 completion?(error)
@@ -2065,7 +2065,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - completion: Called when the message is deleted, with an error if it failed.
+    ///   - completion: Called when the message is deleted, with an error if it failed. The error is
+    ///   `ClientError.ScheduledMessageDoesNotExist` when the server no longer has the message, because it was already sent or deleted on another device. The message is then removed locally.
     public func deleteScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
         client.scheduledMessagesRepository.delete(id: id) { error in
             self.callback { completion?(error) }
