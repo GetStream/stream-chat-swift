@@ -1116,7 +1116,7 @@ final class AIConversation_Tests: XCTestCase {
         XCTAssertEqual(conversation.status, .ready)
     }
 
-    func test_stop_whenAnEarlierStopFailsWhileALaterOneIsOnItsWay_theLaterOneDecides() async {
+    func test_stop_whenAnEarlierStopFailsWhileALaterOneIsOnItsWay_theLaterOneDecides() async throws {
         let first = ChatMessage.reply("a1", "Day one", generating: true)
         let second = ChatMessage.reply("a2", "Porto", generating: true)
         let transport = ConversationTransport(messages: [.user("u1"), first])
@@ -1133,7 +1133,7 @@ final class AIConversation_Tests: XCTestCase {
         XCTAssertFalse(conversation.isGenerating(first), "the later stop can still end it")
 
         transport.finishStop(1, throwing: TransportError())
-        await settle()
+        try await waitUntil { conversation.isGenerating(first) && conversation.isGenerating(second) }
 
         XCTAssertTrue(conversation.isGenerating(first))
         XCTAssertTrue(conversation.isGenerating(second))
