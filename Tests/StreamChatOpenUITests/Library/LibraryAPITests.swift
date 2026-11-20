@@ -141,6 +141,39 @@ struct LibraryAPITests {
         #expect(library.systemPrompt().contains("### Tables") == false)
     }
 
+    @Test func removingDropsTheExamplesRulesAndNotesThatUseTheComponents() {
+        let chat = ComponentLibrary.openUIChat
+        let library = chat.removing(["FollowUpBlock", "FollowUpItem", "Table", "Col"])
+
+        let prompt = library.systemPrompt()
+        #expect(!prompt.contains("FollowUpBlock"))
+        #expect(!prompt.contains("FollowUpItem"))
+        #expect(!prompt.contains("Table(["))
+        #expect(!prompt.contains("Col("))
+        #expect(library.defaultPromptOptions.additionalRules.count < chat.defaultPromptOptions.additionalRules.count)
+        #expect(library.defaultPromptOptions.additionalRules.contains("Never nest Form inside Form."))
+        let lists = library.componentGroups.first { $0.name == "Lists & Follow-ups" }
+        #expect(lists?.notes.contains("- Use ListBlock with ListItem references for numbered lists.") == true)
+        #expect(lists?.notes.contains { $0.contains("FollowUp") } == false)
+    }
+
+    @Test func removingKeepsExamplesThatOnlyShowAComponentsNameAsText() {
+        let chat = ComponentLibrary.openUIChat
+        var options = chat.defaultPromptOptions
+        let text = #"root = Card([TextContent("Table \"Col\" view")])"#
+        let table = #"root = Card([Table([Col("Name", ["Ada"])])])"#
+        options.examples = [text, table]
+        let library = ComponentLibrary(root: chat.root, components: chat.components, componentGroups: chat.componentGroups, defaultPromptOptions: options)
+
+        #expect(library.removing(["Table", "Col"]).defaultPromptOptions.examples == [text])
+    }
+
+    @Test func removingNamesThatArentComponentsKeepsThePrompt() {
+        let library = ComponentLibrary.openUIChat.removing(["Action", "Query", "Card"])
+
+        #expect(library.systemPrompt() == ComponentLibrary.openUIChat.systemPrompt())
+    }
+
     @Test func removingKeepsTheRootAndASlotsOnlyType() {
         let library = ComponentLibrary.openUIChat.removing(["Card", "FollowUpItem", "Callout"])
 

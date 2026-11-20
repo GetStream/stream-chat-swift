@@ -23,6 +23,7 @@ struct HostToolProvider: OpenUIToolProvider {
 }
 
 // A tool a reply's UI ran after its conversation was closed.
+@available(iOS 17.0, macOS 14.0, *)
 struct ConversationClosedError: LocalizedError {
     let toolName: String
 

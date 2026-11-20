@@ -29,6 +29,7 @@ public extension OpenUITheme {
         colors.neutral = Color(tokens.accentNeutral)
 
         let font = appearance.tokens.fonts
+        fonts.titleLarge = font.title2.weight(.bold)
         fonts.title = font.title3.weight(.semibold)
         fonts.heading = font.headline
         fonts.body = font.body

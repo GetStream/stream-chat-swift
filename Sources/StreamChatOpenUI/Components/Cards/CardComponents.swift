@@ -11,12 +11,11 @@ import SwiftUI
 struct TextBlockView: View {
     let context: ComponentContext
     let bold: Bool
-    var sizeOverride: String?
     @Environment(\.openUITheme) private var theme
 
     var body: some View {
         let props = context.props
-        let size = sizeOverride ?? props.string("size") ?? "md"
+        let size = props.string("size") ?? "md"
         let isNumber = props.string("variant") == "number"
         VStack(alignment: .leading, spacing: 2) {
             Text(InlineMarkdown.cached(props.text("value") ?? ""))
@@ -26,7 +25,7 @@ struct TextBlockView: View {
                 .fixedSize(horizontal: false, vertical: true)
             if let subtext = props.text("subtext"), !subtext.isEmpty {
                 Text(subtext)
-                    .font(subtextFont(size))
+                    .font(theme.fonts.caption)
                     .monospacedDigit(props.string("subtextVariant") != "text")
                     .foregroundStyle(subtextColor(subtext, variant: props.string("subtextVariant")))
             }
@@ -35,15 +34,11 @@ struct TextBlockView: View {
 
     private func primaryFont(_ size: String) -> Font {
         switch size {
-        case "xs": return .footnote
-        case "sm": return .subheadline
-        case "lg": return bold ? .title2 : .title3
-        default: return bold ? .title3 : .body
+        case "xs": return theme.fonts.caption
+        case "sm": return theme.fonts.bodySmall
+        case "lg": return bold ? theme.fonts.title : theme.fonts.bodyLarge
+        default: return bold ? theme.fonts.bodyLarge : theme.fonts.body
         }
-    }
-
-    private func subtextFont(_ size: String) -> Font {
-        size == "xs" || size == "sm" ? .caption2 : .caption
     }
 
     private func subtextColor(_ subtext: String, variant: String?) -> Color {
@@ -151,7 +146,7 @@ struct ImageTextView: View {
 
     var body: some View {
         let props = context.props
-        let size = CGFloat(props.number("imageSize") ?? 40)
+        let size = clampedDimension(props.number("imageSize"), in: 16...200, default: 40)
         let vertical = props.string("layout") == "vertical"
         let layout = vertical
             ? AnyLayout(VStackLayout(alignment: .leading, spacing: theme.spacing.s))
@@ -336,7 +331,7 @@ private struct CardBlockProps {
         layout = props.string("layout") ?? "grid"
         action = props["action"].flatMap { $0.isNull ? nil : $0 }
         switch props["gap"] {
-        case .number(let number)?: gap = CGFloat(number)
+        case .number(let number)?: gap = clampedDimension(number, in: 0...64, default: theme.spacing.m)
         case .string(let token)?: gap = theme.spacing.value(token, default: theme.spacing.m)
         default: gap = nil
         }

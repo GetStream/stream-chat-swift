@@ -59,6 +59,58 @@ struct PortableComponentsTests {
         #expect(schema.description == "A photo and a short summary of a place. summary: One sentence about it. The person asks about the place.")
     }
 
+    @Test func theDescriptionSaysWhichNumbersAreWholeAndHowDatesAreWritten() throws {
+        let schema = try ComponentSchema(portableDefinition: [
+            "name": "booking",
+            "parameters": [
+                "type": "object",
+                "properties": [
+                    "nights": ["type": "integer", "description": "How long they stay"],
+                    "day": ["type": "string", "format": "date"],
+                    "at": ["type": ["string", "null"], "format": "date-time"],
+                    "price": ["type": "number"]
+                ],
+                "x-order": ["nights", "day", "at", "price"]
+            ]
+        ])
+
+        #expect(schema.props.map(\.type) == [.number, .string, .string, .number])
+        #expect(schema.description == "nights: How long they stay; a whole number. day: a date as YYYY-MM-DD. at: a date and time as YYYY-MM-DDTHH:MM:SSZ.")
+    }
+
+    @Test func aParameterOfSeveralTypesGetsNoFormatNote() throws {
+        let schema = try ComponentSchema(portableDefinition: [
+            "name": "lookup",
+            "parameters": [
+                "type": "object",
+                "properties": [
+                    "code": ["type": ["integer", "string"], "description": "The booking code"],
+                    "day": ["type": ["string", "integer"], "format": "date"]
+                ],
+                "x-order": ["code", "day"]
+            ]
+        ])
+
+        #expect(schema.description == "code: The booking code.")
+    }
+
+    @Test func aNullableParameterOfOneTypeGetsItsFormatNote() throws {
+        let schema = try ComponentSchema(portableDefinition: [
+            "name": "stay",
+            "parameters": [
+                "type": "object",
+                "properties": [
+                    "nights": ["anyOf": [["type": "integer"], ["type": "null"]]],
+                    "day": ["oneOf": [["type": "string", "format": "date"], ["type": "null"]]],
+                    "code": ["anyOf": [["type": "integer"], ["type": "string"]]]
+                ],
+                "x-order": ["nights", "day", "code"]
+            ]
+        ])
+
+        #expect(schema.description == "nights: a whole number. day: a date as YYYY-MM-DD.")
+    }
+
     @Test func aDefinitionNeedsAName() {
         #expect(throws: OpenUIPortableComponentError.self) {
             try ComponentSchema(portableDefinition: ["description": "No name"])

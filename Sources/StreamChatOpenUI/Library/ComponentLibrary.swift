@@ -162,7 +162,9 @@ public struct ComponentLibrary: Sendable {
     /// Returns a library in which `view` shows the component named `name`, which keeps its props,
     /// such as to restyle the chat library's buttons. The view's context has the component's
     /// props, and the library's own view of it, ``ComponentContext/defaultView``, to wrap or
-    /// restyle. It is the same library when it has no such component.
+    /// restyle. It is the same library when it has no such component, or when the component has
+    /// no view of its own because its parent draws it, such as a list's items, a chart's series
+    /// or a table's columns: replace the parent's view instead.
     ///
     /// ```swift
     /// let library = ComponentLibrary.openUIChat.replacingView(of: .button) { context in
@@ -201,10 +203,11 @@ public struct ComponentLibrary: Sendable {
     }
 
     /// Returns a library without the given components. They are also removed from every slot that
-    /// takes several types, and groups left empty are dropped. The root component, and a type that
-    /// is the only one a slot takes, stay.
+    /// takes several types, and groups left empty are dropped, as are the prompt's examples, rules
+    /// and group notes that use them. The root component, and a type that is the only one a slot
+    /// takes, stay.
     public func removing(_ names: Set<String>) -> ComponentLibrary {
-        var names = names
+        var names = names.intersection(componentNames)
         if let root { names.remove(root) }
         // A component that is all a remaining slot takes stays, and so do the ones its slots need.
         while true {
@@ -224,18 +227,64 @@ public struct ComponentLibrary: Sendable {
             }
             return OpenUIComponentDefinition(schema, renderer: definition.renderer)
         }
+        // Text that names a removed component would have the model write it. An example calls it
+        // outside its strings, which can hold its name as plain text.
+        func keeps(_ text: String) -> Bool {
+            Self.identifiers(in: text).isDisjoint(with: names)
+        }
+        func keepsExample(_ example: String) -> Bool {
+            keeps(Self.withoutStrings(example))
+        }
         let groups = componentGroups.compactMap { group -> ComponentGroup? in
             let kept = group.components.filter { !names.contains($0) }
-            return kept.isEmpty ? nil : ComponentGroup(name: group.name, components: kept, notes: group.notes)
+            return kept.isEmpty ? nil : ComponentGroup(name: group.name, components: kept, notes: group.notes.filter(keeps))
         }
+        var options = defaultPromptOptions
+        options.examples = options.examples.filter(keepsExample)
+        options.toolExamples = options.toolExamples.filter(keepsExample)
+        options.additionalRules = options.additionalRules.filter(keeps)
         return ComponentLibrary(
             root: root,
             components: remaining,
             componentGroups: groups,
-            defaultPromptOptions: defaultPromptOptions,
+            defaultPromptOptions: options,
             functions: functions,
             customActions: customActions
         )
+    }
+
+    // The words of `text` that could name a component: runs of letters and digits.
+    private static func identifiers(in text: String) -> Set<String> {
+        Set(text.split { !($0.isASCII && ($0.isLetter || $0.isNumber)) }.map(String.init))
+    }
+
+    // `text` with its double-quoted strings blanked out. A string ends with its line, so a quote
+    // in an example's prose hides no more than the rest of that line.
+    private static func withoutStrings(_ text: String) -> String {
+        var code = ""
+        var inString = false
+        var escaped = false
+        for character in text {
+            if character.isNewline {
+                inString = false
+                escaped = false
+                code.append(character)
+            } else if inString {
+                if escaped {
+                    escaped = false
+                } else if character == "\\" {
+                    escaped = true
+                } else if character == "\"" {
+                    inString = false
+                }
+            } else if character == "\"" {
+                inString = true
+                code.append(" ")
+            } else {
+                code.append(character)
+            }
+        }
+        return code
     }
 
     // MARK: - Prompt & spec

@@ -28,10 +28,50 @@ struct MarkdownCacheTests {
         #expect(InlineMarkdown.cached("a *b*") == InlineMarkdown.attributed("a *b*"))
     }
 
+    @Test func aFullCacheKeepsTheTextsUsedLately() {
+        var made: [String] = []
+        var cache = RecentValues<Int>(limit: 3)
+        func value(_ key: String) -> Int {
+            cache.value(for: key) { key in
+                made.append(key)
+                return key.count
+            }
+        }
+
+        for key in ["a", "b", "c", "d"] {
+            _ = value(key)
+        }
+        _ = value("a")
+        _ = value("e")
+        _ = value("f")
+        _ = value("a")
+
+        #expect(made == ["a", "b", "c", "d", "e", "f"], "a text shown again isn't parsed again")
+
+        _ = value("b")
+        _ = value("a")
+
+        #expect(made == ["a", "b", "c", "d", "e", "f", "b"], "a text not shown lately was dropped, and one shown lately wasn't")
+        #expect(cache.count <= 6)
+    }
+
     @Test func unchangedBlocksCompareEqual() {
         let block = MarkdownBlock.heading(level: 1, text: "Title")
 
         #expect(MarkdownBlockView(block: block, baseFont: .body, foreground: nil) == MarkdownBlockView(block: block, baseFont: .body, foreground: nil))
         #expect(MarkdownBlockView(block: block, baseFont: .body, foreground: nil) != MarkdownBlockView(block: .paragraph("Title"), baseFont: .body, foreground: nil))
+    }
+}
+
+@MainActor
+@Suite("Markdown headings")
+struct MarkdownHeadingTests {
+    @Test func headingsGetSmallerFromTheFirstLevelDown() throws {
+        let heights = try (1...4).map { level in
+            try #require(RenderingTests.render(MarkdownBlockView(block: .heading(level: level, text: "Heading"), baseFont: .body, foreground: nil))).height
+        }
+
+        #expect(heights == heights.sorted(by: >))
+        #expect(Set(heights).count == heights.count, "\(heights)")
     }
 }

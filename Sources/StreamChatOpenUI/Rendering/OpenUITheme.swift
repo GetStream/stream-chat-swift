@@ -115,6 +115,7 @@ public struct OpenUITheme: Sendable {
     }
 
     public struct Fonts: Sendable {
+        public var titleLarge: Font = .title2.weight(.bold)
         public var title: Font = .title3.weight(.semibold)
         public var heading: Font = .headline
         public var body: Font = .body
