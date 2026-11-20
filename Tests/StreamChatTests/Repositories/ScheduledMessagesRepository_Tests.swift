@@ -1380,6 +1380,48 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try storedMessages(query: channelsQuery).map(\.id), [otherChannel.id])
     }
 
+    // MARK: - Mentions, silent and skip push
+
+    func test_sendPendingChanges_sendsTheMentionsSilentAndSkipPush() throws {
+        _ = try schedule(id: "scheduled-id", content: contentWithAllOptions()).get()
+        apiClient.test_mockResponseResult(.success(sendMessageResponse(.dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId)))))
+
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        let body = try XCTUnwrap(apiClient.request_endpoint).bodyAsDictionary()
+        let message = try XCTUnwrap(body["message"] as? [String: Any])
+        XCTAssertEqual(body["skip_push"] as? Bool, true)
+        XCTAssertEqual(message["mentioned_here"] as? Bool, true)
+        XCTAssertEqual(message["mentioned_channel"] as? Bool, true)
+        XCTAssertEqual(message["mentioned_group_ids"] as? [String], ["group-id"])
+        XCTAssertEqual(message["mentioned_roles"] as? [String], ["admin"])
+        XCTAssertEqual(message["silent"] as? Bool, true)
+    }
+
+    func test_update_replacesTheMentionsAndSilentAndKeepsSkipPush() throws {
+        _ = try schedule(id: "scheduled-id", content: contentWithAllOptions()).get()
+
+        let updated = try waitFor {
+            repository.update(id: "scheduled-id", content: content(text: "Edited"), scheduledAt: nil, completion: $0)
+        }.get()
+
+        XCTAssertEqual(updated.message.text, "Edited")
+        XCTAssertFalse(updated.message.mentionedHere)
+        XCTAssertFalse(updated.message.mentionedChannel)
+        XCTAssertEqual(updated.message.mentionedRoles, [])
+        XCTAssertFalse(updated.message.isSilent)
+        XCTAssertEqual(try storedGroupIds(id: "scheduled-id"), [])
+        XCTAssertEqual(try storedSkipPush(id: "scheduled-id"), true)
+    }
+
+    func test_saveScheduledMessage_savesTheMentionedGroupIds() throws {
+        let response = ScheduledMessageResponse.dummy(id: "scheduled-id", cid: cid, message: .dummy(mentionedGroupIds: ["group-id"]))
+
+        _ = try XCTUnwrap(model(from: response))
+
+        XCTAssertEqual(try storedGroupIds(id: "scheduled-id"), ["group-id"])
+    }
+
     // MARK: - Usage
 
     func test_usage_countsThePendingMessagesOfTheChannelAndOfAllChannels() throws {
@@ -1416,6 +1458,25 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    private func contentWithAllOptions() -> ScheduledMessageContent {
+        var content = content()
+        content.mentionedHere = true
+        content.mentionedChannel = true
+        content.mentionedGroupIds = ["group-id"]
+        content.mentionedRoles = ["admin"]
+        content.isSilent = true
+        content.skipPush = true
+        return content
+    }
+
+    private func storedGroupIds(id: String) throws -> [String]? {
+        try database.readSynchronously { $0.scheduledMessage(id: id)?.message?.mentionedGroupIds }
+    }
+
+    private func storedSkipPush(id: String) throws -> Bool? {
+        try database.readSynchronously { $0.scheduledMessage(id: id)?.message?.skipPush }
+    }
 
     private func saveMessage(id: MessageId) throws {
         try database.createMessage(id: id, cid: cid)
@@ -1602,6 +1663,7 @@ extension ScheduledMessageContentResponse {
         attachments: [MessageAttachmentPayload]? = nil,
         custom: [String: RawJSON] = [:],
         mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
         mentionedHere: Bool? = nil,
         mentionedRoles: [String]? = nil,
         mentionedUsers: [String]? = nil,
@@ -1616,6 +1678,7 @@ extension ScheduledMessageContentResponse {
             attachments: attachments,
             custom: custom,
             mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
             mentionedHere: mentionedHere,
             mentionedRoles: mentionedRoles,
             mentionedUsers: mentionedUsers,

@@ -2143,6 +2143,27 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(scheduledMessage.scheduledAt, updated.scheduledAt)
     }
 
+    func test_updateScheduledMessage_withMentionsAndSilent_thenTheyAreSavedLocally() async throws {
+        let scheduledMessage = try await chat.scheduleMessage(with: "Later", scheduledAt: Date().addingTimeInterval(3600))
+
+        let updated = try await chat.updateScheduledMessage(
+            id: scheduledMessage.id,
+            text: "Edited",
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroupIds: ["group-id"],
+            mentionedRoles: ["admin"],
+            silent: true
+        )
+
+        XCTAssertTrue(updated.message.mentionedHere)
+        XCTAssertTrue(updated.message.mentionedChannel)
+        XCTAssertEqual(["admin"], updated.message.mentionedRoles)
+        XCTAssertTrue(updated.message.isSilent)
+        let groupIds = try env.client.databaseContainer.readSynchronously { $0.scheduledMessage(id: scheduledMessage.id)?.message?.mentionedGroupIds }
+        XCTAssertEqual(["group-id"], groupIds)
+    }
+
     func test_rescheduleMessage_thenTheDateIsUpdatedLocally() async throws {
         let scheduledMessage = try await chat.scheduleMessage(with: "Later", scheduledAt: Date().addingTimeInterval(3600))
         let newDate = Date().addingTimeInterval(7200)
@@ -2170,6 +2191,48 @@ final class Chat_Tests: XCTestCase {
             $0.scheduledMessage(id: scheduledMessage.id)?.isPendingSendNow
         }
         XCTAssertEqual(true, isPendingSendNow)
+    }
+
+    func test_scheduleMessage_withMentionsSilentAndSkipPush_thenTheyAreSavedLocally() async throws {
+        let scheduledMessage = try await chat.scheduleMessage(
+            with: "Later",
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroupIds: ["group-id"],
+            mentionedRoles: ["admin"],
+            scheduledAt: Date().addingTimeInterval(3600),
+            silent: true,
+            skipPushNotification: true
+        )
+
+        XCTAssertTrue(scheduledMessage.message.mentionedHere)
+        XCTAssertTrue(scheduledMessage.message.mentionedChannel)
+        XCTAssertEqual(["admin"], scheduledMessage.message.mentionedRoles)
+        XCTAssertTrue(scheduledMessage.message.isSilent)
+        let stored = try env.client.databaseContainer.readSynchronously { session in
+            let message = session.scheduledMessage(id: scheduledMessage.id)?.message
+            return [message?.mentionedGroupIds == ["group-id"], message?.skipPush == true]
+        }
+        XCTAssertEqual([true, true], stored)
+    }
+
+    func test_scheduleReply_withMentionsSilentAndSkipPush_thenTheyAreSavedLocally() async throws {
+        let scheduledMessage = try await chat.scheduleReply(
+            to: .unique,
+            text: "Later",
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroupIds: ["group-id"],
+            mentionedRoles: ["admin"],
+            scheduledAt: Date().addingTimeInterval(3600),
+            silent: true,
+            skipPushNotification: true
+        )
+
+        XCTAssertTrue(scheduledMessage.message.mentionedHere)
+        XCTAssertTrue(scheduledMessage.message.mentionedChannel)
+        XCTAssertEqual(["admin"], scheduledMessage.message.mentionedRoles)
+        XCTAssertTrue(scheduledMessage.message.isSilent)
     }
 
     func test_scheduledMessagesUsage_whenAMessageIsScheduled_thenItHasTheCountsAndLimits() async throws {
