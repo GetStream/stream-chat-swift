@@ -648,6 +648,8 @@ protocol ScheduledMessageDatabaseSession {
         scheduledAt: Date?
     ) throws -> ScheduledMessageDTO
 
+    func scheduledMessagesUsage(cid: ChannelId) throws -> ScheduledMessagesUsage
+
     /// Creates or updates a scheduled message with the provided payload.
     ///
     /// The content is kept when it has local changes that are not on the server yet.

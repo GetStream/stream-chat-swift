@@ -9,6 +9,7 @@ import XCTest
 final class MessageScheduler_Tests: XCTestCase {
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
+    var eventNotificationCenter: EventNotificationCenter_Mock!
     var repository: ScheduledMessagesRepository!
     var scheduler: MessageScheduler!
     var cid: ChannelId!
@@ -21,11 +22,12 @@ final class MessageScheduler_Tests: XCTestCase {
 
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
+        eventNotificationCenter = EventNotificationCenter_Mock(database: database)
         repository = ScheduledMessagesRepository(database: database, apiClient: apiClient)
         cid = .unique
         userId = .unique
         try? database.createCurrentUser(id: userId)
-        scheduler = MessageScheduler(scheduledMessagesRepository: repository, database: database, apiClient: apiClient)
+        scheduler = makeScheduler()
     }
 
     override func tearDown() {
@@ -36,6 +38,7 @@ final class MessageScheduler_Tests: XCTestCase {
         weak var weakAPIClient = apiClient
         weak var weakDatabase = database
         scheduler = nil
+        eventNotificationCenter = nil
         repository = nil
         apiClient = nil
         database = nil
@@ -103,7 +106,7 @@ final class MessageScheduler_Tests: XCTestCase {
             scheduledMessage: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId))
         )))
 
-        scheduler = MessageScheduler(scheduledMessagesRepository: repository, database: database, apiClient: apiClient)
+        scheduler = makeScheduler()
 
         wait(until: { [self] in
             apiClient.request_endpoint?.path.value == EndpointPath.updateScheduledMessage(id: "scheduled-id").value
@@ -137,6 +140,22 @@ final class MessageScheduler_Tests: XCTestCase {
         wait(until: { [self] in localState(of: "scheduled-id") == .sendingFailed })
     }
 
+    func test_scheduler_whenTheServerSendsTheMessageRightAway_postsASentNowEvent() throws {
+        try database.createChannel(cid: cid)
+        apiClient.test_mockResponseResult(.success(SendMessageResponsePayload(
+            message: .dummy(messageId: "scheduled-id", authorUserId: userId, cid: cid),
+            scheduledMessage: nil
+        )))
+
+        try scheduleLocally(id: "scheduled-id")
+
+        wait(until: { [self] in !eventNotificationCenter.mock_processCalledWithEvents.isEmpty })
+        let event = try XCTUnwrap(eventNotificationCenter.mock_processCalledWithEvents.first as? ScheduledMessageSentEvent)
+        XCTAssertTrue(event.isSentNow)
+        XCTAssertEqual(event.messageId, "scheduled-id")
+        XCTAssertEqual(event.cid, cid)
+    }
+
     func test_scheduler_sendsNow_aMessageMarkedToBeSentNow() throws {
         try database.writeSynchronously { [cid, userId] session in
             let dto = try session.saveScheduledMessage(payload: .dummy(id: "scheduled-id", cid: cid!, user: .dummy(userId: userId!)))
@@ -161,6 +180,15 @@ final class MessageScheduler_Tests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    private func makeScheduler() -> MessageScheduler {
+        MessageScheduler(
+            scheduledMessagesRepository: repository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: database,
+            apiClient: apiClient
+        )
+    }
 
     private func scheduleLocally(id: String, attachments: [AnyAttachmentPayload] = []) throws {
         let content = ScheduledMessageContent(

@@ -767,6 +767,7 @@ public class ChatClient: @unchecked Sendable {
             MessageEditor(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
             MessageScheduler(
                 scheduledMessagesRepository: scheduledMessagesRepository,
+                eventNotificationCenter: eventNotificationCenter,
                 database: databaseContainer,
                 apiClient: apiClient
             ),

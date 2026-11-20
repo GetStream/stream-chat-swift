@@ -27,6 +27,8 @@ final class ScheduledMessageContentResponse: Sendable, Decodable {
     let pinned: Bool?
     /// Identifier of the poll to include in the message
     let pollId: String?
+    /// Represents any chat message
+    let quotedMessage: MessageResponse?
     let quotedMessageId: String?
     /// IDs of the users the message will be visible to
     let restrictedVisibility: [String]?
@@ -51,6 +53,7 @@ final class ScheduledMessageContentResponse: Sendable, Decodable {
         pinExpires: Date? = nil,
         pinned: Bool? = nil,
         pollId: String? = nil,
+        quotedMessage: MessageResponse? = nil,
         quotedMessageId: String? = nil,
         restrictedVisibility: [String]? = nil,
         showInChannel: Bool? = nil,
@@ -69,6 +72,7 @@ final class ScheduledMessageContentResponse: Sendable, Decodable {
         self.pinExpires = pinExpires
         self.pinned = pinned
         self.pollId = pollId
+        self.quotedMessage = quotedMessage
         self.quotedMessageId = quotedMessageId
         self.restrictedVisibility = restrictedVisibility
         self.showInChannel = showInChannel
@@ -96,6 +100,10 @@ final class ScheduledMessageContentResponse: Sendable, Decodable {
         self.pinExpires = try container.decodeIfPresent(Date.self, forKey: .pinExpires)
         self.pinned = try container.decodeIfPresent(Bool.self, forKey: .pinned)
         self.pollId = try container.decodeIfPresent(String.self, forKey: .pollId)
+        self.quotedMessage = try container.decodeIfPresent(
+            MessageResponse.self,
+            forKey: .quotedMessage
+        )
         self.quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
         self.restrictedVisibility = try container.decodeIfPresent(
             [String].self,

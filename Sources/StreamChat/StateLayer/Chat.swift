@@ -1353,6 +1353,17 @@ public class Chat: @unchecked Sendable {
 
     // MARK: - Scheduling Messages
 
+    /// Loads how many scheduled messages the current user has in the channel and in all channels, next to the limits of the app.
+    ///
+    /// Use it to tell whether a limit is reached before scheduling a message, for example to disable scheduling in the UI.
+    /// The counts come from the local database. The server can still reject a scheduled message later.
+    ///
+    /// - Throws: `ClientError.ChannelNotCreatedYet` when the channel is not created yet, or an error reading the local database.
+    /// - Returns: The usage of the current user.
+    public func scheduledMessagesUsage() async throws -> ScheduledMessagesUsage {
+        try await scheduledMessagesRepository.usage(cid: cid)
+    }
+
     /// Schedules a new message to be sent to the channel at a later date.
     ///
     /// The message is not added to the channel until it is sent. It is saved locally first and sent to the server
@@ -1516,8 +1527,10 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Parameter id: The id of the scheduled message.
     ///
-    /// - Throws: An error while deleting the scheduled message. It is `ClientError.ScheduledMessageDoesNotExist` when
-    /// the server no longer has the message, because it was already sent or deleted on another device. The message is then removed locally.
+    /// - Throws: An error while deleting the scheduled message. It is `ClientError.ScheduledMessageAlreadySent` when
+    /// the server already sent the message, and `ClientError.ScheduledMessageDoesNotExist` when the server no longer has it,
+    /// for example because it was deleted on another device. In both cases the message is removed locally.
+    /// It is `ClientError.ScheduledMessageIsBeingSent` when the server is sending the message right now.
     public func deleteScheduledMessage(id: String) async throws {
         try await scheduledMessagesRepository.delete(id: id)
     }

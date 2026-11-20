@@ -33,9 +33,10 @@ class ScheduledMessageDTO: NSManagedObject {
     // The quoted message is not always available locally, so its id is kept.
     @NSManaged var quotedMessageId: String?
 
-    // The backend only returns the channel in query results, so the last known one is kept.
+    // The backend leaves the channel out when it is gone or can't be read, so the last known one is kept.
     @NSManaged var channelName: String?
     @NSManaged var channelImageURL: URL?
+    @NSManaged var channelMemberCount: Int64
 
     // Relationships
 
@@ -44,6 +45,7 @@ class ScheduledMessageDTO: NSManagedObject {
 
     // The channel of the message, when it is saved locally.
     @NSManaged var channel: ChannelDTO?
+    @NSManaged var channelMembers: Set<MemberDTO>
 
     override func willSave() {
         super.willSave()
@@ -204,6 +206,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         if let channel = dto.channel {
             dto.channelName = channel.name
             dto.channelImageURL = channel.imageURL
+            dto.channelMemberCount = channel.memberCount
+            dto.channelMembers = channel.members
         }
 
         let message = contentMessage(of: dto)
@@ -264,6 +268,10 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         return dto
     }
 
+    func scheduledMessagesUsage(cid: ChannelId) throws -> ScheduledMessagesUsage {
+        try scheduledMessagesUsage(cid: cid, excludingId: nil)
+    }
+
     func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO {
         let cid = try ChannelId(cid: payload.cid)
         let dto = ScheduledMessageDTO.loadOrCreate(id: payload.id, context: self)
@@ -279,6 +287,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         if let channel = payload.channel {
             dto.channelName = channel.name
             dto.channelImageURL = channel.image.flatMap(URL.init(string:))
+            dto.channelMemberCount = Int64(channel.memberCount)
+            dto.channelMembers = try Set(channel.members.map { try saveMember(payload: $0, channelId: cid, query: nil, cache: nil) })
         }
 
         let message = contentMessage(of: dto)
@@ -312,7 +322,11 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.mentionedHere = content.mentionedHere ?? false
         message.mentionedChannel = content.mentionedChannel ?? false
         message.mentionedRoles = content.mentionedRoles ?? []
-        message.quotedMessage = content.quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
+        if let quotedMessage = content.quotedMessage, let channel = dto.channel {
+            message.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channel, syncOwnReactions: false, cache: nil)
+        } else {
+            message.quotedMessage = content.quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
+        }
         message.poll = content.pollId.flatMap { try? poll(id: $0) }
         message.pinned = content.pinned ?? false
         message.pinnedBy = message.pinned ? user : nil
@@ -406,27 +420,38 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
     }
 
     /// The server rejects a new scheduled message once the current user has as many pending ones as the app allows,
-    /// in the channel or in all channels. Failed messages don't count. It is refused locally when the channel config has
-    /// the limits, counting the pending messages saved locally.
+    /// in the channel or in all channels. Failed messages don't count, except ones whose edit failed. It is refused
+    /// locally when the channel config has the limits, counting the pending messages saved locally.
     private func validateScheduledMessagesLimits(cid: ChannelId, excludingId id: String) throws {
-        guard let config = channel(cid: cid)?.config else { return }
-        let pending = NSPredicate(format: "isPending == YES AND id != %@", id)
-        if let limit = config.scheduledMessagesMaxPerChannel?.intValue {
-            let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-                pending, NSPredicate(format: "cid == %@", cid.rawValue)
-            ])
-            if try count(for: request) >= limit {
-                throw ClientError.ScheduledMessagesChannelLimitReached(limit: limit)
-            }
+        let usage = try scheduledMessagesUsage(cid: cid, excludingId: id)
+        if let limit = usage.channelLimit, usage.channelCount >= limit {
+            throw ClientError.ScheduledMessagesChannelLimitReached(limit: limit)
         }
-        if let limit = config.scheduledMessagesMaxPerUser?.intValue {
-            let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
-            request.predicate = pending
-            if try count(for: request) >= limit {
-                throw ClientError.ScheduledMessagesUserLimitReached(limit: limit)
-            }
+        if let limit = usage.userLimit, usage.userCount >= limit {
+            throw ClientError.ScheduledMessagesUserLimitReached(limit: limit)
         }
+    }
+
+    private func scheduledMessagesUsage(cid: ChannelId, excludingId id: String?) throws -> ScheduledMessagesUsage {
+        let config = channel(cid: cid)?.config
+        // The server still has a message whose edit failed.
+        let pending = NSPredicate(
+            format: "(isPending == YES OR message.localMessageStateRaw == %@) AND id != %@",
+            LocalMessageState.syncingFailed.rawValue,
+            id ?? ""
+        )
+        let channelRequest = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        channelRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            pending, NSPredicate(format: "cid == %@", cid.rawValue)
+        ])
+        let userRequest = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        userRequest.predicate = pending
+        return ScheduledMessagesUsage(
+            channelCount: try count(for: channelRequest),
+            channelLimit: config?.scheduledMessagesMaxPerChannel?.intValue,
+            userCount: try count(for: userRequest),
+            userLimit: config?.scheduledMessagesMaxPerUser?.intValue
+        )
     }
 
     private func saveContent(_ content: ScheduledMessageContent, to message: MessageDTO, cid: ChannelId, user: UserDTO) throws {
@@ -474,7 +499,11 @@ extension ScheduledMessageDTO {
             channel: ScheduledMessageChannel(
                 cid: channelId,
                 name: channelName ?? localChannel?.name,
-                imageURL: channelImageURL ?? localChannel?.imageURL
+                imageURL: channelImageURL ?? localChannel?.imageURL,
+                memberCount: Int(channelMemberCount),
+                members: try channelMembers
+                    .sorted { $0.memberCreatedAt.bridgeDate < $1.memberCreatedAt.bridgeDate }
+                    .map { try $0.asModel() }
             ),
             message: chatMessage,
             quotedMessageId: quotedMessageId,

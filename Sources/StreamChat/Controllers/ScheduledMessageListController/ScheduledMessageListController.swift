@@ -203,7 +203,9 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     /// - Parameters:
     ///   - id: The id of the scheduled message.
     ///   - completion: Called when the message is deleted, with an error if it failed. The error is
-    ///   `ClientError.ScheduledMessageDoesNotExist` when the server no longer has the message, because it was already sent or deleted on another device. The message is then removed locally.
+    ///   `ClientError.ScheduledMessageAlreadySent` when the server already sent the message, and `ClientError.ScheduledMessageDoesNotExist`
+    ///   when the server no longer has it, for example because it was deleted on another device. In both cases the message is removed locally.
+    ///   It is `ClientError.ScheduledMessageIsBeingSent` when the server is sending the message right now.
     public func deleteScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
         scheduledMessagesRepository.delete(id: id) { error in
             self.callback { completion?(error) }

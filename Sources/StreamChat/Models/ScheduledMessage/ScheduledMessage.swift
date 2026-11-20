@@ -24,7 +24,8 @@ public final class ScheduledMessage: Identifiable, Equatable, Sendable {
     ///
     /// It is authored by the current user, and its `createdAt` is `scheduledAt`. It is not in the messages of the channel
     /// until it is sent, and has no reactions, replies or read state. The server returns only the ids of the mentioned
-    /// users, the quoted message and the poll, so they are filled in from the ones saved locally.
+    /// users and the poll, so they are filled in from the ones saved locally. The quoted message comes from the server
+    /// when the channel is saved locally, and otherwise from the one saved locally.
     public let message: ChatMessage
 
     /// The identifier of the message quoted by `message`, even when the quoted message is not available locally.

@@ -2172,6 +2172,15 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(true, isPendingSendNow)
     }
 
+    func test_scheduledMessagesUsage_whenAMessageIsScheduled_thenItHasTheCountsAndLimits() async throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxPerChannel: 1, scheduledMessagesMaxPerUser: 5))
+        try await chat.scheduleMessage(with: "Later", scheduledAt: Date().addingTimeInterval(3600))
+
+        let usage = try await chat.scheduledMessagesUsage()
+
+        XCTAssertEqual(ScheduledMessagesUsage(channelCount: 1, channelLimit: 1, userCount: 1, userLimit: 5), usage)
+    }
+
     func test_watch_whenTheQueryIncludesScheduledMessages_thenTheyAreIncludedInTheRequest() async throws {
         var query = ChannelQuery(cid: channelId)
         query.includeScheduledMessages = true
@@ -2179,6 +2188,12 @@ final class Chat_Tests: XCTestCase {
         env.channelUpdaterMock.startWatching_completion_result = .success(())
         try await chat.watch()
         XCTAssertEqual(true, env.channelUpdaterMock.startWatching_includeScheduledMessages)
+    }
+
+    private func saveChannel(config: ChannelConfig) throws {
+        try env.client.databaseContainer.writeSynchronously { [channelId] session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId!, config: config)))
+        }
     }
 
     // MARK: - Test Data

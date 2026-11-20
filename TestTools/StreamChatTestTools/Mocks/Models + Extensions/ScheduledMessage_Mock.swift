@@ -10,6 +10,8 @@ extension ScheduledMessage {
         id: String = .unique,
         cid: ChannelId = .unique,
         channelName: String? = nil,
+        channelMemberCount: Int = 0,
+        channelMembers: [ChatChannelMember] = [],
         message: ChatMessage = .mock(),
         quotedMessageId: MessageId? = nil,
         scheduledAt: Date = .init(),
@@ -21,7 +23,7 @@ extension ScheduledMessage {
         .init(
             id: id,
             cid: cid,
-            channel: .init(cid: cid, name: channelName, imageURL: nil),
+            channel: .init(cid: cid, name: channelName, imageURL: nil, memberCount: channelMemberCount, members: channelMembers),
             message: message,
             quotedMessageId: quotedMessageId,
             scheduledAt: scheduledAt,
