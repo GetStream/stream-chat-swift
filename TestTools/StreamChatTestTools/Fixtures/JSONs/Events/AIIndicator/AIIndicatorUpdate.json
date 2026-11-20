@@ -7,6 +7,9 @@
   "ai_state": "AI_STATE_ERROR",
   "ai_message": "failure",
   "user": {
+    "custom": {},
+    "language": "",
+    "teams": [],
     "id": "ai-1e9666df-9b9e-429e-b7e4-e2f54446d5ac",
     "role": "user",
     "created_at": "2024-11-27T15:51:55.649597Z",

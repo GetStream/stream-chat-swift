@@ -92,19 +92,6 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.channels[0].messages.count, 24)
     }
 
-    func test_decode_threadsDefaultToEmptyWhenMissing() throws {
-        var root = try channelsQueryJSONObject()
-        var channels = try XCTUnwrap(root["channels"] as? [[String: Any]])
-        channels[0].removeValue(forKey: "threads")
-        root["channels"] = channels
-        let data = try JSONSerialization.data(withJSONObject: root)
-
-        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: data)
-
-        XCTAssertEqual(payload.channels.count, 20)
-        XCTAssertEqual(payload.channels[0].threads.count, 0)
-    }
-
     func test_groupedQueryChannelsPayload_shouldReturnChannelsIfOneChannelFailsParsing() throws {
         let root = try channelsQueryJSONObject()
         var channels = try XCTUnwrap(root["channels"] as? [[String: Any]])

@@ -2,12 +2,14 @@
  "duration": "et laboris",
  "reactions": [
   {
+   "custom": {},
    "type": "vol",
    "created_at": "1964-11-15T03:35:07.785Z",
    "message_id": "ea ut laborum",
    "score": 1,
    "updated_at": "1959-09-09T08:25:23.952Z",
    "user": {
+    "custom": {},
     "id": "ut id anim",
     "ban_expires": "2016-09-30T15:52:48.809Z",
     "banned": false,
@@ -29,12 +31,14 @@
    "user_id": "ut laboris id"
   },
   {
+   "custom": {},
    "type": "deserun",
    "created_at": "2001-08-01T20:43:36.999Z",
    "message_id": "cillum incididunt nulla ullamco",
    "score": 1,
    "updated_at": "1987-12-09T10:01:48.478Z",
    "user": {
+    "custom": {},
     "id": "ut ad sit cillum",
     "ban_expires": "1973-04-11T00:50:45.688Z",
     "banned": true,

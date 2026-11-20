@@ -86,63 +86,35 @@ final class FullUserResponse: Sendable, Decodable {
         self.updatedAt = updatedAt
     }
 
-    static let allKeys: Set<String> = [
-        StringCodingKey.avgResponseTime.stringValue,
-        StringCodingKey.banned.stringValue,
-        StringCodingKey.blockedUserIds.stringValue,
-        StringCodingKey.channelMutes.stringValue,
-        StringCodingKey.createdAt.stringValue,
-        StringCodingKey.custom.stringValue,
-        StringCodingKey.deactivatedAt.stringValue,
-        StringCodingKey.devices.stringValue,
-        StringCodingKey.id.stringValue,
-        StringCodingKey.image.stringValue,
-        StringCodingKey.invisible.stringValue,
-        StringCodingKey.language.stringValue,
-        StringCodingKey.lastActive.stringValue,
-        StringCodingKey.mutes.stringValue,
-        StringCodingKey.name.stringValue,
-        StringCodingKey.online.stringValue,
-        StringCodingKey.privacySettings.stringValue,
-        StringCodingKey.role.stringValue,
-        StringCodingKey.shadowBanned.stringValue,
-        StringCodingKey.teams.stringValue,
-        StringCodingKey.teamsRole.stringValue,
-        StringCodingKey.totalUnreadCount.stringValue,
-        StringCodingKey.unreadChannels.stringValue,
-        StringCodingKey.unreadThreads.stringValue,
-        StringCodingKey.updatedAt.stringValue
-    ]
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
-        banned = try container.decode(Bool.self, forKey: .banned)
-        blockedUserIds = try container.decode([String].self, forKey: .blockedUserIds)
-        channelMutes = try container.decode([MutedChannelPayload].self, forKey: .channelMutes)
-        createdAt = try container.decode(Date.self, forKey: .createdAt)
-        custom = try container.decode([String: RawJSON].self, forKey: .custom)
-        deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
-        devices = try container.decode([Device].self, forKey: .devices)
-        id = try container.decode(String.self, forKey: .id)
-        image = try container.decodeIfPresent(String.self, forKey: .image)
-        invisible = try container.decode(Bool.self, forKey: .invisible)
-        language = try container.decode(String.self, forKey: .language)
-        lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
-        mutes = try container.decode([MutedUserPayload].self, forKey: .mutes)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        online = try container.decode(Bool.self, forKey: .online)
-        privacySettings = try container.decodeIfPresent(
+        self.avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
+        self.banned = try container.decode(Bool.self, forKey: .banned)
+        self.blockedUserIds = try container.decode([String].self, forKey: .blockedUserIds)
+        self.channelMutes = try container.decode([MutedChannelPayload].self, forKey: .channelMutes)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        self.deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
+        self.devices = try container.decode([Device].self, forKey: .devices)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.image = try container.decodeIfPresent(String.self, forKey: .image)
+        self.invisible = try container.decode(Bool.self, forKey: .invisible)
+        self.language = try container.decode(String.self, forKey: .language)
+        self.lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
+        self.mutes = try container.decode([MutedUserPayload].self, forKey: .mutes)
+        self.name = try container.decodeIfPresent(String.self, forKey: .name)
+        self.online = try container.decode(Bool.self, forKey: .online)
+        self.privacySettings = try container.decodeIfPresent(
             UserPrivacySettings.self,
             forKey: .privacySettings
         )
-        role = try container.decode(String.self, forKey: .role)
-        shadowBanned = try container.decode(Bool.self, forKey: .shadowBanned)
-        teams = try container.decode([String].self, forKey: .teams)
-        teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
-        totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
-        unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
-        unreadThreads = try container.decode(Int.self, forKey: .unreadThreads)
-        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.role = try container.decode(String.self, forKey: .role)
+        self.shadowBanned = try container.decode(Bool.self, forKey: .shadowBanned)
+        self.teams = try container.decode([String].self, forKey: .teams)
+        self.teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
+        self.totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
+        self.unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
+        self.unreadThreads = try container.decode(Int.self, forKey: .unreadThreads)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
 }
