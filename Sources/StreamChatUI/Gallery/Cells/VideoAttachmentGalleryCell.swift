@@ -16,6 +16,12 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
         playerView.player
     }
 
+    private(set) var currentAssetLoadingError: Error?
+    var onAssetLoadingErrorChange: ((Error?) -> Void)?
+
+    private var loadedAttachmentID: AttachmentId?
+    private var assetLoadRequestID = UUID()
+
     /// Image view to be used for zoom in/out animation.
     open private(set) lazy var animationPlaceholderImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
@@ -47,39 +53,57 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
         super.updateContent()
 
         let videoAttachment = content?.attachment(payloadType: VideoAttachmentPayload.self)
+        let attachmentID = content?.id
 
-        let newAssetURL = videoAttachment?.videoURL
-        let currentAssetURL = (player.currentItem?.asset as? AVURLAsset)?.url
+        guard attachmentID != loadedAttachmentID else { return }
+        loadedAttachmentID = attachmentID
 
-        if newAssetURL != currentAssetURL {
-            if let url = newAssetURL {
-                components.mediaLoader.loadVideoAsset(at: url) { [weak self] result in
-                    if case let .success(loaded) = result {
-                        let playerItem = AVPlayerItem(asset: loaded.asset)
-                        self?.player.replaceCurrentItem(with: playerItem)
-                    }
+        let requestID = UUID()
+        assetLoadRequestID = requestID
+        player.replaceCurrentItem(with: nil)
+        updateAssetLoadingError(nil)
+
+        if let url = videoAttachment?.videoURL {
+            components.mediaLoader.loadVideoAsset(at: url) { [weak self] result in
+                guard let self, self.assetLoadRequestID == requestID else { return }
+                switch result {
+                case let .success(loaded):
+                    self.updateAssetLoadingError(nil)
+                    self.player.replaceCurrentItem(with: AVPlayerItem(asset: loaded.asset))
+                case let .failure(error):
+                    self.updateAssetLoadingError(error)
                 }
-            } else {
-                player.replaceCurrentItem(with: nil)
             }
+        }
 
-            if let videoAttachment {
-                components.mediaLoader.loadVideoPreview(
-                    with: videoAttachment
-                ) { [weak self] in
-                    switch $0 {
-                    case let .success(preview):
-                        self?.showPreview(using: preview.image)
-                    case .failure:
-                        self?.showPreview(using: nil)
-                    }
+        if let videoAttachment {
+            components.mediaLoader.loadVideoPreview(
+                with: videoAttachment
+            ) { [weak self] in
+                guard let self, self.assetLoadRequestID == requestID else { return }
+                switch $0 {
+                case let .success(preview):
+                    self.showPreview(using: preview.image)
+                case .failure:
+                    self.showPreview(using: nil)
                 }
             }
         }
     }
 
+    override open func prepareForReuse() {
+        assetLoadRequestID = UUID()
+        super.prepareForReuse()
+        onAssetLoadingErrorChange = nil
+    }
+
     private func showPreview(using thumbnail: UIImage?) {
         animationPlaceholderImageView.image = thumbnail
+    }
+
+    private func updateAssetLoadingError(_ error: Error?) {
+        currentAssetLoadingError = error
+        onAssetLoadingErrorChange?(error)
     }
 
     override open func viewForZooming(in scrollView: UIScrollView) -> UIView? {
