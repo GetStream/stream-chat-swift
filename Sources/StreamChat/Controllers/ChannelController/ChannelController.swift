@@ -2038,10 +2038,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// Updates the content of a scheduled message, and optionally when it is sent.
     ///
-    /// A failed scheduled message can not be changed: delete it and schedule a new one.
-    ///
     /// - Important: The update replaces the content of the message, so content that is left out is cleared. The message
     /// keeps its `skipPush`.
+    ///
+    /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
+    /// with a new id, which the completion returns. The failed one is deleted. This needs a new `scheduledAt`. Without
+    /// one, the update fails. A message whose channel was deleted can't be scheduled again.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
@@ -2095,7 +2097,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// Changes when a scheduled message is sent.
+    ///
+    /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
+    /// with a new id, which the completion returns. The failed one is deleted. A message whose channel was deleted
+    /// can't be rescheduled.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.

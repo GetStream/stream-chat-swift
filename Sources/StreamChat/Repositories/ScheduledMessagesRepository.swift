@@ -99,16 +99,33 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
 
     /// Edits a scheduled message locally. The `MessageScheduler` syncs it with the server.
     ///
-    /// Without a `parentId` in `content`, the message keeps the thread it was scheduled in.
+    /// Without a `parentId` in `content`, the message keeps the thread it was scheduled in. Without `content`, only the
+    /// date changes.
     func update(
         id: String,
-        content: ScheduledMessageContent,
+        content: ScheduledMessageContent?,
         scheduledAt: Date?,
         completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
-        database.write(converting: { session in
-            try session.updateScheduledMessage(id: id, content: content, scheduledAt: scheduledAt).asModel()
-        }, completion: completion)
+        database.write(converting: { session -> (ScheduledMessage, scheduledAgain: Bool) in
+            guard let dto = session.scheduledMessage(id: id) else {
+                throw ClientError.ScheduledMessageDoesNotExist(id: id)
+            }
+            guard dto.isServerFailed, let scheduledAt else {
+                return (try session.updateScheduledMessage(id: id, content: content, scheduledAt: scheduledAt).asModel(), false)
+            }
+            let new = try session.scheduleFailedMessageAgain(id: id, newId: .newUniqueId, content: content, scheduledAt: scheduledAt)
+            return (try new.asModel(), true)
+        }, completion: { [weak self] result in
+            if case .success((_, scheduledAgain: true)) = result {
+                self?.apiClient.request(endpoint: .deleteScheduledMessage(id: id)) { result in
+                    if let error = result.error, !error.isBackendNotFound404StatusCode {
+                        log.warning("Failed to delete the failed scheduled message \(id) that was scheduled again: \(error)")
+                    }
+                }
+            }
+            completion(result.map(\.0))
+        })
     }
 
     /// Changes when a scheduled message is sent, locally. The `MessageScheduler` syncs it with the server.
@@ -117,9 +134,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         scheduledAt: Date,
         completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
-        database.write(converting: { session in
-            try session.updateScheduledMessage(id: id, content: nil, scheduledAt: scheduledAt).asModel()
-        }, completion: completion)
+        update(id: id, content: nil, scheduledAt: scheduledAt, completion: completion)
     }
 
     /// Sends the local changes of a scheduled message that failed to reach the server again.
@@ -363,6 +378,13 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             }
             database.write({ session in
                 guard let dto = session.scheduledMessage(id: id) else { return }
+                if reason == .scheduledMessageNotEditable {
+                    // The server failed to send it meanwhile. Rescheduling it schedules a copy with the local changes.
+                    dto.status = ScheduledMessageServerStatus.failed.rawValue
+                    dto.isPendingSendNow = false
+                    dto.message?.localMessageState = nil
+                    return
+                }
                 dto.message?.localMessageState = isEphemeral ? pendingState : failedState
                 // Kept so the user sees why, for example that the scheduling limit of the channel is reached.
                 dto.syncErrorReason = isEphemeral ? nil : reason?.rawValue
@@ -468,6 +490,18 @@ extension ClientError {
     public final class ScheduledMessagesUserLimitReached: ClientError, @unchecked Sendable {
         init(limit: Int) {
             super.init("You can have at most \(limit) scheduled messages.")
+        }
+    }
+
+    final class ScheduledMessageNotEditable: ClientError, @unchecked Sendable {
+        init(id: String) {
+            super.init("The scheduled message with id: \(id) failed to send and can't be changed.")
+        }
+    }
+
+    final class ScheduledMessageChannelDeleted: ClientError, @unchecked Sendable {
+        init(id: String) {
+            super.init("The channel of the scheduled message with id: \(id) was deleted.")
         }
     }
 
