@@ -364,3 +364,39 @@
 
 /// Shown in the composer's picker view to create a poll.
 "composer.picker.poll" = "Create Poll";
+
+/// Shown by the scheduled message date formatter to combine day and time with "at".
+"scheduled-message.date.day-at-time" = "%@ at %@";
+
+/// Shown on a scheduled message which failed because an attachment could not be uploaded.
+"scheduled-message.failure.attachment-upload-failed" = "Couldn't upload attachment";
+/// Shown on a scheduled message which failed because the user is banned in the channel.
+"scheduled-message.failure.banned" = "You can't send messages in this channel.";
+/// Shown on a scheduled message which failed because its channel was deleted.
+"scheduled-message.failure.channel-deleted" = "This channel was deleted";
+/// Shown on a scheduled message which failed because its channel is frozen.
+"scheduled-message.failure.channel-frozen" = "This channel is frozen.";
+/// Shown on a scheduled message which was rejected because the channel has too many scheduled messages.
+"scheduled-message.failure.channel-limit" = "You've reached the limit of scheduled messages in this channel.";
+/// Shown on a scheduled message which the server could not send in time.
+"scheduled-message.failure.expired" = "Not sent: the service was delayed.";
+/// Shown on a scheduled message which failed for a reason without its own text.
+"scheduled-message.failure.generic" = "Something went wrong. Try again";
+/// Shown on a scheduled message which was rejected by a webhook of the app.
+"scheduled-message.failure.hook-rejected" = "Rejected by the app.";
+/// Shown on a scheduled message which is no longer valid, for example because it is too long.
+"scheduled-message.failure.invalid-message" = "The message no longer meets the app's limits. Edit it.";
+/// Shown on a scheduled message which was blocked by moderation.
+"scheduled-message.failure.moderation-blocked" = "Blocked by moderation.";
+/// Shown on a scheduled message which failed because the user can no longer send messages in the channel.
+"scheduled-message.failure.no-permission" = "You're no longer allowed to post here.";
+/// Shown on a scheduled message which failed because messages of the channel now need an approval.
+"scheduled-message.failure.pending-not-supported" = "This channel now needs approval. Schedule it again.";
+/// Shown on a scheduled message which failed because the request did not reach the server.
+"scheduled-message.failure.request-failed" = "Couldn't send. Try again";
+/// Shown on a scheduled message which was rejected because its date is too far ahead.
+"scheduled-message.failure.too-far" = "That's further ahead than your app allows";
+/// Shown on a scheduled message which was rejected because its date is too soon.
+"scheduled-message.failure.too-soon" = "Pick a later time";
+/// Shown on a scheduled message which was rejected because the user has too many scheduled messages.
+"scheduled-message.failure.user-limit" = "You've reached your limit of scheduled messages.";
