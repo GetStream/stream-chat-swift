@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add the member count and the first members to `ScheduledMessageChannel` [#4429](https://github.com/GetStream/stream-chat-swift/pull/4429)
 - Add the quoted message of a scheduled reply from the server [#4429](https://github.com/GetStream/stream-chat-swift/pull/4429)
 - Add mentions, `silent` and `skipPush` to scheduling a message, and mentions and `silent` to updating one [#4430](https://github.com/GetStream/stream-chat-swift/pull/4430)
+- Add rescheduling a scheduled message the server failed to send, which schedules it again as a new message [#4431](https://github.com/GetStream/stream-chat-swift/pull/4431)
 ### 🐞 Fixed
 - Fix scheduled messages going out of sync with the server [#4426](https://github.com/GetStream/stream-chat-swift/pull/4426)
 

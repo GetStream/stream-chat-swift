@@ -165,6 +165,10 @@ class ScheduledMessageDTO: NSManagedObject {
         }
     }
 
+    var isServerFailed: Bool {
+        ScheduledMessageServerStatus(rawValue: status) == .failed && !hasLocalChanges
+    }
+
     /// Whether the scheduled message has local changes the server does not have yet.
     var hasLocalChanges: Bool {
         switch message?.localMessageState {
@@ -232,6 +236,9 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         }
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
+        }
+        if dto.isServerFailed {
+            throw ClientError.ScheduledMessageNotEditable(id: id)
         }
         let cid = try ChannelId(cid: dto.cid)
         if let content {
@@ -563,5 +570,51 @@ extension DatabaseSession {
     func validateQuotedMessage(_ id: MessageId?) throws {
         guard let id, message(id: id)?.deletedAt != nil else { return }
         throw ClientError.ScheduledMessageQuotesADeletedMessage()
+    }
+
+    func scheduleFailedMessageAgain(
+        id: String,
+        newId: String,
+        content: ScheduledMessageContent?,
+        scheduledAt: Date
+    ) throws -> ScheduledMessageDTO {
+        guard let dto = scheduledMessage(id: id), let message = dto.message else {
+            throw ClientError.ScheduledMessageDoesNotExist(id: id)
+        }
+        if dto.failureReason == ScheduledMessageFailureReason.channelDeleted.rawValue {
+            throw ClientError.ScheduledMessageChannelDeleted(id: id)
+        }
+        let cid = try ChannelId(cid: dto.cid)
+        var newContent = try content ?? ScheduledMessageContent(
+            text: message.text,
+            attachments: message.attachments
+                .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
+                .map { AnyAttachmentPayload(type: $0.attachmentType, payload: try JSONDecoder.stream.decodeRawJSON(from: $0.data), localFileURL: nil) },
+            mentionedUserIds: message.mentionedUserIds,
+            mentionedHere: message.mentionedHere,
+            mentionedChannel: message.mentionedChannel,
+            mentionedGroupIds: message.mentionedGroupIds,
+            mentionedRoles: message.mentionedRoles,
+            quotedMessageId: dto.quotedMessageId,
+            parentId: message.parentMessageId,
+            showReplyInChannel: message.showReplyInChannel,
+            isSilent: message.isSilent,
+            extraData: JSONDecoder.stream.decodeRawJSON(from: message.extraData)
+        )
+        // Without a thread, the message keeps the thread it was scheduled in.
+        if newContent.parentId == nil {
+            newContent.parentId = message.parentMessageId
+            newContent.showReplyInChannel = message.showReplyInChannel
+        }
+        newContent.skipPush = message.skipPush
+        let new = try createNewScheduledMessage(id: newId, cid: cid, content: newContent, scheduledAt: scheduledAt)
+        new.channelName = new.channelName ?? dto.channelName
+        new.channelImageURL = new.channelImageURL ?? dto.channelImageURL
+        if new.channelMembers.isEmpty {
+            new.channelMemberCount = dto.channelMemberCount
+            new.channelMembers = dto.channelMembers
+        }
+        deleteScheduledMessage(id: id)
+        return new
     }
 }
