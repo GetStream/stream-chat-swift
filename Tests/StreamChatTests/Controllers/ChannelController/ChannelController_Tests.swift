@@ -6060,6 +6060,16 @@ final class ChannelController_Tests: XCTestCase {
         // THEN
         AssertAsync.willBeEqual(completionResult?.error as? TestError, expectedError)
     }
+
+    // MARK: - Scheduled Messages
+
+    func test_startWatching_whenTheQueryIncludesScheduledMessages_includesThemInTheRequest() {
+        var query = ChannelQuery(cid: channelId)
+        query.includeScheduledMessages = true
+        controller = ChatChannelController(channelQuery: query, channelListQuery: nil, client: client, environment: env.environment)
+        controller.startWatching(isInRecoveryMode: false)
+        XCTAssertEqual(env.channelUpdater?.startWatching_includeScheduledMessages, true)
+    }
 }
 
 // MARK: Test Helpers

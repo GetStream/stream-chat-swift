@@ -357,6 +357,28 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         }
     }
 
+    func test_uploader_whenUploadOfAnEditedScheduledMessageFails_markMessageAsSyncingFailed() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        apiClient.uploadFile_completion_result = .failure(ClientError("Upload failed"))
+        let expectation = XCTestExpectation()
+        let observer = StateLayerDatabaseObserver(
+            database: database,
+            fetchRequest: MessageDTO.message(withID: messageId),
+            itemCreator: { $0.localMessageState == .syncingFailed }
+        )
+        try observer.startObserving { isSyncingFailed, _ in
+            if isSyncingFailed == true { expectation.fulfill() }
+        }
+        try database.writeSynchronously { session in
+            let scheduledMessage = try session.saveScheduledMessage(payload: .dummy(id: messageId, cid: cid))
+            scheduledMessage.message?.localMessageState = .pendingSync
+            try session.createNewAttachment(attachment: .mockImage, id: AttachmentId(cid: cid, messageId: messageId, index: 0))
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
+        XCTAssertEqual(observer.item, true)
+    }
+
     func test_uploader_doesNotUploadAttachments_notInPendingUploadState() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique

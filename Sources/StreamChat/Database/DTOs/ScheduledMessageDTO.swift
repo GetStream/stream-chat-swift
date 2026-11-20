@@ -252,6 +252,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             message.createdAt = scheduledAt.bridgeDate
             dto.hasPendingScheduledAt = !dto.isLocalOnly
         }
+        message.restartFailedUploads()
         dto.updatedAt = Date().bridgeDate
         dto.syncErrorReason = nil
         dto.syncErrorMessage = nil
@@ -329,7 +330,6 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         return dto
     }
 
-    /// Saves the scheduled messages of a channel query, which are all the scheduled messages of the channel.
     func saveScheduledMessages(payload: [ScheduledMessageResponse], cid: ChannelId) {
         payload.forEach { payload in
             do {
@@ -484,6 +484,14 @@ extension ScheduledMessageDTO {
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate
         )
+    }
+}
+
+extension MessageDTO {
+    func restartFailedUploads() {
+        attachments
+            .filter { $0.localState == .uploadingFailed }
+            .forEach { $0.localState = .pendingUpload }
     }
 }
 

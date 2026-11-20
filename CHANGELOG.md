@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix scheduled messages going out of sync with the server [#4426](https://github.com/GetStream/stream-chat-swift/pull/4426)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix the composer sending typing events when attachments are added or removed [#4407](https://github.com/GetStream/stream-chat-swift/pull/4407)
