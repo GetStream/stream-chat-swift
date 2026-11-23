@@ -1,11 +1,23 @@
 import Foundation
 @preconcurrency internal import StreamChatAICMark
 
+// Markdown can come from a model or another person, so it mustn't be able to crash or freeze the
+// app. This conversion and the views that show its result recurse once per level of nesting:
+// content nested deeper than `maxDepth` shows as plain text. Each table cell is a view, and
+// cmark-gfm fills short rows with empty cells, so that a 2 KB table can have 90,000 of them: a
+// table shows at most `maxTableColumns` columns, and the rows that fit in `maxTableCells`.
+@available(iOS 15.0, macOS 12.0, *)
+enum MarkdownLimits {
+  static let maxDepth = 32
+  static let maxTableColumns = 32
+  static let maxTableCells = 2000
+}
+
 @available(iOS 15.0, macOS 12.0, *)
 extension Array where Element == BlockNode {
   init(markdown: String) {
     let blocks = UnsafeNode.parseMarkdown(markdown) { document in
-      document.children.compactMap(BlockNode.init(unsafeNode:))
+      document.blockChildren(depth: 0)
     }
     self.init(blocks ?? .init())
   }
@@ -31,28 +43,32 @@ extension Array where Element == BlockNode {
 
 @available(iOS 15.0, macOS 12.0, *)
 extension BlockNode {
-  fileprivate init?(unsafeNode: UnsafeNode) {
+  fileprivate init?(unsafeNode: UnsafeNode, depth: Int) {
+    guard depth < MarkdownLimits.maxDepth else {
+      self = .paragraph(content: [.text(unsafeNode.plainText)])
+      return
+    }
     switch unsafeNode.nodeType {
     case .blockquote:
-      self = .blockquote(children: unsafeNode.children.compactMap(BlockNode.init(unsafeNode:)))
+      self = .blockquote(children: unsafeNode.blockChildren(depth: depth + 1))
     case .list:
       if unsafeNode.children.contains(where: \.isTaskListItem) {
         self = .taskList(
           isTight: unsafeNode.isTightList,
-          items: unsafeNode.children.map(RawTaskListItem.init(unsafeNode:))
+          items: unsafeNode.children.map { RawTaskListItem(unsafeNode: $0, depth: depth + 1) }
         )
       } else {
         switch unsafeNode.listType {
         case CMARK_BULLET_LIST:
           self = .bulletedList(
             isTight: unsafeNode.isTightList,
-            items: unsafeNode.children.map(RawListItem.init(unsafeNode:))
+            items: unsafeNode.children.map { RawListItem(unsafeNode: $0, depth: depth + 1) }
           )
         case CMARK_ORDERED_LIST:
           self = .numberedList(
             isTight: unsafeNode.isTightList,
             start: unsafeNode.listStart,
-            items: unsafeNode.children.map(RawListItem.init(unsafeNode:))
+            items: unsafeNode.children.map { RawListItem(unsafeNode: $0, depth: depth + 1) }
           )
         default:
           fatalError("cmark reported a list node without a list type.")
@@ -63,16 +79,20 @@ extension BlockNode {
     case .htmlBlock:
       self = .htmlBlock(content: unsafeNode.literal ?? "")
     case .paragraph:
-      self = .paragraph(content: unsafeNode.children.compactMap(InlineNode.init(unsafeNode:)))
+      self = .paragraph(content: unsafeNode.inlineChildren(depth: depth + 1))
     case .heading:
       self = .heading(
         level: unsafeNode.headingLevel,
-        content: unsafeNode.children.compactMap(InlineNode.init(unsafeNode:))
+        content: unsafeNode.inlineChildren(depth: depth + 1)
       )
     case .table:
+      let columns = min(unsafeNode.tableColumns, MarkdownLimits.maxTableColumns)
+      let rows = MarkdownLimits.maxTableCells / max(columns, 1)
       self = .table(
-        columnAlignments: unsafeNode.tableAlignments,
-        rows: unsafeNode.children.map(RawTableRow.init(unsafeNode:))
+        columnAlignments: Array(unsafeNode.tableAlignments.prefix(columns)),
+        rows: unsafeNode.children.prefix(rows).map {
+          RawTableRow(unsafeNode: $0, columns: columns, depth: depth + 1)
+        }
       )
     case .thematicBreak:
       self = .thematicBreak
@@ -85,50 +105,54 @@ extension BlockNode {
 
 @available(iOS 15.0, macOS 12.0, *)
 extension RawListItem {
-  fileprivate init(unsafeNode: UnsafeNode) {
+  fileprivate init(unsafeNode: UnsafeNode, depth: Int) {
     guard unsafeNode.nodeType == .item else {
       fatalError("Expected a list item but got a '\(unsafeNode.nodeType)' instead.")
     }
-    self.init(children: unsafeNode.children.compactMap(BlockNode.init(unsafeNode:)))
+    self.init(children: unsafeNode.blockChildren(depth: depth))
   }
 }
 
 @available(iOS 15.0, macOS 12.0, *)
 extension RawTaskListItem {
-  fileprivate init(unsafeNode: UnsafeNode) {
+  fileprivate init(unsafeNode: UnsafeNode, depth: Int) {
     guard unsafeNode.nodeType == .taskListItem || unsafeNode.nodeType == .item else {
       fatalError("Expected a list item but got a '\(unsafeNode.nodeType)' instead.")
     }
     self.init(
       isCompleted: unsafeNode.isTaskListItemChecked,
-      children: unsafeNode.children.compactMap(BlockNode.init(unsafeNode:))
+      children: unsafeNode.blockChildren(depth: depth)
     )
   }
 }
 
 @available(iOS 15.0, macOS 12.0, *)
 extension RawTableRow {
-  fileprivate init(unsafeNode: UnsafeNode) {
+  fileprivate init(unsafeNode: UnsafeNode, columns: Int, depth: Int) {
     guard unsafeNode.nodeType == .tableRow || unsafeNode.nodeType == .tableHead else {
       fatalError("Expected a table row but got a '\(unsafeNode.nodeType)' instead.")
     }
-    self.init(cells: unsafeNode.children.map(RawTableCell.init(unsafeNode:)))
+    self.init(cells: unsafeNode.children.prefix(columns).map { RawTableCell(unsafeNode: $0, depth: depth) })
   }
 }
 
 @available(iOS 15.0, macOS 12.0, *)
 extension RawTableCell {
-  fileprivate init(unsafeNode: UnsafeNode) {
+  fileprivate init(unsafeNode: UnsafeNode, depth: Int) {
     guard unsafeNode.nodeType == .tableCell else {
       fatalError("Expected a table cell but got a '\(unsafeNode.nodeType)' instead.")
     }
-    self.init(content: unsafeNode.children.compactMap(InlineNode.init(unsafeNode:)))
+    self.init(content: unsafeNode.inlineChildren(depth: depth))
   }
 }
 
 @available(iOS 15.0, macOS 12.0, *)
 extension InlineNode {
-  fileprivate init?(unsafeNode: UnsafeNode) {
+  fileprivate init?(unsafeNode: UnsafeNode, depth: Int) {
+    guard depth < MarkdownLimits.maxDepth else {
+      self = .text(unsafeNode.plainText)
+      return
+    }
     switch unsafeNode.nodeType {
     case .text:
       self = .text(unsafeNode.literal ?? "")
@@ -141,20 +165,20 @@ extension InlineNode {
     case .html:
       self = .html(unsafeNode.literal ?? "")
     case .emphasis:
-      self = .emphasis(children: unsafeNode.children.compactMap(InlineNode.init(unsafeNode:)))
+      self = .emphasis(children: unsafeNode.inlineChildren(depth: depth + 1))
     case .strong:
-      self = .strong(children: unsafeNode.children.compactMap(InlineNode.init(unsafeNode:)))
+      self = .strong(children: unsafeNode.inlineChildren(depth: depth + 1))
     case .strikethrough:
-      self = .strikethrough(children: unsafeNode.children.compactMap(InlineNode.init(unsafeNode:)))
+      self = .strikethrough(children: unsafeNode.inlineChildren(depth: depth + 1))
     case .link:
       self = .link(
         destination: unsafeNode.url ?? "",
-        children: unsafeNode.children.compactMap(InlineNode.init(unsafeNode:))
+        children: unsafeNode.inlineChildren(depth: depth + 1)
       )
     case .image:
       self = .image(
         source: unsafeNode.url ?? "",
-        children: unsafeNode.children.compactMap(InlineNode.init(unsafeNode:))
+        children: unsafeNode.inlineChildren(depth: depth + 1)
       )
     default:
       assertionFailure("Unhandled node type '\(unsafeNode.nodeType)' in InlineNode.")
@@ -178,6 +202,40 @@ extension UnsafeNode {
 
   fileprivate var children: UnsafeNodeSequence {
     .init(stream_cmark_node_first_child(self))
+  }
+
+  fileprivate func blockChildren(depth: Int) -> [BlockNode] {
+    self.children.compactMap { BlockNode(unsafeNode: $0, depth: depth) }
+  }
+
+  fileprivate func inlineChildren(depth: Int) -> [InlineNode] {
+    self.children.compactMap { InlineNode(unsafeNode: $0, depth: depth) }
+  }
+
+  // The text in the node, without its formatting. It walks the node with cmark's iterator rather
+  // than recursion, and its length is at most the node's: cmark's plain text renderer indents
+  // each line by every list around it.
+  fileprivate var plainText: String {
+    guard let iterator = stream_cmark_iter_new(self) else { return "" }
+    defer { stream_cmark_iter_free(iterator) }
+    var text = ""
+    var event = stream_cmark_iter_next(iterator)
+    while event != CMARK_EVENT_DONE {
+      if let node = stream_cmark_iter_get_node(iterator) {
+        let type = stream_cmark_node_get_type(node)
+        if event == CMARK_EVENT_ENTER, let literal = stream_cmark_node_get_literal(node) {
+          text += String(cString: literal)
+        } else if event == CMARK_EVENT_ENTER, type == CMARK_NODE_SOFTBREAK {
+          text += " "
+        } else if (event == CMARK_EVENT_ENTER && type == CMARK_NODE_LINEBREAK)
+          || (event == CMARK_EVENT_EXIT && (type == CMARK_NODE_PARAGRAPH || type == CMARK_NODE_HEADING))
+        {
+          text += "\n"
+        }
+      }
+      event = stream_cmark_iter_next(iterator)
+    }
+    return text.trimmingCharacters(in: .whitespacesAndNewlines)
   }
 
   fileprivate var literal: String? {

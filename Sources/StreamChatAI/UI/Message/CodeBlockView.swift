@@ -17,6 +17,8 @@ struct CodeBlockView: View {
     @Injected(\.aiAppearance.images) private var images
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
+    @StateObject private var highlighting = CodeHighlighting()
+
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -40,7 +42,9 @@ struct CodeBlockView: View {
             Divider()
 
             ScrollView(.horizontal) {
-                configuration.label
+                Text(code)
+                    .textStyleFont()
+                    .textStyleForegroundColor()
                     .relativeLineSpacing(.em(0.25))
                     .markdownTextStyle {
                         FontFamilyVariant(.monospaced)
@@ -52,5 +56,34 @@ struct CodeBlockView: View {
         .background(Color(colors.codeBlockBackground))
         .clipShape(RoundedRectangle(cornerRadius: layout.radiusMd))
         .markdownMargin(top: .zero, bottom: .em(0.8))
+        .task(id: configuration.content) {
+            guard configuration.language != nil else { return }
+            highlighting.highlight(configuration.content, format: format)
+        }
+    }
+
+    // Code without a language shows plain, in the text color of the reply.
+    private var code: AttributedString {
+        guard configuration.language != nil else {
+            return AttributedString(configuration.content)
+        }
+        return highlighting.text(for: configuration.content, plainTextColor: Color(colors.codeText))
+    }
+
+    private var format: TextOutputFormat {
+        TextOutputFormat(
+            plainTextColor: Color(colors.codeText),
+            tokenColors: [
+                .keyword: Color(colors.codeKeyword),
+                .string: Color(colors.codeString),
+                .type: Color(colors.codeType),
+                .call: Color(colors.codeCall),
+                .number: Color(colors.codeNumber),
+                .comment: Color(colors.codeComment),
+                .property: Color(colors.codeProperty),
+                .dotAccess: Color(colors.codeDotAccess),
+                .preprocessing: Color(colors.codePreprocessing)
+            ]
+        )
     }
 }

@@ -4,47 +4,50 @@
 
 import SwiftUI
 
+// Splash's output as one attributed string, so that it can be made away from the main thread, and
+// shows as one text rather than a text per token.
 @available(iOS 15.0, macOS 12.0, *)
 struct TextOutputFormat: OutputFormat {
-    private let theme: SplashTheme
-    
-    init(theme: SplashTheme) {
-        self.theme = theme
-    }
-    
+    let plainTextColor: Color
+    let tokenColors: [TokenType: Color]
+
     func makeBuilder() -> Builder {
-        Builder(theme: self.theme)
+        Builder(plainTextColor: plainTextColor, tokenColors: tokenColors)
     }
 }
 
 @available(iOS 15.0, macOS 12.0, *)
 extension TextOutputFormat {
     struct Builder: OutputBuilder {
-        private let theme: SplashTheme
-        private var accumulatedText: [Text]
-        
-        fileprivate init(theme: SplashTheme) {
-            self.theme = theme
-            self.accumulatedText = []
+        private let plainTextColor: Color
+        private let tokenColors: [TokenType: Color]
+        private var text = AttributedString()
+
+        fileprivate init(plainTextColor: Color, tokenColors: [TokenType: Color]) {
+            self.plainTextColor = plainTextColor
+            self.tokenColors = tokenColors
         }
-        
+
         mutating func addToken(_ token: String, ofType type: TokenType) {
-            let color = self.theme.tokenColors[type] ?? self.theme.plainTextColor
-            self.accumulatedText.append(Text(token).foregroundColor(.init(uiColor: color)))
+            append(token, color: tokenColors[type] ?? plainTextColor)
         }
-        
+
         mutating func addPlainText(_ text: String) {
-            self.accumulatedText.append(
-                Text(text).foregroundColor(.init(uiColor: self.theme.plainTextColor))
-            )
+            append(text, color: plainTextColor)
         }
-        
+
         mutating func addWhitespace(_ whitespace: String) {
-            self.accumulatedText.append(Text(whitespace))
+            text.append(AttributedString(whitespace))
         }
-        
-        func build() -> Text {
-            self.accumulatedText.reduce(Text(""), +)
+
+        func build() -> AttributedString {
+            text
+        }
+
+        private mutating func append(_ string: String, color: Color) {
+            var run = AttributedString(string)
+            run.foregroundColor = color
+            text.append(run)
         }
     }
 }

@@ -28,13 +28,14 @@ update_differencekit: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/DifferenceKit Sources/StreamChatUI/StreamDifferenceKit Sources
 	./Scripts/removePublicDeclarations.sh Sources/StreamChatUI/StreamDifferenceKit
 
+# Splash is no longer maintained, and an update drops the local changes listed in AGENTS.md: put them back.
 update_splash: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/Splash Sources/StreamChatAI/StreamSplash Sources/Splash
 	./Scripts/removePublicDeclarations.sh Sources/StreamChatAI/StreamSplash
 
 # MarkdownUI's Swift sources go into StreamChatAI. Its cmark-gfm is older than upstream's, so update_cmark takes cmark-gfm
 # from github/cmark-gfm instead. StreamChatAI requires iOS 15, above the package's minimum, so its vendored declarations
-# get an @available attribute.
+# get an @available attribute. An update drops the local changes listed in AGENTS.md: put them back.
 update_markdownui: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/MarkdownUI Sources/StreamChatAI/StreamMarkdownUI Sources/MarkdownUI
 	./Scripts/removePublicDeclarations.sh Sources/StreamChatAI/StreamMarkdownUI

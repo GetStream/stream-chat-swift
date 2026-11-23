@@ -20,7 +20,7 @@ public struct StreamingMessageView: View {
     @State private var isFinished: Bool
 
     @Environment(\.aiThinkingTurn) private var turn
-    @Injected(\.aiAppearance.colors) private var colors
+    @Environment(\.aiMarkdownImageLoading) private var imageLoading
     
     private static let supportedChartLanguages = ["json", "chart", "chartjs", "echarts", "highcharts", "vega-lite", "vegalite"]
     
@@ -39,7 +39,7 @@ public struct StreamingMessageView: View {
     }
     
     public var body: some View {
-        Markdown(displayedText)
+        Markdown(MarkdownContent(displayedText).loadingImages(imageLoading))
             .markdownBlockStyle(\.codeBlock) { cfg in
                 if #available(iOS 16.0, *), let spec = Self.chartSpec(cfg) {
                     USpecChartView(spec: spec)
@@ -48,7 +48,6 @@ public struct StreamingMessageView: View {
                     CodeBlockView(configuration: cfg)
                 }
             }
-            .markdownCodeSyntaxHighlighter(.splash(theme: self.theme))
             .onAppear {
                 isFinished = !isGenerating
                 if !isGenerating {
@@ -183,24 +182,5 @@ public struct StreamingMessageView: View {
         guard let language = configuration.language, supportedChartLanguages.contains(language.lowercased()),
               let data = configuration.content.data(using: .utf8) else { return nil }
         return try? ChartSpecParser.parse(data)
-    }
-
-    private var theme: SplashTheme {
-        SplashTheme(
-            font: .init(size: 16),
-            plainTextColor: colors.codeText,
-            tokenColors: [
-                .keyword: colors.codeKeyword,
-                .string: colors.codeString,
-                .type: colors.codeType,
-                .call: colors.codeCall,
-                .number: colors.codeNumber,
-                .comment: colors.codeComment,
-                .property: colors.codeProperty,
-                .dotAccess: colors.codeDotAccess,
-                .preprocessing: colors.codePreprocessing
-            ],
-            backgroundColor: colors.codeBlockHeaderBackground
-        )
     }
 }
