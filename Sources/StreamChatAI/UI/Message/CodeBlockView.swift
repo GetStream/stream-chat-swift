@@ -58,7 +58,7 @@ struct CodeBlockView: View {
         .markdownMargin(top: .zero, bottom: .em(0.8))
         .task(id: configuration.content) {
             guard configuration.language != nil else { return }
-            highlighting.highlight(configuration.content, format: format)
+            highlighting.highlight(configuration.content)
         }
     }
 
@@ -67,13 +67,13 @@ struct CodeBlockView: View {
         guard configuration.language != nil else {
             return AttributedString(configuration.content)
         }
-        return highlighting.text(for: configuration.content, plainTextColor: Color(colors.codeText))
+        return highlighting.text(for: configuration.content, colors: codeColors)
     }
 
-    private var format: TextOutputFormat {
-        TextOutputFormat(
-            plainTextColor: Color(colors.codeText),
-            tokenColors: [
+    private var codeColors: CodeColors {
+        CodeColors(
+            plainText: Color(colors.codeText),
+            tokens: [
                 .keyword: Color(colors.codeKeyword),
                 .string: Color(colors.codeString),
                 .type: Color(colors.codeType),

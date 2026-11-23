@@ -12,21 +12,21 @@ final class AIMarkdownImageLoading_Tests: XCTestCase {
     }
 
     func test_never_showsAnImageAsALinkToItsAddress() {
-        let content = MarkdownContent("Here: ![a chart](https://exfil.example/p.png?d=secret)").loadingImages(.never)
+        let content = MarkdownContent("Here: ![a chart](https://cdn.example/p.png?w=200)").loadingImages(.never)
 
         XCTAssertEqual(content.blocks, [
             .paragraph(content: [
                 .text("Here: "),
-                .link(destination: "https://exfil.example/p.png?d=secret", children: [.text("Image: a chart")])
+                .link(destination: "https://cdn.example/p.png?w=200", children: [.text("Image: a chart")])
             ])
         ])
     }
 
     func test_never_namesTheHostOfAnImageWithoutADescription() {
-        let content = MarkdownContent("![](https://exfil.example/p.png)").loadingImages(.never)
+        let content = MarkdownContent("![](https://cdn.example/p.png)").loadingImages(.never)
 
         XCTAssertEqual(content.blocks, [
-            .paragraph(content: [.link(destination: "https://exfil.example/p.png", children: [.text("Image: exfil.example")])])
+            .paragraph(content: [.link(destination: "https://cdn.example/p.png", children: [.text("Image: cdn.example")])])
         ])
     }
 
@@ -57,10 +57,26 @@ final class AIMarkdownImageLoading_Tests: XCTestCase {
     }
 
     func test_anImageInALink_becomesTheLinksText() {
-        let content = MarkdownContent("[![a](https://exfil.example/a.png)](https://site.example)").loadingImages(.never)
+        let content = MarkdownContent("[![a](https://cdn.example/a.png)](https://site.example)").loadingImages(.never)
 
         XCTAssertEqual(content.blocks, [
             .paragraph(content: [.link(destination: "https://site.example", children: [.text("Image: a")])])
+        ])
+    }
+
+    func test_aFormattedImageInALink_becomesFormattedText() {
+        let markdown = "[**![a](https://cdn.example/a.png)** and *~~![b](https://cdn.example/b.png)~~*](https://site.example)"
+
+        let content = MarkdownContent(markdown).loadingImages(.never)
+
+        XCTAssertEqual(content.blocks, [
+            .paragraph(content: [
+                .link(destination: "https://site.example", children: [
+                    .strong(children: [.text("Image: a")]),
+                    .text(" and "),
+                    .emphasis(children: [.strikethrough(children: [.text("Image: b")])])
+                ])
+            ])
         ])
     }
 
@@ -74,11 +90,11 @@ final class AIMarkdownImageLoading_Tests: XCTestCase {
 
     func test_imagesInQuotesListsAndTables_becomeLinks() {
         let markdown = """
-        > ![q](https://exfil.example/q.png)
+        > ![q](https://cdn.example/q.png)
 
-        - ![l](https://exfil.example/l.png)
+        - ![l](https://cdn.example/l.png)
 
-        | ![t](https://exfil.example/t.png) |
+        | ![t](https://cdn.example/t.png) |
         | --- |
         """
 

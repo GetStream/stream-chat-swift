@@ -96,17 +96,22 @@ private extension InlineNode {
             }
             return [.link(destination: source, children: [.text(label)])]
         case let .link(destination, children):
-            // A link can't hold another, such as an image in it that became one.
+            // A link can't hold another, such as an image in it that became one, however deep in
+            // its text: the inner one would be what a tap opens.
             return [.link(destination: destination, children: children.flatMap(\.unlinked))]
         default:
             return [self]
         }
     }
 
+    // The node with the links in it replaced by their text, keeping its emphasis, strong text and
+    // strikethrough.
     var unlinked: [InlineNode] {
         if case let .link(_, children) = self {
-            return children
+            return children.flatMap(\.unlinked)
         }
-        return [self]
+        var inline = self
+        inline.children = children.flatMap(\.unlinked)
+        return [inline]
     }
 }
