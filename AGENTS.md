@@ -41,8 +41,8 @@ Agents should prioritize backwards compatibility, API stability, and high test c
   - `Sources/StreamChatAI/StreamSplash/` — vendored Splash (0.16.0) for code syntax highlighting
   - `Sources/StreamChatAI/StreamMarkdownUI/` — vendored MarkdownUI (2.4.0), with fixes for Swift 6 that an update overwrites
   - `Sources/StreamChatAI/StreamNetworkImage/` — vendored NetworkImage (6.0.1), used by MarkdownUI
-  - `Sources/StreamChatAICMark/` — MarkdownUI's cmark-gfm as an internal C target. Every global symbol has a `stream_` prefix, so it links next to an app's own cmark-gfm
-  - Update these via `make update_swiftygif version=X.Y.Z` / `make update_differencekit version=X.Y.Z` / `make update_splash version=X.Y.Z` / `make update_markdownui version=X.Y.Z` / `make update_networkimage version=X.Y.Z`
+  - `Sources/StreamChatAICMark/` — cmark-gfm (0.29.0.gfm.14) as an internal C target. It comes from github/cmark-gfm, since the copy MarkdownUI bundles is older. Every global symbol has a `stream_` prefix, so it links next to an app's own cmark-gfm
+  - Update these via `make update_swiftygif version=X.Y.Z` / `make update_differencekit version=X.Y.Z` / `make update_splash version=X.Y.Z` / `make update_markdownui version=X.Y.Z` / `make update_cmark version=X.Y.Z.gfm.N` / `make update_networkimage version=X.Y.Z`
 
 ### Project layout (high level)
 
