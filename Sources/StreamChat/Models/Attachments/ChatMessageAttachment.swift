@@ -229,18 +229,32 @@ extension URL {
         return base.appendingPathComponent("StreamAttachmentDownloads", isDirectory: true)
     }
 
-    static func streamAttachmentLocalStorageURL(forRelativePath path: String, baseURL: URL? = nil) -> URL {
-        URL(
-            fileURLWithPath: path,
-            isDirectory: false,
-            relativeTo: streamAttachmentDownloadsDirectory(baseURL: baseURL)
-        ).standardizedFileURL
+    static func streamAttachmentLocalStorageURL(forRelativePath path: String, baseURL: URL? = nil) -> URL? {
+        guard !path.isEmpty else { return nil }
+        let downloadsDirectory = streamAttachmentDownloadsDirectory(baseURL: baseURL)
+        let url = URL(fileURLWithPath: path, isDirectory: false, relativeTo: downloadsDirectory).standardizedFileURL
+        // `nil` for a path that leaves the downloads directory: paths stored by earlier versions
+        // can contain `..` taken from an attachment's title.
+        let directoryComponents = downloadsDirectory.standardizedFileURL.pathComponents
+        let components = url.absoluteURL.pathComponents
+        guard components.count > directoryComponents.count, components.starts(with: directoryComponents) else { return nil }
+        return url
     }
 }
 
 extension ChatMessageAttachment where Payload: AttachmentPayloadDownloading {
     /// A local and unique file path for the attachment.
     var relativeStoragePath: String {
-        "\(id.messageId)-\(id.index)/\(payload.localStorageFileName)"
+        // The sender chooses the message id and the title, so each must stay a single path component.
+        let folderName = "\(id.messageId)-\(id.index)".storagePathComponent(fallback: "\(id.index)")
+        let fileName = payload.localStorageFileName.storagePathComponent(fallback: "attachment")
+        return "\(folderName)/\(fileName)"
+    }
+}
+
+private extension String {
+    func storagePathComponent(fallback: String) -> String {
+        let component = replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "\0", with: "")
+        return component.isEmpty || component == "." || component == ".." ? fallback : component
     }
 }

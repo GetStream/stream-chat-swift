@@ -67,7 +67,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         let container = DatabaseContainer(kind: .inMemory)
 
         // Create dummy local download
-        let localDownload = URL.streamAttachmentLocalStorageURL(forRelativePath: "mypath")
+        let localDownload = try XCTUnwrap(URL.streamAttachmentLocalStorageURL(forRelativePath: "mypath"))
         try FileManager.default.createDirectory(at: localDownload.deletingLastPathComponent(), withIntermediateDirectories: true)
         try "1".write(to: localDownload, atomically: false, encoding: .utf8)
         
@@ -382,7 +382,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         let messageId = MessageId.unique
         let existingFileAttachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
         let existingFilePath = "\(String.unique)-file.txt"
-        let existingFileURL = URL.streamAttachmentLocalStorageURL(forRelativePath: existingFilePath)
+        let existingFileURL = try XCTUnwrap(URL.streamAttachmentLocalStorageURL(forRelativePath: existingFilePath))
         try FileManager.default.createDirectory(at: existingFileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
         try UUID().uuidString.write(to: existingFileURL, atomically: false, encoding: .utf8)
         defer { try? FileManager.default.removeItem(at: existingFileURL) }

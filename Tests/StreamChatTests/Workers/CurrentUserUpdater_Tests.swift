@@ -892,7 +892,28 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             }
         }
     }
-    
+
+    func test_deleteAllLocalAttachmentDownloads_keepsFilesOutsideDownloadsDirectory() throws {
+        let outsideFileURL = URL.streamAttachmentDownloadsDirectory()
+            .deletingLastPathComponent()
+            .appendingPathComponent("\(String.unique).txt")
+        try "1".write(to: outsideFileURL, atomically: false, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: outsideFileURL) }
+        let attachmentId = AttachmentId(cid: .unique, messageId: .unique, index: 0)
+        try database.createChannel(cid: attachmentId.cid, withMessages: false)
+        try database.createMessage(id: attachmentId.messageId, cid: attachmentId.cid)
+        try database.writeSynchronously { session in
+            let dto = try session.createNewAttachment(attachment: .mockFile, id: attachmentId)
+            dto.localDownloadState = .downloaded
+            dto.localRelativePath = "message-0/../../\(outsideFileURL.lastPathComponent)"
+        }
+
+        let error = try waitFor { currentUserUpdater.deleteAllLocalAttachmentDownloads(completion: $0) }
+
+        XCTAssertNil(error)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: outsideFileURL.path))
+    }
+
     // MARK: - Load All Unreads
     
     func test_loadAllUnreads_makesCorrectAPICall() {
@@ -1048,7 +1069,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             let localRelativePath = messageId + "-file.txt"
             dto.localDownloadState = .downloaded
             dto.localRelativePath = localRelativePath
-            let localFileURL = URL.streamAttachmentLocalStorageURL(forRelativePath: localRelativePath)
+            let localFileURL = try XCTUnwrap(URL.streamAttachmentLocalStorageURL(forRelativePath: localRelativePath))
             try FileManager.default.createDirectory(at: localFileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
             try UUID().uuidString.write(to: localFileURL, atomically: false, encoding: .utf8)
             XCTAssertTrue(FileManager.default.fileExists(atPath: localFileURL.path))

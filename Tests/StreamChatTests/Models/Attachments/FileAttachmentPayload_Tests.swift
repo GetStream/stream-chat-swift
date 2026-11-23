@@ -33,6 +33,24 @@ final class FileAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.extraData, nil)
     }
 
+    func test_decodingFileSize_outsideInt64Range_decodesZero() throws {
+        for fileSize in ["1e20", "-1e19", "9.3e18", "1e300"] {
+            let json = Data(#"{"asset_url": "https://example.com/file.pdf", "file_size": \#(fileSize)}"#.utf8)
+
+            let payload = try JSONDecoder.stream.decode(FileAttachmentPayload.self, from: json)
+
+            XCTAssertEqual(payload.file.size, 0, fileSize)
+        }
+    }
+
+    func test_decodingFractionalFileSize_isRounded() throws {
+        let json = Data(#"{"asset_url": "https://example.com/file.pdf", "file_size": 1234.5}"#.utf8)
+
+        let payload = try JSONDecoder.stream.decode(FileAttachmentPayload.self, from: json)
+
+        XCTAssertEqual(payload.file.size, 1235)
+    }
+
     func test_decodingExtraData() throws {
         struct ExtraData: Codable {
             let comment: String

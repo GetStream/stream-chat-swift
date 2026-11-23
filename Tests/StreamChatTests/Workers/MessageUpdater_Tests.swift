@@ -2228,7 +2228,23 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
         XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
     }
-    
+
+    func test_downloadAttachment_titleWithParentDirectories_downloadsInsideDownloadsDirectory() throws {
+        let messageId: MessageId = .unique
+        let attachment = try setUpAttachment(
+            attachment: ChatMessageFileAttachment.mock(id: .unique, title: "../../../Library/Preferences/app.plist"),
+            messageId: messageId
+        )
+        apiClient.downloadFile_completion_result = .success(())
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
+        let value = try XCTUnwrap(result.value)
+        let expectedURL = URL.streamAttachmentDownloadsDirectory()
+            .appendingPathComponent("\(messageId)-0")
+            .appendingPathComponent(".._.._.._Library_Preferences_app.plist")
+        XCTAssertEqual(expectedURL.path, apiClient.downloadFile_localURL?.path)
+        XCTAssertEqual(expectedURL.path, value.downloadingState?.localFileURL?.path)
+    }
+
     func test_downloadAttachment_imageAttachment_success() throws {
         let attachment = try setUpAttachment(
             attachment: ChatMessageImageAttachment.mock(
