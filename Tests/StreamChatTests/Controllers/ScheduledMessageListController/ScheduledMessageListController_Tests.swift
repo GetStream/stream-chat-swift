@@ -21,6 +21,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         userId = .unique
         client.currentUserId_mock = userId
         try? client.mockDatabaseContainer.createCurrentUser(id: userId)
+        client.addMessageScheduler()
     }
 
     override func tearDown() {
@@ -120,17 +121,29 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         XCTAssertEqual(stored.scheduledAt.timeIntervalSince1970, newDate.timeIntervalSince1970, accuracy: 0.001)
     }
 
-    func test_sendScheduledMessageNow_marksItToBeSentByTheScheduler() throws {
+    func test_sendScheduledMessageNow_completesWhenTheServerSendsIt() throws {
         let message = try schedule()
         let controller = client.scheduledMessageListController()
         apiClient.cleanUp()
+        apiClient.test_mockResponseResult(.success(SendScheduledMessageNowResponse(
+            scheduledMessage: .dummy(id: message.id, cid: cid, status: .sending)
+        )))
 
         let error = try waitFor { controller.sendScheduledMessageNow(id: message.id, completion: $0) }
 
         XCTAssertNil(error)
-        XCTAssertNil(apiClient.request_endpoint)
-        let isPendingSendNow = try client.databaseContainer.readSynchronously { $0.scheduledMessage(id: message.id)?.isPendingSendNow }
-        XCTAssertEqual(isPendingSendNow, true)
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, EndpointPath.sendScheduledMessageNow(id: message.id).value)
+    }
+
+    func test_sendScheduledMessageNow_whenTheRequestFails_completesWithItsError() throws {
+        let message = try schedule()
+        let controller = client.scheduledMessageListController()
+        let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorTimedOut)
+        apiClient.test_mockResponseResult(Result<SendScheduledMessageNowResponse, Error>.failure(error))
+
+        let sendNowError = try waitFor { controller.sendScheduledMessageNow(id: message.id, completion: $0) }
+
+        XCTAssertEqual((sendNowError as? NSError)?.code, NSURLErrorTimedOut)
     }
 
     // The list reuses scheduled messages by id, so these check that changes of their content still reach it.
@@ -152,7 +165,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
     }
 
     @MainActor func test_scheduledMessages_whenAnAttachmentChanges_areUpdated() throws {
-        let message = try schedule(attachments: [.mockImage])
+        let message = try scheduleLocally(attachments: [.mockImage])
         let controller = client.scheduledMessageListController()
         let delegate = DelegateSpy()
         controller.delegate = delegate
@@ -171,16 +184,30 @@ final class ScheduledMessageListController_Tests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func schedule(cid: ChannelId? = nil, attachments: [AnyAttachmentPayload] = []) throws -> ScheduledMessage {
+    private func schedule(cid: ChannelId? = nil) throws -> ScheduledMessage {
         let cid = cid ?? self.cid!
+        let id = String.unique
         apiClient.test_mockResponseResult(.success(
-            SendMessageResponsePayload(message: .dummy(cid: cid), scheduledMessage: .dummy(cid: cid))
+            SendMessageResponsePayload(message: .dummy(cid: cid), scheduledMessage: .dummy(id: id, cid: cid))
         ))
         let channelController = client.channelController(for: cid)
         return try waitFor {
             channelController.scheduleMessage(
+                messageId: id,
                 text: "Hello",
-                attachments: attachments,
+                scheduledAt: Date().addingTimeInterval(3600),
+                completion: $0
+            )
+        }.get()
+    }
+
+    // Saved locally only: the scheduler waits for the attachments, which are not uploaded in the tests.
+    private func scheduleLocally(attachments: [AnyAttachmentPayload]) throws -> ScheduledMessage {
+        try waitFor { [client, cid] in
+            client!.scheduledMessagesRepository.schedule(
+                id: .unique,
+                cid: cid!,
+                content: .dummy(attachments: attachments),
                 scheduledAt: Date().addingTimeInterval(3600),
                 completion: $0
             )

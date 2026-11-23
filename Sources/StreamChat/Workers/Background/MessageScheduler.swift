@@ -19,11 +19,15 @@ import Foundation
 /// Editing or rescheduling a message goes through the same phases, with the `pendingSync`, `syncing` and
 /// `syncingFailed` local states.
 class MessageScheduler: Worker, @unchecked Sendable {
+    typealias Waiter = @Sendable (Result<ScheduledMessage?, Error>) -> Void
+
     @Atomic private var pendingIds: Set<String> = []
     @Atomic private var isProcessing = false
     @Atomic private var isWaitingForConnection = false
+    @Atomic private var waiters: [String: [Waiter]] = [:]
 
     private let observer: StateLayerDatabaseObserver<ListResult, String, ScheduledMessageDTO>
+    private let failedUploadsObserver: StateLayerDatabaseObserver<ListResult, (String, AttachmentId?), ScheduledMessageDTO>
     private let scheduledMessagesRepository: ScheduledMessagesRepository
     private let eventNotificationCenter: EventNotificationCenter
 
@@ -37,6 +41,14 @@ class MessageScheduler: Worker, @unchecked Sendable {
             database: database,
             fetchRequest: ScheduledMessageDTO.pendingRequestsFetchRequest(),
             itemCreator: { $0.id },
+            itemReuseKeyPaths: nil
+        )
+        failedUploadsObserver = StateLayerDatabaseObserver(
+            database: database,
+            fetchRequest: ScheduledMessageDTO.failedUploadsFetchRequest(),
+            itemCreator: { dto in
+                (dto.id, dto.message?.attachments.first { $0.localState == .uploadingFailed }?.attachmentID)
+            },
             itemReuseKeyPaths: nil
         )
         self.scheduledMessagesRepository = scheduledMessagesRepository
@@ -63,6 +75,12 @@ class MessageScheduler: Worker, @unchecked Sendable {
         do {
             try observer.startObserving(onContextDidChange: { [weak self] _, changes in
                 self?.enqueue(changes.pendingIds)
+            })
+            // The scheduler never sends a message whose attachment failed to upload.
+            try failedUploadsObserver.startObserving(onContextDidChange: { [weak self] failedUploads, _ in
+                for case let (id, attachmentId?) in failedUploads {
+                    self?.completeWaiters(of: id, with: .failure(ClientError.AttachmentUploading(id: attachmentId)))
+                }
             })
             enqueue(observer.items)
             // `.sending` messages are rescued with the other messages, by the `MessageSender`.
@@ -97,10 +115,27 @@ class MessageScheduler: Worker, @unchecked Sendable {
                 isWaitingForConnection = true
                 log.debug("Message scheduler started waiting for connection")
             }
-            _pendingIds.mutate { $0.remove(id) }
+            // Sending it now follows in another request once its changes are on the server.
+            if (try? result.get())?.status != .preparingToSchedule {
+                // Nothing is sent until connected, so all the waiters fail with the error.
+                completeWaiters(of: isWaitingForConnection ? nil : id, with: result)
+                _pendingIds.mutate { $0.remove(id) }
+            }
             isProcessing = false
             processNextMessage()
         }
+    }
+
+    // Completes the waiters of a scheduled message, or all of them for `nil`.
+    private func completeWaiters(of id: String?, with result: Result<ScheduledMessage?, Error>) {
+        var completedWaiters: [Waiter] = []
+        _waiters.mutate { waiters in
+            completedWaiters = id.map { waiters.removeValue(forKey: $0) ?? [] } ?? waiters.values.flatMap { $0 }
+            if id == nil {
+                waiters = [:]
+            }
+        }
+        completedWaiters.forEach { $0(result) }
     }
 }
 
@@ -113,6 +148,43 @@ private extension Array where Element == ListChange<String> {
             case .move, .remove:
                 return nil
             }
+        }
+    }
+}
+
+// MARK: - Waiting for the API Request
+
+extension MessageScheduler {
+    // Runs a local write of a scheduled message, then waits until the request which sends it to the server finishes.
+    // The write has to complete from the completion of the database write, which runs before the scheduler can send the
+    // message. Completes with the local message when the server no longer has it, for example after sending it right away.
+    func waitForAPIRequest(
+        afterLocalWrite write: (@escaping @Sendable (Result<ScheduledMessage, Error>) -> Void) -> Void,
+        completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
+    ) {
+        write { [weak self] result in
+            guard let self, case let .success(localMessage) = result else {
+                completion(result)
+                return
+            }
+            var isOffline = false
+            _waiters.mutate { waiters in
+                isOffline = isWaitingForConnection
+                guard !isOffline else { return }
+                waiters[localMessage.id, default: []].append { completion($0.map { $0 ?? localMessage }) }
+            }
+            // The changes stay pending and are sent once connected.
+            if isOffline {
+                completion(.failure(ClientError.ConnectionError()))
+            }
+        }
+    }
+
+    func waitForAPIRequest(
+        afterLocalWrite write: (@escaping @Sendable (Result<ScheduledMessage, Error>) -> Void) -> Void
+    ) async throws -> ScheduledMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            waitForAPIRequest(afterLocalWrite: write) { continuation.resume(with: $0) }
         }
     }
 }

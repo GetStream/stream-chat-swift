@@ -19,6 +19,7 @@ final class ScheduledMessageList_Tests: XCTestCase {
         let userId = UserId.unique
         client.currentUserId_mock = userId
         try client.mockDatabaseContainer.createCurrentUser(id: userId)
+        client.addMessageScheduler()
     }
 
     override func tearDownWithError() throws {
@@ -114,6 +115,9 @@ final class ScheduledMessageList_Tests: XCTestCase {
         let message = try await schedule()
         setUpScheduledMessageList()
         let newDate = Date().addingTimeInterval(7200)
+        apiClient.test_mockResponseResult(.success(
+            UpdateScheduledMessageResponse(scheduledMessage: .dummy(id: message.id, cid: cid, scheduledAt: newDate))
+        ))
 
         let rescheduled = try await scheduledMessageList.rescheduleMessage(id: message.id, scheduledAt: newDate)
 
@@ -137,15 +141,18 @@ final class ScheduledMessageList_Tests: XCTestCase {
         XCTAssertEqual([], scheduledMessageList.state.scheduledMessages.map(\.id))
     }
 
-    @MainActor func test_sendScheduledMessageNow_thenItIsMarkedUntilTheSchedulerSendsIt() async throws {
+    @MainActor func test_sendScheduledMessageNow_thenItReturnsWhenTheServerSendsIt() async throws {
         let message = try await schedule()
         setUpScheduledMessageList()
+        apiClient.test_mockResponseResult(.success(
+            SendScheduledMessageNowResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: .sending))
+        ))
 
         try await scheduledMessageList.sendScheduledMessageNow(id: message.id)
 
-        XCTAssertNil(apiClient.request_endpoint)
-        let stored = try await waitForScheduledMessage(id: message.id) { $0.status == .preparingToSchedule }
-        XCTAssertEqual(.preparingToSchedule, stored.status)
+        XCTAssertEqual(EndpointPath.sendScheduledMessageNow(id: message.id).value, apiClient.request_endpoint?.path.value)
+        let stored = try await waitForScheduledMessage(id: message.id) { $0.status == .sending }
+        XCTAssertEqual(.sending, stored.status)
     }
 
     @MainActor func test_resendScheduledMessage_whenItHasNoFailedChanges_thenResendFails() async throws {
@@ -217,16 +224,14 @@ final class ScheduledMessageList_Tests: XCTestCase {
         }
     }
 
-    /// Schedules a message on the device, with local attachments.
+    /// Schedules a message on the device, with local attachments. The scheduler waits for them, which are not uploaded
+    /// in the tests.
     @MainActor private func scheduleLocally(attachments: [AnyAttachmentPayload]) async throws -> ScheduledMessage {
-        apiClient.test_mockResponseResult(.success(
-            SendMessageResponsePayload(message: .dummy(cid: cid), scheduledMessage: .dummy(cid: cid))
-        ))
-        let channelController = client.channelController(for: cid)
-        return try await withCheckedThrowingContinuation { continuation in
-            channelController.scheduleMessage(
-                text: "Photo",
-                attachments: attachments,
+        try await withCheckedThrowingContinuation { continuation in
+            client.scheduledMessagesRepository.schedule(
+                id: .unique,
+                cid: cid,
+                content: .dummy(attachments: attachments),
                 scheduledAt: Date().addingTimeInterval(3600),
                 completion: { continuation.resume(with: $0) }
             )

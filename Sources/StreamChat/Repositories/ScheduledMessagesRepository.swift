@@ -140,20 +140,12 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     /// Sends the local changes of a scheduled message that failed to reach the server again.
     func resend(id: String, completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void) {
         database.write(converting: { session in
-            guard let dto = session.scheduledMessage(id: id), let message = dto.message else {
+            guard let dto = session.scheduledMessage(id: id) else {
                 throw ClientError.ScheduledMessageDoesNotExist(id: id)
             }
-            switch message.localMessageState {
-            case .sendingFailed:
-                message.localMessageState = .pendingSend
-            case .syncingFailed:
-                message.localMessageState = .pendingSync
-            default:
+            guard dto.restartFailedChanges() else {
                 throw ClientError.ScheduledMessageHasNoPendingChanges(id: id)
             }
-            dto.syncErrorReason = nil
-            dto.syncErrorMessage = nil
-            dto.isSyncErrorLocal = false
             return try dto.asModel()
         }, completion: completion)
     }
@@ -198,14 +190,16 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     }
 
     /// Marks a scheduled message to be sent right away. The `MessageScheduler` sends it once its local changes and
-    /// attachments are on the server, so it is never sent with older content.
-    func sendNow(id: String, completion: @escaping @Sendable (Error?) -> Void) {
-        database.write({ session in
+    /// attachments are on the server, so it is never sent with older content. Failed local changes are sent again first.
+    func sendNow(id: String, completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void) {
+        database.write(converting: { session in
             guard let dto = session.scheduledMessage(id: id) else {
                 throw ClientError.ScheduledMessageDoesNotExist(id: id)
             }
             try session.validateQuotedMessage(dto.quotedMessageId)
             dto.isPendingSendNow = true
+            dto.restartFailedChanges()
+            return try dto.asModel()
         }, completion: completion)
     }
 
@@ -215,8 +209,9 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     /// once they are on the server, sends it right away.
     ///
     /// Called by the `MessageScheduler` once the attachments of the message are uploaded. Completes with `nil` when the
-    /// message is no longer scheduled: the server sent it right away because its date passed while offline, it was
-    /// already sent, or it was deleted on another device.
+    /// server sent it right away because its date passed while offline. Completes with
+    /// `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when it was already sent,
+    /// or deleted on this or another device, and removes it locally.
     func sendPendingChanges(
         id: String,
         didSendNow: (@Sendable (ScheduledMessageSentEvent) -> Void)? = nil,
@@ -347,8 +342,13 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 dto.message?.localMessageState = nil
                 return try session.saveScheduledMessage(payload: payload).asModel()
             }, completion: { [weak self] result in
-                guard case .success(nil) = result, pendingState == .pendingSend, let self else {
+                guard case .success(nil) = result else {
                     completion(result)
+                    return
+                }
+                let deleted = ClientError.ScheduledMessageDoesNotExist(id: id)
+                guard pendingState == .pendingSend, let self else {
+                    completion(.failure(deleted))
                     return
                 }
                 // It was only deleted locally, since it was not on the server yet.
@@ -356,7 +356,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                     if let error = deleteResult.error {
                         log.error("Failed to delete the scheduled message \(payload.id) on the server: \(error)")
                     }
-                    completion(.success(nil))
+                    completion(.failure(deleted))
                 }
             })
         case let .failure(error):
@@ -372,7 +372,11 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 database.write({ session in
                     session.deleteScheduledMessage(id: id)
                 }, completion: { error in
-                    completion(error.map { .failure($0) } ?? .success(nil))
+                    completion(.failure(error ?? (
+                        reason == .scheduledMessageAlreadySent
+                            ? ClientError.ScheduledMessageAlreadySent(id: id)
+                            : ClientError.ScheduledMessageDoesNotExist(id: id)
+                    )))
                 })
                 return
             }
@@ -512,6 +516,26 @@ extension ClientError {
     }
 }
 
+private extension ScheduledMessageDTO {
+    // Makes failed local changes pending again, so the `MessageScheduler` sends them. Returns `false` without failed changes.
+    @discardableResult func restartFailedChanges() -> Bool {
+        guard let message else { return false }
+        switch message.localMessageState {
+        case .sendingFailed:
+            message.localMessageState = .pendingSend
+        case .syncingFailed:
+            message.localMessageState = .pendingSync
+        default:
+            return false
+        }
+        syncErrorReason = nil
+        syncErrorMessage = nil
+        isSyncErrorLocal = false
+        message.restartFailedUploads()
+        return true
+    }
+}
+
 // MARK: - Request
 
 extension ScheduledMessageListQuery {
@@ -578,39 +602,9 @@ extension ScheduledMessagesRepository {
         try await database.read { try $0.scheduledMessagesUsage(cid: cid) }
     }
 
-    func schedule(id: String, cid: ChannelId, content: ScheduledMessageContent, scheduledAt: Date) async throws -> ScheduledMessage {
-        try await withCheckedThrowingContinuation { continuation in
-            schedule(id: id, cid: cid, content: content, scheduledAt: scheduledAt) { continuation.resume(with: $0) }
-        }
-    }
-
-    func update(id: String, content: ScheduledMessageContent, scheduledAt: Date?) async throws -> ScheduledMessage {
-        try await withCheckedThrowingContinuation { continuation in
-            update(id: id, content: content, scheduledAt: scheduledAt) { continuation.resume(with: $0) }
-        }
-    }
-
-    func reschedule(id: String, scheduledAt: Date) async throws -> ScheduledMessage {
-        try await withCheckedThrowingContinuation { continuation in
-            reschedule(id: id, scheduledAt: scheduledAt) { continuation.resume(with: $0) }
-        }
-    }
-
-    func resend(id: String) async throws -> ScheduledMessage {
-        try await withCheckedThrowingContinuation { continuation in
-            resend(id: id) { continuation.resume(with: $0) }
-        }
-    }
-
     func delete(id: String) async throws {
         try await withCheckedThrowingContinuation { continuation in
             delete(id: id) { continuation.resume(with: $0) }
-        }
-    }
-
-    func sendNow(id: String) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            sendNow(id: id) { continuation.resume(with: $0) }
         }
     }
 }

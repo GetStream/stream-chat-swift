@@ -141,6 +141,17 @@ class ScheduledMessageDTO: NSManagedObject {
         return request
     }
 
+    // The scheduled messages with an attachment that failed to upload, which the `MessageScheduler` never sends.
+    static func failedUploadsFetchRequest() -> NSFetchRequest<ScheduledMessageDTO> {
+        let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \ScheduledMessageDTO.createdAt, ascending: true)]
+        request.predicate = NSPredicate(
+            format: "ANY message.attachments.localStateRaw == %@",
+            LocalAttachmentState.uploadingFailed.rawValue
+        )
+        return request
+    }
+
     /// Loads the scheduled message with the specified id.
     static func load(id: String, context: NSManagedObjectContext) -> ScheduledMessageDTO? {
         load(by: fetchRequest(id: id), context: context).first

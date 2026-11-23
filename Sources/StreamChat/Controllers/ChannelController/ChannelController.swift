@@ -1988,9 +1988,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the message right away.
     ///   - extraData: Additional extra data of the message object.
-    ///   - completion: Called when the message is saved locally, with the scheduled message or an error saving it locally.
-    ///   It is sent to the server once its attachments are uploaded. The server answers later, on the scheduled message: a
-    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
+    ///   - completion: Called when the server answers, with the scheduled message or an error. The message is saved
+    ///   locally first and stays saved when the request fails, see `ScheduledMessage.status`.
     public func scheduleMessage(
         messageId: MessageId? = nil,
         text: String,
@@ -2026,13 +2025,24 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             skipPush: skipPush,
             extraData: extraData
         )
-        client.scheduledMessagesRepository.schedule(
-            id: messageId ?? .newUniqueId,
-            cid: cid,
-            content: content,
-            scheduledAt: scheduledAt
-        ) { result in
-            self.callback { completion?(result) }
+        do {
+            let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+            messageScheduler.waitForAPIRequest(
+                afterLocalWrite: {
+                    client.scheduledMessagesRepository.schedule(
+                        id: messageId ?? .newUniqueId,
+                        cid: cid,
+                        content: content,
+                        scheduledAt: scheduledAt,
+                        completion: $0
+                    )
+                },
+                completion: { result in
+                    self.callback { completion?(result) }
+                }
+            )
+        } catch {
+            callback { completion?(.failure(error)) }
         }
     }
 
@@ -2059,10 +2069,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
     ///   - extraData: The new extra data of the message.
-    ///   - completion: Called when the message is updated locally, with the scheduled message or an error updating it
-    ///   locally. The changes are sent to the server once its attachments are uploaded. The server answers later, on the
-    ///   scheduled message: a rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says
-    ///   why.
+    ///   - completion: Called when the server answers, with the scheduled message or an error. The changes are saved
+    ///   locally first and stay saved when the request fails, see `ScheduledMessage.status`.
+    ///   The error is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the
+    ///   server already sent the message or no longer has it, which also removes it locally.
     public func updateScheduledMessage(
         id: String,
         text: String,
@@ -2092,8 +2102,16 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             isSilent: silent,
             extraData: extraData
         )
-        client.scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt) { result in
-            self.callback { completion?(result) }
+        do {
+            let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+            messageScheduler.waitForAPIRequest(
+                afterLocalWrite: { client.scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt, completion: $0) },
+                completion: { result in
+                    self.callback { completion?(result) }
+                }
+            )
+        } catch {
+            callback { completion?(.failure(error)) }
         }
     }
 
@@ -2107,16 +2125,25 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - id: The id of the scheduled message.
     ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
     ///   next whole minute, at least 1 minute from now.
-    ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error rescheduling
-    ///   it locally. The new date is sent to the server right after. The server answers later, on the scheduled message: a
-    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
+    ///   - completion: Called when the server answers, with the scheduled message or an error. The new date is saved
+    ///   locally first and stays saved when the request fails, see `ScheduledMessage.status`.
+    ///   The error is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the
+    ///   server already sent the message or no longer has it, which also removes it locally.
     public func rescheduleMessage(
         id: String,
         scheduledAt: Date,
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
     ) {
-        client.scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt) { result in
-            self.callback { completion?(result) }
+        do {
+            let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+            messageScheduler.waitForAPIRequest(
+                afterLocalWrite: { client.scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt, completion: $0) },
+                completion: { result in
+                    self.callback { completion?(result) }
+                }
+            )
+        } catch {
+            callback { completion?(.failure(error)) }
         }
     }
 
@@ -2137,17 +2164,26 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Sends a scheduled message right away.
     ///
     /// It is marked locally and sent once its local changes and attachments are on the server, so it is never sent
-    /// with older content. The message is added to the channel when it is sent, which is reported by the
-    /// `ScheduledMessageSentEvent`.
+    /// with older content. Failed local changes are sent again first. The message is added to the channel when it is
+    /// sent, which is reported by the `ScheduledMessageSentEvent`.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - completion: Called when the message is marked locally, with an error if it can't be sent, for example when
-    ///   its quoted message was deleted. A rejection of the server sets `ScheduledMessage.status` to `.failed`, with the
-    ///   reason in `ScheduledMessage.failure`.
+    ///   - completion: Called when the server answers, with an error if the message can't be sent, for example when its
+    ///   quoted message was deleted or the request failed, see `ScheduledMessage.status`.
+    ///   The error is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the
+    ///   server already sent the message or no longer has it, which also removes it locally.
     public func sendScheduledMessageNow(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
-        client.scheduledMessagesRepository.sendNow(id: id) { error in
-            self.callback { completion?(error) }
+        do {
+            let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+            messageScheduler.waitForAPIRequest(
+                afterLocalWrite: { client.scheduledMessagesRepository.sendNow(id: id, completion: $0) },
+                completion: { result in
+                    self.callback { completion?(result.error) }
+                }
+            )
+        } catch {
+            callback { completion?(error) }
         }
     }
 

@@ -6,11 +6,13 @@ import Foundation
 
 /// An object which represents the current user's list of `ScheduledMessage` for the specified query.
 public final class ScheduledMessageList: Sendable {
+    private let client: ChatClient
     private let query: ScheduledMessageListQuery
     private let scheduledMessagesRepository: ScheduledMessagesRepository
     @MainActor private var stateBuilder: StateBuilder<ScheduledMessageListState>
 
     init(query: ScheduledMessageListQuery, client: ChatClient, environment: Environment = .init()) {
+        self.client = client
         self.query = query
         scheduledMessagesRepository = environment.scheduledMessagesRepositoryBuilder(
             client.databaseContainer,
@@ -65,12 +67,16 @@ public final class ScheduledMessageList: Sendable {
     ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
     ///   next whole minute, at least 1 minute from now.
     ///
-    /// - Throws: An error while rescheduling the message locally, not an error of the server. Unlike `sendMessage`, it does
-    /// not wait for the server: the server answers later, on the scheduled message, and a rejection sets
-    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
+    /// - Throws: An error while rescheduling the message locally, or the error of the request. The new date stays saved
+    /// when the request fails, see `ScheduledMessage.status`.
+    /// It is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the server
+    /// already sent the message or no longer has it, which also removes it locally.
     /// - Returns: The rescheduled message.
     @discardableResult public func rescheduleMessage(id: String, scheduledAt: Date) async throws -> ScheduledMessage {
-        try await scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt)
+        let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+        return try await messageScheduler.waitForAPIRequest {
+            scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt, completion: $0)
+        }
     }
 
     /// Deletes a scheduled message, so it is never sent.
@@ -88,16 +94,20 @@ public final class ScheduledMessageList: Sendable {
     /// Sends a scheduled message right away.
     ///
     /// It is marked locally and sent once its local changes and attachments are on the server, so it is never sent
-    /// with older content. The message is added to the channel when it is sent, which is reported by the
-    /// `ScheduledMessageSentEvent`.
+    /// with older content. Failed local changes are sent again first. The message is added to the channel when it is
+    /// sent, which is reported by the `ScheduledMessageSentEvent`.
     ///
     /// - Parameter id: The id of the scheduled message.
     ///
-    /// - Throws: An error when the message can't be sent, for example when its quoted message was deleted. It does not
-    /// wait for the server: a rejection sets `ScheduledMessage.status` to `.failed`, with the reason in
-    /// `ScheduledMessage.failure`.
+    /// - Throws: An error when the message can't be sent, for example when its quoted message was deleted, or the error of
+    /// the request, see `ScheduledMessage.status`.
+    /// It is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the server
+    /// already sent the message or no longer has it, which also removes it locally.
     public func sendScheduledMessageNow(id: String) async throws {
-        try await scheduledMessagesRepository.sendNow(id: id)
+        let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+        _ = try await messageScheduler.waitForAPIRequest {
+            scheduledMessagesRepository.sendNow(id: id, completion: $0)
+        }
     }
 
     /// Sends the changes of a scheduled message that failed to reach the server again.
@@ -107,11 +117,13 @@ public final class ScheduledMessageList: Sendable {
     ///
     /// - Parameter id: The id of the scheduled message.
     ///
-    /// - Throws: An error when the scheduled message has no failed changes, not an error of the server. It does not wait for
-    /// the server: the server answers later, on the scheduled message, and a rejection sets `ScheduledMessage.status` to
-    /// `.failed` again, with the reason in `ScheduledMessage.failure`.
+    /// - Throws: An error when the scheduled message has no failed changes, or the error of the request, see
+    /// `ScheduledMessage.status`.
     public func resendScheduledMessage(id: String) async throws {
-        _ = try await scheduledMessagesRepository.resend(id: id)
+        let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+        _ = try await messageScheduler.waitForAPIRequest {
+            scheduledMessagesRepository.resend(id: id, completion: $0)
+        }
     }
 
     // MARK: - Private

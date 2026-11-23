@@ -6065,8 +6065,10 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_scheduleMessage_savesTheMentionsSilentAndSkipPush() throws {
         try client.databaseContainer.createCurrentUser()
+        client.addMessageScheduler()
+        client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(TestError()))
 
-        let scheduledMessage = try waitFor {
+        _ = try waitFor {
             controller.scheduleMessage(
                 messageId: "scheduled-id",
                 text: "Later",
@@ -6080,8 +6082,9 @@ final class ChannelController_Tests: XCTestCase {
                 scheduledAt: Date().addingTimeInterval(3600),
                 completion: $0
             )
-        }.get()
+        }
 
+        let scheduledMessage = try XCTUnwrap(client.databaseContainer.readSynchronously { try $0.scheduledMessage(id: "scheduled-id")?.asModel() })
         XCTAssertEqual(scheduledMessage.cid, channelId)
         XCTAssertEqual(scheduledMessage.message.text, "Later")
         XCTAssertNil(scheduledMessage.message.parentMessageId)
@@ -6098,11 +6101,14 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_updateScheduledMessage_savesTheMentionsAndSilent() throws {
         try client.databaseContainer.createCurrentUser()
+        client.addMessageScheduler()
+        client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(TestError()))
         _ = try waitFor {
             controller.scheduleMessage(messageId: "scheduled-id", text: "Later", scheduledAt: Date().addingTimeInterval(3600), completion: $0)
-        }.get()
+        }
+        client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(TestError()))
 
-        let updated = try waitFor {
+        _ = try waitFor {
             controller.updateScheduledMessage(
                 id: "scheduled-id",
                 text: "Edited",
@@ -6113,8 +6119,9 @@ final class ChannelController_Tests: XCTestCase {
                 mentionedRoles: ["admin"],
                 completion: $0
             )
-        }.get()
+        }
 
+        let updated = try XCTUnwrap(client.databaseContainer.readSynchronously { try $0.scheduledMessage(id: "scheduled-id")?.asModel() })
         XCTAssertEqual(updated.message.text, "Edited")
         XCTAssertTrue(updated.message.isSilent)
         XCTAssertTrue(updated.message.mentionedHere)
@@ -6143,8 +6150,13 @@ final class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { [channelId] session in
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId!, config: config)))
         }
+        client.addMessageScheduler()
+        client.mockAPIClient.test_mockResponseResult(.success(SendMessageResponsePayload(
+            message: .dummy(cid: channelId),
+            scheduledMessage: .dummy(id: "scheduled-id", cid: channelId)
+        )))
         _ = try waitFor {
-            controller.scheduleMessage(text: "Later", scheduledAt: Date().addingTimeInterval(3600), completion: $0)
+            controller.scheduleMessage(messageId: "scheduled-id", text: "Later", scheduledAt: Date().addingTimeInterval(3600), completion: $0)
         }.get()
 
         let usage = try waitFor { controller.scheduledMessagesUsage(completion: $0) }.get()
