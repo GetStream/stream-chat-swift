@@ -982,6 +982,15 @@ lane :impact_analysis do
       sources: ['Sources'],
       checks: ['Automated Code Review']
     },
+    generated_code: {
+      sources: [
+        'Sources/StreamChat/.sourcery.yml',
+        'Sources/StreamChat/Query/ChannelListQuery.swift',
+        'Sources/StreamChat/Query/Sorting/ChannelListSortingKey.swift',
+        'Sources/StreamChat/Generated/PredefinedFilter'
+      ],
+      checks: ['Validate Generated Code']
+    },
     size: {
       sources: ['Sources', 'StreamChat.xcodeproj'],
       checks: ['Size Metrics']
