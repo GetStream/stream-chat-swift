@@ -15,25 +15,13 @@ permissions:
 jobs:
   test-release:
     name: Start new release
-    runs-on: macos-15
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # to fetch git tags
 
-      - name: Generate bot token
-        id: bot-token
-        uses: actions/create-github-app-token@v3
-        with:
-          client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
-          private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: ios-certificates
-          permission-contents: read
-
       - uses: ./.github/actions/ruby-cache
-
-      - uses: ./.github/actions/xcode-cache
 
       - name: Generate release bot token
         id: app-token
@@ -42,7 +30,7 @@ jobs:
           client-id: ${{ vars.IOS_RELEASE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.IOS_RELEASE_BOT_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          repositories: ${{ github.event.repository.name }},apple-internal-testing-pipeline
+          repositories: ${{ github.event.repository.name }},apple-internal-testing-pipeline,stream-internal-metrics
           permission-contents: read
           permission-pull-requests: write
           permission-actions: write
@@ -56,6 +44,3 @@ jobs:
         run: bundle exec fastlane release version:"${{ github.event.inputs.version }}" --verbose
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          MATCH_GIT_TOKEN: ${{ steps.bot-token.outputs.token }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
