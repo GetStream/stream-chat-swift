@@ -169,16 +169,9 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_YEETD: true
-        INSTALL_SONAR: true
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}" ${{ env.VERBOSE }}
       timeout-minutes: 60
-    - name: Run Sonar analysis
-      run: bundle exec fastlane sonar_upload
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_IOS_BOTS }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        PR_NUMBER: ${{ github.event.number }}
     - name: Upload raw Xcode logs
       if: always()
       uses: actions/upload-artifact@v7
@@ -205,6 +198,35 @@ jobs:
       with:
         name: test-coverage-${{ github.event.pull_request.number }}
         path: reports/sonarqube-generic-coverage.xml
+
+  # Optional: a Sonar failure (for example a license issue) must not fail
+  # the checks that depend on the LLC tests.
+  sonar:
+    name: Sonar Analysis
+    runs-on: ubuntu-24.04
+    needs: test-llc-debug
+    continue-on-error: true
+    # Secrets are not available to forks.
+    if: ${{ !cancelled() && needs.test-llc-debug.result == 'success' && github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 100
+    - uses: ./.github/actions/ruby-cache
+    - run: ./Scripts/bootstrap.sh
+      env:
+        INSTALL_SONAR: true
+        SKIP_SWIFT_BOOTSTRAP: true
+    - uses: actions/download-artifact@v8
+      with:
+        name: test-coverage-${{ github.event.pull_request.number }}
+        path: reports
+    - name: Run Sonar analysis
+      run: bundle exec fastlane sonar_upload
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_IOS_BOTS }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        PR_NUMBER: ${{ github.event.number }}
 
   test-ui-debug:
     name: Test UI (Debug)
