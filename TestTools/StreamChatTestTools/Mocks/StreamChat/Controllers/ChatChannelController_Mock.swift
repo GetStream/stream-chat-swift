@@ -77,6 +77,7 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
     }
 
     @Atomic var scheduleMessageCallCount = 0
+    @Atomic var scheduleMessage_messageId: MessageId?
     @Atomic var scheduleMessage_text: String?
     @Atomic var scheduleMessage_scheduledAt: Date?
     @Atomic var scheduleMessage_completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)?
@@ -97,6 +98,7 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
     ) {
         scheduleMessageCallCount += 1
+        scheduleMessage_messageId = messageId
         scheduleMessage_text = text
         scheduleMessage_scheduledAt = scheduledAt
         scheduleMessage_completion = completion
