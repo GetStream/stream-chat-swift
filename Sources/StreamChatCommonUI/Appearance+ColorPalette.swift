@@ -79,8 +79,6 @@ public extension Appearance {
         public lazy var accentSuccess: UIColor = UIColor(light: .green400, dark: .green300)
         /// Indicates a failure or destructive state. Used for failed messages, validation errors, and deletions.
         public lazy var accentError: UIColor = UIColor(light: .red500, dark: .red400)
-        /// A subtle tint of the error color. Used as the background of error notifications.
-        public lazy var accentErrorSubtle: UIColor = UIColor(light: .red50, dark: .red800)
         /// A mid-tone gray for de-emphasized UI elements.
         public lazy var accentNeutral: UIColor = chrome500
 
@@ -123,7 +121,7 @@ public extension Appearance {
         /// Background for non-interactive elements. Flattens the element visually to signal unavailability.
         public lazy var backgroundUtilityDisabled: UIColor = chrome100
         /// Background for elements that report an error, such as an inline error notification.
-        public lazy var backgroundUtilityErrorSubtle: UIColor = accentErrorSubtle
+        public lazy var backgroundUtilityErrorSubtle: UIColor = UIColor(light: .red50, dark: .red800)
 
         // MARK: - Text
 

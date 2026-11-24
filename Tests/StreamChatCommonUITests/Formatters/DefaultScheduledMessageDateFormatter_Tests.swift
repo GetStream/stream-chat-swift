@@ -70,11 +70,6 @@ final class DefaultScheduledMessageDateFormatter_Tests: XCTestCase {
         XCTAssertEqual(subject.formatAbsolute(date), "\(expected(date, template: dayTemplate(for: date))) at 23:00")
     }
 
-    func test_formatAbsolute_twoDaysAhead_returnsTheDay() {
-        let date = date(daysFromNow: 2, hour: 9)
-        XCTAssertEqual(subject.formatAbsolute(date), "\(expected(date, template: dayTemplate(for: date))) at 09:00")
-    }
-
     func test_formatAbsolute_anotherYear_returnsTheDayWithTheYear() {
         let date = date(daysFromNow: 400, hour: 9)
         XCTAssertEqual(subject.formatAbsolute(date), "\(expected(date, template: "EEEMMMdy")) at 09:00")

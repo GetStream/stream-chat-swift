@@ -23,26 +23,13 @@ public protocol ScheduledMessageDateFormatter {
 /// - Another day of the current year: "Fri, Oct 23"
 /// - Another year: "Fri, Oct 23, 2027"
 open class DefaultScheduledMessageDateFormatter: ScheduledMessageDateFormatter {
-    /// The calendar used to tell how far the date is from now.
-    public let calendar: Calendar
-
-    /// The formatter to show relative dates like "Today" or "Tomorrow".
-    public var relativeDateFormatter: DateFormatter
-
-    /// The formatter to show the weekday.
-    public var weekdayFormatter: DateFormatter
-
-    /// The formatter to show the day of a date in the current year.
-    public var dayFormatter: DateFormatter
-
-    /// The formatter to show the day of a date in another year.
-    public var dayWithYearFormatter: DateFormatter
-
-    /// The formatter to show the time.
-    public var timeFormatter: DateFormatter
-
-    /// The formatter to show the short name of a time zone.
-    public var timeZoneFormatter: DateFormatter
+    private let calendar: Calendar
+    private let relativeDateFormatter: DateFormatter
+    private let weekdayFormatter: DateFormatter
+    private let dayFormatter: DateFormatter
+    private let dayWithYearFormatter: DateFormatter
+    private let timeFormatter: DateFormatter
+    private let timeZoneFormatter: DateFormatter
 
     /// Creates the formatter.
     /// - Parameters:
@@ -79,7 +66,21 @@ open class DefaultScheduledMessageDateFormatter: ScheduledMessageDateFormatter {
     }
 
     open func format(_ date: Date) -> String {
-        L10n.ScheduledMessage.Date.dayAtTime(formatDay(date), timeFormatter.string(from: date))
+        let days = calendar.dateComponents(
+            [.day],
+            from: calendar.startOfDay(for: Date()),
+            to: calendar.startOfDay(for: date)
+        ).day ?? 0
+        let day: String
+        switch days {
+        case 0...1:
+            day = relativeDateFormatter.string(from: date)
+        case 2...6:
+            day = weekdayFormatter.string(from: date)
+        default:
+            day = formatAbsoluteDay(date)
+        }
+        return L10n.ScheduledMessage.Date.dayAtTime(day, timeFormatter.string(from: date))
     }
 
     open func formatAbsolute(_ date: Date) -> String {
@@ -89,23 +90,6 @@ open class DefaultScheduledMessageDateFormatter: ScheduledMessageDateFormatter {
     open func formatTimeZone(_ timeZone: TimeZone) -> String {
         timeZoneFormatter.timeZone = timeZone
         return timeZoneFormatter.string(from: Date())
-    }
-
-    private func formatDay(_ date: Date) -> String {
-        let now = Date()
-        let days = calendar.dateComponents(
-            [.day],
-            from: calendar.startOfDay(for: now),
-            to: calendar.startOfDay(for: date)
-        ).day ?? 0
-        switch days {
-        case 0...1:
-            return relativeDateFormatter.string(from: date)
-        case 2...6:
-            return weekdayFormatter.string(from: date)
-        default:
-            return formatAbsoluteDay(date)
-        }
     }
 
     private func formatAbsoluteDay(_ date: Date) -> String {
