@@ -1505,8 +1505,8 @@ public class Chat: @unchecked Sendable {
     /// A scheduled reply stays in its thread. A failed scheduled message can not be changed: delete it and schedule a new one.
     /// The changes are sent to the server once its attachments are uploaded, see `ScheduledMessage.status`.
     ///
-    /// - Important: The update replaces the message, so arguments that are left out are cleared, except
-    /// `skipPushNotification`, which keeps the value the message was scheduled with.
+    /// - Important: The update replaces the content of the message, so content that is left out is cleared. The message
+    /// keeps its `skipPush`.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.

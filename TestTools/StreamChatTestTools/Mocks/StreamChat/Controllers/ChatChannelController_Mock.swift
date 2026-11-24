@@ -109,7 +109,6 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
     @Atomic var updateScheduledMessage_quotedMessageId: MessageId?
     @Atomic var updateScheduledMessage_scheduledAt: Date?
     @Atomic var updateScheduledMessage_extraData: [String: RawJSON]?
-    @Atomic var updateScheduledMessage_completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)?
     override func updateScheduledMessage(
         id: String,
         text: String,
@@ -132,7 +131,6 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
         updateScheduledMessage_quotedMessageId = quotedMessageId
         updateScheduledMessage_scheduledAt = scheduledAt
         updateScheduledMessage_extraData = extraData
-        updateScheduledMessage_completion = completion
     }
 
     @Atomic var scheduledMessagesUsage_result: Result<ScheduledMessagesUsage, Error> = .success(

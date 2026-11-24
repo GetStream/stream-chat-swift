@@ -2040,8 +2040,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// A failed scheduled message can not be changed: delete it and schedule a new one.
     ///
-    /// - Important: The update replaces the message, so arguments that are left out are cleared, except `skipPush`, which
-    /// keeps the value the message was scheduled with.
+    /// - Important: The update replaces the content of the message, so content that is left out is cleared. The message
+    /// keeps its `skipPush`.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
