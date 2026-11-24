@@ -11,13 +11,12 @@ import UIKit
 @available(iOS 15.0, macOS 12.0, *)
 struct CodeBlockView: View {
     let configuration: CodeBlockConfiguration
+    @ObservedObject var highlighting: CodeHighlighting
 
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.images) private var images
     @Injected(\.aiAppearance.tokens.layout) private var layout
-
-    @StateObject private var highlighting = CodeHighlighting()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -58,7 +57,7 @@ struct CodeBlockView: View {
         .markdownMargin(top: .zero, bottom: .em(0.8))
         .task(id: configuration.content) {
             guard configuration.language != nil else { return }
-            highlighting.highlight(configuration.content)
+            await highlighting.highlight(configuration.content)
         }
     }
 

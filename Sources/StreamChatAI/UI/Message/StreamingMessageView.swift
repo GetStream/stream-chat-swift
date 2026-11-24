@@ -18,6 +18,7 @@ public struct StreamingMessageView: View {
     // Whether the reply is finished, which the typing timer reads: it was made with an earlier
     // copy of the view, whose `isGenerating` it keeps.
     @State private var isFinished: Bool
+    @StateObject private var codeHighlighting = CodeHighlighting()
 
     @Environment(\.aiThinkingTurn) private var turn
     @Environment(\.aiMarkdownImageLoading) private var imageLoading
@@ -45,7 +46,7 @@ public struct StreamingMessageView: View {
                     USpecChartView(spec: spec)
                 } else {
                     // Not a chart language, not valid ChartSpec JSON, or Swift Charts is unavailable: render as code block
-                    CodeBlockView(configuration: cfg)
+                    CodeBlockView(configuration: cfg, highlighting: codeHighlighting)
                 }
             }
             .onAppear {
