@@ -129,7 +129,6 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             dto.syncErrorReason = nil
             dto.syncErrorMessage = nil
             dto.isSyncErrorLocal = false
-            message.restartFailedUploads()
             return try dto.asModel()
         }, completion: completion)
     }
@@ -146,16 +145,13 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             switch result {
             case .success(true):
                 apiClient.request(endpoint: .deleteScheduledMessage(id: id)) { [weak self] result in
-                    let isGoneFromServer = result.error?.isBackendNotFound404StatusCode == true
-                    if let error = result.error, !isGoneFromServer {
+                    if let error = result.error {
                         completion(error)
                         return
                     }
                     self?.database.write({ session in
                         session.deleteScheduledMessage(id: id)
-                    }, completion: { error in
-                        completion(error ?? (isGoneFromServer ? ClientError.ScheduledMessageDoesNotExist(id: id) : nil))
-                    })
+                    }, completion: completion)
                 }
             case .success(false):
                 completion(nil)
@@ -361,9 +357,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
 }
 
 extension ClientError {
-    /// There is no scheduled message with the given id: it is not in the local database, or the server no longer
-    /// has it because it was already sent or deleted on another device.
-    public final class ScheduledMessageDoesNotExist: ClientError, @unchecked Sendable {
+    final class ScheduledMessageDoesNotExist: ClientError, @unchecked Sendable {
         init(id: String) {
             super.init("There is no scheduled message with id: \(id).")
         }

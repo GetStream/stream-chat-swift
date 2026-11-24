@@ -917,12 +917,6 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     // MARK: - Failed uploads
 
-    func test_resend_restartsTheFailedUploads() throws {
-        try scheduleWithFailedUpload(id: "scheduled-id")
-        _ = try waitFor { repository.resend(id: "scheduled-id", completion: $0) }.get()
-        XCTAssertEqual(try attachmentStates(id: "scheduled-id"), [.pendingUpload])
-    }
-
     func test_reschedule_restartsTheFailedUploads() throws {
         try scheduleWithFailedUpload(id: "scheduled-id")
         _ = try waitFor {
@@ -972,21 +966,13 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_delete_whenTheRequestFails_failsAndKeepsTheMessage() throws {
         try saveOnServer(id: "scheduled-id")
         let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
-        let error = ClientError(with: APIError(code: -1, message: "Internal error", statusCode: 500))
+        let error = ClientError(with: APIError(code: 4, message: "This scheduled message no longer exists", statusCode: 404))
         apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(error))
 
         let result = try waitFor { repository.delete(id: message.id, completion: $0) }
 
         XCTAssertNotNil(result)
         XCTAssertEqual(try storedMessages(), [message])
-    }
-
-    func test_delete_whenTheServerNoLongerHasTheMessage_removesItAndFails() throws {
-        try saveOnServer(id: "scheduled-id")
-        apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(notFoundError()))
-        let error = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
-        XCTAssertTrue(error is ClientError.ScheduledMessageDoesNotExist, "\(String(describing: error))")
-        XCTAssertEqual(try storedMessages(), [])
     }
 
     // MARK: - Send now

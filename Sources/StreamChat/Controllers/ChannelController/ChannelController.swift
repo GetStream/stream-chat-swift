@@ -2065,8 +2065,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - completion: Called when the message is deleted, with an error if it failed. The error is
-    ///   `ClientError.ScheduledMessageDoesNotExist` when the server no longer has the message, because it was already sent or deleted on another device. The message is then removed locally.
+    ///   - completion: Called when the message is deleted, with an error if it failed.
     public func deleteScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
         client.scheduledMessagesRepository.delete(id: id) { error in
             self.callback { completion?(error) }
