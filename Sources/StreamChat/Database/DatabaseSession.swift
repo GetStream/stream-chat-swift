@@ -669,6 +669,10 @@ protocol ScheduledMessageDatabaseSession {
     /// Changes the state to `.pendingSync` for all scheduled messages in `.syncing` state, at the beginning of the session.
     /// They get stuck there when the app is killed while their changes are sent to the server.
     func rescueScheduledMessagesStuckInSyncing()
+
+    /// Uploads again the attachments of the scheduled messages whose upload failed without a connection. The messages
+    /// stay pending meanwhile, and are sent once their attachments are uploaded.
+    func restartFailedUploadsOfPendingScheduledMessages()
 }
 
 protocol PollDatabaseSession {

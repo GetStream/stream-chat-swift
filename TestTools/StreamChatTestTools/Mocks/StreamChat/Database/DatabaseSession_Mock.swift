@@ -123,6 +123,10 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.rescueScheduledMessagesStuckInSyncing()
     }
 
+    func restartFailedUploadsOfPendingScheduledMessages() {
+        underlyingSession.restartFailedUploadsOfPendingScheduledMessages()
+    }
+
     func saveUserGroup(payload: UserGroup) throws -> UserGroupDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveUserGroup(payload: payload)

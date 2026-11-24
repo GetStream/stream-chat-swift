@@ -360,6 +360,18 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         }
     }
 
+    func restartFailedUploadsOfPendingScheduledMessages() {
+        let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        request.predicate = NSPredicate(
+            format: "message.localMessageStateRaw IN %@ AND ANY message.attachments.localStateRaw == %@",
+            [LocalMessageState.pendingSend.rawValue, LocalMessageState.pendingSync.rawValue],
+            LocalAttachmentState.uploadingFailed.rawValue
+        )
+        ScheduledMessageDTO.load(by: request, context: self).forEach {
+            $0.message?.restartFailedUploads()
+        }
+    }
+
     func deleteScheduledMessage(id: String) {
         guard let dto = scheduledMessage(id: id) else { return }
         // The sent message can have the same id and reuse the content, it is kept then.

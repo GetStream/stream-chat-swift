@@ -128,6 +128,22 @@ final class MessageScheduler_Tests: XCTestCase {
         wait(until: { [self] in localState(of: "scheduled-id") == nil })
     }
 
+    func test_scheduler_whenConnected_uploadsAgainTheAttachmentsThatFailedWithoutConnection() throws {
+        try scheduleLocally(id: "pending-id", attachments: [.mockFile])
+        try scheduleLocally(id: "failed-id", attachments: [.mockFile])
+        try database.writeSynchronously { session in
+            session.scheduledMessage(id: "pending-id")?.message?.attachments.forEach { $0.localState = .uploadingFailed }
+            let failed = session.scheduledMessage(id: "failed-id")?.message
+            failed?.attachments.forEach { $0.localState = .uploadingFailed }
+            failed?.localMessageState = .sendingFailed
+        }
+
+        scheduler.didUpdateConnectionState(.connected(healthCheckInfo: .init(connectionId: .unique)))
+
+        wait(until: { [self] in attachmentStates(of: "pending-id") == [.pendingUpload] })
+        XCTAssertEqual(attachmentStates(of: "failed-id"), [.uploadingFailed])
+    }
+
     func test_scheduler_whenTheRequestFails_marksTheMessageFailed() throws {
         let error = ClientError(with: APIError(code: 4, message: "Pick a time at least 1 minute from now", statusCode: 400))
         apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
@@ -179,6 +195,10 @@ final class MessageScheduler_Tests: XCTestCase {
 
     private func localState(of id: String) -> LocalMessageState? {
         database.viewContext.scheduledMessage(id: id)?.message?.localMessageState
+    }
+
+    private func attachmentStates(of id: String) -> [LocalAttachmentState?] {
+        database.viewContext.scheduledMessage(id: id)?.message?.attachments.map(\.localState) ?? []
     }
 
     private func sendResponse(id: String) -> SendMessageResponsePayload {

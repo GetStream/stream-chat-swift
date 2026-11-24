@@ -379,6 +379,30 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         XCTAssertEqual(observer.item, true)
     }
 
+    func test_uploader_whenUploadOfAScheduledMessageFailsWithoutConnection_keepsTheMessagePending() throws {
+        for localState in [LocalMessageState.pendingSend, .pendingSync] {
+            let cid: ChannelId = .unique
+            let messageId: MessageId = .unique
+            apiClient.uploadFile_completion_result = .failure(URLError(.notConnectedToInternet))
+            let expectation = XCTestExpectation()
+            let observer = StateLayerDatabaseObserver(
+                database: database,
+                fetchRequest: MessageDTO.message(withID: messageId),
+                itemCreator: { $0.attachments.first?.localState == .uploadingFailed }
+            )
+            try observer.startObserving { isUploadFailed, _ in
+                if isUploadFailed == true { expectation.fulfill() }
+            }
+            try database.writeSynchronously { session in
+                let scheduledMessage = try session.saveScheduledMessage(payload: .dummy(id: messageId, cid: cid))
+                scheduledMessage.message?.localMessageState = localState
+                try session.createNewAttachment(attachment: .mockImage, id: AttachmentId(cid: cid, messageId: messageId, index: 0))
+            }
+            wait(for: [expectation], timeout: defaultTimeout)
+            XCTAssertEqual(database.viewContext.message(id: messageId)?.localMessageState, localState)
+        }
+    }
+
     func test_uploader_doesNotUploadAttachments_notInPendingUploadState() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
