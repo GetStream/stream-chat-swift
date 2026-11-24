@@ -516,11 +516,14 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         }
     }
 
-    /// The server rejects a date further ahead than the maximum lead time of the app. It is refused locally when the
-    /// channel config has the limit.
+    /// The server rejects a date sooner than the minimum lead time of the app, or further ahead than the maximum lead
+    /// time. It is refused locally when the channel config has the limit.
     private func validateScheduledAt(_ scheduledAt: Date, cid: ChannelId) throws {
-        guard let maxLeadTime = channel(cid: cid)?.config.scheduledMessagesMaxLeadTime?.doubleValue else { return }
-        if scheduledAt.timeIntervalSinceNow > maxLeadTime {
+        let config = channel(cid: cid)?.config
+        if let minLeadTime = config?.scheduledMessagesMinLeadTime?.doubleValue, scheduledAt.timeIntervalSinceNow < minLeadTime {
+            throw ClientError.ScheduledMessageIsTooSoon(minLeadTime: minLeadTime)
+        }
+        if let maxLeadTime = config?.scheduledMessagesMaxLeadTime?.doubleValue, scheduledAt.timeIntervalSinceNow > maxLeadTime {
             throw ClientError.ScheduledMessageIsTooFarAhead(maxLeadTime: maxLeadTime)
         }
     }

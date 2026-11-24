@@ -498,6 +498,18 @@ extension ClientError {
         }
     }
 
+    /// The date is sooner than the app allows.
+    public final class ScheduledMessageIsTooSoon: ClientError, @unchecked Sendable {
+        init(minLeadTime: TimeInterval) {
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.day, .hour, .minute, .second]
+            formatter.unitsStyle = .full
+            formatter.maximumUnitCount = 1
+            let leadTime = formatter.string(from: minLeadTime) ?? "\(Int(minLeadTime)) seconds"
+            super.init("A message can be scheduled at least \(leadTime) ahead. Pick a later time.")
+        }
+    }
+
     /// The date is further ahead than the app allows.
     public final class ScheduledMessageIsTooFarAhead: ClientError, @unchecked Sendable {
         init(maxLeadTime: TimeInterval) {

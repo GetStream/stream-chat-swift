@@ -1977,14 +1977,16 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - text: The text of the message, which can't be a slash command in a channel with commands.
     ///   - quotedMessageId: The quoted message, which can't be deleted.
-    ///   - scheduledAt: The date, which can't be further ahead than the max lead time of the app.
+    ///   - scheduledAt: The date, which can't be sooner than the min lead time or further ahead than the max lead time
+    ///   of the app.
     ///   - scheduledMessageId: The edited scheduled message, `nil` for a new message, which counts against the limits of
     ///   the app. Without `text`, the edited message keeps its text and quote. A message the server failed to send is
     ///   checked as scheduled again.
     ///   - completion: Called with `nil` when the message can be scheduled. Otherwise with
     ///   `ClientError.ScheduledMessageHasACommand`, `ScheduledMessageQuotesADeletedMessage`,
-    ///   `ScheduledMessageIsTooFarAhead`, `ScheduledMessagesChannelLimitReached`, `ScheduledMessagesUserLimitReached`,
-    ///   `ScheduledMessageDoesNotExist`, `ScheduledMessageChannelDeleted` or `ChannelNotCreatedYet`.
+    ///   `ScheduledMessageIsTooSoon`, `ScheduledMessageIsTooFarAhead`, `ScheduledMessagesChannelLimitReached`,
+    ///   `ScheduledMessagesUserLimitReached`, `ScheduledMessageDoesNotExist`, `ScheduledMessageChannelDeleted` or
+    ///   `ChannelNotCreatedYet`.
     public func validateForScheduling(
         text: String? = nil,
         quotedMessageId: MessageId? = nil,

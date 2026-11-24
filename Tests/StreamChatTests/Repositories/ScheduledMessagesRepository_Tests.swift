@@ -493,6 +493,29 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertNil(try storedMessage(id: "scheduled-id"))
     }
 
+    func test_schedule_whenTheDateIsSoonerThanTheMinLeadTime_failsWithoutSavingTheMessage() throws {
+        try saveChannel(config: .mock(scheduledMessagesMinLeadTime: 3600))
+
+        let result = schedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(1800))
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageIsTooSoon, "\(String(describing: result.error))")
+        XCTAssertNil(try storedMessage(id: "scheduled-id"))
+    }
+
+    func test_reschedule_whenTheDateIsSoonerThanTheMinLeadTime_failsAndKeepsTheDate() throws {
+        try saveChannel(config: .mock(scheduledMessagesMinLeadTime: 3600))
+        let scheduledAt = Date().addingTimeInterval(7200)
+        _ = try schedule(id: "scheduled-id", scheduledAt: scheduledAt).get()
+
+        let result = try waitFor {
+            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(1800), completion: $0)
+        }
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageIsTooSoon, "\(String(describing: result.error))")
+        let stored = try XCTUnwrap(storedMessage(id: "scheduled-id"))
+        XCTAssertEqual(stored.scheduledAt.timeIntervalSince1970, scheduledAt.timeIntervalSince1970, accuracy: 0.001)
+    }
+
     func test_schedule_whenTheDateIsWithinTheMaxLeadTime_savesTheMessage() throws {
         try saveChannel(config: .mock(scheduledMessagesMaxLeadTime: 7200))
 
