@@ -10,7 +10,7 @@ permissions:
 jobs:
   release:
     name: Publish new release
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@v7
         with:
@@ -45,7 +45,7 @@ jobs:
 
   merge-main-to-develop:
     name: Merge main to develop
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     needs: release
     steps:
       - name: Generate release bot token
