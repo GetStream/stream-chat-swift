@@ -42,7 +42,7 @@ permissions:
 jobs:
   guard:
     name: Guard
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     permissions:
       actions: write # to cancel skip-ci runs
       checks: read # to skip checks already verified
@@ -89,7 +89,7 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     needs: guard
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     steps:
@@ -203,7 +203,7 @@ jobs:
   # the checks that depend on the LLC tests.
   sonar:
     name: Sonar Analysis
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     needs: test-llc-debug
     continue-on-error: true
     # Secrets are not available to forks.
@@ -427,7 +427,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     if: ${{ !cancelled() && !failure() && github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' && fromJSON(needs.guard.outputs.checks).e2e }}
     needs:
       - guard
@@ -513,7 +513,7 @@ jobs:
   # The number of E2E batches depends on the PR, so branch protection requires this job instead of each batch.
   test-e2e-debug-result:
     name: Test E2E UI (Debug) Result
-    runs-on: ubuntu-latest
+    runs-on: { group: github-public-amd64 }
     if: always()
     needs:
       - guard
