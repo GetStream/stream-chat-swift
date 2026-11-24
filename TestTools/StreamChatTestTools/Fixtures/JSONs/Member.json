@@ -11,6 +11,9 @@
   "user_id" : "broken-waterfall-5",
   "channel_role" : "owner",
   "user" : {
+    "custom" : {},
+    "language" : "",
+    "teams" : [],
     "id" : "broken-waterfall-5",
     "banned" : false,
     "unread_channels" : 1,

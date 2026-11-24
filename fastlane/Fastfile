@@ -30,7 +30,7 @@ xcodebuild_formatter = FastlaneCore::Globals.verbose? ? '' : nil
 
 # These lanes do not build anything, so they can run on Linux.
 lanes_without_xcode = [
-  :sonar_upload, :allure_launch, :allure_upload, :copyright, :merge_main, :merge_release, :publish_release,
+  :sonar_upload, :allure_launch, :allure_upload, :copyright, :merge_main, :release, :merge_release, :publish_release,
   :lint_pr, :rubocop, :run_swift_format, :validate_public_interface, :required_checks
 ]
 
@@ -49,6 +49,9 @@ end
 
 desc 'Start a new release'
 lane :release do |options|
+  # Reuse the sizes from the SDK Size workflow, so no archive is needed.
+  sizes = benchmark_sdk_sizes
+
   extra_changes = lambda do |release_version|
     # Set the framework version in SystemEnvironment+Version.swift
     old_content = File.read(swift_environment_path)
@@ -57,7 +60,7 @@ lane :release do |options|
     File.open(swift_environment_path, 'w') { |f| f.puts(new_content) }
 
     # Update sdk sizes
-    Dir.chdir('fastlane') { update_img_shields_sdk_sizes }
+    Dir.chdir('fastlane') { update_img_shields_sdk_sizes(sizes: sizes) }
   end
 
   lint_swift_package
@@ -982,6 +985,15 @@ lane :impact_analysis do
       sources: ['Sources'],
       checks: ['Automated Code Review']
     },
+    generated_code: {
+      sources: [
+        'Sources/StreamChat/.sourcery.yml',
+        'Sources/StreamChat/Query/ChannelListQuery.swift',
+        'Sources/StreamChat/Query/Sorting/ChannelListSortingKey.swift',
+        'Sources/StreamChat/Generated/PredefinedFilter'
+      ],
+      checks: ['Validate Generated Code']
+    },
     size: {
       sources: ['Sources', 'StreamChat.xcodeproj'],
       checks: ['Size Metrics']
@@ -1083,6 +1095,19 @@ lane :update_img_shields_sdk_sizes do |options|
     readme_path: 'README.md',
     sizes: options[:sizes] || frameworks_sizes
   )
+end
+
+# SDK sizes that the SDK Size workflow saved for the current branch.
+private_lane :benchmark_sdk_sizes do
+  Dir.mktmpdir do |dir|
+    clone_internal_metrics(path: dir)
+    path = File.join(dir, "#{github_repo.split('/').last}-size.json")
+    branch = current_branch
+    sizes = JSON.parse(File.read(path))[branch]
+    UI.user_error!("No SDK sizes for #{branch} in #{File.basename(path)}") if sizes.nil?
+
+    sizes
+  end
 end
 
 private_lane :frameworks_sizes do

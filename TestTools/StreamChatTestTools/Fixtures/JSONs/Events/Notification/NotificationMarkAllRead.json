@@ -3,6 +3,9 @@
     "unread_channels" : 3,
     "unread_threads" : 10,
     "user" : {
+        "custom" : {},
+        "language" : "",
+        "teams" : [],
         "id" : "steep-moon-9",
         "banned" : false,
         "unread_channels" : 3,
