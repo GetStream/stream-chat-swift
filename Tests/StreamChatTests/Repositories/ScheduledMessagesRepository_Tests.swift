@@ -156,9 +156,8 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         apiError.exceptionFields = ["reason": "scheduled_limit_channel"]
         apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
 
-        let error = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }.error
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
-        XCTAssertTrue(error is ClientError.ScheduledMessagesChannelLimitReached, "\(String(describing: error))")
         let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
         XCTAssertEqual(message.message.localState, .sendingFailed)
         XCTAssertEqual(message.status, .failed)
@@ -643,6 +642,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
             repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
         }.get()
 
+        XCTAssertEqual(rescheduled.id, "scheduled-id")
         XCTAssertNil(rescheduled.failure)
         XCTAssertEqual(rescheduled.message.localState, .pendingSend)
     }
@@ -1145,18 +1145,6 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try storedMessages().map(\.id), [rescheduled.id])
     }
 
-    func test_reschedule_ofAMessageWhoseChannelWasDeleted_failsAndKeepsIt() throws {
-        try saveFailedOnServer(id: "scheduled-id", failureReason: .channelDeleted)
-
-        let result = try waitFor {
-            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
-        }
-
-        XCTAssertTrue(result.error is ClientError.ScheduledMessageChannelDeleted)
-        XCTAssertEqual(try storedMessages().map(\.id), ["scheduled-id"])
-        XCTAssertNil(apiClient.request_endpoint)
-    }
-
     func test_reschedule_ofAMessageTheServerFailed_whenTheChannelLimitIsReached_failsAndKeepsIt() throws {
         try saveChannel(config: .mock(scheduledMessagesMaxPerChannel: 1))
         _ = try schedule().get()
@@ -1169,21 +1157,6 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertTrue(result.error is ClientError.ScheduledMessagesChannelLimitReached)
         XCTAssertNotNil(try storedMessage(id: "scheduled-id"))
         XCTAssertNil(apiClient.request_endpoint)
-    }
-
-    func test_reschedule_ofAMessageThatFailedLocally_keepsItsId() throws {
-        _ = try schedule(id: "scheduled-id").get()
-        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(
-            ClientError(with: APIError(code: 4, message: "banned", statusCode: 403))
-        ))
-        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
-
-        let rescheduled = try waitFor {
-            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
-        }.get()
-
-        XCTAssertEqual(rescheduled.id, "scheduled-id")
-        XCTAssertEqual(rescheduled.message.localState, .pendingSend)
     }
 
     func test_update_ofAMessageTheServerFailed_withoutADate_fails() throws {
@@ -1658,14 +1631,6 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
         XCTAssertTrue(try validate(editing: "scheduled-id") is ClientError.ScheduledMessageQuotesADeletedMessage)
         XCTAssertNil(try validate(text: "Without the quote", editing: "scheduled-id"))
-    }
-
-    func test_validate_whenEditingAMessageTheServerFailed_checksItAsScheduledAgain() throws {
-        try saveChannel(config: .mock(scheduledMessagesMaxPerChannel: 1))
-        _ = try schedule().get()
-        try saveFailedOnServer(id: "scheduled-id")
-
-        XCTAssertTrue(try validate(editing: "scheduled-id") is ClientError.ScheduledMessagesChannelLimitReached)
     }
 
     func test_validate_whenEditingAMissingMessage_fails() throws {

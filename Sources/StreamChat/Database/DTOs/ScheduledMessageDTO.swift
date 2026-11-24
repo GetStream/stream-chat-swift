@@ -482,9 +482,6 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             cid = try ChannelId(cid: dto.cid)
             // A message the server failed to send is scheduled again as a new message.
             if dto.isServerFailed {
-                if dto.failureReason == ScheduledMessageFailureReason.channelDeleted.rawValue {
-                    throw ClientError.ScheduledMessageChannelDeleted(id: id)
-                }
                 isNew = true
             }
             // Without new content, the message keeps its own.
@@ -672,7 +669,6 @@ extension DatabaseSession {
 
     func scheduleFailedMessageAgain(
         id: String,
-        newId: String,
         content: ScheduledMessageContent?,
         scheduledAt: Date
     ) throws -> ScheduledMessageDTO {
@@ -709,7 +705,7 @@ extension DatabaseSession {
             newContent.showReplyInChannel = message.showReplyInChannel
         }
         newContent.skipPush = message.skipPush
-        let new = try createNewScheduledMessage(id: newId, cid: cid, content: newContent, scheduledAt: scheduledAt)
+        let new = try createNewScheduledMessage(id: .newUniqueId, cid: cid, content: newContent, scheduledAt: scheduledAt)
         new.channelName = new.channelName ?? dto.channelName
         new.channelImageURL = new.channelImageURL ?? dto.channelImageURL
         if new.channelMembers.isEmpty {

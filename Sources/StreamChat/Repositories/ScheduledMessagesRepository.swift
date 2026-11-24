@@ -133,7 +133,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             guard dto.isServerFailed, let scheduledAt else {
                 return (try session.updateScheduledMessage(id: id, content: content, scheduledAt: scheduledAt).asModel(), false)
             }
-            let new = try session.scheduleFailedMessageAgain(id: id, newId: .newUniqueId, content: content, scheduledAt: scheduledAt)
+            let new = try session.scheduleFailedMessageAgain(id: id, content: content, scheduledAt: scheduledAt)
             return (try new.asModel(), true)
         }, completion: { [weak self] result in
             if case .success((_, scheduledAgain: true)) = result {
@@ -414,15 +414,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 dto.syncErrorMessage = isEphemeral ? nil : apiError?.message ?? error.localizedDescription
                 dto.isSyncErrorLocal = !isEphemeral && apiError == nil
             }, completion: { _ in
-                // The limits are optional in the config, so the server can be the first to tell.
-                switch reason {
-                case .scheduledLimitChannel:
-                    completion(.failure(ClientError.ScheduledMessagesChannelLimitReached(limit: nil)))
-                case .scheduledLimitUser:
-                    completion(.failure(ClientError.ScheduledMessagesUserLimitReached(limit: nil)))
-                default:
-                    completion(.failure(error))
-                }
+                completion(.failure(error))
             })
         }
     }
@@ -524,30 +516,21 @@ extension ClientError {
 
     /// The current user has as many pending scheduled messages in the channel as the app allows.
     public final class ScheduledMessagesChannelLimitReached: ClientError, @unchecked Sendable {
-        init(limit: Int?) {
-            super.init(limit.map { "You can have at most \($0) scheduled messages in this channel." }
-                ?? "You have as many scheduled messages in this channel as the app allows.")
+        init(limit: Int) {
+            super.init("You can have at most \(limit) scheduled messages in this channel.")
         }
     }
 
     /// The current user has as many pending scheduled messages as the app allows.
     public final class ScheduledMessagesUserLimitReached: ClientError, @unchecked Sendable {
-        init(limit: Int?) {
-            super.init(limit.map { "You can have at most \($0) scheduled messages." }
-                ?? "You have as many scheduled messages as the app allows.")
+        init(limit: Int) {
+            super.init("You can have at most \(limit) scheduled messages.")
         }
     }
 
     final class ScheduledMessageNotEditable: ClientError, @unchecked Sendable {
         init(id: String) {
             super.init("The scheduled message with id: \(id) failed to send and can't be changed.")
-        }
-    }
-
-    /// The channel of the scheduled message was deleted, so it can't be scheduled again.
-    public final class ScheduledMessageChannelDeleted: ClientError, @unchecked Sendable {
-        init(id: String) {
-            super.init("The channel of the scheduled message with id: \(id) was deleted.")
         }
     }
 

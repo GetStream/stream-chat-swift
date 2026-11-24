@@ -182,8 +182,7 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     /// Changes when a scheduled message is sent.
     ///
     /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
-    /// with a new id, which the completion returns. The failed one is deleted. A message whose channel was deleted
-    /// can't be rescheduled.
+    /// with a new id, which the completion returns. The failed one is deleted.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.

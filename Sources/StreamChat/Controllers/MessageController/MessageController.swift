@@ -1215,7 +1215,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Important: A reply the server failed to send can't be changed, so it is scheduled again as a new message
     /// with a new id, which the completion returns. The failed one is deleted. This needs a new `scheduledAt`. Without
-    /// one, the update fails. A reply whose channel was deleted can't be scheduled again.
+    /// one, the update fails.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.

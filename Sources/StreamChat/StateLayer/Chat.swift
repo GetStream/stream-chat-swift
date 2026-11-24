@@ -1380,8 +1380,7 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Throws: `ClientError.ScheduledMessageHasACommand`, `ScheduledMessageQuotesADeletedMessage`,
     /// `ScheduledMessageIsTooSoon`, `ScheduledMessageIsTooFarAhead`, `ScheduledMessagesChannelLimitReached`,
-    /// `ScheduledMessagesUserLimitReached`, `ScheduledMessageDoesNotExist` or `ScheduledMessageChannelDeleted` when the
-    /// message can't be scheduled.
+    /// `ScheduledMessagesUserLimitReached` or `ScheduledMessageDoesNotExist` when the message can't be scheduled.
     public func validateForScheduling(
         text: String? = nil,
         quote quotedMessageId: MessageId? = nil,
@@ -1549,7 +1548,7 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
     /// with a new id, which is returned. The failed one is deleted. This needs a new `scheduledAt`. Without one, the
-    /// update fails. A message whose channel was deleted can't be scheduled again.
+    /// update fails.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
@@ -1609,8 +1608,7 @@ public class Chat: @unchecked Sendable {
     /// Changes when a scheduled message is sent.
     ///
     /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
-    /// with a new id, which is returned. The failed one is deleted. A message whose channel was deleted can't be
-    /// rescheduled.
+    /// with a new id, which is returned. The failed one is deleted.
     ///
     /// The new date is sent to the server right after it is saved locally, see `ScheduledMessage.status`.
     ///

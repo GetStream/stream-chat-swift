@@ -1985,8 +1985,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - completion: Called with `nil` when the message can be scheduled. Otherwise with
     ///   `ClientError.ScheduledMessageHasACommand`, `ScheduledMessageQuotesADeletedMessage`,
     ///   `ScheduledMessageIsTooSoon`, `ScheduledMessageIsTooFarAhead`, `ScheduledMessagesChannelLimitReached`,
-    ///   `ScheduledMessagesUserLimitReached`, `ScheduledMessageDoesNotExist`, `ScheduledMessageChannelDeleted` or
-    ///   `ChannelNotCreatedYet`.
+    ///   `ScheduledMessagesUserLimitReached`, `ScheduledMessageDoesNotExist` or `ChannelNotCreatedYet`.
     public func validateForScheduling(
         text: String? = nil,
         quotedMessageId: MessageId? = nil,
@@ -2093,7 +2092,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
     /// with a new id, which the completion returns. The failed one is deleted. This needs a new `scheduledAt`. Without
-    /// one, the update fails. A message whose channel was deleted can't be scheduled again.
+    /// one, the update fails.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
@@ -2158,8 +2157,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Changes when a scheduled message is sent.
     ///
     /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
-    /// with a new id, which the completion returns. The failed one is deleted. A message whose channel was deleted
-    /// can't be rescheduled.
+    /// with a new id, which the completion returns. The failed one is deleted.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
