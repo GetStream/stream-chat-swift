@@ -358,7 +358,8 @@ jobs:
   automated-code-review:
     name: Automated Code Review
     if: ${{ (inputs.mock_server_branch || 'main') == 'main' }}
-    runs-on: ubuntu-24.04
+    runs-on:
+      group: github-public-ubuntu-static
     steps:
     - uses: actions/checkout@v7
     - uses: ./.github/actions/ruby-cache
@@ -368,7 +369,8 @@ jobs:
 
   slack:
     name: Slack Report
-    runs-on: ubuntu-latest
+    runs-on:
+      group: github-public-ubuntu-static
     needs: [build-and-test-llc-debug, build-and-test-common-ui-debug, build-and-test-ai-debug, build-and-test-a2ui-debug, test-e2e-debug, build-old-xcode, automated-code-review]
     if: failure() && github.event_name == 'schedule'
     steps:

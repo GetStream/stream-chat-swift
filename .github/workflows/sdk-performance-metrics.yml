@@ -34,7 +34,8 @@ permissions:
 jobs:
   guard:
     name: Guard
-    runs-on: ubuntu-24.04
+    runs-on:
+      group: github-public-ubuntu-static
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     permissions:
       actions: write # to cancel skip-ci runs

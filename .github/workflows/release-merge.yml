@@ -14,7 +14,8 @@ permissions:
 jobs:
   merge-release-to-main:
     name: Merge release to main
-    runs-on: ubuntu-24.04
+    runs-on:
+      group: github-public-ubuntu-static
     if: github.event_name == 'workflow_dispatch' || (github.event.issue.pull_request && github.event.issue.state == 'open' && github.event.comment.body == '/merge release')
     steps:
       - uses: actions/checkout@v7

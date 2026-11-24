@@ -10,7 +10,8 @@ permissions:
 jobs:
   record:
     name: Record
-    runs-on: ubuntu-latest
+    runs-on:
+      group: github-public-ubuntu-static
     steps:
     - uses: actions/checkout@v7
     - run: gh workflow run smoke-checks.yml --ref "${GITHUB_REF#refs/heads/}" -f record_snapshots=true

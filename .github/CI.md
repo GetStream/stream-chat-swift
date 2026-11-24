@@ -1,7 +1,9 @@
 # CI runners
 
-Smoke Checks uses the `stream-macos` runner group for macOS jobs. Guard and
-E2E result checks use GitHub-hosted Ubuntu runners. Other workflows keep their
+Smoke Checks uses the `stream-macos` runner group for macOS jobs. Ubuntu jobs
+in every workflow use the `github-public-ubuntu-static` runner group. Its
+static IPs pass the GetStream organization's IP allow list, which blocks other
+GitHub-hosted runners from the GitHub API. Other macOS workflows keep their
 existing runner selection.
 
 If `stream-macos` is unavailable, set the repository variable
