@@ -671,6 +671,8 @@ public extension Appearance {
         public var notificationError: UIImage = loadSafely(systemName: "exclamationmark.circle")
         /// The icon of an informational notification.
         public var notificationInfo: UIImage = loadSafely(systemName: "info.circle")
+        /// The icon of an error snack bar.
+        public var snackBarError: UIImage = loadSafely(systemName: "exclamationmark.circle.fill")
 
         // MARK: - Mention Suggestion Icons
 
