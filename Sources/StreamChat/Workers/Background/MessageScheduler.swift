@@ -89,10 +89,9 @@ class MessageScheduler: Worker, @unchecked Sendable {
         }
         guard let id = nextId else { return }
 
-        let didSendNow: @Sendable (ScheduledMessageSentEvent) -> Void = { [eventNotificationCenter] event in
-            eventNotificationCenter.process(event)
-        }
-        scheduledMessagesRepository.sendPendingChanges(id: id, didSendNow: didSendNow) { [weak self] result in
+        scheduledMessagesRepository.sendPendingChanges(id: id, didSendNow: { [eventNotificationCenter] in
+            eventNotificationCenter.process($0)
+        }) { [weak self] result in
             guard let self else { return }
             if let error = result.error, ClientError.isEphemeral(error: error) {
                 isWaitingForConnection = true

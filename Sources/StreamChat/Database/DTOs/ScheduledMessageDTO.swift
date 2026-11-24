@@ -207,7 +207,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             dto.channelName = channel.name
             dto.channelImageURL = channel.imageURL
             dto.channelMemberCount = channel.memberCount
-            dto.channelMembers = channel.members
+            // The server sends the 4 oldest members.
+            dto.channelMembers = Set(channel.members.sorted { $0.memberCreatedAt.bridgeDate < $1.memberCreatedAt.bridgeDate }.prefix(4))
         }
 
         let message = contentMessage(of: dto)

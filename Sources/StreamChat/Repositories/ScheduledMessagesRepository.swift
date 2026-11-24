@@ -196,9 +196,6 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     /// Called by the `MessageScheduler` once the attachments of the message are uploaded. Completes with `nil` when the
     /// message is no longer scheduled: the server sent it right away because its date passed while offline, it was
     /// already sent, or it was deleted on another device.
-    ///
-    /// `didSendNow` is called before the completion when the server sent the message right away. The server sends
-    /// no event for it.
     func sendPendingChanges(
         id: String,
         didSendNow: (@Sendable (ScheduledMessageSentEvent) -> Void)? = nil,
@@ -248,7 +245,9 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                         self?.saveSentMessage(response.message, scheduledMessageId: id, didSendNow: didSendNow, completion: completion)
                         return
                     }
-                    if let error = result.error, error.isMessageAlreadyExistsError {
+                    // There is no error code for a message whose id is taken.
+                    if let apiError = (result.error as? ClientError)?.apiError, apiError.code == 4,
+                       apiError.message.contains("already exists") {
                         // The response of an earlier attempt, which sent the message right away, was lost.
                         self?.saveSentMessage(nil, scheduledMessageId: id, didSendNow: didSendNow, completion: completion)
                         return
@@ -391,15 +390,10 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 )
             }
         }, completion: { result in
-            switch result {
-            case let .success(event):
-                if let event {
-                    didSendNow?(event)
-                }
-                completion(.success(nil))
-            case let .failure(error):
-                completion(.failure(error))
+            if case let .success(event?) = result {
+                didSendNow?(event)
             }
+            completion(result.map { _ in nil })
         })
     }
 }

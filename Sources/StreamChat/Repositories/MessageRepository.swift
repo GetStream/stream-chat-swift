@@ -231,17 +231,22 @@ class MessageRepository: @unchecked Sendable {
     ) {
         log.error("Sending the message with id \(messageId) failed with error: \(error)")
 
-        // If the message already exists on the server we do not want to mark it as failed,
-        // since this will cause an unrecoverable state, where the user will keep resending
-        // the message and it will always fail.
-        if error.isMessageAlreadyExistsError {
-            database.write({
-                let messageDTO = $0.message(id: messageId)
-                messageDTO?.markMessageAsSent()
-            }, completion: { _ in
-                completion(.failure(.failedToSendMessage(error)))
-            })
-            return
+        if let clientError = error as? ClientError, let errorPayload = clientError.apiError {
+            // If the message already exists on the server we do not want to mark it as failed,
+            // since this will cause an unrecoverable state, where the user will keep resending
+            // the message and it will always fail. Right now, the only way to check this error is
+            // by checking a combination of the error code and description, since there is no special
+            // error code for duplicated messages.
+            let isDuplicatedMessageError = errorPayload.code == 4 && errorPayload.message.contains("already exists")
+            if isDuplicatedMessageError {
+                database.write({
+                    let messageDTO = $0.message(id: messageId)
+                    messageDTO?.markMessageAsSent()
+                }, completion: { _ in
+                    completion(.failure(.failedToSendMessage(error)))
+                })
+                return
+            }
         }
 
         markMessageAsFailedToSend(id: messageId) {

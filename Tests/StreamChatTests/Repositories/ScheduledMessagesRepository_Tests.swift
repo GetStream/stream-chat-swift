@@ -60,6 +60,21 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertNil(apiClient.request_endpoint)
     }
 
+    func test_schedule_keepsTheFourOldestMembersOfTheChannel() throws {
+        try database.writeSynchronously { [cid] session in
+            try session.saveChannel(payload: .dummy(
+                channel: .dummy(cid: cid!),
+                members: (0..<6).reversed().map {
+                    .dummy(user: .dummy(userId: "user-\($0)"), createdAt: Date(timeIntervalSince1970: TimeInterval($0)))
+                }
+            ))
+        }
+
+        let message = try schedule(id: "scheduled-id").get()
+
+        XCTAssertEqual(message.channel.members.map(\.id), ["user-0", "user-1", "user-2", "user-3"])
+    }
+
     func test_schedule_withoutCurrentUser_fails() throws {
         try database.writeSynchronously { session in
             session.deleteCurrentUser()
@@ -1058,25 +1073,25 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_delete_whenTheServerNoLongerHasTheMessage_removesItAndFails() throws {
         try saveOnServer(id: "scheduled-id")
         apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(notFoundError()))
-        let error = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
-        XCTAssertTrue(error is ClientError.ScheduledMessageDoesNotExist, "\(String(describing: error))")
+        let notFound = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
+        XCTAssertTrue(notFound is ClientError.ScheduledMessageDoesNotExist, "\(String(describing: notFound))")
         XCTAssertEqual(try storedMessages(), [])
-    }
 
-    func test_delete_whenItWasAlreadySentOrCanceled_removesItAndFails() throws {
-        for (code, reason) in [(123, "scheduled_message_already_sent"), (124, "scheduled_message_canceled")] {
-            try saveOnServer(id: "scheduled-id")
-            let apiError = APIError(code: code, message: reason, statusCode: 400)
-            apiError.exceptionFields = ["reason": reason]
-            apiClient.test_mockResponseResult(Result<DeleteScheduledMessageResponse, Error>.failure(ClientError(with: apiError)))
-            let error = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
-            if code == 123 {
-                XCTAssertTrue(error is ClientError.ScheduledMessageAlreadySent, "\(reason): \(String(describing: error))")
-            } else {
-                XCTAssertTrue(error is ClientError.ScheduledMessageDoesNotExist, "\(reason): \(String(describing: error))")
-            }
-            XCTAssertEqual(try storedMessages(), [])
-        }
+        try saveOnServer(id: "scheduled-id")
+        apiClient.test_mockResponseResult(
+            Result<DeleteScheduledMessageResponse, Error>.failure(rejectionError(code: 124, reason: "scheduled_message_canceled"))
+        )
+        let canceled = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
+        XCTAssertTrue(canceled is ClientError.ScheduledMessageDoesNotExist, "\(String(describing: canceled))")
+        XCTAssertEqual(try storedMessages(), [])
+
+        try saveOnServer(id: "scheduled-id")
+        apiClient.test_mockResponseResult(
+            Result<DeleteScheduledMessageResponse, Error>.failure(rejectionError(code: 123, reason: "scheduled_message_already_sent"))
+        )
+        let alreadySent = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
+        XCTAssertTrue(alreadySent is ClientError.ScheduledMessageAlreadySent, "\(String(describing: alreadySent))")
+        XCTAssertEqual(try storedMessages(), [])
     }
 
     func test_delete_whenTheServerIsSendingTheMessage_failsAndKeepsIt() throws {
@@ -1411,6 +1426,12 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         } catch {
             return .failure(error)
         }
+    }
+
+    private func rejectionError(code: Int, reason: String) -> ClientError {
+        let apiError = APIError(code: code, message: reason, statusCode: 400)
+        apiError.exceptionFields = ["reason": reason]
+        return ClientError(with: apiError)
     }
 
     private func notFoundError() -> ClientError {

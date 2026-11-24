@@ -41,12 +41,6 @@ extension Error {
         return false
     }
 
-    // There is no error code for a message whose id is taken, so it is told by the code and the description.
-    var isMessageAlreadyExistsError: Bool {
-        guard let error = (self as? ClientError)?.apiError else { return false }
-        return error.code == 4 && error.message.contains("already exists")
-    }
-
     var isClientError: Bool {
         if let error = (self as? ClientError)?.apiError {
             return error.isClientError
