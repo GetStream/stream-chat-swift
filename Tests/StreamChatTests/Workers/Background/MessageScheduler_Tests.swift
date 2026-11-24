@@ -242,7 +242,7 @@ final class MessageScheduler_Tests: XCTestCase {
         wait(for: [queuedCompleted], timeout: defaultTimeout)
         let later = try waitFor { scheduleWaitingForAPIRequest(id: "later", completion: $0) }
 
-        XCTAssertEqual((queued?.error as? NSError)?.code, NSURLErrorNotConnectedToInternet)
+        XCTAssertTrue(queued?.error is ClientError.ConnectionError)
         XCTAssertTrue(later.error is ClientError.ConnectionError)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
         XCTAssertEqual(localState(of: "later"), .pendingSend)

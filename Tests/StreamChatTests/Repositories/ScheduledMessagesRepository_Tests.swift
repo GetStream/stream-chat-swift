@@ -156,8 +156,9 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         apiError.exceptionFields = ["reason": "scheduled_limit_channel"]
         apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
 
-        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+        let error = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }.error
 
+        XCTAssertTrue(error is ClientError.ScheduledMessagesChannelLimitReached, "\(String(describing: error))")
         let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
         XCTAssertEqual(message.message.localState, .sendingFailed)
         XCTAssertEqual(message.status, .failed)
@@ -1596,7 +1597,77 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(usage, ScheduledMessagesUsage(channelCount: 2, channelLimit: nil, userCount: 2, userLimit: nil))
     }
 
+    // MARK: - Validate
+
+    func test_validate_runsTheChecksOfScheduling() throws {
+        try saveChannel(commands: [.init(name: "giphy", description: "", set: "", args: "")])
+
+        XCTAssertTrue(try validate(text: "/giphy hello") is ClientError.ScheduledMessageHasACommand)
+        XCTAssertNil(try validate(text: "Hello"))
+    }
+
+    func test_validate_ofANewMessage_checksTheLimits() throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxPerChannel: 1))
+        _ = try schedule().get()
+
+        XCTAssertTrue(try validate() is ClientError.ScheduledMessagesChannelLimitReached)
+    }
+
+    func test_validate_withoutAChannel_fails() throws {
+        let error = try waitFor {
+            repository.validate(cid: nil, text: "Hello", quotedMessageId: nil, scheduledAt: nil, editing: nil, completion: $0)
+        }
+
+        XCTAssertTrue(error is ClientError.ChannelNotCreatedYet, "\(String(describing: error))")
+    }
+
+    func test_validate_whenEditing_doesNotCheckTheLimits() throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxPerChannel: 1))
+        _ = try schedule(id: "scheduled-id").get()
+
+        XCTAssertNil(try validate(text: "Edited", editing: "scheduled-id"))
+    }
+
+    func test_validate_whenEditingWithoutText_checksTheQuoteOfTheMessage() throws {
+        try saveMessage(id: "quoted-id")
+        _ = try schedule(id: "scheduled-id", content: content(quotedMessageId: "quoted-id")).get()
+        try deleteMessage(id: "quoted-id")
+
+        XCTAssertTrue(try validate(editing: "scheduled-id") is ClientError.ScheduledMessageQuotesADeletedMessage)
+        XCTAssertNil(try validate(text: "Without the quote", editing: "scheduled-id"))
+    }
+
+    func test_validate_whenEditingAMessageTheServerFailed_checksItAsScheduledAgain() throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxPerChannel: 1))
+        _ = try schedule().get()
+        try saveFailedOnServer(id: "scheduled-id")
+
+        XCTAssertTrue(try validate(editing: "scheduled-id") is ClientError.ScheduledMessagesChannelLimitReached)
+    }
+
+    func test_validate_whenEditingAMissingMessage_fails() throws {
+        XCTAssertTrue(try validate(editing: "missing-id") is ClientError.ScheduledMessageDoesNotExist)
+    }
+
     // MARK: - Helpers
+
+    private func validate(
+        text: String? = nil,
+        quotedMessageId: MessageId? = nil,
+        scheduledAt: Date? = nil,
+        editing id: String? = nil
+    ) throws -> Error? {
+        try waitFor {
+            repository.validate(
+                cid: cid,
+                text: text,
+                quotedMessageId: quotedMessageId,
+                scheduledAt: scheduledAt,
+                editing: id,
+                completion: $0
+            )
+        }
+    }
 
     private func storedGroupIds(id: String) throws -> [String]? {
         try database.readSynchronously { $0.scheduledMessage(id: id)?.message?.mentionedGroupIds }

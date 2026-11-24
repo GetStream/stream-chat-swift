@@ -1364,6 +1364,37 @@ public class Chat: @unchecked Sendable {
         try await scheduledMessagesRepository.usage(cid: cid)
     }
 
+    /// Checks a message with the checks the SDK runs on the device before saving a scheduled message, with no request.
+    ///
+    /// Use it to disable scheduling in the UI and show why. `nil` values are not checked. The checks read the local
+    /// database, so the server can still reject the message later.
+    ///
+    /// - Parameters:
+    ///   - text: The text of the message, which can't be a slash command in a channel with commands.
+    ///   - quotedMessageId: The quoted message, which can't be deleted.
+    ///   - scheduledAt: The date, which can't be further ahead than the max lead time of the app.
+    ///   - scheduledMessageId: The edited scheduled message, `nil` for a new message, which counts against the limits of
+    ///   the app. Without `text`, the edited message keeps its text and quote. A message the server failed to send is
+    ///   checked as scheduled again.
+    ///
+    /// - Throws: `ClientError.ScheduledMessageHasACommand`, `ScheduledMessageQuotesADeletedMessage`,
+    /// `ScheduledMessageIsTooFarAhead`, `ScheduledMessagesChannelLimitReached`, `ScheduledMessagesUserLimitReached`,
+    /// `ScheduledMessageDoesNotExist` or `ScheduledMessageChannelDeleted` when the message can't be scheduled.
+    public func validateForScheduling(
+        text: String? = nil,
+        quote quotedMessageId: MessageId? = nil,
+        scheduledAt: Date? = nil,
+        editing scheduledMessageId: String? = nil
+    ) async throws {
+        try await scheduledMessagesRepository.validate(
+            cid: cid,
+            text: text,
+            quotedMessageId: quotedMessageId,
+            scheduledAt: scheduledAt,
+            editing: scheduledMessageId
+        )
+    }
+
     /// Schedules a new message to be sent to the channel at a later date.
     ///
     /// The message is not added to the channel until it is sent. It is saved locally first and sent to the server

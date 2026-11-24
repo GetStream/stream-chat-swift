@@ -648,6 +648,15 @@ protocol ScheduledMessageDatabaseSession {
         scheduledAt: Date?
     ) throws -> ScheduledMessageDTO
 
+    /// Throws the error saving the scheduled message would throw, with no changes. `nil` values are not checked.
+    func validateScheduledMessage(
+        cid: ChannelId?,
+        text: String?,
+        quotedMessageId: MessageId?,
+        scheduledAt: Date?,
+        editing id: String?
+    ) throws
+
     func scheduledMessagesUsage(cid: ChannelId) throws -> ScheduledMessagesUsage
 
     /// Creates or updates a scheduled message with the provided payload.

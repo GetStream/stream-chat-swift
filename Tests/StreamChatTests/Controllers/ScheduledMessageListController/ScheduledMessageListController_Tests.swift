@@ -135,7 +135,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint?.path.value, EndpointPath.sendScheduledMessageNow(id: message.id).value)
     }
 
-    func test_sendScheduledMessageNow_whenTheRequestFails_completesWithItsError() throws {
+    func test_sendScheduledMessageNow_whenTheRequestTimesOut_completesWithAConnectionError() throws {
         let message = try schedule()
         let controller = client.scheduledMessageListController()
         let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorTimedOut)
@@ -143,7 +143,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
 
         let sendNowError = try waitFor { controller.sendScheduledMessageNow(id: message.id, completion: $0) }
 
-        XCTAssertEqual((sendNowError as? NSError)?.code, NSURLErrorTimedOut)
+        XCTAssertTrue(sendNowError is ClientError.ConnectionError, "\(String(describing: sendNowError))")
     }
 
     // The list reuses scheduled messages by id, so these check that changes of their content still reach it.

@@ -2299,6 +2299,17 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(ScheduledMessagesUsage(channelCount: 1, channelLimit: 1, userCount: 1, userLimit: 5), usage)
     }
 
+    func test_validateForScheduling_whenTheDateIsTooFarAhead_thenItThrows() async throws {
+        try env.client.databaseContainer.createCurrentUser(id: currentUserId)
+        try saveChannel(config: .mock(scheduledMessagesMaxLeadTime: 3600))
+
+        try await chat.validateForScheduling(text: "Later", scheduledAt: Date().addingTimeInterval(1800))
+        await XCTAssertAsyncFailure(
+            try await chat.validateForScheduling(text: "Later", scheduledAt: Date().addingTimeInterval(7200)),
+            expectedErrorHandler: { error in error is ClientError.ScheduledMessageIsTooFarAhead }
+        )
+    }
+
     func test_watch_whenTheQueryIncludesScheduledMessages_thenTheyAreIncludedInTheRequest() async throws {
         var query = ChannelQuery(cid: channelId)
         query.includeScheduledMessages = true

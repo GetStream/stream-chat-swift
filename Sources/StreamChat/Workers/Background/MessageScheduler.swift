@@ -117,8 +117,12 @@ class MessageScheduler: Worker, @unchecked Sendable {
             }
             // Sending it now follows in another request once its changes are on the server.
             if (try? result.get())?.status != .preparingToSchedule {
-                // Nothing is sent until connected, so all the waiters fail with the error.
-                completeWaiters(of: isWaitingForConnection ? nil : id, with: result)
+                // Nothing is sent until connected, so all the waiters fail like when they wait offline.
+                if isWaitingForConnection {
+                    completeWaiters(of: nil, with: .failure(ClientError.ConnectionError()))
+                } else {
+                    completeWaiters(of: id, with: result)
+                }
                 _pendingIds.mutate { $0.remove(id) }
             }
             isProcessing = false

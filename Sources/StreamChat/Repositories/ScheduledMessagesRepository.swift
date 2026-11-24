@@ -82,6 +82,25 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         database.read({ try $0.scheduledMessagesUsage(cid: cid) }, completion: completion)
     }
 
+    func validate(
+        cid: ChannelId?,
+        text: String?,
+        quotedMessageId: MessageId?,
+        scheduledAt: Date?,
+        editing id: String?,
+        completion: @escaping @Sendable (Error?) -> Void
+    ) {
+        database.read({
+            try $0.validateScheduledMessage(
+                cid: cid,
+                text: text,
+                quotedMessageId: quotedMessageId,
+                scheduledAt: scheduledAt,
+                editing: id
+            )
+        }, completion: { completion($0.error) })
+    }
+
     /// Schedules a message locally.
     ///
     /// The message is in the list right away. The `MessageScheduler` sends it to the server once its attachments are uploaded.
@@ -395,7 +414,15 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 dto.syncErrorMessage = isEphemeral ? nil : apiError?.message ?? error.localizedDescription
                 dto.isSyncErrorLocal = !isEphemeral && apiError == nil
             }, completion: { _ in
-                completion(.failure(error))
+                // The limits are optional in the config, so the server can be the first to tell.
+                switch reason {
+                case .scheduledLimitChannel:
+                    completion(.failure(ClientError.ScheduledMessagesChannelLimitReached(limit: nil)))
+                case .scheduledLimitUser:
+                    completion(.failure(ClientError.ScheduledMessagesUserLimitReached(limit: nil)))
+                default:
+                    completion(.failure(error))
+                }
             })
         }
     }
@@ -485,15 +512,17 @@ extension ClientError {
 
     /// The current user has as many pending scheduled messages in the channel as the app allows.
     public final class ScheduledMessagesChannelLimitReached: ClientError, @unchecked Sendable {
-        init(limit: Int) {
-            super.init("You can have at most \(limit) scheduled messages in this channel.")
+        init(limit: Int?) {
+            super.init(limit.map { "You can have at most \($0) scheduled messages in this channel." }
+                ?? "You have as many scheduled messages in this channel as the app allows.")
         }
     }
 
     /// The current user has as many pending scheduled messages as the app allows.
     public final class ScheduledMessagesUserLimitReached: ClientError, @unchecked Sendable {
-        init(limit: Int) {
-            super.init("You can have at most \(limit) scheduled messages.")
+        init(limit: Int?) {
+            super.init(limit.map { "You can have at most \($0) scheduled messages." }
+                ?? "You have as many scheduled messages as the app allows.")
         }
     }
 
@@ -503,7 +532,8 @@ extension ClientError {
         }
     }
 
-    final class ScheduledMessageChannelDeleted: ClientError, @unchecked Sendable {
+    /// The channel of the scheduled message was deleted, so it can't be scheduled again.
+    public final class ScheduledMessageChannelDeleted: ClientError, @unchecked Sendable {
         init(id: String) {
             super.init("The channel of the scheduled message with id: \(id) was deleted.")
         }
@@ -600,6 +630,24 @@ extension ScheduledMessagesRepository {
 
     func usage(cid: ChannelId) async throws -> ScheduledMessagesUsage {
         try await database.read { try $0.scheduledMessagesUsage(cid: cid) }
+    }
+
+    func validate(
+        cid: ChannelId?,
+        text: String?,
+        quotedMessageId: MessageId?,
+        scheduledAt: Date?,
+        editing id: String?
+    ) async throws {
+        try await database.read {
+            try $0.validateScheduledMessage(
+                cid: cid,
+                text: text,
+                quotedMessageId: quotedMessageId,
+                scheduledAt: scheduledAt,
+                editing: id
+            )
+        }
     }
 
     func delete(id: String) async throws {

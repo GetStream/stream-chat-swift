@@ -6164,6 +6164,19 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(usage, ScheduledMessagesUsage(channelCount: 1, channelLimit: 1, userCount: 1, userLimit: 5))
     }
 
+    func test_validateForScheduling_whenTheDateIsTooFarAhead_fails() throws {
+        try client.databaseContainer.createCurrentUser()
+        try client.databaseContainer.writeSynchronously { [channelId] session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId!, config: .mock(scheduledMessagesMaxLeadTime: 3600))))
+        }
+
+        let withinError = try waitFor { controller.validateForScheduling(scheduledAt: Date().addingTimeInterval(1800), completion: $0) }
+        let error = try waitFor { controller.validateForScheduling(scheduledAt: Date().addingTimeInterval(7200), completion: $0) }
+
+        XCTAssertNil(withinError)
+        XCTAssertTrue(error is ClientError.ScheduledMessageIsTooFarAhead, "\(String(describing: error))")
+    }
+
     func test_startWatching_whenTheQueryIncludesScheduledMessages_includesThemInTheRequest() {
         var query = ChannelQuery(cid: channelId)
         query.includeScheduledMessages = true
