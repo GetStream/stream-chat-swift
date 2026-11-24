@@ -293,6 +293,25 @@ final class MessageScheduler_Tests: XCTestCase {
         XCTAssertNil(apiClient.request_endpoint)
     }
 
+    func test_waitForAPIRequest_whenAnAttachmentFailsToUploadWithoutConnection_failsWithAConnectionError() throws {
+        let completed = expectation(description: "completed")
+        nonisolated(unsafe) var result: Result<ScheduledMessage, Error>?
+        scheduleWaitingForAPIRequest(id: "scheduled-id", attachments: [.mockFile]) {
+            result = $0
+            completed.fulfill()
+        }
+
+        try database.writeSynchronously { session in
+            let message = try XCTUnwrap(session.scheduledMessage(id: "scheduled-id")?.message)
+            message.attachments.forEach { $0.localState = .uploadingFailed }
+        }
+
+        wait(for: [completed], timeout: defaultTimeout)
+        XCTAssertTrue(result?.error is ClientError.ConnectionError, "\(String(describing: result?.error))")
+        XCTAssertEqual(localState(of: "scheduled-id"), .pendingSend)
+        XCTAssertNil(apiClient.request_endpoint)
+    }
+
     // MARK: - Helpers
 
     private func makeScheduler() -> MessageScheduler {

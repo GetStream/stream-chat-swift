@@ -27,7 +27,7 @@ class MessageScheduler: Worker, @unchecked Sendable {
     @Atomic private var waiters: [String: [Waiter]] = [:]
 
     private let observer: StateLayerDatabaseObserver<ListResult, String, ScheduledMessageDTO>
-    private let failedUploadsObserver: StateLayerDatabaseObserver<ListResult, (String, AttachmentId?), ScheduledMessageDTO>
+    private let failedUploadsObserver: StateLayerDatabaseObserver<ListResult, FailedUpload, ScheduledMessageDTO>
     private let scheduledMessagesRepository: ScheduledMessagesRepository
     private let eventNotificationCenter: EventNotificationCenter
 
@@ -47,7 +47,11 @@ class MessageScheduler: Worker, @unchecked Sendable {
             database: database,
             fetchRequest: ScheduledMessageDTO.failedUploadsFetchRequest(),
             itemCreator: { dto in
-                (dto.id, dto.message?.attachments.first { $0.localState == .uploadingFailed }?.attachmentID)
+                FailedUpload(
+                    scheduledMessageId: dto.id,
+                    attachmentId: dto.message?.attachments.first { $0.localState == .uploadingFailed }?.attachmentID,
+                    isMessageFailed: [.sendingFailed, .syncingFailed].contains(dto.message?.localMessageState)
+                )
             },
             itemReuseKeyPaths: nil
         )
@@ -78,8 +82,13 @@ class MessageScheduler: Worker, @unchecked Sendable {
             })
             // The scheduler never sends a message whose attachment failed to upload.
             try failedUploadsObserver.startObserving(onContextDidChange: { [weak self] failedUploads, _ in
-                for case let (id, attachmentId?) in failedUploads {
-                    self?.completeWaiters(of: id, with: .failure(ClientError.AttachmentUploading(id: attachmentId)))
+                for failedUpload in failedUploads {
+                    guard let attachmentId = failedUpload.attachmentId else { continue }
+                    // Without a connection, the message stays pending and its attachments are uploaded again once connected.
+                    let error: Error = failedUpload.isMessageFailed
+                        ? ClientError.AttachmentUploading(id: attachmentId)
+                        : ClientError.ConnectionError()
+                    self?.completeWaiters(of: failedUpload.scheduledMessageId, with: .failure(error))
                 }
             })
             enqueue(observer.items)
@@ -141,6 +150,12 @@ class MessageScheduler: Worker, @unchecked Sendable {
         }
         completedWaiters.forEach { $0(result) }
     }
+}
+
+private struct FailedUpload {
+    let scheduledMessageId: String
+    let attachmentId: AttachmentId?
+    let isMessageFailed: Bool
 }
 
 private extension Array where Element == ListChange<String> {
