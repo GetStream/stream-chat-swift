@@ -234,7 +234,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
                 if let scheduledMessage = message.scheduledMessage {
                     // A scheduled message stays scheduled without a connection. The `MessageScheduler` uploads its
                     // attachments again once connected.
-                    if !(uploadError.map(ClientError.isEphemeral) ?? false) {
+                    if uploadError?.isInternetOfflineError != true {
                         // A scheduled message already on the server keeps its changes as an update.
                         message.localMessageState = scheduledMessage.isLocalOnly ? .sendingFailed : .syncingFailed
                     }
