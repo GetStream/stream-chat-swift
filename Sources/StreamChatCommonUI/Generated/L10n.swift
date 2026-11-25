@@ -531,6 +531,49 @@ public enum L10n {
     }
   }
 
+  public enum ScheduledMessage {
+    public enum Date {
+      /// %@ at %@
+      public static func dayAtTime(_ p1: Any, _ p2: Any) -> String {
+        return L10n.tr("Localizable", "scheduled-message.date.day-at-time", String(describing: p1), String(describing: p2))
+      }
+    }
+    public enum Failure {
+      /// Couldn't upload attachment
+      public static var attachmentUploadFailed: String { L10n.tr("Localizable", "scheduled-message.failure.attachment-upload-failed") }
+      /// You can't send messages in this channel.
+      public static var banned: String { L10n.tr("Localizable", "scheduled-message.failure.banned") }
+      /// This channel was deleted
+      public static var channelDeleted: String { L10n.tr("Localizable", "scheduled-message.failure.channel-deleted") }
+      /// This channel is frozen.
+      public static var channelFrozen: String { L10n.tr("Localizable", "scheduled-message.failure.channel-frozen") }
+      /// You've reached the limit of scheduled messages in this channel.
+      public static var channelLimit: String { L10n.tr("Localizable", "scheduled-message.failure.channel-limit") }
+      /// Not sent: the service was delayed.
+      public static var expired: String { L10n.tr("Localizable", "scheduled-message.failure.expired") }
+      /// Something went wrong. Try again
+      public static var generic: String { L10n.tr("Localizable", "scheduled-message.failure.generic") }
+      /// Rejected by the app.
+      public static var hookRejected: String { L10n.tr("Localizable", "scheduled-message.failure.hook-rejected") }
+      /// The message no longer meets the app's limits. Edit it.
+      public static var invalidMessage: String { L10n.tr("Localizable", "scheduled-message.failure.invalid-message") }
+      /// Blocked by moderation.
+      public static var moderationBlocked: String { L10n.tr("Localizable", "scheduled-message.failure.moderation-blocked") }
+      /// You're no longer allowed to post here.
+      public static var noPermission: String { L10n.tr("Localizable", "scheduled-message.failure.no-permission") }
+      /// This channel now needs approval. Schedule it again.
+      public static var pendingNotSupported: String { L10n.tr("Localizable", "scheduled-message.failure.pending-not-supported") }
+      /// Couldn't send. Try again
+      public static var requestFailed: String { L10n.tr("Localizable", "scheduled-message.failure.request-failed") }
+      /// That's further ahead than your app allows
+      public static var tooFar: String { L10n.tr("Localizable", "scheduled-message.failure.too-far") }
+      /// Pick a later time
+      public static var tooSoon: String { L10n.tr("Localizable", "scheduled-message.failure.too-soon") }
+      /// You've reached your limit of scheduled messages.
+      public static var userLimit: String { L10n.tr("Localizable", "scheduled-message.failure.user-limit") }
+    }
+  }
+
   public enum ThreadList {
     /// %d new threads
     public static func newThreads(_ p1: Int) -> String {
