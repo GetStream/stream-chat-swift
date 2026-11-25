@@ -2108,7 +2108,17 @@ final class Chat_Tests: XCTestCase {
     func test_scheduleMessage_thenTheScheduledMessageIsSavedLocally() async throws {
         let scheduledAt = Date().addingTimeInterval(3600)
 
-        let scheduledMessage = try await chat.scheduleMessage(with: "Later", messageId: "scheduled-id", scheduledAt: scheduledAt)
+        let scheduledMessage = try await chat.scheduleMessage(
+            with: "Later",
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroupIds: ["group-id"],
+            mentionedRoles: ["admin"],
+            messageId: "scheduled-id",
+            scheduledAt: scheduledAt,
+            silent: true,
+            skipPushNotification: true
+        )
 
         XCTAssertEqual("scheduled-id", scheduledMessage.id)
         XCTAssertEqual(channelId, scheduledMessage.cid)
@@ -2116,8 +2126,16 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(nil, scheduledMessage.message.parentMessageId)
         XCTAssertEqual(scheduledAt.timeIntervalSince1970, scheduledMessage.scheduledAt.timeIntervalSince1970, accuracy: 0.001)
         XCTAssertEqual(.preparingToSchedule, scheduledMessage.status)
-        let isStored = try env.client.databaseContainer.readSynchronously { $0.scheduledMessage(id: "scheduled-id") != nil }
-        XCTAssertTrue(isStored)
+        XCTAssertTrue(scheduledMessage.message.mentionedHere)
+        XCTAssertTrue(scheduledMessage.message.mentionedChannel)
+        XCTAssertEqual(["admin"], scheduledMessage.message.mentionedRoles)
+        XCTAssertTrue(scheduledMessage.message.isSilent)
+        let stored = try env.client.databaseContainer.readSynchronously { session in
+            let message = session.scheduledMessage(id: "scheduled-id")?.message
+            return (message?.mentionedGroupIds, message?.skipPush)
+        }
+        XCTAssertEqual(["group-id"], stored.0)
+        XCTAssertEqual(true, stored.1)
     }
 
     func test_scheduleReply_thenTheScheduledReplyIsInTheThread() async throws {
@@ -2127,20 +2145,42 @@ final class Chat_Tests: XCTestCase {
             to: parentMessageId,
             text: "Later",
             showReplyInChannel: true,
-            scheduledAt: Date().addingTimeInterval(3600)
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedRoles: ["admin"],
+            scheduledAt: Date().addingTimeInterval(3600),
+            silent: true
         )
 
         XCTAssertEqual(parentMessageId, scheduledMessage.message.parentMessageId)
         XCTAssertEqual(true, scheduledMessage.message.showReplyInChannel)
+        XCTAssertTrue(scheduledMessage.message.mentionedHere)
+        XCTAssertTrue(scheduledMessage.message.mentionedChannel)
+        XCTAssertEqual(["admin"], scheduledMessage.message.mentionedRoles)
+        XCTAssertTrue(scheduledMessage.message.isSilent)
     }
 
     func test_updateScheduledMessage_thenTheContentIsUpdatedLocally() async throws {
         let scheduledMessage = try await chat.scheduleMessage(with: "Later", scheduledAt: Date().addingTimeInterval(3600))
 
-        let updated = try await chat.updateScheduledMessage(id: scheduledMessage.id, text: "Edited")
+        let updated = try await chat.updateScheduledMessage(
+            id: scheduledMessage.id,
+            text: "Edited",
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroupIds: ["group-id"],
+            mentionedRoles: ["admin"],
+            silent: true
+        )
 
         XCTAssertEqual("Edited", updated.message.text)
         XCTAssertEqual(scheduledMessage.scheduledAt, updated.scheduledAt)
+        XCTAssertTrue(updated.message.mentionedHere)
+        XCTAssertTrue(updated.message.mentionedChannel)
+        XCTAssertEqual(["admin"], updated.message.mentionedRoles)
+        XCTAssertTrue(updated.message.isSilent)
+        let groupIds = try env.client.databaseContainer.readSynchronously { $0.scheduledMessage(id: scheduledMessage.id)?.message?.mentionedGroupIds }
+        XCTAssertEqual(["group-id"], groupIds)
     }
 
     func test_rescheduleMessage_thenTheDateIsUpdatedLocally() async throws {

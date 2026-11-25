@@ -6063,6 +6063,67 @@ final class ChannelController_Tests: XCTestCase {
 
     // MARK: - Scheduled Messages
 
+    func test_scheduleMessage_savesTheMentionsSilentAndSkipPush() throws {
+        try client.databaseContainer.createCurrentUser()
+
+        let scheduledMessage = try waitFor {
+            controller.scheduleMessage(
+                messageId: "scheduled-id",
+                text: "Later",
+                silent: true,
+                mentionedUserIds: ["user-id"],
+                mentionedHere: true,
+                mentionedChannel: true,
+                mentionedGroupIds: ["group-id"],
+                mentionedRoles: ["admin"],
+                skipPush: true,
+                scheduledAt: Date().addingTimeInterval(3600),
+                completion: $0
+            )
+        }.get()
+
+        XCTAssertEqual(scheduledMessage.cid, channelId)
+        XCTAssertEqual(scheduledMessage.message.text, "Later")
+        XCTAssertNil(scheduledMessage.message.parentMessageId)
+        XCTAssertTrue(scheduledMessage.message.isSilent)
+        XCTAssertTrue(scheduledMessage.message.mentionedHere)
+        XCTAssertTrue(scheduledMessage.message.mentionedChannel)
+        XCTAssertEqual(scheduledMessage.message.mentionedRoles, ["admin"])
+        let stored = try client.databaseContainer.readSynchronously { session in
+            let message = session.scheduledMessage(id: "scheduled-id")?.message
+            return [message?.mentionedUserIds == ["user-id"], message?.mentionedGroupIds == ["group-id"], message?.skipPush == true]
+        }
+        XCTAssertEqual(stored, [true, true, true])
+    }
+
+    func test_updateScheduledMessage_savesTheMentionsAndSilent() throws {
+        try client.databaseContainer.createCurrentUser()
+        _ = try waitFor {
+            controller.scheduleMessage(messageId: "scheduled-id", text: "Later", scheduledAt: Date().addingTimeInterval(3600), completion: $0)
+        }.get()
+
+        let updated = try waitFor {
+            controller.updateScheduledMessage(
+                id: "scheduled-id",
+                text: "Edited",
+                silent: true,
+                mentionedHere: true,
+                mentionedChannel: true,
+                mentionedGroupIds: ["group-id"],
+                mentionedRoles: ["admin"],
+                completion: $0
+            )
+        }.get()
+
+        XCTAssertEqual(updated.message.text, "Edited")
+        XCTAssertTrue(updated.message.isSilent)
+        XCTAssertTrue(updated.message.mentionedHere)
+        XCTAssertTrue(updated.message.mentionedChannel)
+        XCTAssertEqual(updated.message.mentionedRoles, ["admin"])
+        let groupIds = try client.databaseContainer.readSynchronously { $0.scheduledMessage(id: "scheduled-id")?.message?.mentionedGroupIds }
+        XCTAssertEqual(groupIds, ["group-id"])
+    }
+
     func test_scheduledMessagesUsage_whenTheChannelIsNotCreatedYet_fails() throws {
         controller = ChatChannelController(
             channelQuery: ChannelQuery(type: .messaging, id: nil, channelInput: ChannelInput()),

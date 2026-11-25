@@ -1376,10 +1376,16 @@ public class Chat: @unchecked Sendable {
     ///   - attachments: An array of the attachments for the message.
     ///   - quotedMessageId: An id of the quoted message.
     ///   - mentions: An array of mentioned user ids.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel.
+    ///   - mentionedChannel: If true, the message mentions all members of the channel.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message.
+    ///   - mentionedRoles: The list of roles mentioned in the message.
     ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
     ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the message right away.
     ///   - extraData: Additional extra data of the message object.
+    ///   - silent: If true, the message doesn't increase the unread messages count and mark a channel as unread.
+    ///   - skipPushNotification: If true, skips sending push notification to channel members.
     ///
     /// - Throws: An error while saving the scheduled message locally, not an error of the server. Unlike `sendMessage`, it
     /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
@@ -1391,18 +1397,30 @@ public class Chat: @unchecked Sendable {
         attachments: [AnyAttachmentPayload] = [],
         quote quotedMessageId: MessageId? = nil,
         mentions: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         messageId: MessageId? = nil,
         scheduledAt: Date,
-        extraData: [String: RawJSON] = [:]
+        extraData: [String: RawJSON] = [:],
+        silent: Bool = false,
+        skipPushNotification: Bool = false
     ) async throws -> ScheduledMessage {
         let cid = try await self.cid
         let content = ScheduledMessageContent(
             text: text,
             attachments: attachments,
             mentionedUserIds: mentions,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             parentId: nil,
             showReplyInChannel: false,
+            isSilent: silent,
+            skipPush: skipPushNotification,
             extraData: extraData
         )
         return try await scheduledMessagesRepository.schedule(
@@ -1425,10 +1443,16 @@ public class Chat: @unchecked Sendable {
     ///   - attachments: An array of the attachments for the reply.
     ///   - quotedMessageId: An id of the quoted message.
     ///   - mentions: An array of mentioned user ids.
+    ///   - mentionedHere: If true, the reply mentions users currently online in the channel.
+    ///   - mentionedChannel: If true, the reply mentions all members of the channel.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the reply.
+    ///   - mentionedRoles: The list of roles mentioned in the reply.
     ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
     ///   - scheduledAt: When to send the reply, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the reply right away.
     ///   - extraData: Additional extra data of the reply.
+    ///   - silent: If true, the message doesn't increase the unread messages count and mark a channel as unread.
+    ///   - skipPushNotification: If true, skips sending push notification to channel members.
     ///
     /// - Throws: An error while saving the scheduled reply locally, not an error of the server. Unlike `sendMessage`, it
     /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
@@ -1442,18 +1466,30 @@ public class Chat: @unchecked Sendable {
         attachments: [AnyAttachmentPayload] = [],
         quote quotedMessageId: MessageId? = nil,
         mentions: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         messageId: MessageId? = nil,
         scheduledAt: Date,
-        extraData: [String: RawJSON] = [:]
+        extraData: [String: RawJSON] = [:],
+        silent: Bool = false,
+        skipPushNotification: Bool = false
     ) async throws -> ScheduledMessage {
         let cid = try await self.cid
         let content = ScheduledMessageContent(
             text: text,
             attachments: attachments,
             mentionedUserIds: mentions,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             parentId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
+            isSilent: silent,
+            skipPush: skipPushNotification,
             extraData: extraData
         )
         return try await scheduledMessagesRepository.schedule(
@@ -1469,15 +1505,23 @@ public class Chat: @unchecked Sendable {
     /// A scheduled reply stays in its thread. A failed scheduled message can not be changed: delete it and schedule a new one.
     /// The changes are sent to the server once its attachments are uploaded, see `ScheduledMessage.status`.
     ///
+    /// - Important: The update replaces the content of the message, so content that is left out is cleared. The message
+    /// keeps its `skipPush`.
+    ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
     ///   - text: The new text of the message.
     ///   - attachments: The new attachments of the message.
     ///   - quotedMessageId: The new quoted message of the message.
     ///   - mentions: The new mentioned user ids of the message.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel.
+    ///   - mentionedChannel: If true, the message mentions all members of the channel.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message.
+    ///   - mentionedRoles: The list of roles mentioned in the message.
     ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
     ///   - extraData: The new extra data of the message.
+    ///   - silent: If true, the message doesn't increase the unread messages count and mark a channel as unread.
     ///
     /// - Throws: An error while updating the scheduled message locally, not an error of the server. Unlike `sendMessage`, it
     /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
@@ -1490,16 +1534,26 @@ public class Chat: @unchecked Sendable {
         attachments: [AnyAttachmentPayload] = [],
         quote quotedMessageId: MessageId? = nil,
         mentions: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         scheduledAt: Date? = nil,
-        extraData: [String: RawJSON] = [:]
+        extraData: [String: RawJSON] = [:],
+        silent: Bool = false
     ) async throws -> ScheduledMessage {
         let content = ScheduledMessageContent(
             text: text,
             attachments: attachments,
             mentionedUserIds: mentions,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             parentId: nil,
             showReplyInChannel: false,
+            isSilent: silent,
             extraData: extraData
         )
         return try await scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt)

@@ -97,7 +97,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     // MARK: - Sending to the server
 
     func test_sendPendingChanges_schedulesTheMessageOnTheServer() throws {
-        let content = ScheduledMessageContent(
+        var content = ScheduledMessageContent(
             text: "Hi @mentioned",
             attachments: [],
             mentionedUserIds: ["mentioned"],
@@ -106,6 +106,12 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
             showReplyInChannel: true,
             extraData: ["key": .string("value")]
         )
+        content.mentionedHere = true
+        content.mentionedChannel = true
+        content.mentionedGroupIds = ["group-id"]
+        content.mentionedRoles = ["admin"]
+        content.isSilent = true
+        content.skipPush = true
         _ = try schedule(id: "scheduled-id", content: content).get()
         apiClient.test_mockResponseResult(.success(sendMessageResponse(.dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId)))))
 
@@ -122,6 +128,12 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(message["show_in_channel"] as? Bool, true)
         XCTAssertEqual(message["mentioned_users"] as? [String], ["mentioned"])
         XCTAssertEqual((message["custom"] as? [String: Any])?["key"] as? String, "value")
+        XCTAssertEqual(body["skip_push"] as? Bool, true)
+        XCTAssertEqual(message["mentioned_here"] as? Bool, true)
+        XCTAssertEqual(message["mentioned_channel"] as? Bool, true)
+        XCTAssertEqual(message["mentioned_group_ids"] as? [String], ["group-id"])
+        XCTAssertEqual(message["mentioned_roles"] as? [String], ["admin"])
+        XCTAssertEqual(message["silent"] as? Bool, true)
         XCTAssertNil(sent.message.localState)
         XCTAssertEqual(sent.status, .scheduled)
         XCTAssertNil(try storedMessage(id: "scheduled-id")?.message.localState)
@@ -759,10 +771,12 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         let scheduledAt = Date().addingTimeInterval(3600)
         let pinExpires = Date().addingTimeInterval(7200)
         let response = ScheduledMessageResponse.dummy(
+            id: "scheduled-id",
             cid: cid,
             user: .dummy(userId: userId),
             message: .dummy(
                 mentionedChannel: true,
+                mentionedGroupIds: ["group-id"],
                 mentionedHere: true,
                 mentionedRoles: ["admin"],
                 pinExpires: pinExpires,
@@ -776,6 +790,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertTrue(message.mentionedChannel)
         XCTAssertTrue(message.mentionedHere)
         XCTAssertEqual(message.mentionedRoles, ["admin"])
+        XCTAssertEqual(try storedGroupIds(id: "scheduled-id"), ["group-id"])
         XCTAssertEqual(try XCTUnwrap(message.pinDetails?.pinnedAt).timeIntervalSince1970, scheduledAt.timeIntervalSince1970, accuracy: 0.001)
         XCTAssertEqual(message.pinDetails?.pinnedBy.id, userId)
         XCTAssertEqual(try XCTUnwrap(message.pinDetails?.expiresAt).timeIntervalSince1970, pinExpires.timeIntervalSince1970, accuracy: 0.001)
@@ -1380,7 +1395,31 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try storedMessages(query: channelsQuery).map(\.id), [otherChannel.id])
     }
 
-    // MARK: - Usage
+    // MARK: - Mentions, silent and skip push
+
+    func test_update_replacesTheMentionsAndSilentAndKeepsSkipPush() throws {
+        var scheduledContent = content()
+        scheduledContent.mentionedHere = true
+        scheduledContent.mentionedChannel = true
+        scheduledContent.mentionedGroupIds = ["group-id"]
+        scheduledContent.mentionedRoles = ["admin"]
+        scheduledContent.isSilent = true
+        scheduledContent.skipPush = true
+        _ = try schedule(id: "scheduled-id", content: scheduledContent).get()
+
+        let updated = try waitFor {
+            repository.update(id: "scheduled-id", content: content(text: "Edited"), scheduledAt: nil, completion: $0)
+        }.get()
+
+        XCTAssertEqual(updated.message.text, "Edited")
+        XCTAssertFalse(updated.message.mentionedHere)
+        XCTAssertFalse(updated.message.mentionedChannel)
+        XCTAssertEqual(updated.message.mentionedRoles, [])
+        XCTAssertFalse(updated.message.isSilent)
+        XCTAssertEqual(try storedGroupIds(id: "scheduled-id"), [])
+        let skipPush = try database.readSynchronously { $0.scheduledMessage(id: "scheduled-id")?.message?.skipPush }
+        XCTAssertEqual(skipPush, true)
+    }
 
     func test_usage_countsThePendingMessagesOfTheChannelAndOfAllChannels() throws {
         let otherCid = ChannelId.unique
@@ -1416,6 +1455,10 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    private func storedGroupIds(id: String) throws -> [String]? {
+        try database.readSynchronously { $0.scheduledMessage(id: id)?.message?.mentionedGroupIds }
+    }
 
     private func saveMessage(id: MessageId) throws {
         try database.createMessage(id: id, cid: cid)
@@ -1602,6 +1645,7 @@ extension ScheduledMessageContentResponse {
         attachments: [MessageAttachmentPayload]? = nil,
         custom: [String: RawJSON] = [:],
         mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
         mentionedHere: Bool? = nil,
         mentionedRoles: [String]? = nil,
         mentionedUsers: [String]? = nil,
@@ -1616,6 +1660,7 @@ extension ScheduledMessageContentResponse {
             attachments: attachments,
             custom: custom,
             mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
             mentionedHere: mentionedHere,
             mentionedRoles: mentionedRoles,
             mentionedUsers: mentionedUsers,
