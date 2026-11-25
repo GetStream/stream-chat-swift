@@ -120,18 +120,18 @@ class MessageScheduler: Worker, @unchecked Sendable {
             eventNotificationCenter.process($0)
         }) { [weak self] result in
             guard let self else { return }
-            if let error = result.error, ClientError.isEphemeral(error: error) {
+            switch result {
+            case let .success(message) where message?.status == .preparingToSchedule:
+                // Sending it now follows in another request once its changes are on the server.
+                break
+            case let .failure(error) where ClientError.isEphemeral(error: error):
                 isWaitingForConnection = true
                 log.debug("Message scheduler started waiting for connection")
-            }
-            // Sending it now follows in another request once its changes are on the server.
-            if (try? result.get())?.status != .preparingToSchedule {
                 // Nothing is sent until connected, so all the waiters fail like when they wait offline.
-                if isWaitingForConnection {
-                    completeWaiters(of: nil, with: .failure(ClientError.ConnectionError()))
-                } else {
-                    completeWaiters(of: id, with: result)
-                }
+                completeWaiters(of: nil, with: .failure(ClientError.ConnectionError()))
+                _pendingIds.mutate { $0.remove(id) }
+            case .success, .failure:
+                completeWaiters(of: id, with: result)
                 _pendingIds.mutate { $0.remove(id) }
             }
             isProcessing = false
