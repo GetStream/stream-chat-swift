@@ -323,8 +323,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.mentionedHere = content.mentionedHere ?? false
         message.mentionedChannel = content.mentionedChannel ?? false
         message.mentionedRoles = content.mentionedRoles ?? []
-        if let quotedMessage = content.quotedMessage, let channel = dto.channel {
-            message.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channel, syncOwnReactions: false, cache: nil)
+        if let quotedMessage = content.quotedMessage {
+            message.quotedMessage = try saveQuotedScheduledMessage(payload: quotedMessage)
         } else {
             message.quotedMessage = content.quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
         }

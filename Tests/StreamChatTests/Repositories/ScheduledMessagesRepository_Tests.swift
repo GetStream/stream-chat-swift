@@ -456,6 +456,19 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertNil(apiClient.request_endpoint)
     }
 
+    func test_sendNow_whenTheQuotedMessageWasDeletedWithoutALocalChannel_failsWithoutARequest() throws {
+        let content = ScheduledMessageContentResponse.dummy(
+            quotedMessage: .dummy(type: .deleted, messageId: "quoted-id", deletedAt: Date(), cid: cid),
+            quotedMessageId: "quoted-id"
+        )
+        _ = try XCTUnwrap(model(from: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), message: content)))
+
+        let error = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }
+
+        XCTAssertTrue(error is ClientError.ScheduledMessageQuotesADeletedMessage, "\(String(describing: error))")
+        XCTAssertNil(apiClient.request_endpoint)
+    }
+
     func test_schedule_whenTheDateIsFurtherThanTheMaxLeadTime_failsWithoutSavingTheMessage() throws {
         try saveChannel(config: .mock(scheduledMessagesMaxLeadTime: 3600))
 
@@ -847,14 +860,32 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(message.message.quotedMessage?.type, .deleted)
     }
 
-    func test_asModel_ofAReply_withoutALocalChannel_keepsOnlyTheIdOfTheQuotedMessage() throws {
+    func test_asModel_ofAReply_withoutALocalChannel_savesTheQuotedMessageWithoutAChannel() throws {
         let content = ScheduledMessageContentResponse.dummy(
-            quotedMessage: .dummy(messageId: "quoted-id", text: "See you at 5", cid: cid),
+            quotedMessage: .dummy(messageId: "quoted-id", authorUserId: "alice", text: "See you at 5", deletedAt: Date(), cid: cid),
             quotedMessageId: "quoted-id"
         )
         let message = try XCTUnwrap(model(from: .dummy(cid: cid, message: content)))
-        XCTAssertNil(message.message.quotedMessage)
-        XCTAssertEqual(message.quotedMessageId, "quoted-id")
+        XCTAssertEqual(message.message.quotedMessage?.author.id, "alice")
+        XCTAssertEqual(message.message.quotedMessage?.text, "See you at 5")
+        XCTAssertNotNil(message.message.quotedMessage?.deletedAt)
+        let hasChannel = try database.readSynchronously { $0.message(id: "quoted-id")?.channel != nil }
+        XCTAssertFalse(hasChannel)
+    }
+
+    func test_saveChannel_withAQuotedMessageSavedWithoutAChannel_addsItToTheChannel() throws {
+        let quotedMessage = MessagePayload.dummy(messageId: "quoted-id", text: "See you at 5", cid: cid)
+        let content = ScheduledMessageContentResponse.dummy(quotedMessage: quotedMessage, quotedMessageId: "quoted-id")
+        _ = try XCTUnwrap(model(from: .dummy(cid: cid, message: content)))
+
+        try database.writeSynchronously { [cid] session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid!), messages: [quotedMessage]))
+        }
+
+        let channelMessageIds = try database.readSynchronously { [cid] session in
+            session.channel(cid: cid!)?.messages.map(\.id)
+        }
+        XCTAssertEqual(channelMessageIds, ["quoted-id"])
     }
 
     func test_asModel_withoutChannelInTheResponse_usesTheLocalChannel() throws {
