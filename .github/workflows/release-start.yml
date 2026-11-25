@@ -15,7 +15,7 @@ permissions:
 jobs:
   test-release:
     name: Start new release
-    runs-on: ubuntu-24.04
+    runs-on: { group: github-public-amd64 }
     steps:
       - uses: actions/checkout@v7
         with:
