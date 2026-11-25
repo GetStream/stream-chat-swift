@@ -9,7 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatCommonUI
 ### ✅ Added
-- Add scheduled message date and failure formatters, icons, colors and localization keys [#4427](https://github.com/GetStream/stream-chat-swift/pull/4427)
+- Add scheduled message date and failure formatters, icons and colors [#4427](https://github.com/GetStream/stream-chat-swift/pull/4427)
+### 🎭 New Localizations
+- Add `scheduled-message.date.day-at-time` and `scheduled-message.failure.*` keys [#4427](https://github.com/GetStream/stream-chat-swift/pull/4427)
 
 # [5.18.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.18.0)
 _November 25, 2026_
