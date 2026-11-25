@@ -200,7 +200,7 @@ public struct AttachmentFile: Codable, Hashable, Sendable {
         if let size = try? container.decodeIfPresent(Int64.self, forKey: .size) {
             self.size = size
         } else if let floatSize = try? container.decodeIfPresent(Float64.self, forKey: .size) {
-            size = Int64(floatSize.rounded())
+            size = Int64(exactly: floatSize.rounded()) ?? 0
         } else {
             size = 0
         }

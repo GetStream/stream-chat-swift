@@ -801,10 +801,13 @@ class MessageUpdater: Worker, @unchecked Sendable {
         completion: @escaping @Sendable (Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
         let attachmentId = attachment.id
-        let localURL = URL.streamAttachmentLocalStorageURL(
+        guard let localURL = URL.streamAttachmentLocalStorageURL(
             forRelativePath: attachment.relativeStoragePath,
             baseURL: database.chatClientConfig.localAttachmentDownloadsFolderURL
-        )
+        ) else {
+            completion(.failure(ClientError.AttachmentDownloading(id: attachmentId, reason: "Invalid local file path")))
+            return
+        }
         let downloadRequest = request ?? URLRequest(url: attachment.remoteURL)
         apiClient.downloadFile(
             downloadRequest,

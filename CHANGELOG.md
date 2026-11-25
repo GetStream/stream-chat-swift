@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix attachments with an out-of-range file size crashing the app [#4438](https://github.com/GetStream/stream-chat-swift/pull/4438)
+- Keep downloaded attachments inside the downloads folder whatever their title [#4438](https://github.com/GetStream/stream-chat-swift/pull/4438)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix the composer sending typing events when attachments are added or removed [#4407](https://github.com/GetStream/stream-chat-swift/pull/4407)

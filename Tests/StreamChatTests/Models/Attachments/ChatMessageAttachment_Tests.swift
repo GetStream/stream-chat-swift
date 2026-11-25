@@ -141,9 +141,72 @@ final class ChatMessageAttachment_Tests: XCTestCase {
             baseURL.appendingPathComponent("StreamAttachmentDownloads", isDirectory: true)
         )
         XCTAssertEqual(
-            localFileURL.path,
+            localFileURL?.path,
             downloadsDirectory.appendingPathComponent("message-id-0/File.txt").path
         )
+    }
+
+    func test_relativeStoragePath_keepsTitleInOneFileInsideAttachmentFolder() throws {
+        let messageId: MessageId = "message-id"
+        let attachmentId = AttachmentId(cid: .unique, messageId: messageId, index: 2)
+        let titles: [String: String] = [
+            "Report.pdf": "Report.pdf",
+            "2024/25 Report.pdf": "2024_25 Report.pdf",
+            "../../../Library/Preferences/app.plist": ".._.._.._Library_Preferences_app.plist",
+            "/etc/hosts": "_etc_hosts",
+            "..": "attachment",
+            ".": "attachment",
+            "": "attachment"
+        ]
+        let downloadsDirectory = URL.streamAttachmentDownloadsDirectory()
+
+        for (title, fileName) in titles {
+            let attachment = ChatMessageFileAttachment.mock(id: attachmentId, title: title)
+
+            XCTAssertEqual(attachment.relativeStoragePath, "message-id-2/\(fileName)", title)
+            let localURL = try XCTUnwrap(URL.streamAttachmentLocalStorageURL(forRelativePath: attachment.relativeStoragePath), title)
+            XCTAssertEqual(
+                localURL.path,
+                downloadsDirectory.appendingPathComponent("message-id-2").appendingPathComponent(fileName).path,
+                title
+            )
+        }
+    }
+
+    func test_relativeStoragePath_keepsMessageIdInOneFolder() {
+        let attachment = ChatMessageFileAttachment.mock(
+            id: AttachmentId(cid: .unique, messageId: "../../message", index: 0),
+            title: "Report.pdf"
+        )
+
+        XCTAssertEqual(attachment.relativeStoragePath, ".._.._message-0/Report.pdf")
+    }
+
+    func test_streamAttachmentLocalStorageURL_rejectsPathsOutsideDownloadsDirectory() {
+        let downloadsDirectory = URL.streamAttachmentDownloadsDirectory()
+        let paths = [
+            "../file.txt",
+            "message-0/../../file.txt",
+            "~/file.txt",
+            "/etc/hosts",
+            "/",
+            "",
+            ".",
+            downloadsDirectory.path,
+            downloadsDirectory.path + "-other/file.txt",
+            downloadsDirectory.appendingPathComponent("../file.txt").path
+        ]
+
+        for path in paths {
+            XCTAssertNil(URL.streamAttachmentLocalStorageURL(forRelativePath: path), path)
+        }
+    }
+
+    func test_streamAttachmentLocalStorageURL_acceptsAbsolutePathsInsideDownloadsDirectory() {
+        // Downloads store the standardized URL's path, which is absolute.
+        let fileURL = URL.streamAttachmentDownloadsDirectory().appendingPathComponent("message-0/file.txt")
+
+        XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: fileURL.path)?.path, fileURL.path)
     }
 
     func test_streamAttachmentDownloadsDirectory_defaultsToDocuments() {

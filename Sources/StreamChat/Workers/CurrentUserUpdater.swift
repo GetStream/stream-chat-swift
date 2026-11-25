@@ -209,11 +209,11 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             var latestError: Error?
             let attachments = session.allLocallyDownloadedAttachments()
             for attachment in attachments {
-                if let localRelativePath = attachment.localRelativePath {
-                    let localURL = URL.streamAttachmentLocalStorageURL(
-                        forRelativePath: localRelativePath,
-                        baseURL: downloadsBaseURL
-                    )
+                if let localRelativePath = attachment.localRelativePath,
+                   let localURL = URL.streamAttachmentLocalStorageURL(
+                       forRelativePath: localRelativePath,
+                       baseURL: downloadsBaseURL
+                   ) {
                     if FileManager.default.fileExists(atPath: localURL.path) {
                         do {
                             try FileManager.default.removeItem(at: localURL)
