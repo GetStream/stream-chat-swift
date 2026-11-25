@@ -12,8 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `memberCount` and `members` to `ScheduledMessageChannel` [#4429](https://github.com/GetStream/stream-chat-swift/pull/4429)
 - Add `mentionedHere`, `mentionedChannel`, `mentionedGroupIds`, `mentionedRoles` and `silent` to `ChatChannelController.scheduleMessage()`, `ChatChannelController.updateScheduledMessage()`, `ChatMessageController.scheduleReply()`, `ChatMessageController.updateScheduledReply()`, `Chat.scheduleMessage()`, `Chat.scheduleReply()` and `Chat.updateScheduledMessage()` [#4430](https://github.com/GetStream/stream-chat-swift/pull/4430)
 - Add `skipPush` to `ChatChannelController.scheduleMessage()` and `ChatMessageController.scheduleReply()`, and `skipPushNotification` to `Chat.scheduleMessage()` and `Chat.scheduleReply()` [#4430](https://github.com/GetStream/stream-chat-swift/pull/4430)
+- Add `validateForScheduling()` to `ChatChannelController` and `Chat` for checking a message on the device before scheduling it [#4431](https://github.com/GetStream/stream-chat-swift/pull/4431)
 ### 🐞 Fixed
 - Fix scheduled messages going out of sync with the server [#4426](https://github.com/GetStream/stream-chat-swift/pull/4426)
+- Fix rescheduling and editing a scheduled message the server failed to send, by scheduling it again as a new message with a new id [#4431](https://github.com/GetStream/stream-chat-swift/pull/4431)
 
 ## StreamChatCommonUI
 ### ✅ Added

@@ -77,6 +77,7 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
     }
 
     @Atomic var scheduleMessageCallCount = 0
+    @Atomic var scheduleMessage_messageId: MessageId?
     @Atomic var scheduleMessage_text: String?
     @Atomic var scheduleMessage_scheduledAt: Date?
     @Atomic var scheduleMessage_completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)?
@@ -97,6 +98,7 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
     ) {
         scheduleMessageCallCount += 1
+        scheduleMessage_messageId = messageId
         scheduleMessage_text = text
         scheduleMessage_scheduledAt = scheduledAt
         scheduleMessage_completion = completion
@@ -138,6 +140,23 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
     )
     override func scheduledMessagesUsage(completion: @escaping @MainActor (Result<ScheduledMessagesUsage, Error>) -> Void) {
         callback { completion(self.scheduledMessagesUsage_result) }
+    }
+
+    @Atomic var validateForScheduling_error: Error?
+    @Atomic var validateForScheduling_text: String?
+    @Atomic var validateForScheduling_quotedMessageId: MessageId?
+    @Atomic var validateForScheduling_scheduledMessageId: String?
+    override func validateForScheduling(
+        text: String? = nil,
+        quotedMessageId: MessageId? = nil,
+        scheduledAt: Date? = nil,
+        editing scheduledMessageId: String? = nil,
+        completion: @escaping @MainActor (Error?) -> Void
+    ) {
+        validateForScheduling_text = text
+        validateForScheduling_quotedMessageId = quotedMessageId
+        validateForScheduling_scheduledMessageId = scheduledMessageId
+        callback { completion(self.validateForScheduling_error) }
     }
 
     var hasLoadedAllNextMessages_mock: Bool? = true

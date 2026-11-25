@@ -1364,6 +1364,38 @@ public class Chat: @unchecked Sendable {
         try await scheduledMessagesRepository.usage(cid: cid)
     }
 
+    /// Checks a message with the checks the SDK runs on the device before saving a scheduled message, with no request.
+    ///
+    /// Use it to disable scheduling in the UI and show why. `nil` values are not checked. The checks read the local
+    /// database, so the server can still reject the message later.
+    ///
+    /// - Parameters:
+    ///   - text: The text of the message, which can't be a slash command in a channel with commands.
+    ///   - quotedMessageId: The quoted message, which can't be deleted.
+    ///   - scheduledAt: The date, which can't be sooner than the min lead time or further ahead than the max lead time
+    ///   of the app.
+    ///   - scheduledMessageId: The edited scheduled message, `nil` for a new message, which counts against the limits of
+    ///   the app. Without `text`, the edited message keeps its text and quote. A message the server failed to send is
+    ///   checked as scheduled again.
+    ///
+    /// - Throws: `ClientError.ScheduledMessageHasACommand`, `ScheduledMessageQuotesADeletedMessage`,
+    /// `ScheduledMessageIsTooSoon`, `ScheduledMessageIsTooFarAhead`, `ScheduledMessagesChannelLimitReached`,
+    /// `ScheduledMessagesUserLimitReached` or `ScheduledMessageDoesNotExist` when the message can't be scheduled.
+    public func validateForScheduling(
+        text: String? = nil,
+        quote quotedMessageId: MessageId? = nil,
+        scheduledAt: Date? = nil,
+        editing scheduledMessageId: String? = nil
+    ) async throws {
+        try await scheduledMessagesRepository.validate(
+            cid: cid,
+            text: text,
+            quotedMessageId: quotedMessageId,
+            scheduledAt: scheduledAt,
+            editing: scheduledMessageId
+        )
+    }
+
     /// Schedules a new message to be sent to the channel at a later date.
     ///
     /// The message is not added to the channel until it is sent. It is saved locally first and sent to the server
@@ -1387,9 +1419,8 @@ public class Chat: @unchecked Sendable {
     ///   - silent: If true, the message doesn't increase the unread messages count and mark a channel as unread.
     ///   - skipPushNotification: If true, skips sending push notification to channel members.
     ///
-    /// - Throws: An error while saving the scheduled message locally, not an error of the server. Unlike `sendMessage`, it
-    /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
-    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
+    /// - Throws: An error while saving the scheduled message locally, or the error of the request. Like `sendMessage`, it waits
+    /// for the server. The message stays saved when the request fails, see `ScheduledMessage.status`.
     /// - Returns: The scheduled message.
     @discardableResult
     public func scheduleMessage(
@@ -1423,12 +1454,16 @@ public class Chat: @unchecked Sendable {
             skipPush: skipPushNotification,
             extraData: extraData
         )
-        return try await scheduledMessagesRepository.schedule(
-            id: messageId ?? .newUniqueId,
-            cid: cid,
-            content: content,
-            scheduledAt: scheduledAt
-        )
+        let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+        return try await messageScheduler.waitForAPIRequest {
+            scheduledMessagesRepository.schedule(
+                id: messageId ?? .newUniqueId,
+                cid: cid,
+                content: content,
+                scheduledAt: scheduledAt,
+                completion: $0
+            )
+        }
     }
 
     /// Schedules a new reply to the specified message, to be sent at a later date.
@@ -1454,9 +1489,8 @@ public class Chat: @unchecked Sendable {
     ///   - silent: If true, the message doesn't increase the unread messages count and mark a channel as unread.
     ///   - skipPushNotification: If true, skips sending push notification to channel members.
     ///
-    /// - Throws: An error while saving the scheduled reply locally, not an error of the server. Unlike `sendMessage`, it
-    /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
-    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
+    /// - Throws: An error while saving the scheduled reply locally, or the error of the request. Like `sendMessage`, it waits
+    /// for the server. The reply stays saved when the request fails, see `ScheduledMessage.status`.
     /// - Returns: The scheduled reply.
     @discardableResult
     public func scheduleReply(
@@ -1492,21 +1526,29 @@ public class Chat: @unchecked Sendable {
             skipPush: skipPushNotification,
             extraData: extraData
         )
-        return try await scheduledMessagesRepository.schedule(
-            id: messageId ?? .newUniqueId,
-            cid: cid,
-            content: content,
-            scheduledAt: scheduledAt
-        )
+        let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+        return try await messageScheduler.waitForAPIRequest {
+            scheduledMessagesRepository.schedule(
+                id: messageId ?? .newUniqueId,
+                cid: cid,
+                content: content,
+                scheduledAt: scheduledAt,
+                completion: $0
+            )
+        }
     }
 
     /// Updates the content of a scheduled message, and optionally when it is sent.
     ///
-    /// A scheduled reply stays in its thread. A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// A scheduled reply stays in its thread.
     /// The changes are sent to the server once its attachments are uploaded, see `ScheduledMessage.status`.
     ///
     /// - Important: The update replaces the content of the message, so content that is left out is cleared. The message
     /// keeps its `skipPush`.
+    ///
+    /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
+    /// with a new id, which is returned. The failed one is deleted. This needs a new `scheduledAt`. Without one, the
+    /// update fails.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
@@ -1523,9 +1565,10 @@ public class Chat: @unchecked Sendable {
     ///   - extraData: The new extra data of the message.
     ///   - silent: If true, the message doesn't increase the unread messages count and mark a channel as unread.
     ///
-    /// - Throws: An error while updating the scheduled message locally, not an error of the server. Unlike `sendMessage`, it
-    /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
-    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
+    /// - Throws: An error while updating the scheduled message locally, or the error of the request. Like `sendMessage`, it
+    /// waits for the server. The changes stay saved when the request fails, see `ScheduledMessage.status`.
+    /// It is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the server
+    /// already sent the message or no longer has it, which also removes it locally.
     /// - Returns: The updated scheduled message.
     @discardableResult
     public func updateScheduledMessage(
@@ -1556,10 +1599,16 @@ public class Chat: @unchecked Sendable {
             isSilent: silent,
             extraData: extraData
         )
-        return try await scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt)
+        let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+        return try await messageScheduler.waitForAPIRequest {
+            scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt, completion: $0)
+        }
     }
 
-    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// Changes when a scheduled message is sent.
+    ///
+    /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
+    /// with a new id, which is returned. The failed one is deleted.
     ///
     /// The new date is sent to the server right after it is saved locally, see `ScheduledMessage.status`.
     ///
@@ -1568,13 +1617,17 @@ public class Chat: @unchecked Sendable {
     ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
     ///   next whole minute, at least 1 minute from now.
     ///
-    /// - Throws: An error while rescheduling the message locally, not an error of the server. Unlike `sendMessage`, it does
-    /// not wait for the server: the server answers later, on the scheduled message, and a rejection sets
-    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
+    /// - Throws: An error while rescheduling the message locally, or the error of the request. Like `sendMessage`, it waits
+    /// for the server. The new date stays saved when the request fails, see `ScheduledMessage.status`.
+    /// It is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the server
+    /// already sent the message or no longer has it, which also removes it locally.
     /// - Returns: The rescheduled message.
     @discardableResult
     public func rescheduleMessage(id: String, scheduledAt: Date) async throws -> ScheduledMessage {
-        try await scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt)
+        let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+        return try await messageScheduler.waitForAPIRequest {
+            scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt, completion: $0)
+        }
     }
 
     /// Deletes a scheduled message, so it is never sent.
@@ -1592,16 +1645,20 @@ public class Chat: @unchecked Sendable {
     /// Sends a scheduled message right away.
     ///
     /// It is marked locally and sent once its local changes and attachments are on the server, so it is never sent
-    /// with older content. The message is added to the channel when it is sent, which is reported by the
-    /// `ScheduledMessageSentEvent`.
+    /// with older content. Failed local changes are sent again first. The message is added to the channel when it is
+    /// sent, which is reported by the `ScheduledMessageSentEvent`.
     ///
     /// - Parameter id: The id of the scheduled message.
     ///
-    /// - Throws: An error when the message can't be sent, for example when its quoted message was deleted. It does not
-    /// wait for the server: a rejection sets `ScheduledMessage.status` to `.failed`, with the reason in
-    /// `ScheduledMessage.failure`.
+    /// - Throws: An error when the message can't be sent, for example when its quoted message was deleted, or the error of
+    /// the request, see `ScheduledMessage.status`.
+    /// It is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the server
+    /// already sent the message or no longer has it, which also removes it locally.
     public func sendScheduledMessageNow(id: String) async throws {
-        try await scheduledMessagesRepository.sendNow(id: id)
+        let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+        _ = try await messageScheduler.waitForAPIRequest {
+            scheduledMessagesRepository.sendNow(id: id, completion: $0)
+        }
     }
 
     // MARK: - Sending and Listening to Events
