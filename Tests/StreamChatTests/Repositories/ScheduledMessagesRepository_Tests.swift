@@ -60,7 +60,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertNil(apiClient.request_endpoint)
     }
 
-    func test_schedule_keepsTheFourOldestMembersOfTheChannel() throws {
+    func test_schedule_keepsTheMembersOfTheChannelOldestFirst() throws {
         try database.writeSynchronously { [cid] session in
             try session.saveChannel(payload: .dummy(
                 channel: .dummy(cid: cid!),
@@ -72,7 +72,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
         let message = try schedule(id: "scheduled-id").get()
 
-        XCTAssertEqual(message.channel.members.map(\.id), ["user-0", "user-1", "user-2", "user-3"])
+        XCTAssertEqual(message.channel.members.map(\.id), ["user-0", "user-1", "user-2", "user-3", "user-4", "user-5"])
     }
 
     func test_schedule_withoutCurrentUser_fails() throws {
