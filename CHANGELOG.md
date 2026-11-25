@@ -10,7 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ClientError.ScheduledMessageIsBeingSent` for deleting a scheduled message the server is sending [#4429](https://github.com/GetStream/stream-chat-swift/pull/4429)
 - Add `ClientError.ScheduledMessageAlreadySent` for deleting a scheduled message that was already sent [#4429](https://github.com/GetStream/stream-chat-swift/pull/4429)
 - Add `memberCount` and `members` to `ScheduledMessageChannel` [#4429](https://github.com/GetStream/stream-chat-swift/pull/4429)
-- Add mentions, `silent` and `skipPush` to scheduling a message, and mentions and `silent` to updating one [#4430](https://github.com/GetStream/stream-chat-swift/pull/4430)
+- Add `mentionedHere`, `mentionedChannel`, `mentionedGroupIds`, `mentionedRoles` and `silent` to `ChatChannelController.scheduleMessage()`, `ChatChannelController.updateScheduledMessage()`, `ChatMessageController.scheduleReply()`, `ChatMessageController.updateScheduledReply()`, `Chat.scheduleMessage()`, `Chat.scheduleReply()` and `Chat.updateScheduledMessage()` [#4430](https://github.com/GetStream/stream-chat-swift/pull/4430)
+- Add `skipPush` to `ChatChannelController.scheduleMessage()` and `ChatMessageController.scheduleReply()`, and `skipPushNotification` to `Chat.scheduleMessage()` and `Chat.scheduleReply()` [#4430](https://github.com/GetStream/stream-chat-swift/pull/4430)
 ### 🐞 Fixed
 - Fix scheduled messages going out of sync with the server [#4426](https://github.com/GetStream/stream-chat-swift/pull/4426)
 
