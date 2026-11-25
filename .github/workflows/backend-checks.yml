@@ -19,7 +19,7 @@ permissions:
 jobs:
   test-backend-integration:
     name: Test Backend Integration
-    runs-on: macos-15
+    runs-on: { group: scaleway-macos }
     steps:
     - uses: actions/checkout@v7
     - uses: ./.github/actions/bootstrap
