@@ -648,6 +648,17 @@ protocol ScheduledMessageDatabaseSession {
         scheduledAt: Date?
     ) throws -> ScheduledMessageDTO
 
+    /// Throws the error saving the scheduled message would throw, with no changes. `nil` values are not checked.
+    func validateScheduledMessage(
+        cid: ChannelId?,
+        text: String?,
+        quotedMessageId: MessageId?,
+        scheduledAt: Date?,
+        editing id: String?
+    ) throws
+
+    func scheduledMessagesUsage(cid: ChannelId) throws -> ScheduledMessagesUsage
+
     /// Creates or updates a scheduled message with the provided payload.
     ///
     /// The content is kept when it has local changes that are not on the server yet.
@@ -660,12 +671,19 @@ protocol ScheduledMessageDatabaseSession {
     /// Deletes the scheduled message with the specified id.
     func deleteScheduledMessage(id: String)
 
+    /// Saves the scheduled messages of a channel query, which are all the scheduled messages of the channel.
+    func saveScheduledMessages(payload: [ScheduledMessageResponse], cid: ChannelId)
+
     /// Deletes the scheduled messages missing from the whole list of the server, except the ones that are not on the server yet.
     func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?)
 
     /// Changes the state to `.pendingSync` for all scheduled messages in `.syncing` state, at the beginning of the session.
     /// They get stuck there when the app is killed while their changes are sent to the server.
     func rescueScheduledMessagesStuckInSyncing()
+
+    /// Uploads again the attachments of the scheduled messages whose upload failed without a connection. The messages
+    /// stay pending meanwhile, and are sent once their attachments are uploaded.
+    func restartFailedUploadsOfPendingScheduledMessages()
 }
 
 protocol PollDatabaseSession {

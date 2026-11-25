@@ -11,6 +11,7 @@ import UIKit
 @available(iOS 15.0, macOS 12.0, *)
 struct CodeBlockView: View {
     let configuration: CodeBlockConfiguration
+    @ObservedObject var highlighting: CodeHighlighting
 
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.fonts) private var fonts
@@ -40,7 +41,9 @@ struct CodeBlockView: View {
             Divider()
 
             ScrollView(.horizontal) {
-                configuration.label
+                Text(code)
+                    .textStyleFont()
+                    .textStyleForegroundColor()
                     .relativeLineSpacing(.em(0.25))
                     .markdownTextStyle {
                         FontFamilyVariant(.monospaced)
@@ -52,5 +55,34 @@ struct CodeBlockView: View {
         .background(Color(colors.codeBlockBackground))
         .clipShape(RoundedRectangle(cornerRadius: layout.radiusMd))
         .markdownMargin(top: .zero, bottom: .em(0.8))
+        .task(id: configuration.content) {
+            guard configuration.language != nil else { return }
+            await highlighting.highlight(configuration.content)
+        }
+    }
+
+    // Code without a language shows plain, in the text color of the reply.
+    private var code: AttributedString {
+        guard configuration.language != nil else {
+            return AttributedString(configuration.content)
+        }
+        return highlighting.text(for: configuration.content, colors: codeColors)
+    }
+
+    private var codeColors: CodeColors {
+        CodeColors(
+            plainText: Color(colors.codeText),
+            tokens: [
+                .keyword: Color(colors.codeKeyword),
+                .string: Color(colors.codeString),
+                .type: Color(colors.codeType),
+                .call: Color(colors.codeCall),
+                .number: Color(colors.codeNumber),
+                .comment: Color(colors.codeComment),
+                .property: Color(colors.codeProperty),
+                .dotAccess: Color(colors.codeDotAccess),
+                .preprocessing: Color(colors.codePreprocessing)
+            ]
+        )
     }
 }

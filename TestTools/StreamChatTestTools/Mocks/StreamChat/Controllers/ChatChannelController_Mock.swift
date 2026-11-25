@@ -76,6 +76,89 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
         createNewMessageCallCount += 1
     }
 
+    @Atomic var scheduleMessageCallCount = 0
+    @Atomic var scheduleMessage_messageId: MessageId?
+    @Atomic var scheduleMessage_text: String?
+    @Atomic var scheduleMessage_scheduledAt: Date?
+    @Atomic var scheduleMessage_completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)?
+    override func scheduleMessage(
+        messageId: MessageId? = nil,
+        text: String,
+        silent: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
+        quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
+        scheduledAt: Date,
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
+    ) {
+        scheduleMessageCallCount += 1
+        scheduleMessage_messageId = messageId
+        scheduleMessage_text = text
+        scheduleMessage_scheduledAt = scheduledAt
+        scheduleMessage_completion = completion
+    }
+
+    @Atomic var updateScheduledMessageCallCount = 0
+    @Atomic var updateScheduledMessage_id: String?
+    @Atomic var updateScheduledMessage_text: String?
+    @Atomic var updateScheduledMessage_silent: Bool?
+    @Atomic var updateScheduledMessage_quotedMessageId: MessageId?
+    @Atomic var updateScheduledMessage_scheduledAt: Date?
+    @Atomic var updateScheduledMessage_extraData: [String: RawJSON]?
+    override func updateScheduledMessage(
+        id: String,
+        text: String,
+        silent: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
+        quotedMessageId: MessageId? = nil,
+        scheduledAt: Date? = nil,
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
+    ) {
+        updateScheduledMessageCallCount += 1
+        updateScheduledMessage_id = id
+        updateScheduledMessage_text = text
+        updateScheduledMessage_silent = silent
+        updateScheduledMessage_quotedMessageId = quotedMessageId
+        updateScheduledMessage_scheduledAt = scheduledAt
+        updateScheduledMessage_extraData = extraData
+    }
+
+    @Atomic var scheduledMessagesUsage_result: Result<ScheduledMessagesUsage, Error> = .success(
+        ScheduledMessagesUsage(channelCount: 0, channelLimit: nil, userCount: 0, userLimit: nil)
+    )
+    override func scheduledMessagesUsage(completion: @escaping @MainActor (Result<ScheduledMessagesUsage, Error>) -> Void) {
+        callback { completion(self.scheduledMessagesUsage_result) }
+    }
+
+    @Atomic var validateForScheduling_error: Error?
+    @Atomic var validateForScheduling_text: String?
+    @Atomic var validateForScheduling_quotedMessageId: MessageId?
+    @Atomic var validateForScheduling_scheduledMessageId: String?
+    override func validateForScheduling(
+        text: String? = nil,
+        quotedMessageId: MessageId? = nil,
+        scheduledAt: Date? = nil,
+        editing scheduledMessageId: String? = nil,
+        completion: @escaping @MainActor (Error?) -> Void
+    ) {
+        validateForScheduling_text = text
+        validateForScheduling_quotedMessageId = quotedMessageId
+        validateForScheduling_scheduledMessageId = scheduledMessageId
+        callback { completion(self.validateForScheduling_error) }
+    }
+
     var hasLoadedAllNextMessages_mock: Bool? = true
     override var hasLoadedAllNextMessages: Bool {
         hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages

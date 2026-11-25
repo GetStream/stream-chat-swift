@@ -1142,21 +1142,32 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - text: Text of the reply.
     ///   - attachments: An array of the attachments for the reply.
     ///   - mentionedUserIds: An array of the users mentioned in the reply.
+    ///   - mentionedHere: If true, the reply mentions users currently online in the channel.
+    ///   - mentionedChannel: If true, the reply mentions all members of the channel.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the reply.
+    ///   - mentionedRoles: The list of roles mentioned in the reply.
     ///   - showReplyInChannel: Set this flag to `true` if you want the reply to be shown in the channel as well.
+    ///   - silent: A flag indicating whether the reply is a silent message.
     ///   - quotedMessageId: An id of the message the reply quotes.
+    ///   - skipPush: If true, skips sending push notification to channel members.
     ///   - scheduledAt: When to send the reply, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the reply right away.
     ///   - extraData: Additional extra data of the reply.
-    ///   - completion: Called when the reply is saved locally, with the scheduled message or an error saving it locally. It
-    ///   is sent to the server once its attachments are uploaded. The server answers later, on the scheduled message: a
-    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
+    ///   - completion: Called when the server answers, with the scheduled message or an error. The reply is saved
+    ///   locally first and stays saved when the request fails, see `ScheduledMessage.status`.
     public func scheduleReply(
         messageId: MessageId? = nil,
         text: String,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         showReplyInChannel: Bool = false,
+        silent: Bool = false,
         quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
         scheduledAt: Date,
         extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
@@ -1165,43 +1176,77 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             text: text,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             parentId: self.messageId,
             showReplyInChannel: showReplyInChannel,
+            isSilent: silent,
+            skipPush: skipPush,
             extraData: extraData
         )
-        client.scheduledMessagesRepository.schedule(
-            id: messageId ?? .newUniqueId,
-            cid: cid,
-            content: content,
-            scheduledAt: scheduledAt
-        ) { result in
-            self.callback { completion?(result) }
+        do {
+            let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+            messageScheduler.waitForAPIRequest(
+                afterLocalWrite: {
+                    client.scheduledMessagesRepository.schedule(
+                        id: messageId ?? .newUniqueId,
+                        cid: cid,
+                        content: content,
+                        scheduledAt: scheduledAt,
+                        completion: $0
+                    )
+                },
+                completion: { result in
+                    self.callback { completion?(result) }
+                }
+            )
+        } catch {
+            callback { completion?(.failure(error)) }
         }
     }
 
     /// Updates the content of a scheduled reply to the message, and optionally when it is sent.
     ///
-    /// A failed scheduled reply can not be changed: delete it and schedule a new one.
+    /// - Important: The update replaces the content of the reply, so content that is left out is cleared. The reply
+    /// keeps its `skipPush`.
+    ///
+    /// - Important: A reply the server failed to send can't be changed, so it is scheduled again as a new message
+    /// with a new id, which the completion returns. The failed one is deleted. This needs a new `scheduledAt`. Without
+    /// one, the update fails.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
     ///   - text: The new text of the reply.
     ///   - attachments: The new attachments of the reply.
     ///   - mentionedUserIds: The new mentioned users of the reply.
+    ///   - mentionedHere: If true, the reply mentions users currently online in the channel.
+    ///   - mentionedChannel: If true, the reply mentions all members of the channel.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the reply.
+    ///   - mentionedRoles: The list of roles mentioned in the reply.
     ///   - showReplyInChannel: Set this flag to `true` if you want the reply to be shown in the channel as well.
+    ///   - silent: A flag indicating whether the reply is a silent message.
     ///   - quotedMessageId: The new quoted message of the reply.
     ///   - scheduledAt: When to send the reply, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
     ///   - extraData: The new extra data of the reply.
-    ///   - completion: Called when the reply is updated locally, with the scheduled message or an error. The changes are
-    ///   sent to the server once its attachments are uploaded, see `ScheduledMessage.status`.
+    ///   - completion: Called when the server answers, with the scheduled message or an error. The changes are saved
+    ///   locally first and stay saved when the request fails, see `ScheduledMessage.status`.
+    ///   The error is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the
+    ///   server already sent the message or no longer has it, which also removes it locally.
     public func updateScheduledReply(
         id: String,
         text: String,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         showReplyInChannel: Bool = false,
+        silent: Bool = false,
         quotedMessageId: MessageId? = nil,
         scheduledAt: Date? = nil,
         extraData: [String: RawJSON] = [:],
@@ -1211,13 +1256,26 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             text: text,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             parentId: messageId,
             showReplyInChannel: showReplyInChannel,
+            isSilent: silent,
             extraData: extraData
         )
-        client.scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt) { result in
-            self.callback { completion?(result) }
+        do {
+            let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+            messageScheduler.waitForAPIRequest(
+                afterLocalWrite: { client.scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt, completion: $0) },
+                completion: { result in
+                    self.callback { completion?(result) }
+                }
+            )
+        } catch {
+            callback { completion?(.failure(error)) }
         }
     }
 }

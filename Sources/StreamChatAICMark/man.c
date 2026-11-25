@@ -74,7 +74,6 @@ static void S_outc(cmark_renderer *renderer, cmark_node *node,
 
 static int S_render_node(cmark_renderer *renderer, cmark_node *node,
                          cmark_event_type ev_type, int options) {
-  cmark_node *tmp;
   int list_number;
   bool entering = (ev_type == CMARK_EVENT_ENTER);
   bool allow_wrap = renderer->width > 0 && !(CMARK_OPT_NOBREAKS & options);
@@ -123,12 +122,7 @@ static int S_render_node(cmark_renderer *renderer, cmark_node *node,
       if (stream_cmark_node_get_list_type(node->parent) == CMARK_BULLET_LIST) {
         LIT("\\[bu] 2");
       } else {
-        list_number = stream_cmark_node_get_list_start(node->parent);
-        tmp = node;
-        while (tmp->prev) {
-          tmp = tmp->prev;
-          list_number += 1;
-        }
+        list_number = stream_cmark_node_get_item_index(node);
         char list_number_s[LIST_NUMBER_SIZE];
         snprintf(list_number_s, LIST_NUMBER_SIZE, "\"%d.\" 4", list_number);
         LIT(list_number_s);
@@ -225,10 +219,12 @@ static int S_render_node(cmark_renderer *renderer, cmark_node *node,
     break;
 
   case CMARK_NODE_STRONG:
-    if (entering) {
-      LIT("\\f[B]");
-    } else {
-      LIT("\\f[]");
+    if (node->parent == NULL || node->parent->type != CMARK_NODE_STRONG) {
+      if (entering) {
+        LIT("\\f[B]");
+      } else {
+        LIT("\\f[]");
+      }
     }
     break;
 

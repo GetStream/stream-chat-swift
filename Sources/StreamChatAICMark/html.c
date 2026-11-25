@@ -63,10 +63,16 @@ static bool S_put_footnote_backref(cmark_html_renderer *renderer, cmark_strbuf *
   if (renderer->written_footnote_ix >= renderer->footnote_ix)
     return false;
   renderer->written_footnote_ix = renderer->footnote_ix;
+  char m[32];
+  snprintf(m, sizeof(m), "%d", renderer->written_footnote_ix);
 
   stream_cmark_strbuf_puts(html, "<a href=\"#fnref-");
   stream_houdini_escape_href(html, node->as.literal.data, node->as.literal.len);
-  stream_cmark_strbuf_puts(html, "\" class=\"footnote-backref\" data-footnote-backref aria-label=\"Back to content\">↩</a>");
+  stream_cmark_strbuf_puts(html, "\" class=\"footnote-backref\" data-footnote-backref data-footnote-backref-idx=\"");
+  stream_cmark_strbuf_puts(html, m);
+  stream_cmark_strbuf_puts(html, "\" aria-label=\"Back to reference ");
+  stream_cmark_strbuf_puts(html, m);
+  stream_cmark_strbuf_puts(html, "\">↩</a>");
 
   if (node->footnote.def_count > 1)
   {
@@ -78,7 +84,15 @@ static bool S_put_footnote_backref(cmark_html_renderer *renderer, cmark_strbuf *
       stream_houdini_escape_href(html, node->as.literal.data, node->as.literal.len);
       stream_cmark_strbuf_puts(html, "-");
       stream_cmark_strbuf_puts(html, n);
-      stream_cmark_strbuf_puts(html, "\" class=\"footnote-backref\" data-footnote-backref aria-label=\"Back to content\">↩<sup class=\"footnote-ref\">");
+      stream_cmark_strbuf_puts(html, "\" class=\"footnote-backref\" data-footnote-backref data-footnote-backref-idx=\"");
+      stream_cmark_strbuf_puts(html, m);
+      stream_cmark_strbuf_puts(html, "-");
+      stream_cmark_strbuf_puts(html, n);
+      stream_cmark_strbuf_puts(html, "\" aria-label=\"Back to reference ");
+      stream_cmark_strbuf_puts(html, m);
+      stream_cmark_strbuf_puts(html, "-");
+      stream_cmark_strbuf_puts(html, n);
+      stream_cmark_strbuf_puts(html, "\">↩<sup class=\"footnote-ref\">");
       stream_cmark_strbuf_puts(html, n);
       stream_cmark_strbuf_puts(html, "</sup></a>");
     }
@@ -350,10 +364,12 @@ static int S_render_node(cmark_html_renderer *renderer, cmark_node *node,
     break;
 
   case CMARK_NODE_STRONG:
-    if (entering) {
-      stream_cmark_strbuf_puts(html, "<strong>");
-    } else {
-      stream_cmark_strbuf_puts(html, "</strong>");
+    if (node->parent == NULL || node->parent->type != CMARK_NODE_STRONG) {
+      if (entering) {
+        stream_cmark_strbuf_puts(html, "<strong>");
+      } else {
+        stream_cmark_strbuf_puts(html, "</strong>");
+      }
     }
     break;
 

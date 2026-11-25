@@ -53,7 +53,7 @@ jobs:
 
   sdk_size:
     name: Size Metrics
-    runs-on: macos-15
+    runs-on: { group: scaleway-macos }
     needs: guard
     if: ${{ fromJSON(needs.guard.outputs.checks).size }}
     env:

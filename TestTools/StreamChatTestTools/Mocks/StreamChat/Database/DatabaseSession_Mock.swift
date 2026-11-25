@@ -98,6 +98,28 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.updateScheduledMessage(id: id, content: content, scheduledAt: scheduledAt)
     }
 
+    func validateScheduledMessage(
+        cid: ChannelId?,
+        text: String?,
+        quotedMessageId: MessageId?,
+        scheduledAt: Date?,
+        editing id: String?
+    ) throws {
+        try throwErrorIfNeeded()
+        try underlyingSession.validateScheduledMessage(
+            cid: cid,
+            text: text,
+            quotedMessageId: quotedMessageId,
+            scheduledAt: scheduledAt,
+            editing: id
+        )
+    }
+
+    func scheduledMessagesUsage(cid: ChannelId) throws -> ScheduledMessagesUsage {
+        try throwErrorIfNeeded()
+        return try underlyingSession.scheduledMessagesUsage(cid: cid)
+    }
+
     func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveScheduledMessage(payload: payload)
@@ -111,12 +133,20 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteScheduledMessage(id: id)
     }
 
+    func saveScheduledMessages(payload: [ScheduledMessageResponse], cid: ChannelId) {
+        underlyingSession.saveScheduledMessages(payload: payload, cid: cid)
+    }
+
     func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?) {
         underlyingSession.deleteScheduledMessages(notIn: ids, cid: cid)
     }
 
     func rescueScheduledMessagesStuckInSyncing() {
         underlyingSession.rescueScheduledMessagesStuckInSyncing()
+    }
+
+    func restartFailedUploadsOfPendingScheduledMessages() {
+        underlyingSession.restartFailedUploadsOfPendingScheduledMessages()
     }
 
     func saveUserGroup(payload: UserGroup) throws -> UserGroupDTO {

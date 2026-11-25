@@ -6060,6 +6060,130 @@ final class ChannelController_Tests: XCTestCase {
         // THEN
         AssertAsync.willBeEqual(completionResult?.error as? TestError, expectedError)
     }
+
+    // MARK: - Scheduled Messages
+
+    func test_scheduleMessage_savesTheMentionsSilentAndSkipPush() throws {
+        try client.databaseContainer.createCurrentUser()
+        client.addMessageScheduler()
+        client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(TestError()))
+
+        _ = try waitFor {
+            controller.scheduleMessage(
+                messageId: "scheduled-id",
+                text: "Later",
+                silent: true,
+                mentionedUserIds: ["user-id"],
+                mentionedHere: true,
+                mentionedChannel: true,
+                mentionedGroupIds: ["group-id"],
+                mentionedRoles: ["admin"],
+                skipPush: true,
+                scheduledAt: Date().addingTimeInterval(3600),
+                completion: $0
+            )
+        }
+
+        let scheduledMessage = try XCTUnwrap(client.databaseContainer.readSynchronously { try $0.scheduledMessage(id: "scheduled-id")?.asModel() })
+        XCTAssertEqual(scheduledMessage.cid, channelId)
+        XCTAssertEqual(scheduledMessage.message.text, "Later")
+        XCTAssertNil(scheduledMessage.message.parentMessageId)
+        XCTAssertTrue(scheduledMessage.message.isSilent)
+        XCTAssertTrue(scheduledMessage.message.mentionedHere)
+        XCTAssertTrue(scheduledMessage.message.mentionedChannel)
+        XCTAssertEqual(scheduledMessage.message.mentionedRoles, ["admin"])
+        let stored = try client.databaseContainer.readSynchronously { session in
+            let message = session.scheduledMessage(id: "scheduled-id")?.message
+            return [message?.mentionedUserIds == ["user-id"], message?.mentionedGroupIds == ["group-id"], message?.skipPush == true]
+        }
+        XCTAssertEqual(stored, [true, true, true])
+    }
+
+    func test_updateScheduledMessage_savesTheMentionsAndSilent() throws {
+        try client.databaseContainer.createCurrentUser()
+        client.addMessageScheduler()
+        client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(TestError()))
+        _ = try waitFor {
+            controller.scheduleMessage(messageId: "scheduled-id", text: "Later", scheduledAt: Date().addingTimeInterval(3600), completion: $0)
+        }
+        client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(TestError()))
+
+        _ = try waitFor {
+            controller.updateScheduledMessage(
+                id: "scheduled-id",
+                text: "Edited",
+                silent: true,
+                mentionedHere: true,
+                mentionedChannel: true,
+                mentionedGroupIds: ["group-id"],
+                mentionedRoles: ["admin"],
+                completion: $0
+            )
+        }
+
+        let updated = try XCTUnwrap(client.databaseContainer.readSynchronously { try $0.scheduledMessage(id: "scheduled-id")?.asModel() })
+        XCTAssertEqual(updated.message.text, "Edited")
+        XCTAssertTrue(updated.message.isSilent)
+        XCTAssertTrue(updated.message.mentionedHere)
+        XCTAssertTrue(updated.message.mentionedChannel)
+        XCTAssertEqual(updated.message.mentionedRoles, ["admin"])
+        let groupIds = try client.databaseContainer.readSynchronously { $0.scheduledMessage(id: "scheduled-id")?.message?.mentionedGroupIds }
+        XCTAssertEqual(groupIds, ["group-id"])
+    }
+
+    func test_scheduledMessagesUsage_whenTheChannelIsNotCreatedYet_fails() throws {
+        controller = ChatChannelController(
+            channelQuery: ChannelQuery(type: .messaging, id: nil, channelInput: ChannelInput()),
+            channelListQuery: nil,
+            client: client,
+            isChannelAlreadyCreated: false
+        )
+
+        let result = try waitFor { controller.scheduledMessagesUsage(completion: $0) }
+
+        XCTAssertTrue(result.error is ClientError.ChannelNotCreatedYet, "\(String(describing: result.error))")
+    }
+
+    func test_scheduledMessagesUsage_returnsTheCountsAndLimits() throws {
+        let config = ChannelConfig.mock(scheduledMessagesMaxPerChannel: 1, scheduledMessagesMaxPerUser: 5)
+        try client.databaseContainer.createCurrentUser()
+        try client.databaseContainer.writeSynchronously { [channelId] session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId!, config: config)))
+        }
+        client.addMessageScheduler()
+        client.mockAPIClient.test_mockResponseResult(.success(SendMessageResponsePayload(
+            message: .dummy(cid: channelId),
+            scheduledMessage: .dummy(id: "scheduled-id", cid: channelId)
+        )))
+        _ = try waitFor {
+            controller.scheduleMessage(messageId: "scheduled-id", text: "Later", scheduledAt: Date().addingTimeInterval(3600), completion: $0)
+        }.get()
+
+        let usage = try waitFor { controller.scheduledMessagesUsage(completion: $0) }.get()
+
+        XCTAssertEqual(usage, ScheduledMessagesUsage(channelCount: 1, channelLimit: 1, userCount: 1, userLimit: 5))
+    }
+
+    func test_validateForScheduling_whenTheDateIsTooSoon_fails() throws {
+        try client.databaseContainer.createCurrentUser()
+        try client.databaseContainer.writeSynchronously { [channelId] session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId!, config: .mock(scheduledMessagesMinLeadTime: 3600))))
+        }
+
+        let withinError = try waitFor { controller.validateForScheduling(scheduledAt: Date().addingTimeInterval(7200), completion: $0) }
+        let error = try waitFor { controller.validateForScheduling(scheduledAt: Date().addingTimeInterval(1800), completion: $0) }
+
+        XCTAssertNil(withinError)
+        XCTAssertTrue(error is ClientError.ScheduledMessageIsTooSoon, "\(String(describing: error))")
+    }
+
+    func test_startWatching_whenTheQueryIncludesScheduledMessages_includesThemInTheRequest() {
+        var query = ChannelQuery(cid: channelId)
+        query.includeScheduledMessages = true
+        controller = ChatChannelController(channelQuery: query, channelListQuery: nil, client: client, environment: env.environment)
+        controller.startWatching(isInRecoveryMode: false)
+        XCTAssertEqual(env.channelUpdater?.startWatching_includeScheduledMessages, true)
+    }
 }
 
 // MARK: Test Helpers

@@ -73,6 +73,8 @@ public extension Appearance {
         /// The main brand color. Used for interactive elements, buttons, links, and primary actions.
         /// Override this to apply your brand color across the SDK.
         public lazy var accentPrimary: UIColor = UIColor(light: brand500, dark: brand400)
+        /// A subtle tint of the main brand color. Used as the background of informational notifications.
+        public lazy var accentPrimarySubtle: UIColor = UIColor(light: brand50, dark: brand100)
         /// Indicates a positive or completed state. Used for confirmations and success feedback.
         public lazy var accentSuccess: UIColor = UIColor(light: .green400, dark: .green300)
         /// Indicates a failure or destructive state. Used for failed messages, validation errors, and deletions.
@@ -118,6 +120,8 @@ public extension Appearance {
         public lazy var backgroundUtilitySelected: UIColor = UIColor(light: UIColor(hex: 0x1a1b2533), dark: UIColor(hex: 0xffffff40))
         /// Background for non-interactive elements. Flattens the element visually to signal unavailability.
         public lazy var backgroundUtilityDisabled: UIColor = chrome100
+        /// Background for elements that report an error, such as an inline error notification.
+        public lazy var backgroundUtilityErrorSubtle: UIColor = UIColor(light: .red50, dark: .red800)
 
         // MARK: - Text
 

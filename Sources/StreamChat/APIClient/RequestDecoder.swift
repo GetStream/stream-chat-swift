@@ -132,7 +132,8 @@ extension ClientError {
     final class ExpiredToken: ClientError, @unchecked Sendable {}
     final class RefreshingToken: ClientError, @unchecked Sendable {}
     final class TokenRefreshed: ClientError, @unchecked Sendable {}
-    final class ConnectionError: ClientError, @unchecked Sendable {}
+    /// The request failed because the device has no connection.
+    public final class ConnectionError: ClientError, @unchecked Sendable {}
     final class ResponseBodyEmpty: ClientError, @unchecked Sendable {
         override var localizedDescription: String { "Response body is empty." }
     }

@@ -21,13 +21,22 @@ public final class ScheduledMessageChannel: Equatable, Sendable {
     /// The image of the channel, if it has one.
     public let imageURL: URL?
 
-    init(cid: ChannelId, name: String?, imageURL: URL?) {
+    /// The number of members of the channel. It is 0 when the channel was deleted.
+    public let memberCount: Int
+
+    /// The first members of the channel, oldest first. It is empty when the channel was deleted.
+    public let members: [ChatChannelMember]
+
+    init(cid: ChannelId, name: String?, imageURL: URL?, memberCount: Int = 0, members: [ChatChannelMember] = []) {
         self.cid = cid
         self.name = name
         self.imageURL = imageURL
+        self.memberCount = memberCount
+        self.members = members
     }
 
     public static func == (lhs: ScheduledMessageChannel, rhs: ScheduledMessageChannel) -> Bool {
         lhs.cid == rhs.cid && lhs.name == rhs.name && lhs.imageURL == rhs.imageURL
+            && lhs.memberCount == rhs.memberCount && lhs.members == rhs.members
     }
 }

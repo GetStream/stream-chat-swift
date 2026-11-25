@@ -28,7 +28,7 @@ permissions:
 
 jobs:
   deploy:
-    runs-on: macos-15
+    runs-on: { group: scaleway-macos }
     steps:
     - uses: actions/checkout@v7
     - name: Generate bot token

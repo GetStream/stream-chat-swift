@@ -31,13 +31,7 @@ static void S_out(cmark_renderer *renderer, cmark_node *node,
   cmark_chunk remainder = cmark_chunk_literal("");
   int k = renderer->buffer->size - 1;
 
-  cmark_syntax_extension *ext = NULL;
-  cmark_node *n = node;
-  while (n && !ext) {
-    ext = n->extension;
-    if (!ext)
-      n = n->parent;
-  }
+  cmark_syntax_extension *ext = node->ancestor_extension;
   if (ext && !ext->commonmark_escape_func)
     ext = NULL;
 
@@ -182,6 +176,20 @@ char *stream_cmark_render(cmark_mem *mem, cmark_node *root, int options, int wid
 
   while ((ev_type = stream_cmark_iter_next(iter)) != CMARK_EVENT_DONE) {
     cur = stream_cmark_iter_get_node(iter);
+    if (cur->extension) {
+      cur->ancestor_extension = cur->extension;
+    } else if (cur->parent) {
+      cur->ancestor_extension = cur->parent->ancestor_extension;
+    }
+    if (cur->type == CMARK_NODE_ITEM) {
+      // Calculate the list item's index, for the benefit of output formats
+      // like commonmark and plaintext.
+      if (cur->prev) {
+        stream_cmark_node_set_item_index(cur, 1 + stream_cmark_node_get_item_index(cur->prev));
+      } else {
+        stream_cmark_node_set_item_index(cur, stream_cmark_node_get_list_start(cur->parent));
+      }
+    }
     if (!render_node(&renderer, cur, ev_type, options)) {
       // a false value causes us to skip processing
       // the node's contents.  this is used for

@@ -33,9 +33,10 @@ class ScheduledMessageDTO: NSManagedObject {
     // The quoted message is not always available locally, so its id is kept.
     @NSManaged var quotedMessageId: String?
 
-    // The backend only returns the channel in query results, so the last known one is kept.
+    // The backend leaves the channel out when it is gone or can't be read, so the last known one is kept.
     @NSManaged var channelName: String?
     @NSManaged var channelImageURL: URL?
+    @NSManaged var channelMemberCount: Int64
 
     // Relationships
 
@@ -44,6 +45,7 @@ class ScheduledMessageDTO: NSManagedObject {
 
     // The channel of the message, when it is saved locally.
     @NSManaged var channel: ChannelDTO?
+    @NSManaged var channelMembers: Set<MemberDTO>
 
     override func willSave() {
         super.willSave()
@@ -96,13 +98,16 @@ class ScheduledMessageDTO: NSManagedObject {
                 continue
             }
         }
-        // Without a sorting, pending messages come first and failed ones after, each sorted by `scheduledAt`.
+        // Without a sorting, pending messages come first and failed ones after, each sorted by `scheduledAt`, like on
+        // the server.
         if sortDescriptors.isEmpty {
             sortDescriptors = [
                 NSSortDescriptor(keyPath: \ScheduledMessageDTO.isPending, ascending: false),
                 NSSortDescriptor(keyPath: \ScheduledMessageDTO.scheduledAt, ascending: true)
             ]
         }
+        // Messages sent at the same time keep the order of the server.
+        sortDescriptors.append(NSSortDescriptor(keyPath: \ScheduledMessageDTO.id, ascending: true))
         request.sortDescriptors = sortDescriptors
 
         if let filter = query.filter, let predicate = filter.predicate {
@@ -136,6 +141,17 @@ class ScheduledMessageDTO: NSManagedObject {
         return request
     }
 
+    // The scheduled messages with an attachment that failed to upload, which the `MessageScheduler` never sends.
+    static func failedUploadsFetchRequest() -> NSFetchRequest<ScheduledMessageDTO> {
+        let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \ScheduledMessageDTO.createdAt, ascending: true)]
+        request.predicate = NSPredicate(
+            format: "ANY message.attachments.localStateRaw == %@",
+            LocalAttachmentState.uploadingFailed.rawValue
+        )
+        return request
+    }
+
     /// Loads the scheduled message with the specified id.
     static func load(id: String, context: NSManagedObjectContext) -> ScheduledMessageDTO? {
         load(by: fetchRequest(id: id), context: context).first
@@ -163,6 +179,10 @@ class ScheduledMessageDTO: NSManagedObject {
         }
     }
 
+    var isServerFailed: Bool {
+        ScheduledMessageServerStatus(rawValue: status) == .failed && !hasLocalChanges
+    }
+
     /// Whether the scheduled message has local changes the server does not have yet.
     var hasLocalChanges: Bool {
         switch message?.localMessageState {
@@ -184,9 +204,14 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
-        try validateSchedulable(content, cid: cid)
-        try validateScheduledAt(scheduledAt, cid: cid)
-        try validateScheduledMessagesLimits(cid: cid, excludingId: id)
+        try validateScheduledMessage(
+            cid: cid,
+            text: content.text,
+            quotedMessageId: content.quotedMessageId,
+            scheduledAt: scheduledAt,
+            editing: nil,
+            excludingId: id
+        )
 
         let now = Date()
         let dto = ScheduledMessageDTO.loadOrCreate(id: id, context: self)
@@ -204,10 +229,14 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         if let channel = dto.channel {
             dto.channelName = channel.name
             dto.channelImageURL = channel.imageURL
+            dto.channelMemberCount = channel.memberCount
+            dto.channelMembers = channel.members
         }
 
         let message = contentMessage(of: dto)
         try saveContent(content, to: message, cid: cid, user: currentUserDTO.user)
+        // Set when scheduling only, because the update request has no field for it.
+        message.skipPush = content.skipPush
         message.locallyCreatedAt = now.bridgeDate
         message.createdAt = scheduledAt.bridgeDate
         message.updatedAt = now.bridgeDate
@@ -227,15 +256,17 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
+        if dto.isServerFailed {
+            throw ClientError.ScheduledMessageNotEditable(id: id)
+        }
         let cid = try ChannelId(cid: dto.cid)
-        if let content {
-            try validateSchedulable(content, cid: cid)
-        } else {
-            try validateQuotedMessage(dto.quotedMessageId)
-        }
-        if let scheduledAt {
-            try validateScheduledAt(scheduledAt, cid: cid)
-        }
+        try validateScheduledMessage(
+            cid: cid,
+            text: content?.text,
+            quotedMessageId: content?.quotedMessageId,
+            scheduledAt: scheduledAt,
+            editing: id
+        )
 
         if let content {
             // Without a thread, the message keeps the thread it was scheduled in.
@@ -252,6 +283,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             message.createdAt = scheduledAt.bridgeDate
             dto.hasPendingScheduledAt = !dto.isLocalOnly
         }
+        message.restartFailedUploads()
         dto.updatedAt = Date().bridgeDate
         dto.syncErrorReason = nil
         dto.syncErrorMessage = nil
@@ -261,6 +293,27 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.localMessageState = dto.isLocalOnly ? .pendingSend : .pendingSync
 
         return dto
+    }
+
+    func validateScheduledMessage(
+        cid: ChannelId?,
+        text: String?,
+        quotedMessageId: MessageId?,
+        scheduledAt: Date?,
+        editing id: String?
+    ) throws {
+        try validateScheduledMessage(
+            cid: cid,
+            text: text,
+            quotedMessageId: quotedMessageId,
+            scheduledAt: scheduledAt,
+            editing: id,
+            excludingId: nil
+        )
+    }
+
+    func scheduledMessagesUsage(cid: ChannelId) throws -> ScheduledMessagesUsage {
+        try scheduledMessagesUsage(cid: cid, excludingId: nil)
     }
 
     func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO {
@@ -278,6 +331,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         if let channel = payload.channel {
             dto.channelName = channel.name
             dto.channelImageURL = channel.image.flatMap(URL.init(string:))
+            dto.channelMemberCount = Int64(channel.memberCount)
+            dto.channelMembers = try Set(channel.members.map { try saveMember(payload: $0, channelId: cid, query: nil, cache: nil) })
         }
 
         let message = contentMessage(of: dto)
@@ -310,8 +365,14 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.mentionedUsers = Set(message.mentionedUserIds.compactMap { self.user(id: $0) })
         message.mentionedHere = content.mentionedHere ?? false
         message.mentionedChannel = content.mentionedChannel ?? false
+        message.mentionedGroupIds = content.mentionedGroupIds ?? []
+        message.mentionedGroups = Set(message.mentionedGroupIds.compactMap { UserGroupDTO.load(id: $0, context: self) })
         message.mentionedRoles = content.mentionedRoles ?? []
-        message.quotedMessage = content.quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
+        if let quotedMessage = content.quotedMessage {
+            message.quotedMessage = try saveQuotedScheduledMessage(payload: quotedMessage)
+        } else {
+            message.quotedMessage = content.quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
+        }
         message.poll = content.pollId.flatMap { try? poll(id: $0) }
         message.pinned = content.pinned ?? false
         message.pinnedBy = message.pinned ? user : nil
@@ -329,7 +390,6 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         return dto
     }
 
-    /// Saves the scheduled messages of a channel query, which are all the scheduled messages of the channel.
     func saveScheduledMessages(payload: [ScheduledMessageResponse], cid: ChannelId) {
         payload.forEach { payload in
             do {
@@ -360,6 +420,18 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         }
     }
 
+    func restartFailedUploadsOfPendingScheduledMessages() {
+        let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        request.predicate = NSPredicate(
+            format: "message.localMessageStateRaw IN %@ AND ANY message.attachments.localStateRaw == %@",
+            [LocalMessageState.pendingSend.rawValue, LocalMessageState.pendingSync.rawValue],
+            LocalAttachmentState.uploadingFailed.rawValue
+        )
+        ScheduledMessageDTO.load(by: request, context: self).forEach {
+            $0.message?.restartFailedUploads()
+        }
+    }
+
     func deleteScheduledMessage(id: String) {
         guard let dto = scheduledMessage(id: id) else { return }
         // The sent message can have the same id and reuse the content, it is kept then.
@@ -387,46 +459,105 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         return message
     }
 
-    /// The server never schedules a slash command, which runs side effects or shows ephemeral output when it is sent,
-    /// in a channel with commands. It is refused locally, so it is not saved and sent to fail.
-    private func validateSchedulable(_ content: ScheduledMessageContent, cid: ChannelId) throws {
-        if content.text.hasPrefix("/"), (channel(cid: cid)?.config.commands.count ?? 0) > 0 {
-            throw ClientError.ScheduledMessageHasACommand()
+    // The saves and `validateForScheduling` run the same checks, so they can't disagree. `nil` values are not checked.
+    private func validateScheduledMessage(
+        cid: ChannelId?,
+        text: String?,
+        quotedMessageId: MessageId?,
+        scheduledAt: Date?,
+        editing id: String?,
+        excludingId: String?
+    ) throws {
+        guard currentUser != nil else {
+            throw ClientError.CurrentUserDoesNotExist()
         }
-        try validateQuotedMessage(content.quotedMessageId)
+        var cid = cid
+        var text = text
+        var quotedMessageId = quotedMessageId
+        var isNew = id == nil
+        if let id {
+            guard let dto = scheduledMessage(id: id), let message = dto.message else {
+                throw ClientError.ScheduledMessageDoesNotExist(id: id)
+            }
+            cid = try ChannelId(cid: dto.cid)
+            // A message the server failed to send is scheduled again as a new message.
+            if dto.isServerFailed {
+                isNew = true
+            }
+            // Without new content, the message keeps its own.
+            if text == nil {
+                text = isNew ? message.text : nil
+                quotedMessageId = dto.quotedMessageId
+            }
+        }
+        guard let cid else {
+            throw ClientError.ChannelNotCreatedYet()
+        }
+        if let text {
+            try validateCommand(text, cid: cid)
+        }
+        try validateQuotedMessage(quotedMessageId)
+        if let scheduledAt {
+            try validateScheduledAt(scheduledAt, cid: cid)
+        }
+        if isNew {
+            try validateScheduledMessagesLimits(cid: cid, excludingId: excludingId)
+        }
     }
 
-    /// The server rejects a date further ahead than the maximum lead time of the app. It is refused locally when the
-    /// channel config has the limit.
+    /// The server never schedules a slash command, which runs side effects or shows ephemeral output when it is sent,
+    /// in a channel with commands. It is refused locally, so it is not saved and sent to fail.
+    private func validateCommand(_ text: String, cid: ChannelId) throws {
+        if text.hasPrefix("/"), (channel(cid: cid)?.config.commands.count ?? 0) > 0 {
+            throw ClientError.ScheduledMessageHasACommand()
+        }
+    }
+
+    /// The server rejects a date sooner than the minimum lead time of the app, or further ahead than the maximum lead
+    /// time. It is refused locally when the channel config has the limit.
     private func validateScheduledAt(_ scheduledAt: Date, cid: ChannelId) throws {
-        guard let maxLeadTime = channel(cid: cid)?.config.scheduledMessagesMaxLeadTime?.doubleValue else { return }
-        if scheduledAt.timeIntervalSinceNow > maxLeadTime {
+        let config = channel(cid: cid)?.config
+        if let minLeadTime = config?.scheduledMessagesMinLeadTime?.doubleValue, scheduledAt.timeIntervalSinceNow < minLeadTime {
+            throw ClientError.ScheduledMessageIsTooSoon(minLeadTime: minLeadTime)
+        }
+        if let maxLeadTime = config?.scheduledMessagesMaxLeadTime?.doubleValue, scheduledAt.timeIntervalSinceNow > maxLeadTime {
             throw ClientError.ScheduledMessageIsTooFarAhead(maxLeadTime: maxLeadTime)
         }
     }
 
     /// The server rejects a new scheduled message once the current user has as many pending ones as the app allows,
-    /// in the channel or in all channels. Failed messages don't count. It is refused locally when the channel config has
-    /// the limits, counting the pending messages saved locally.
-    private func validateScheduledMessagesLimits(cid: ChannelId, excludingId id: String) throws {
-        guard let config = channel(cid: cid)?.config else { return }
-        let pending = NSPredicate(format: "isPending == YES AND id != %@", id)
-        if let limit = config.scheduledMessagesMaxPerChannel?.intValue {
-            let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-                pending, NSPredicate(format: "cid == %@", cid.rawValue)
-            ])
-            if try count(for: request) >= limit {
-                throw ClientError.ScheduledMessagesChannelLimitReached(limit: limit)
-            }
+    /// in the channel or in all channels. Failed messages don't count, except ones whose edit failed. It is refused
+    /// locally when the channel config has the limits, counting the pending messages saved locally.
+    private func validateScheduledMessagesLimits(cid: ChannelId, excludingId id: String?) throws {
+        let usage = try scheduledMessagesUsage(cid: cid, excludingId: id)
+        if let limit = usage.channelLimit, usage.channelCount >= limit {
+            throw ClientError.ScheduledMessagesChannelLimitReached(limit: limit)
         }
-        if let limit = config.scheduledMessagesMaxPerUser?.intValue {
-            let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
-            request.predicate = pending
-            if try count(for: request) >= limit {
-                throw ClientError.ScheduledMessagesUserLimitReached(limit: limit)
-            }
+        if let limit = usage.userLimit, usage.userCount >= limit {
+            throw ClientError.ScheduledMessagesUserLimitReached(limit: limit)
         }
+    }
+
+    private func scheduledMessagesUsage(cid: ChannelId, excludingId id: String?) throws -> ScheduledMessagesUsage {
+        let config = channel(cid: cid)?.config
+        // The server still has a message whose edit failed.
+        let pending = NSPredicate(
+            format: "(isPending == YES OR message.localMessageStateRaw == %@) AND id != %@",
+            LocalMessageState.syncingFailed.rawValue,
+            id ?? ""
+        )
+        let channelRequest = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        channelRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            pending, NSPredicate(format: "cid == %@", cid.rawValue)
+        ])
+        let userRequest = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        userRequest.predicate = pending
+        return ScheduledMessagesUsage(
+            channelCount: try count(for: channelRequest),
+            channelLimit: config?.scheduledMessagesMaxPerChannel?.intValue,
+            userCount: try count(for: userRequest),
+            userLimit: config?.scheduledMessagesMaxPerUser?.intValue
+        )
     }
 
     private func saveContent(_ content: ScheduledMessageContent, to message: MessageDTO, cid: ChannelId, user: UserDTO) throws {
@@ -444,8 +575,12 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.user = user
         message.mentionedUserIds = content.mentionedUserIds
         message.mentionedUsers = Set(content.mentionedUserIds.compactMap { self.user(id: $0) })
-        message.mentionedHere = false
-        message.mentionedChannel = false
+        message.mentionedHere = content.mentionedHere
+        message.mentionedChannel = content.mentionedChannel
+        message.mentionedGroupIds = content.mentionedGroupIds
+        message.mentionedGroups = Set(content.mentionedGroupIds.compactMap { UserGroupDTO.load(id: $0, context: self) })
+        message.mentionedRoles = content.mentionedRoles
+        message.isSilent = content.isSilent
         message.quotedMessage = content.quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
 
         message.attachments.forEach { delete($0) }
@@ -474,7 +609,11 @@ extension ScheduledMessageDTO {
             channel: ScheduledMessageChannel(
                 cid: channelId,
                 name: channelName ?? localChannel?.name,
-                imageURL: channelImageURL ?? localChannel?.imageURL
+                imageURL: channelImageURL ?? localChannel?.imageURL,
+                memberCount: Int(channelMemberCount),
+                members: try channelMembers
+                    .sorted { $0.memberCreatedAt.bridgeDate < $1.memberCreatedAt.bridgeDate }
+                    .map { try $0.asModel() }
             ),
             message: chatMessage,
             quotedMessageId: quotedMessageId,
@@ -484,6 +623,14 @@ extension ScheduledMessageDTO {
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate
         )
+    }
+}
+
+extension MessageDTO {
+    func restartFailedUploads() {
+        attachments
+            .filter { $0.localState == .uploadingFailed }
+            .forEach { $0.localState = .pendingUpload }
     }
 }
 
@@ -518,5 +665,54 @@ extension DatabaseSession {
     func validateQuotedMessage(_ id: MessageId?) throws {
         guard let id, message(id: id)?.deletedAt != nil else { return }
         throw ClientError.ScheduledMessageQuotesADeletedMessage()
+    }
+
+    func scheduleFailedMessageAgain(
+        id: String,
+        content: ScheduledMessageContent?,
+        scheduledAt: Date
+    ) throws -> ScheduledMessageDTO {
+        guard let dto = scheduledMessage(id: id), let message = dto.message else {
+            throw ClientError.ScheduledMessageDoesNotExist(id: id)
+        }
+        try validateScheduledMessage(
+            cid: nil,
+            text: content?.text,
+            quotedMessageId: content?.quotedMessageId,
+            scheduledAt: scheduledAt,
+            editing: id
+        )
+        let cid = try ChannelId(cid: dto.cid)
+        var newContent = try content ?? ScheduledMessageContent(
+            text: message.text,
+            attachments: message.attachments
+                .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
+                .map { AnyAttachmentPayload(type: $0.attachmentType, payload: try JSONDecoder.stream.decodeRawJSON(from: $0.data), localFileURL: nil) },
+            mentionedUserIds: message.mentionedUserIds,
+            mentionedHere: message.mentionedHere,
+            mentionedChannel: message.mentionedChannel,
+            mentionedGroupIds: message.mentionedGroupIds,
+            mentionedRoles: message.mentionedRoles,
+            quotedMessageId: dto.quotedMessageId,
+            parentId: message.parentMessageId,
+            showReplyInChannel: message.showReplyInChannel,
+            isSilent: message.isSilent,
+            extraData: JSONDecoder.stream.decodeRawJSON(from: message.extraData)
+        )
+        // Without a thread, the message keeps the thread it was scheduled in.
+        if newContent.parentId == nil {
+            newContent.parentId = message.parentMessageId
+            newContent.showReplyInChannel = message.showReplyInChannel
+        }
+        newContent.skipPush = message.skipPush
+        let new = try createNewScheduledMessage(id: .newUniqueId, cid: cid, content: newContent, scheduledAt: scheduledAt)
+        new.channelName = new.channelName ?? dto.channelName
+        new.channelImageURL = new.channelImageURL ?? dto.channelImageURL
+        if new.channelMembers.isEmpty {
+            new.channelMemberCount = dto.channelMemberCount
+            new.channelMembers = dto.channelMembers
+        }
+        deleteScheduledMessage(id: id)
+        return new
     }
 }

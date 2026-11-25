@@ -36,6 +36,13 @@ enum L10n {
         static var codeBlockLanguageFallback: String {
             localized("streaming.code_block.language_fallback", comment: "Fallback name for code blocks when no language is provided.")
         }
+
+        static func imageLink(_ description: String) -> String {
+            String(
+                format: localized("streaming.image_link", comment: "A link to an image in a reply, shown instead of the image. The argument is the image's description, or the name of the site that has it."),
+                description
+            )
+        }
     }
     
     enum Conversation {

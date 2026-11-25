@@ -10,9 +10,9 @@
 cmark_node_type stream_CMARK_NODE_LAST_BLOCK = CMARK_NODE_FOOTNOTE_DEFINITION;
 cmark_node_type stream_CMARK_NODE_LAST_INLINE = CMARK_NODE_FOOTNOTE_REFERENCE;
 
-int stream_cmark_version() { return CMARK_GFM_VERSION; }
+int stream_cmark_version(void) { return CMARK_GFM_VERSION; }
 
-const char *stream_cmark_version_string() { return CMARK_GFM_VERSION_STRING; }
+const char *stream_cmark_version_string(void) { return CMARK_GFM_VERSION_STRING; }
 
 static void *xcalloc(size_t nmem, size_t size) {
   void *ptr = calloc(nmem, size);
@@ -38,7 +38,7 @@ static void xfree(void *ptr) {
 
 cmark_mem stream_CMARK_DEFAULT_MEM_ALLOCATOR = {xcalloc, xrealloc, xfree};
 
-cmark_mem *stream_cmark_get_default_mem_allocator() {
+cmark_mem *stream_cmark_get_default_mem_allocator(void) {
   return &stream_CMARK_DEFAULT_MEM_ALLOCATOR;
 }
 

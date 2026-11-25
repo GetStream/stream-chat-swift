@@ -52,7 +52,7 @@ jobs:
 
   performance:
     name: Performance Metrics
-    runs-on: macos-15
+    runs-on: { group: scaleway-macos }
     needs: guard
     if: ${{ fromJSON(needs.guard.outputs.checks).xcmetrics }}
     steps:

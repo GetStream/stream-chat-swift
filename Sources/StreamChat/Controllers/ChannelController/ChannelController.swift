@@ -1630,7 +1630,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         client.syncRepository.startTrackingChannelController(self)
 
-        updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
+        updater.startWatching(cid: cid, includeScheduledMessages: channelQuery.includeScheduledMessages, isInRecoveryMode: isInRecoveryMode) { error in
             self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
             self.callback {
                 completion?(error)
@@ -1952,6 +1952,62 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     // MARK: - Scheduled Messages
 
+    /// Loads how many scheduled messages the current user has in the channel and in all channels, next to the limits of the app.
+    ///
+    /// Use it to tell whether a limit is reached before scheduling a message, for example to disable scheduling in the UI.
+    /// The counts come from the local database. The server can still reject a scheduled message later.
+    ///
+    /// - Parameter completion: Called with the usage, with `ClientError.ChannelNotCreatedYet` when the channel is not created
+    /// yet, or with an error reading the local database.
+    public func scheduledMessagesUsage(completion: @escaping @MainActor (Result<ScheduledMessagesUsage, Error>) -> Void) {
+        guard let cid else {
+            callback { completion(.failure(ClientError.ChannelNotCreatedYet())) }
+            return
+        }
+        client.scheduledMessagesRepository.usage(cid: cid) { result in
+            self.callback { completion(result) }
+        }
+    }
+
+    /// Checks a message with the checks the SDK runs on the device before saving a scheduled message, with no request.
+    ///
+    /// Use it to disable scheduling in the UI and show why. `nil` values are not checked. The checks read the local
+    /// database, so the server can still reject the message later.
+    ///
+    /// - Parameters:
+    ///   - text: The text of the message, which can't be a slash command in a channel with commands.
+    ///   - quotedMessageId: The quoted message, which can't be deleted.
+    ///   - scheduledAt: The date, which can't be sooner than the min lead time or further ahead than the max lead time
+    ///   of the app.
+    ///   - scheduledMessageId: The edited scheduled message, `nil` for a new message, which counts against the limits of
+    ///   the app. Without `text`, the edited message keeps its text and quote. A message the server failed to send is
+    ///   checked as scheduled again.
+    ///   - completion: Called with `nil` when the message can be scheduled. Otherwise with
+    ///   `ClientError.ScheduledMessageHasACommand`, `ScheduledMessageQuotesADeletedMessage`,
+    ///   `ScheduledMessageIsTooSoon`, `ScheduledMessageIsTooFarAhead`, `ScheduledMessagesChannelLimitReached`,
+    ///   `ScheduledMessagesUserLimitReached`, `ScheduledMessageDoesNotExist` or `ChannelNotCreatedYet`.
+    public func validateForScheduling(
+        text: String? = nil,
+        quotedMessageId: MessageId? = nil,
+        scheduledAt: Date? = nil,
+        editing scheduledMessageId: String? = nil,
+        completion: @escaping @MainActor (Error?) -> Void
+    ) {
+        guard let cid else {
+            callback { completion(ClientError.ChannelNotCreatedYet()) }
+            return
+        }
+        client.scheduledMessagesRepository.validate(
+            cid: cid,
+            text: text,
+            quotedMessageId: quotedMessageId,
+            scheduledAt: scheduledAt,
+            editing: scheduledMessageId
+        ) { error in
+            self.callback { completion(error) }
+        }
+    }
+
     /// Schedules a new message to be sent to the channel at a later date.
     ///
     /// The message is not added to the channel until it is sent. Local attachments are uploaded when scheduling.
@@ -1959,21 +2015,32 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - messageId: The id of the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
     ///   - text: Text of the message.
+    ///   - silent: A flag indicating whether the message is a silent message.
     ///   - attachments: An array of the attachments for the message.
     ///   - mentionedUserIds: An array of the users mentioned in the message.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel.
+    ///   - mentionedChannel: If true, the message mentions all members of the channel.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message.
+    ///   - mentionedRoles: The list of roles mentioned in the message.
     ///   - quotedMessageId: An id of the message the new message quotes.
+    ///   - skipPush: If true, skips sending push notification to channel members.
     ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the message right away.
     ///   - extraData: Additional extra data of the message object.
-    ///   - completion: Called when the message is saved locally, with the scheduled message or an error saving it locally.
-    ///   It is sent to the server once its attachments are uploaded. The server answers later, on the scheduled message: a
-    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
+    ///   - completion: Called when the server answers, with the scheduled message or an error. The message is saved
+    ///   locally first and stays saved when the request fails, see `ScheduledMessage.status`.
     public func scheduleMessage(
         messageId: MessageId? = nil,
         text: String,
+        silent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
         scheduledAt: Date,
         extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
@@ -1986,43 +2053,75 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             text: text,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             parentId: nil,
             showReplyInChannel: false,
+            isSilent: silent,
+            skipPush: skipPush,
             extraData: extraData
         )
-        client.scheduledMessagesRepository.schedule(
-            id: messageId ?? .newUniqueId,
-            cid: cid,
-            content: content,
-            scheduledAt: scheduledAt
-        ) { result in
-            self.callback { completion?(result) }
+        do {
+            let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+            messageScheduler.waitForAPIRequest(
+                afterLocalWrite: {
+                    client.scheduledMessagesRepository.schedule(
+                        id: messageId ?? .newUniqueId,
+                        cid: cid,
+                        content: content,
+                        scheduledAt: scheduledAt,
+                        completion: $0
+                    )
+                },
+                completion: { result in
+                    self.callback { completion?(result) }
+                }
+            )
+        } catch {
+            callback { completion?(.failure(error)) }
         }
     }
 
     /// Updates the content of a scheduled message, and optionally when it is sent.
     ///
-    /// A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// - Important: The update replaces the content of the message, so content that is left out is cleared. The message
+    /// keeps its `skipPush`.
+    ///
+    /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
+    /// with a new id, which the completion returns. The failed one is deleted. This needs a new `scheduledAt`. Without
+    /// one, the update fails.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
     ///   - text: The new text of the message.
+    ///   - silent: A flag indicating whether the message is a silent message.
     ///   - attachments: The new attachments of the message.
     ///   - mentionedUserIds: The new mentioned users of the message.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel.
+    ///   - mentionedChannel: If true, the message mentions all members of the channel.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message.
+    ///   - mentionedRoles: The list of roles mentioned in the message.
     ///   - quotedMessageId: The new quoted message of the message.
     ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
     ///   - extraData: The new extra data of the message.
-    ///   - completion: Called when the message is updated locally, with the scheduled message or an error updating it
-    ///   locally. The changes are sent to the server once its attachments are uploaded. The server answers later, on the
-    ///   scheduled message: a rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says
-    ///   why.
+    ///   - completion: Called when the server answers, with the scheduled message or an error. The changes are saved
+    ///   locally first and stay saved when the request fails, see `ScheduledMessage.status`.
+    ///   The error is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the
+    ///   server already sent the message or no longer has it, which also removes it locally.
     public func updateScheduledMessage(
         id: String,
         text: String,
+        silent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId? = nil,
         scheduledAt: Date? = nil,
         extraData: [String: RawJSON] = [:],
@@ -2032,32 +2131,57 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             text: text,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             parentId: nil,
             showReplyInChannel: false,
+            isSilent: silent,
             extraData: extraData
         )
-        client.scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt) { result in
-            self.callback { completion?(result) }
+        do {
+            let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+            messageScheduler.waitForAPIRequest(
+                afterLocalWrite: { client.scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt, completion: $0) },
+                completion: { result in
+                    self.callback { completion?(result) }
+                }
+            )
+        } catch {
+            callback { completion?(.failure(error)) }
         }
     }
 
-    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// Changes when a scheduled message is sent.
+    ///
+    /// - Important: A message the server failed to send can't be changed, so it is scheduled again as a new message
+    /// with a new id, which the completion returns. The failed one is deleted.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
     ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
     ///   next whole minute, at least 1 minute from now.
-    ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error rescheduling
-    ///   it locally. The new date is sent to the server right after. The server answers later, on the scheduled message: a
-    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
+    ///   - completion: Called when the server answers, with the scheduled message or an error. The new date is saved
+    ///   locally first and stays saved when the request fails, see `ScheduledMessage.status`.
+    ///   The error is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the
+    ///   server already sent the message or no longer has it, which also removes it locally.
     public func rescheduleMessage(
         id: String,
         scheduledAt: Date,
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
     ) {
-        client.scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt) { result in
-            self.callback { completion?(result) }
+        do {
+            let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+            messageScheduler.waitForAPIRequest(
+                afterLocalWrite: { client.scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt, completion: $0) },
+                completion: { result in
+                    self.callback { completion?(result) }
+                }
+            )
+        } catch {
+            callback { completion?(.failure(error)) }
         }
     }
 
@@ -2065,7 +2189,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - completion: Called when the message is deleted, with an error if it failed.
+    ///   - completion: Called when the message is deleted, with an error if it failed. The error is
+    ///   `ClientError.ScheduledMessageAlreadySent` when the server already sent the message, and `ClientError.ScheduledMessageDoesNotExist`
+    ///   when the server no longer has it, for example because it was deleted on another device. In both cases the message is removed locally.
+    ///   It is `ClientError.ScheduledMessageIsBeingSent` when the server is sending the message right now.
     public func deleteScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
         client.scheduledMessagesRepository.delete(id: id) { error in
             self.callback { completion?(error) }
@@ -2075,17 +2202,26 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Sends a scheduled message right away.
     ///
     /// It is marked locally and sent once its local changes and attachments are on the server, so it is never sent
-    /// with older content. The message is added to the channel when it is sent, which is reported by the
-    /// `ScheduledMessageSentEvent`.
+    /// with older content. Failed local changes are sent again first. The message is added to the channel when it is
+    /// sent, which is reported by the `ScheduledMessageSentEvent`.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - completion: Called when the message is marked locally, with an error if it can't be sent, for example when
-    ///   its quoted message was deleted. A rejection of the server sets `ScheduledMessage.status` to `.failed`, with the
-    ///   reason in `ScheduledMessage.failure`.
+    ///   - completion: Called when the server answers, with an error if the message can't be sent, for example when its
+    ///   quoted message was deleted or the request failed, see `ScheduledMessage.status`.
+    ///   The error is `ClientError.ScheduledMessageAlreadySent` or `ClientError.ScheduledMessageDoesNotExist` when the
+    ///   server already sent the message or no longer has it, which also removes it locally.
     public func sendScheduledMessageNow(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
-        client.scheduledMessagesRepository.sendNow(id: id) { error in
-            self.callback { completion?(error) }
+        do {
+            let messageScheduler = try client.backgroundWorker(of: MessageScheduler.self)
+            messageScheduler.waitForAPIRequest(
+                afterLocalWrite: { client.scheduledMessagesRepository.sendNow(id: id, completion: $0) },
+                completion: { result in
+                    self.callback { completion?(result.error) }
+                }
+            )
+        } catch {
+            callback { completion?(error) }
         }
     }
 

@@ -42,6 +42,16 @@ final class ChatClient_Mock: ChatClient, @unchecked Sendable {
         _backgroundWorkers.append(worker)
     }
 
+    // The scheduled message APIs wait for the `MessageScheduler`.
+    func addMessageScheduler() {
+        addBackgroundWorker(MessageScheduler(
+            scheduledMessagesRepository: scheduledMessagesRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: databaseContainer,
+            apiClient: apiClient
+        ))
+    }
+
     private var _backgroundWorkers = [Worker]()
 
     // MARK: - Overrides
