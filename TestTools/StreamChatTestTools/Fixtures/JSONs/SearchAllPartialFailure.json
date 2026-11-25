@@ -1,0 +1,14 @@
+{
+  "messages": {
+    "error": {
+      "code": "backend_timeout",
+      "message": "messages search timed out"
+    }
+  },
+  "users": {
+    "warning": {
+      "code": "cursor_rejected"
+    }
+  },
+  "duration": "3.21ms"
+}

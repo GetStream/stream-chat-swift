@@ -207,6 +207,13 @@ extension ChatClient {
         ) -> RolesRepository = {
             RolesRepository(apiClient: $0)
         }
+
+        var unifiedSearchRepositoryBuilder: @Sendable (
+            _ apiClient: APIClient,
+            _ modelsTransformer: StreamModelsTransformer?
+        ) -> UnifiedSearchRepository = {
+            UnifiedSearchRepository(apiClient: $0, modelsTransformer: $1)
+        }
         
         var channelListUpdaterBuilder: @Sendable (
             _ database: DatabaseContainer,

@@ -460,3 +460,16 @@ extension ChatClient {
         UserGroupSearch(client: self)
     }
 }
+
+// MARK: - Factory Methods for Unified Search
+
+extension ChatClient {
+    /// Creates an instance of ``UnifiedSearch`` which searches messages, users and channels with one request.
+    ///
+    /// Use ``UnifiedSearch`` as a data source for a global search UI.
+    ///
+    /// - Returns: An instance of ``UnifiedSearch`` which represents search actions and the search state.
+    public func makeUnifiedSearch() -> UnifiedSearch {
+        UnifiedSearch(client: self)
+    }
+}

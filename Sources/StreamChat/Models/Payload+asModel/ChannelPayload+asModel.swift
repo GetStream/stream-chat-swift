@@ -79,6 +79,21 @@ extension ChannelPayload {
     }
 }
 
+extension ChannelDetailPayload {
+    /// Converts a channel without its state, as embedded in search results, to a ChatChannel model.
+    func asModel(currentUserId: UserId?) -> ChatChannel {
+        ChannelPayload(
+            channel: self,
+            hidden: hidden,
+            members: members ?? [],
+            messages: [],
+            pinnedMessages: [],
+            threads: []
+        )
+        .asModel(currentUserId: currentUserId, currentlyTypingUsers: nil, typingUsers: nil, unreadCount: nil)
+    }
+}
+
 extension MemberPayload {
     /// Converts the MemberPayload to a ChatChannelMember model
     /// - Parameter channelId: The channel ID the member belongs to

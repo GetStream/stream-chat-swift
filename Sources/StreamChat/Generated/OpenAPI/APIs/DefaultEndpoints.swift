@@ -67,6 +67,7 @@ enum EndpointPath: Codable {
     case removeUserGroupMembers(id: String)
     case runMessageAction(id: String)
     case search
+    case searchAll
     case searchRoles
     case searchUserGroups
     case sendEvent(type: String, id: String)
@@ -231,6 +232,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/action"
         case .search:
             return "/api/v2/chat/search"
+        case .searchAll:
+            return "/api/v2/chat/search/all"
         case .searchRoles:
             return "/api/v2/roles/search"
         case .searchUserGroups:
@@ -1264,6 +1267,16 @@ extension Endpoint {
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func searchAll(searchAllRequest: SearchAllRequest, requiresConnectionId: Bool = true) -> Endpoint<SearchAllResponse> {
+        return .init(
+            path: .searchAll,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: searchAllRequest
         )
     }
 

@@ -76,6 +76,7 @@ extension EndpointPath {
              .removeUserGroupMembers,
              .runMessageAction,
              .search,
+             .searchAll,
              .searchRoles,
              .searchUserGroups,
              .sendEvent,

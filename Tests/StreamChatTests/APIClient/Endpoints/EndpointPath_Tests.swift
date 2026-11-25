@@ -194,6 +194,14 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertEqual(EndpointPath.searchRoles.value, "/api/v2/roles/search")
     }
 
+    func test_searchAll_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.searchAll.shouldBeQueuedOffline)
+    }
+
+    func test_searchAll_value() {
+        XCTAssertEqual(EndpointPath.searchAll.value, "/api/v2/chat/search/all")
+    }
+
     func test_pushPreferences_value() {
         let path = EndpointPath.updatePushNotificationPreferences.value
         XCTAssertEqual(path, "/api/v2/push_preferences")
@@ -238,6 +246,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.queryMembers)
         assertResultEncodingAndDecoding(.updateMemberPartial(type: "messaging", id: "2"))
         assertResultEncodingAndDecoding(.search)
+        assertResultEncodingAndDecoding(.searchAll)
         assertResultEncodingAndDecoding(.createDevice)
         assertResultEncodingAndDecoding(.deleteDevice)
         assertResultEncodingAndDecoding(.listDevices)

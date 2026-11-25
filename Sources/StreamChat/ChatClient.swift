@@ -106,6 +106,11 @@ public class ChatClient: @unchecked Sendable {
         environment.rolesRepositoryBuilder(apiClient)
     }()
 
+    /// Repository for searching messages, users and channels with one request.
+    lazy var unifiedSearchRepository: UnifiedSearchRepository = {
+        environment.unifiedSearchRepositoryBuilder(apiClient, config.modelsTransformer)
+    }()
+
     let channelListUpdater: ChannelListUpdater
 
     /// Handler for watching channels and preventing duplicate watch requests.
