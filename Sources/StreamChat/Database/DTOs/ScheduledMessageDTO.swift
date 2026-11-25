@@ -98,13 +98,16 @@ class ScheduledMessageDTO: NSManagedObject {
                 continue
             }
         }
-        // Without a sorting, pending messages come first and failed ones after, each sorted by `scheduledAt`.
+        // Without a sorting, pending messages come first and failed ones after, each sorted by `scheduledAt`, like on
+        // the server.
         if sortDescriptors.isEmpty {
             sortDescriptors = [
                 NSSortDescriptor(keyPath: \ScheduledMessageDTO.isPending, ascending: false),
                 NSSortDescriptor(keyPath: \ScheduledMessageDTO.scheduledAt, ascending: true)
             ]
         }
+        // Messages sent at the same time keep the order of the server.
+        sortDescriptors.append(NSSortDescriptor(keyPath: \ScheduledMessageDTO.id, ascending: true))
         request.sortDescriptors = sortDescriptors
 
         if let filter = query.filter, let predicate = filter.predicate {

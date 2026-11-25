@@ -1355,6 +1355,15 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try storedMessages(query: query).map(\.id), [second.id, first.id])
     }
 
+    func test_query_withTheSameScheduledAt_sortsById() throws {
+        let scheduledAt = Date().addingTimeInterval(100)
+        try ["b", "c", "a"].forEach { _ = try makeMessage(id: $0, scheduledAt: scheduledAt) }
+
+        XCTAssertEqual(try storedMessages().map(\.id), ["a", "b", "c"])
+        let query = ScheduledMessageListQuery(sort: [.init(key: .scheduledAt, isAscending: true)])
+        XCTAssertEqual(try storedMessages(query: query).map(\.id), ["a", "b", "c"])
+    }
+
     func test_query_filtersByStatusAndChannel() throws {
         let otherCid = ChannelId.unique
         let pending = try makeMessage(scheduledAt: Date().addingTimeInterval(100))
