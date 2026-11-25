@@ -197,12 +197,12 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             case .pendingSend:
                 message.localMessageState = .sending
                 let cid = try ChannelId(cid: dto.cid)
-                return .schedule(cid: cid, request: SendMessageRequest(message: message.asMessageRequest(quotedMessageId: dto.quotedMessageId), scheduledAt: scheduledAt))
+                return .schedule(cid: cid, request: SendMessageRequest(message: message.asMessageRequest(), scheduledAt: scheduledAt))
             case .pendingSync:
                 message.localMessageState = .syncing
                 // The backend ignores the id of the message.
                 return .update(UpdateScheduledMessageRequest(
-                    message: message.asMessageRequest(quotedMessageId: dto.quotedMessageId),
+                    message: message.asMessageRequest(),
                     scheduledAt: dto.hasPendingScheduledAt ? scheduledAt : nil
                 ))
             case nil where dto.isPendingSendNow:

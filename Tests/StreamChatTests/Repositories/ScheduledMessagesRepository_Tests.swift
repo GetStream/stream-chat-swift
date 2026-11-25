@@ -925,19 +925,6 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try attachmentStates(id: "scheduled-id"), [.pendingUpload])
     }
 
-    // MARK: - Quoted message id
-
-    func test_sendPendingChanges_ofAnUpdate_sendsTheQuotedMessageIdWhenTheQuotedMessageIsNotStored() throws {
-        try saveOnServer(id: "scheduled-id")
-        _ = try waitFor {
-            repository.update(id: "scheduled-id", content: content(text: "Updated", quotedMessageId: "quoted"), scheduledAt: nil, completion: $0)
-        }.get()
-        apiClient.test_mockResponseResult(.success(updateResponse(.dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId)))))
-        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }.get()
-        let body = try XCTUnwrap(apiClient.request_endpoint).bodyAsDictionary()
-        XCTAssertEqual((body["message"] as? [String: Any])?["quoted_message_id"] as? String, "quoted")
-    }
-
     // MARK: - Delete
 
     func test_delete_ofAMessageNotOnTheServerYet_onlyDeletesItLocally() throws {
