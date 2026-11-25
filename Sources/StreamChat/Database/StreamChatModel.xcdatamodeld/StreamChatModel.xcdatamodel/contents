@@ -253,6 +253,7 @@
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="members" inverseEntity="ChannelDTO"/>
         <relationship name="membershipChannel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="membership" inverseEntity="ChannelDTO"/>
         <relationship name="queries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelMemberListQueryDTO" inverseName="members" inverseEntity="ChannelMemberListQueryDTO"/>
+        <relationship name="scheduledMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScheduledMessageDTO" inverseName="channelMembers" inverseEntity="ScheduledMessageDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="members" inverseEntity="UserDTO"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
@@ -567,6 +568,7 @@
     </entity>
     <entity name="ScheduledMessageDTO" representedClassName="ScheduledMessageDTO" syncable="YES">
         <attribute name="channelImageURL" optional="YES" attributeType="URI"/>
+        <attribute name="channelMemberCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="channelName" optional="YES" attributeType="String"/>
         <attribute name="cid" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -583,6 +585,7 @@
         <attribute name="status" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="scheduledMessages" inverseEntity="ChannelDTO"/>
+        <relationship name="channelMembers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="scheduledMessages" inverseEntity="MemberDTO"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="scheduledMessage" inverseEntity="MessageDTO"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>

@@ -980,7 +980,30 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         skipDraftUpdate: Bool = false,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
-        let cid = try ChannelId(cid: channelDTO.cid)
+        try saveMessage(
+            payload: payload,
+            channel: channelDTO,
+            syncOwnReactions: syncOwnReactions,
+            skipDraftUpdate: skipDraftUpdate,
+            cache: cache
+        )
+    }
+
+    /// Saves the quoted message of a scheduled message. Without a stored channel the quote is saved without one, and
+    /// saving the messages of the channel later completes it.
+    func saveQuotedScheduledMessage(payload: MessageResponse) throws -> MessageDTO {
+        let channel = ChannelDTO.load(cid: try ChannelId(cid: payload.cid), context: self)
+        return try saveMessage(payload: payload, channel: channel, syncOwnReactions: false, skipDraftUpdate: true, cache: nil)
+    }
+
+    private func saveMessage(
+        payload: MessageResponse,
+        channel channelDTO: ChannelDTO?,
+        syncOwnReactions: Bool,
+        skipDraftUpdate: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        let cid = try ChannelId(cid: channelDTO?.cid ?? payload.cid)
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
 
         if dto.localMessageState == .pendingSend || dto.localMessageState == .pendingSync {
@@ -991,7 +1014,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if let localDate = dto.textUpdatedAt?.bridgeDate,
            let payloadDate = payload.messageTextUpdatedAt,
            localDate.isLaterAtServerPrecision(than: payloadDate) {
-            dto.channel = channelDTO
+            if let channelDTO {
+                dto.channel = channelDTO
+            }
             return dto
         }
 
@@ -1043,10 +1068,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.pinnedBy = try saveUser(payload: pinnedByUser)
         }
 
-        if dto.pinned && !channelDTO.pinnedMessages.contains(dto) {
-            channelDTO.pinnedMessages.insert(dto)
-        } else if !dto.pinned {
-            channelDTO.pinnedMessages.remove(dto)
+        if let channelDTO {
+            if dto.pinned && !channelDTO.pinnedMessages.contains(dto) {
+                channelDTO.pinnedMessages.insert(dto)
+            } else if !dto.pinned {
+                channelDTO.pinnedMessages.remove(dto)
+            }
         }
 
         if let quotedMessageId = payload.quotedMessageId,
@@ -1057,7 +1084,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         } else if let quotedMessage = payload.quotedMessage {
             dto.quotedMessage = try saveMessage(
                 payload: quotedMessage,
-                channelDTO: channelDTO,
+                channel: channelDTO,
                 syncOwnReactions: false,
                 skipDraftUpdate: false,
                 cache: cache
@@ -1120,13 +1147,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let restrictedVisibility = Set(payload.restrictedVisibility)
         dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
 
-        let isSystemMessage = dto.type == MessageType.system.rawValue
-        let shouldNotUpdateLastMessageAt = isSystemMessage && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
-        if !shouldNotUpdateLastMessageAt {
-            channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
+        if let channelDTO {
+            let isSystemMessage = dto.type == MessageType.system.rawValue
+            let shouldNotUpdateLastMessageAt = isSystemMessage && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
+            if !shouldNotUpdateLastMessageAt {
+                channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
+            }
+
+            dto.channel = channelDTO
         }
-        
-        dto.channel = channelDTO
 
         dto.latestReactions = payload
             .latestReactions
@@ -1177,7 +1206,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         // Calculate reads if the message is authored by the current user.
-        if payload.user.id == currentUser?.user.id {
+        if let channelDTO, payload.user.id == currentUser?.user.id {
             dto.updateReadBy(withChannelReads: channelDTO.reads)
         }
 

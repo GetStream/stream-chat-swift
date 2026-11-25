@@ -73,7 +73,10 @@ public final class ScheduledMessageList: Sendable {
     ///
     /// - Parameter id: The id of the scheduled message.
     ///
-    /// - Throws: An error while deleting the scheduled message.
+    /// - Throws: An error while deleting the scheduled message. It is `ClientError.ScheduledMessageAlreadySent` when
+    /// the server already sent the message, and `ClientError.ScheduledMessageDoesNotExist` when the server no longer has it,
+    /// for example because it was deleted on another device. In both cases the message is removed locally.
+    /// It is `ClientError.ScheduledMessageIsBeingSent` when the server is sending the message right now.
     public func deleteScheduledMessage(id: String) async throws {
         try await scheduledMessagesRepository.delete(id: id)
     }
