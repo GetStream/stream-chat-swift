@@ -5,6 +5,7 @@
 "composer.editing" = "Editing message";
 "composer.button.cancel_editing" = "Cancel editing";
 "streaming.code_block.language_fallback" = "plain text";
+"streaming.image_link" = "Image: %@";
 "conversation.button.scroll_to_latest" = "Scroll to latest";
 "conversation.error.agent" = "The agent couldn't answer. Try again.";
 "sidebar.button.close" = "Close menu";
