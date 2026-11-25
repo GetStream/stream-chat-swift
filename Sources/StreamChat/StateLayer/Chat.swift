@@ -111,7 +111,7 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func watch() async throws {
-        try await channelUpdater.startWatching(cid: cid, isInRecoveryMode: false)
+        try await channelUpdater.startWatching(cid: cid, includeScheduledMessages: state.channelQuery.includeScheduledMessages, isInRecoveryMode: false)
         client.syncRepository.startTrackingChat(self)
     }
     

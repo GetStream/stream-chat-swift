@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix scheduled messages going out of sync with the server [#4426](https://github.com/GetStream/stream-chat-swift/pull/4426)
 
 # [5.18.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.18.0)
 _November 25, 2026_

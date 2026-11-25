@@ -111,12 +111,20 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteScheduledMessage(id: id)
     }
 
+    func saveScheduledMessages(payload: [ScheduledMessageResponse], cid: ChannelId) {
+        underlyingSession.saveScheduledMessages(payload: payload, cid: cid)
+    }
+
     func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?) {
         underlyingSession.deleteScheduledMessages(notIn: ids, cid: cid)
     }
 
     func rescueScheduledMessagesStuckInSyncing() {
         underlyingSession.rescueScheduledMessagesStuckInSyncing()
+    }
+
+    func restartFailedUploadsOfPendingScheduledMessages() {
+        underlyingSession.restartFailedUploadsOfPendingScheduledMessages()
     }
 
     func saveUserGroup(payload: UserGroup) throws -> UserGroupDTO {

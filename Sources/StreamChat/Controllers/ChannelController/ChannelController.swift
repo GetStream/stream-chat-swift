@@ -1630,7 +1630,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         client.syncRepository.startTrackingChannelController(self)
 
-        updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
+        updater.startWatching(cid: cid, includeScheduledMessages: channelQuery.includeScheduledMessages, isInRecoveryMode: isInRecoveryMode) { error in
             self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
             self.callback {
                 completion?(error)

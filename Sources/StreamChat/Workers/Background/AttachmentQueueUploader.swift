@@ -97,6 +97,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
                         attachmentId: id,
                         uploadedAttachment: nil,
                         newState: .uploadingFailed,
+                        uploadError: error,
                         completion: { [weak self] in
                             self?.removePendingAttachment(with: id, result: .failure(error))
                         }
@@ -118,6 +119,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
                             attachmentId: id,
                             uploadedAttachment: result.value,
                             newState: result.error == nil ? .uploaded : .uploadingFailed,
+                            uploadError: result.error,
                             completion: { [weak self] in
                                 self?.removePendingAttachment(with: id, result: result)
                             }
@@ -193,6 +195,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
         attachmentId: AttachmentId,
         uploadedAttachment: UploadedAttachment?,
         newState: LocalAttachmentState,
+        uploadError: Error? = nil,
         completion: @escaping @Sendable () -> Void = {}
     ) {
         database.write({ [minSignificantUploadingProgressChange, weak self] session in
@@ -228,7 +231,16 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
             
             // If attachment failed upload, mark message as failed
             if newState == .uploadingFailed {
-                message.localMessageState = .sendingFailed
+                if let scheduledMessage = message.scheduledMessage {
+                    // A scheduled message stays scheduled without a connection. The `MessageScheduler` uploads its
+                    // attachments again once connected.
+                    if uploadError?.isInternetOfflineError != true {
+                        // A scheduled message already on the server keeps its changes as an update.
+                        message.localMessageState = scheduledMessage.isLocalOnly ? .sendingFailed : .syncingFailed
+                    }
+                } else {
+                    message.localMessageState = .sendingFailed
+                }
             }
 
             if var uploadedAttachment = uploadedAttachment {

@@ -13,7 +13,8 @@ import Foundation
 ///     3. When all the attachments are uploaded, the scheduler sends the message with its schedule date, and the local
 ///     state changes to `sending`.
 ///     4. If the request is successful, the local state of the message is changed to `nil`. If the request fails, the local
-///     state is changed to `sendingFailed`. Without a connection, the message is sent again once connected.
+///     state is changed to `sendingFailed`. Without a connection, the message is sent again once connected, and
+///     attachments that failed to upload are uploaded again.
 ///
 /// Editing or rescheduling a message goes through the same phases, with the `pendingSync`, `syncing` and
 /// `syncingFailed` local states.
@@ -39,7 +40,11 @@ class MessageScheduler: Worker, @unchecked Sendable {
     }
 
     func didUpdateConnectionState(_ state: WebSocketConnectionState) {
-        guard state.isConnected, isWaitingForConnection else { return }
+        guard state.isConnected else { return }
+        database.write {
+            $0.restartFailedUploadsOfPendingScheduledMessages()
+        }
+        guard isWaitingForConnection else { return }
         isWaitingForConnection = false
         log.debug("Message scheduler resumed sending scheduled messages after establishing internet connection")
         enqueue(observer.items)

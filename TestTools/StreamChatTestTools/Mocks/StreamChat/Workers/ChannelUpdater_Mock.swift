@@ -153,6 +153,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var disableSlowMode_completion_result: Result<Void, Error>?
 
     @Atomic var startWatching_cid: ChannelId?
+    @Atomic var startWatching_includeScheduledMessages: Bool?
     @Atomic var startWatching_isInRecoveryMode: Bool?
     @Atomic var startWatching_completion: ((Error?) -> Void)?
     @Atomic var startWatching_completion_result: Result<Void, Error>?
@@ -315,6 +316,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         disableSlowMode_completion_result = nil
 
         startWatching_cid = nil
+        startWatching_includeScheduledMessages = nil
         startWatching_isInRecoveryMode = nil
         startWatching_completion = nil
         startWatching_completion_result = nil
@@ -621,8 +623,9 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         disableSlowMode_completion_result?.invoke(with: completion)
     }
 
-    override func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
+    override func startWatching(cid: ChannelId, includeScheduledMessages: Bool = false, isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
         startWatching_cid = cid
+        startWatching_includeScheduledMessages = includeScheduledMessages
         startWatching_isInRecoveryMode = isInRecoveryMode
         startWatching_completion = completion
         startWatching_completion_result?.invoke(with: completion)

@@ -313,7 +313,10 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             let isEphemeral = ClientError.isEphemeral(error: error)
             let apiError = (error as? ClientError)?.apiError
             let reason = apiError.flatMap(ScheduledMessageFailure.ServerRejection.Reason.init(apiError:))
-            if reason == .scheduledMessageAlreadySent || reason == .scheduledMessageCanceled {
+            // A 404 means the message is gone only when sending now. Scheduling and updating also fail with it for a
+            // deleted quoted message, or a missing parent message or channel.
+            let isGoneFromServer = pendingState == nil && error.isBackendNotFound404StatusCode
+            if reason == .scheduledMessageAlreadySent || reason == .scheduledMessageCanceled || isGoneFromServer {
                 // It went out at its date, or was deleted on another device, while this device was offline.
                 database.write({ session in
                     session.deleteScheduledMessage(id: id)

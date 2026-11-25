@@ -252,6 +252,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             message.createdAt = scheduledAt.bridgeDate
             dto.hasPendingScheduledAt = !dto.isLocalOnly
         }
+        message.restartFailedUploads()
         dto.updatedAt = Date().bridgeDate
         dto.syncErrorReason = nil
         dto.syncErrorMessage = nil
@@ -329,7 +330,6 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         return dto
     }
 
-    /// Saves the scheduled messages of a channel query, which are all the scheduled messages of the channel.
     func saveScheduledMessages(payload: [ScheduledMessageResponse], cid: ChannelId) {
         payload.forEach { payload in
             do {
@@ -357,6 +357,18 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         request.predicate = NSPredicate(format: "message.localMessageStateRaw == %@", LocalMessageState.syncing.rawValue)
         ScheduledMessageDTO.load(by: request, context: self).forEach {
             $0.message?.localMessageState = .pendingSync
+        }
+    }
+
+    func restartFailedUploadsOfPendingScheduledMessages() {
+        let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        request.predicate = NSPredicate(
+            format: "message.localMessageStateRaw IN %@ AND ANY message.attachments.localStateRaw == %@",
+            [LocalMessageState.pendingSend.rawValue, LocalMessageState.pendingSync.rawValue],
+            LocalAttachmentState.uploadingFailed.rawValue
+        )
+        ScheduledMessageDTO.load(by: request, context: self).forEach {
+            $0.message?.restartFailedUploads()
         }
     }
 
@@ -484,6 +496,14 @@ extension ScheduledMessageDTO {
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate
         )
+    }
+}
+
+extension MessageDTO {
+    func restartFailedUploads() {
+        attachments
+            .filter { $0.localState == .uploadingFailed }
+            .forEach { $0.localState = .pendingUpload }
     }
 }
 
