@@ -477,7 +477,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         )
         _ = try XCTUnwrap(model(from: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), message: content)))
 
-        let error = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }
+        let error = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }.error
 
         XCTAssertTrue(error is ClientError.ScheduledMessageQuotesADeletedMessage, "\(String(describing: error))")
         XCTAssertNil(apiClient.request_endpoint)
