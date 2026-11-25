@@ -12,10 +12,10 @@
   <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
 <p align="center">
-  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.48%20MB-blue"/>
+  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.47%20MB-blue"/>
   <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-3.4%20MB-blue"/>
   <img id="stream-chat-common-ui-label" alt="StreamChatCommonUI" src="https://img.shields.io/badge/StreamChatCommonUI-1.03%20MB-blue"/>
-  <img id="stream-chat-ai-label" alt="StreamChatAI" src="https://img.shields.io/badge/StreamChatAI-2.91%20MB-blue"/>
+  <img id="stream-chat-ai-label" alt="StreamChatAI" src="https://img.shields.io/badge/StreamChatAI-2.95%20MB-blue"/>
 </p>
 
 This is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications. This library includes both a low-level SDK and a set of reusable UI components.

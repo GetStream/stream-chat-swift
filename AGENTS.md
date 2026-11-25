@@ -38,11 +38,14 @@ Agents should prioritize backwards compatibility, API stability, and high test c
   - `Sources/StreamChatUI/StreamSwiftyGif/` — vendored SwiftyGif
   - `Sources/StreamChatUI/StreamDifferenceKit/` — vendored DifferenceKit for collection diffing
   - `Sources/StreamChat/StreamStarscream/` — vendored Starscream for WebSocket
-  - `Sources/StreamChatAI/StreamSplash/` — vendored Splash (0.16.0) for code syntax highlighting
+  - `Sources/StreamChatAI/StreamSplash/` — vendored Splash (0.16.0) for code syntax highlighting. Splash is no longer maintained
   - `Sources/StreamChatAI/StreamMarkdownUI/` — vendored MarkdownUI (2.4.0), with fixes for Swift 6 that an update overwrites
   - `Sources/StreamChatAI/StreamNetworkImage/` — vendored NetworkImage (6.0.1), used by MarkdownUI
-  - `Sources/StreamChatAICMark/` — MarkdownUI's cmark-gfm as an internal C target. Every global symbol has a `stream_` prefix, so it links next to an app's own cmark-gfm
-  - Update these via `make update_swiftygif version=X.Y.Z` / `make update_differencekit version=X.Y.Z` / `make update_splash version=X.Y.Z` / `make update_markdownui version=X.Y.Z` / `make update_networkimage version=X.Y.Z`
+  - `Sources/StreamChatAICMark/` — cmark-gfm (0.29.0.gfm.14) as an internal C target. It comes from github/cmark-gfm, since the copy MarkdownUI bundles is older. Every global symbol has a `stream_` prefix, so it links next to an app's own cmark-gfm
+  - Update these via `make update_swiftygif version=X.Y.Z` / `make update_differencekit version=X.Y.Z` / `make update_splash version=X.Y.Z` / `make update_markdownui version=X.Y.Z` / `make update_cmark version=X.Y.Z.gfm.N` / `make update_networkimage version=X.Y.Z`
+  - An update overwrites these local changes; put them back. The tests in `Tests/StreamChatAITests/StreamMarkdownUI` and `Tests/StreamChatAITests/StreamSplash` fail without them:
+    - `StreamMarkdownUI/Parser/MarkdownParser.swift`: content nested deeper than `MarkdownLimits.maxDepth` becomes plain text, since the parser and the views recurse once per level, and tables keep the columns and rows that fit `MarkdownLimits`, since cmark-gfm fills short rows with empty cells, each a view
+    - `StreamSplash/Tokenizing/Tokenizer.swift`: `next()` loops rather than calling itself once per character, and the tokens that rules look back through are limited to `Tokenizer.maxPreviousTokens` and `maxPreviousTokensOnLine`
 
 ### Project layout (high level)
 
@@ -345,6 +348,7 @@ Accessibility & UI quality
 - Ensure UIKit components have accessibility labels, traits, and dynamic type support.
 - Support both light/dark mode.
 - Use the Appearance system (`Appearance`, `Components`) for theming and configuration.
+- Treat the Markdown in a model's replies as untrusted input. `StreamingMessageView` loads no image unless the app allows its host with `aiMarkdownImageLoading(_:)`, and `CodeBlockView` highlights code off the main thread with `CodeHighlighting`, since Splash can be slow on long code.
 - In StreamChatAI, keep code without UI (models, parsing, tool calls) under `AI/`, importing Foundation rather than SwiftUI, and views under `UI/`, one view per file. Split a view whose body grows long into smaller views.
 - In StreamChatAI, take colors, fonts, spacing and icons from `AIAppearance`, never hard-coded values. Each view injects only what it reads, e.g. `@Injected(\.aiAppearance.colors) var colors`, `@Injected(\.aiAppearance.fonts) var fonts`, `@Injected(\.aiAppearance.tokens.layout) var layout`, `@Injected(\.aiAppearance.images) var images`. A new color or font goes in `AIAppearance+Colors.swift` or `AIAppearance+Fonts.swift`, derived from the StreamCore `DesignSystemTokens`; a new icon goes in `AIAppearance.Images`. Don't add `InjectedValues` keys such as `\.colors` or `\.fonts`: StreamChatSwiftUI already defines them. Log with StreamCore's `log`, not `print`. Keep re-exporting only `DesignSystemTokens` from StreamCoreUI: the rest of it clashes with StreamChatCommonUI names such as `ImageResize` and `BoxShadow`.
 

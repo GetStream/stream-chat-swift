@@ -7,6 +7,12 @@
 import Foundation
 
 internal struct Tokenizer {
+    // Rules look back through the tokens before each one, so a history without a limit makes
+    // highlighting take time in proportion to the square of the code's length, or of a line's.
+    // Highlighting changes only in generic declarations and lines longer than these limits.
+    static let maxPreviousTokens = 64
+    static let maxPreviousTokensOnLine = 128
+
     func segmentsByTokenizing(_ code: String,
                               using grammar: Grammar) -> AnySequence<Segment> {
         return AnySequence<Segment> {
@@ -59,65 +65,67 @@ private extension Tokenizer {
             segments = (nil, nil)
         }
 
+        // A loop rather than a call per character, which a long token or run of whitespace in
+        // untrusted code would take past the end of the stack.
         mutating func next() -> Segment? {
-            let nextIndex = makeNextIndex()
+            while true {
+                let nextIndex = makeNextIndex()
 
-            guard nextIndex != code.endIndex else {
-                let segment = segments.current
-                segments.current = nil
-                return segment
-            }
-
-            index = nextIndex
-            let component = makeComponent(at: nextIndex)
-
-            switch component.kind {
-            case .token, .delimiter:
-                guard var segment = segments.current else {
-                    segments.current = makeSegment(with: component, at: nextIndex)
-                    return next()
+                guard nextIndex != code.endIndex else {
+                    let segment = segments.current
+                    segments.current = nil
+                    return segment
                 }
 
-                guard segment.trailingWhitespace == nil,
-                      component.isDelimiter == segment.currentTokenIsDelimiter else {
-                    return finish(segment, with: component, at: nextIndex)
-                }
+                index = nextIndex
+                let component = makeComponent(at: nextIndex)
 
-                if component.isDelimiter {
-                    let previousCharacter = segment.tokens.current.last!
-                    let shouldMerge = grammar.isDelimiter(previousCharacter,
-                                                          mergableWith: component.character)
+                switch component.kind {
+                case .token, .delimiter:
+                    guard var segment = segments.current else {
+                        segments.current = makeSegment(with: component, at: nextIndex)
+                        continue
+                    }
 
-                    guard shouldMerge else {
+                    guard segment.trailingWhitespace == nil,
+                          component.isDelimiter == segment.currentTokenIsDelimiter else {
                         return finish(segment, with: component, at: nextIndex)
                     }
-                }
 
-                segment.tokens.current.append(component.character)
-                segments.current = segment
-                return next()
-            case .whitespace, .newline:
-                guard var segment = segments.current else {
-                    var segment = makeSegment(with: component, at: nextIndex)
-                    segment.trailingWhitespace = component.token
-                    segment.isLastOnLine = component.isNewline
+                    if component.isDelimiter {
+                        let previousCharacter = segment.tokens.current.last!
+                        let shouldMerge = grammar.isDelimiter(previousCharacter,
+                                                              mergableWith: component.character)
+
+                        guard shouldMerge else {
+                            return finish(segment, with: component, at: nextIndex)
+                        }
+                    }
+
+                    segment.tokens.current.append(component.character)
                     segments.current = segment
-                    return next()
-                }
+                case .whitespace, .newline:
+                    guard var segment = segments.current else {
+                        var segment = makeSegment(with: component, at: nextIndex)
+                        segment.trailingWhitespace = component.token
+                        segment.isLastOnLine = component.isNewline
+                        segments.current = segment
+                        continue
+                    }
 
-                if var existingWhitespace = segment.trailingWhitespace {
-                    existingWhitespace.append(component.character)
-                    segment.trailingWhitespace = existingWhitespace
-                } else {
-                    segment.trailingWhitespace = component.token
-                }
+                    if var existingWhitespace = segment.trailingWhitespace {
+                        existingWhitespace.append(component.character)
+                        segment.trailingWhitespace = existingWhitespace
+                    } else {
+                        segment.trailingWhitespace = component.token
+                    }
 
-                if component.isNewline {
-                    segment.isLastOnLine = true
-                }
+                    if component.isNewline {
+                        segment.isLastOnLine = true
+                    }
 
-                segments.current = segment
-                return next()
+                    segments.current = segment
+                }
             }
         }
 
@@ -181,11 +189,13 @@ private extension Tokenizer {
             tokenCounts[segment.tokens.current] = count
 
             allTokens.append(segment.tokens.current)
+            allTokens.keepLast(Tokenizer.maxPreviousTokens)
 
             if segment.isLastOnLine {
                 lineTokens = []
             } else {
                 lineTokens.append(segment.tokens.current)
+                lineTokens.keepLast(Tokenizer.maxPreviousTokensOnLine)
             }
 
             segments.previous = segment
@@ -227,5 +237,13 @@ private extension Character {
 
     var isNewline: Bool {
         return CharacterSet.newlines.contains(self)
+    }
+}
+
+private extension Array {
+    mutating func keepLast(_ count: Int) {
+        if self.count > count {
+            removeFirst(self.count - count)
+        }
     }
 }

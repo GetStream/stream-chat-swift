@@ -17,6 +17,7 @@ final class Localization_Tests: XCTestCase {
         XCTAssertEqual(L10n.Composer.editing, "Editing message")
         XCTAssertEqual(L10n.Composer.cancelEditing, "Cancel editing")
         XCTAssertEqual(L10n.StreamingMessage.codeBlockLanguageFallback, "plain text")
+        XCTAssertEqual(L10n.StreamingMessage.imageLink("a chart"), "Image: a chart")
         XCTAssertEqual(L10n.Conversation.scrollToLatest, "Scroll to latest")
         XCTAssertEqual(L10n.Conversation.agentError, "The agent couldn't answer. Try again.")
         XCTAssertEqual(L10n.Sidebar.close, "Close menu")

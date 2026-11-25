@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix scheduled messages going out of sync with the server [#4426](https://github.com/GetStream/stream-chat-swift/pull/4426)
 
+# [5.18.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.18.0)
+_November 25, 2026_
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix the composer sending typing events when attachments are added or removed [#4407](https://github.com/GetStream/stream-chat-swift/pull/4407)
@@ -14,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatAI
 ### ✅ Added
 - Add `transcription.error.speech_recognition_denied`, `transcription.error.microphone_denied` and `sidebar.button.close` localization keys [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
+- Add `aiMarkdownImageLoading(_:)` to choose which hosts images in agent replies load from [#4437](https://github.com/GetStream/stream-chat-swift/pull/4437)
+- Add the `streaming.image_link` localization key [#4437](https://github.com/GetStream/stream-chat-swift/pull/4437)
 ### 🐞 Fixed
 - Fix late replies, stops and repeated edits showing the wrong state in `AIConversation` [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 - Fix streamed answers freezing, repeating or dropping characters [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
@@ -21,6 +26,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix dictation starting without speech or microphone permission, or after the composer went away [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 - Fix charts crashing on extreme values [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 - Fix finished replies growing as they scroll into `AIConversationView` [#4425](https://github.com/GetStream/stream-chat-swift/pull/4425)
+### 🔄 Changed
+- Update the bundled cmark-gfm to 0.29.0.gfm.14 [#4436](https://github.com/GetStream/stream-chat-swift/pull/4436)
+- Show images in agent replies as links unless the app allows their host [#4437](https://github.com/GetStream/stream-chat-swift/pull/4437)
+- Highlight code in agent replies off the main thread [#4437](https://github.com/GetStream/stream-chat-swift/pull/4437)
+- Show content nested deeper than 32 levels as plain text, and at most 32 columns and 2,000 cells of a table [#4437](https://github.com/GetStream/stream-chat-swift/pull/4437)
 
 ## StreamChatA2UI
 ### 🐞 Fixed
