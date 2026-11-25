@@ -59,7 +59,7 @@ jobs:
 
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ fromJSON(needs.guard.outputs.checks).ui || fromJSON(needs.guard.outputs.checks).common_ui || fromJSON(needs.guard.outputs.checks).e2e }}
     needs: guard
     outputs:
@@ -109,7 +109,7 @@ jobs:
 
   validate-generated-code:
     name: Validate Generated Code
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     needs: guard
     env:
       XCODE_VERSION: "16.1"
@@ -121,7 +121,7 @@ jobs:
 
   build-old-xcode:
     name: Build SDKs (Old Xcode)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ github.event.inputs.record_snapshots != 'true' && (fromJSON(needs.guard.outputs.checks).llc || fromJSON(needs.guard.outputs.checks).ui || fromJSON(needs.guard.outputs.checks).common_ui || fromJSON(needs.guard.outputs.checks).ai || fromJSON(needs.guard.outputs.checks).a2ui || fromJSON(needs.guard.outputs.checks).openui) }}
     needs: guard
     env:
@@ -159,7 +159,7 @@ jobs:
 
   test-llc-debug:
     name: Test LLC (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).llc }}
     needs: guard
     steps:
@@ -230,7 +230,7 @@ jobs:
 
   test-ui-debug:
     name: Test UI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ !cancelled() && !failure() && fromJSON(needs.guard.outputs.checks).ui }}
     needs:
       - guard
@@ -277,7 +277,7 @@ jobs:
 
   test-common-ui-debug:
     name: Test Common UI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ !cancelled() && !failure() && fromJSON(needs.guard.outputs.checks).common_ui }}
     needs:
       - guard
@@ -319,7 +319,7 @@ jobs:
 
   test-ai-debug:
     name: Test AI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).ai }}
     needs: guard
     steps:
@@ -355,7 +355,7 @@ jobs:
 
   test-a2ui-debug:
     name: Test A2UI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).a2ui }}
     needs: guard
     steps:
@@ -391,7 +391,7 @@ jobs:
 
   test-openui-debug:
     name: Test OpenUI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).openui }}
     needs: guard
     steps:
@@ -448,7 +448,7 @@ jobs:
 
   test-e2e-debug:
     name: Test E2E UI (Debug)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ !cancelled() && !failure() && github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' && fromJSON(needs.guard.outputs.checks).e2e }}
     needs:
       - guard
@@ -531,7 +531,7 @@ jobs:
 
   build-apps:
     name: Build Demo App + Example Apps
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).sample_apps }}
     needs: guard
     steps:
@@ -556,7 +556,7 @@ jobs:
 
   test-integration:
     name: Test Integration
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).integration }}
     needs: guard
     steps:
@@ -569,7 +569,7 @@ jobs:
 
   build-tvos:
     name: Build LLC (tvOS)
-    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
+    runs-on: { group: scaleway-macos }
     if: ${{ github.event.inputs.record_snapshots != 'true' && fromJSON(needs.guard.outputs.checks).tvos }}
     needs: guard
     steps:
