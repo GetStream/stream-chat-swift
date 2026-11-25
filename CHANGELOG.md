@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix dictation starting without speech or microphone permission, or after the composer went away [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 - Fix charts crashing on extreme values [#4422](https://github.com/GetStream/stream-chat-swift/pull/4422)
 - Fix finished replies growing as they scroll into `AIConversationView` [#4425](https://github.com/GetStream/stream-chat-swift/pull/4425)
+### 🔄 Changed
+- Update the bundled cmark-gfm to 0.29.0.gfm.14 [#4436](https://github.com/GetStream/stream-chat-swift/pull/4436)
 
 ## StreamChatA2UI
 ### 🐞 Fixed

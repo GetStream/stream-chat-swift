@@ -111,13 +111,13 @@ typedef struct cmark_mem {
  * realloc and free.
  */
 CMARK_GFM_EXPORT
-cmark_mem *stream_cmark_get_default_mem_allocator();
+cmark_mem *stream_cmark_get_default_mem_allocator(void);
 
 /** An arena allocator; uses system calloc to allocate large
  * slabs of memory.  Memory in these slabs is not reused at all.
  */
 CMARK_GFM_EXPORT
-cmark_mem *stream_cmark_get_arena_mem_allocator();
+cmark_mem *stream_cmark_get_arena_mem_allocator(void);
 
 /** Resets the arena allocator, quickly returning all used memory
  * to the operating system.
@@ -224,6 +224,11 @@ CMARK_GFM_EXPORT cmark_node *stream_cmark_node_first_child(cmark_node *node);
 /** Returns the last child of 'node', or NULL if 'node' has no children.
  */
 CMARK_GFM_EXPORT cmark_node *stream_cmark_node_last_child(cmark_node *node);
+
+/** Returns the footnote reference of 'node', or NULL if 'node' doesn't have a
+ * footnote reference.
+ */
+CMARK_GFM_EXPORT cmark_node *stream_cmark_node_parent_footnote_def(cmark_node *node);
 
 /**
  * ## Iterator
@@ -407,6 +412,17 @@ CMARK_GFM_EXPORT int stream_cmark_node_get_list_tight(cmark_node *node);
 /** Sets the "tightness" of a list.  Returns 1 on success, 0 on failure.
  */
 CMARK_GFM_EXPORT int stream_cmark_node_set_list_tight(cmark_node *node, int tight);
+
+/**
+ * Returns item index of 'node'. This is only used when rendering output
+ * formats such as commonmark, which need to output the index. It is not
+ * required for formats such as html or latex.
+ */
+CMARK_GFM_EXPORT int stream_cmark_node_get_item_index(cmark_node *node);
+
+/** Sets item index of 'node'. Returns 1 on success, 0 on failure.
+ */
+CMARK_GFM_EXPORT int stream_cmark_node_set_item_index(cmark_node *node, int idx);
 
 /** Returns the info string from a fenced code block.
  */
