@@ -58,8 +58,16 @@ final class DefaultScheduledMessageDateFormatter_Tests: XCTestCase {
     func test_format_inALocaleWithLowercaseDays_capitalizesTheDay() {
         locale = Locale(identifier: "et_EE")
         subject = DefaultScheduledMessageDateFormatter(calendar: calendar, locale: locale)
-        let weekday = date(daysFromNow: 2, hour: 9)
+        let weekday = date(daysFromNow: 3, hour: 9)
         XCTAssertEqual(subject.format(date(daysFromNow: 1, hour: 9)), "Homme at 09:00")
+        XCTAssertEqual(subject.format(weekday), "\(expected(weekday, template: "EEEE").capitalized) at 09:00")
+    }
+
+    func test_format_inALocaleThatNamesTheDayAfterTomorrow_returnsTheName() {
+        locale = Locale(identifier: "fr_FR")
+        subject = DefaultScheduledMessageDateFormatter(calendar: calendar, locale: locale)
+        let weekday = date(daysFromNow: 3, hour: 9)
+        XCTAssertEqual(subject.format(date(daysFromNow: 2, hour: 9)), "Après-demain at 09:00")
         XCTAssertEqual(subject.format(weekday), "\(expected(weekday, template: "EEEE").capitalized) at 09:00")
     }
 

@@ -17,14 +17,14 @@ public protocol ScheduledMessageDateFormatter {
 /// The default scheduled message date formatter.
 ///
 /// Formatting rules for the day, which is followed by the time:
-/// - Same day: "Today"
-/// - Next day: "Tomorrow"
-/// - 2–6 days ahead: the weekday, for example "Monday"
+/// - A day up to 6 days ahead that the locale has a name for: the name, for example "Today", "Tomorrow" or the French "Après-demain"
+/// - Another day up to 6 days ahead: the weekday, for example "Monday"
 /// - Another day of the current year: "Fri, Oct 23"
 /// - Another year: "Fri, Oct 23, 2027"
 open class DefaultScheduledMessageDateFormatter: ScheduledMessageDateFormatter {
     private let calendar: Calendar
     private let relativeDateFormatter: DateFormatter
+    private let dateFormatter: DateFormatter
     private let weekdayFormatter: DateFormatter
     private let dayFormatter: DateFormatter
     private let dayWithYearFormatter: DateFormatter
@@ -51,6 +51,9 @@ open class DefaultScheduledMessageDateFormatter: ScheduledMessageDateFormatter {
         relativeDateFormatter.dateStyle = .medium
         relativeDateFormatter.timeStyle = .none
         relativeDateFormatter.doesRelativeDateFormatting = true
+        dateFormatter = makeFormatter(nil)
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .none
         weekdayFormatter = makeFormatter("EEEE")
         dayFormatter = makeFormatter("EEEMMMd")
         dayWithYearFormatter = makeFormatter("EEEMMMdy")
@@ -59,8 +62,9 @@ open class DefaultScheduledMessageDateFormatter: ScheduledMessageDateFormatter {
         timeFormatter.timeStyle = .short
         timeZoneFormatter = makeFormatter(nil)
         timeZoneFormatter.dateFormat = "O"
-        // The day starts the text, so it is capitalized in every locale.
-        [relativeDateFormatter, weekdayFormatter, dayFormatter, dayWithYearFormatter].forEach {
+        // The day starts the text, so it is capitalized in every locale. The date without a relative name is compared
+        // with the relative day, so it uses the same context.
+        [relativeDateFormatter, dateFormatter, weekdayFormatter, dayFormatter, dayWithYearFormatter].forEach {
             $0.formattingContext = .beginningOfSentence
         }
     }
@@ -73,10 +77,10 @@ open class DefaultScheduledMessageDateFormatter: ScheduledMessageDateFormatter {
         ).day ?? 0
         let day: String
         switch days {
-        case 0...1:
-            day = relativeDateFormatter.string(from: date)
-        case 2...6:
-            day = weekdayFormatter.string(from: date)
+        case 0...6:
+            // Locales name a different number of days, for example the French "après-demain".
+            let relativeDay = relativeDateFormatter.string(from: date)
+            day = relativeDay != dateFormatter.string(from: date) ? relativeDay : weekdayFormatter.string(from: date)
         default:
             day = formatAbsoluteDay(date)
         }
