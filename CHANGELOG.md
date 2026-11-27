@@ -23,6 +23,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🎭 New Localizations
 - Add `scheduled-message.date.day-at-time` and `scheduled-message.failure.*` keys [#4427](https://github.com/GetStream/stream-chat-swift/pull/4427)
 
+## StreamChatAI
+### ✅ Added
+- Add `assistantMessageText`, `assistantMessageLink` and `assistantMessageTableBorder` colors, and `attachmentPickerTileFailureIcon`, `attachmentBadgeIcon` and `reasoningDisclosure` fonts to `AIAppearance` [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+### 🔄 Changed
+- Take the spacing, sizes, fonts, shadows and reply colors of the AI components from the design tokens [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+
+## StreamChatA2UI
+### ✅ Added
+- Add `spacing`, `buttonHorizontalPadding` and `buttonVerticalPadding` to `A2UITheme` [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+### 🐞 Fixed
+- Fix fields, chips and buttons blending into cards in dark mode [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+### 🔄 Changed
+- Take the components' spacing from the theme, and their controls' color from its accent [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+
+## StreamChatOpenUI
+### ✅ Added
+- Add `OpenUITheme.Spacing.xxs` [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+### 🐞 Fixed
+- Fix fields, chips and option cards blending into cards in dark mode, and tags in light mode [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+### 🔄 Changed
+- Take the components' spacing and fonts from the theme and design tokens, and their controls' color from its accent [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+
 # [5.18.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.18.0)
 _November 25, 2026_
 
