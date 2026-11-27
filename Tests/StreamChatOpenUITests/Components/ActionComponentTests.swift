@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChatOpenUI
+import SwiftUI
 import Testing
 
 @MainActor
@@ -16,6 +17,24 @@ struct ActionComponentTests {
         (["steps": [["type": "run", "refType": "query"]]], false),
         (["steps": [["type": "open_url"]]], false)
     ]
+
+    @Test func aButtonIsACapsuleOnceItsRadiusReachesHalfItsHeight() {
+        let rect = CGRect(x: 0, y: 0, width: 120, height: 40)
+
+        #expect(OpenUIButtonShape(cornerRadius: 9999).path(in: rect) == Capsule(style: .continuous).path(in: rect))
+        #expect(OpenUIButtonShape(cornerRadius: 20).path(in: rect) == Capsule(style: .continuous).path(in: rect))
+        #expect(OpenUIButtonShape(cornerRadius: 6).path(in: rect) == RoundedRectangle(cornerRadius: 6, style: .continuous).path(in: rect))
+    }
+
+    @Test func aButtonIsAsTallAsTheThemeSaysForItsSize() {
+        let heights = OpenUITheme().buttonHeights
+
+        #expect(heights.height(for: .mini) == heights.extraSmall)
+        #expect(heights.height(for: .small) == heights.small)
+        #expect(heights.height(for: .regular) == heights.medium)
+        #expect(heights.height(for: .large) == heights.large)
+        #expect(heights.height(for: .extraLarge) == heights.large)
+    }
 
     @Test(arguments: actions)
     func primaryButtonsValidateBeforeActionsThatSendTheForm(_ action: OpenUIValue, _ validates: Bool) {

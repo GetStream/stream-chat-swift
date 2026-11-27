@@ -80,8 +80,9 @@ struct ButtonComponentView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: variant == "tertiary" ? nil : .infinity)
         }
-        .modifier(OpenUIButtonStyle(variant: variant))
-        .tint(destructive ? theme.colors.danger : theme.colors.accent)
+        .buttonStyle(OpenUIButtonStyle(variant: variant, isDestructive: destructive))
+        // A tertiary button is as wide as its title; the others in its row share what is left.
+        .layoutPriority(variant == "tertiary" ? 1 : 0)
         .controlSize(Self.controlSize(size))
         .disabled(context.isStreaming)
     }
@@ -116,18 +117,98 @@ struct ButtonComponentView: View {
     }
 }
 
+/// A button in the theme: its height for the control size, its corners, and the colors of its
+/// variant, `primary`, `secondary` or `tertiary`.
 @available(iOS 17.0, macOS 14.0, *)
-struct OpenUIButtonStyle: ViewModifier {
+struct OpenUIButtonStyle: ButtonStyle {
     let variant: String
+    var isDestructive = false
+    /// An icon button, as wide as it is tall.
+    var isIconOnly = false
+    var isCircle = false
 
-    func body(content: Content) -> some View {
+    @Environment(\.openUITheme) private var theme
+    @Environment(\.controlSize) private var controlSize
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        let height = theme.buttonHeights.height(for: controlSize)
+        let shape = OpenUIButtonShape(cornerRadius: isCircle ? .greatestFiniteMagnitude : theme.radius.button)
+        configuration.label
+            .font((controlSize == .large || controlSize == .extraLarge ? theme.fonts.body : theme.fonts.bodySmall).weight(.semibold))
+            .padding(.horizontal, isIconOnly ? 0 : (controlSize == .mini ? theme.spacing.m : theme.spacing.l))
+            .frame(minWidth: isIconOnly ? height : nil, minHeight: height)
+            .foregroundStyle(foreground)
+            .background(background, in: shape)
+            .overlay {
+                if kind == .secondary {
+                    shape.strokeBorder(isDestructive ? theme.colors.danger : theme.colors.border, lineWidth: 1)
+                }
+            }
+            .contentShape(shape)
+            .opacity(configuration.isPressed ? 0.7 : (isEnabled ? 1 : 0.5))
+    }
+
+    private enum Kind {
+        case primary, secondary, tertiary
+    }
+
+    private var kind: Kind {
         switch variant {
-        case "secondary":
-            content.buttonStyle(.bordered)
-        case "tertiary", "ghost":
-            content.buttonStyle(.borderless)
-        default:
-            content.buttonStyle(.borderedProminent)
+        case "secondary": return .secondary
+        case "tertiary", "ghost": return .tertiary
+        default: return .primary
+        }
+    }
+
+    private var foreground: Color {
+        switch kind {
+        case .primary: return theme.colors.onAccent
+        case .secondary: return isDestructive ? theme.colors.danger : theme.colors.textPrimary
+        case .tertiary: return isDestructive ? theme.colors.danger : theme.colors.accent
+        }
+    }
+
+    private var background: Color {
+        switch kind {
+        case .primary: return isDestructive ? theme.colors.danger : theme.colors.accent
+        case .secondary: return theme.colors.sunkenSurface
+        case .tertiary: return .clear
+        }
+    }
+}
+
+// A rounded rectangle that is a capsule once its radius reaches half its height: a continuous
+// corner larger than that leaves points at the ends.
+@available(iOS 17.0, macOS 14.0, *)
+struct OpenUIButtonShape: InsettableShape {
+    let cornerRadius: CGFloat
+    var inset: CGFloat = 0
+
+    func path(in rect: CGRect) -> Path {
+        let rect = rect.insetBy(dx: inset, dy: inset)
+        let radius = max(cornerRadius - inset, 0)
+        if radius * 2 >= min(rect.width, rect.height) {
+            return Capsule(style: .continuous).path(in: rect)
+        }
+        return RoundedRectangle(cornerRadius: radius, style: .continuous).path(in: rect)
+    }
+
+    func inset(by amount: CGFloat) -> OpenUIButtonShape {
+        var shape = self
+        shape.inset += amount
+        return shape
+    }
+}
+
+@available(iOS 17.0, macOS 14.0, *)
+extension OpenUITheme.ButtonHeights {
+    func height(for controlSize: ControlSize) -> CGFloat {
+        switch controlSize {
+        case .mini: return extraSmall
+        case .small: return small
+        case .large, .extraLarge: return large
+        default: return medium
         }
     }
 }
@@ -176,9 +257,7 @@ struct IconButtonView: View {
             OpenUIIconImage(element: props.element("icon"))
                 .frame(width: iconSize, height: iconSize)
         }
-        .modifier(OpenUIButtonStyle(variant: variant))
-        .tint(theme.colors.accent)
-        .buttonBorderShape(props.string("shape") == "circle" ? .circle : .roundedRectangle)
+        .buttonStyle(OpenUIButtonStyle(variant: variant, isIconOnly: true, isCircle: props.string("shape") == "circle"))
         .controlSize(ButtonComponentView.controlSize(props.string("size") ?? "medium"))
         .disabled(context.isStreaming)
         .accessibilityLabel(Text(name.isEmpty ? OpenUIIcons.accessibilityName(for: props.element("icon")?.props["name"]?.stringValue) : name))

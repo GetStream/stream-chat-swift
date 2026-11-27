@@ -446,8 +446,7 @@ struct CarouselView: View {
         } label: {
             Image(systemName: systemName).font(theme.fonts.caption.weight(.semibold))
         }
-        .buttonStyle(.bordered)
-        .buttonBorderShape(.circle)
+        .buttonStyle(OpenUIButtonStyle(variant: "secondary", isIconOnly: true, isCircle: true))
         .controlSize(.small)
         .disabled(disabled)
         .accessibilityLabel(Text(label))

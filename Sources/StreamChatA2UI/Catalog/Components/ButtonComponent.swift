@@ -105,25 +105,49 @@ private struct A2UIButtonLabelStyle: ViewModifier {
 
     @Environment(\.a2uiTheme) private var theme
 
+    // Borderless buttons are as tall as the others, so a row of them lines up, but sit at the
+    // edge of their container like a link.
     func body(content: Content) -> some View {
+        let shape = A2UIRoundedShape(cornerRadius: theme.buttonCornerRadius)
+        content
+            .modifier(A2UIButtonTitleWeight())
+            .padding(.horizontal, variant == "borderless" ? 0 : theme.buttonHorizontalPadding)
+            .padding(.vertical, theme.buttonVerticalPadding)
+            .foregroundColor(foreground)
+            .background(background, in: shape)
+            .overlay {
+                if variant != "primary" && variant != "borderless" {
+                    shape.strokeBorder(theme.border, lineWidth: 1)
+                }
+            }
+            .contentShape(shape)
+    }
+
+    private var foreground: Color {
         switch variant {
-        case "primary":
+        case "primary": return theme.onAccent
+        case "borderless": return theme.accent
+        default: return theme.text
+        }
+    }
+
+    private var background: Color {
+        switch variant {
+        case "primary": return theme.accent
+        case "borderless": return .clear
+        default: return theme.subtleSurface
+        }
+    }
+}
+
+// A button's title is semibold, whatever font its text has.
+@available(iOS 15.0, macOS 12.0, *)
+private struct A2UIButtonTitleWeight: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, macOS 13.0, *) {
+            content.fontWeight(.semibold)
+        } else {
             content
-                .padding(.horizontal, theme.buttonHorizontalPadding)
-                .padding(.vertical, theme.buttonVerticalPadding)
-                .foregroundColor(theme.onAccent)
-                .background(theme.accent)
-                .clipShape(RoundedRectangle(cornerRadius: theme.buttonCornerRadius, style: .continuous))
-        case "borderless":
-            content
-                .foregroundColor(theme.accent)
-                .padding(.vertical, theme.spacing.xs)
-        default:
-            content
-                .padding(.horizontal, theme.buttonHorizontalPadding)
-                .padding(.vertical, theme.buttonVerticalPadding)
-                .background(theme.subtleSurface)
-                .clipShape(RoundedRectangle(cornerRadius: theme.buttonCornerRadius, style: .continuous))
         }
     }
 }

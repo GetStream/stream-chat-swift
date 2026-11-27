@@ -17,6 +17,8 @@ public struct OpenUITheme: Sendable {
     public var spacing = Spacing()
     public var radius = Radius()
     public var fonts = Fonts()
+    /// The heights of buttons, by the size a program gives them.
+    public var buttonHeights = ButtonHeights()
 
     public init() {}
 
@@ -112,6 +114,18 @@ public struct OpenUITheme: Sendable {
         public var medium: CGFloat = 12
         public var large: CGFloat = 16
         public var pill: CGFloat = 999
+        /// The corner radius of buttons. A radius of half a button's height or more makes it a
+        /// capsule.
+        public var button: CGFloat = 999
+
+        public init() {}
+    }
+
+    public struct ButtonHeights: Sendable {
+        public var extraSmall: CGFloat = 24
+        public var small: CGFloat = 32
+        public var medium: CGFloat = 40
+        public var large: CGFloat = 48
 
         public init() {}
     }

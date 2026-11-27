@@ -63,7 +63,7 @@ struct TableView: View {
                             .disabled(current >= pages - 1)
                             .accessibilityLabel(Text(L10n.Pagination.nextPage))
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(OpenUIButtonStyle(variant: "secondary", isIconOnly: true, isCircle: true))
                     .controlSize(.small)
                 }
             }
@@ -219,9 +219,9 @@ struct EditableTableView: View {
                         .foregroundStyle(theme.colors.textSecondary)
                     Spacer()
                     Button(L10n.EditableTable.reset) { table.reset() }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(OpenUIButtonStyle(variant: "secondary"))
                     Button(L10n.EditableTable.save) { save(columns) }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(OpenUIButtonStyle(variant: "primary"))
                 }
                 .controlSize(.small)
                 .transition(.opacity)

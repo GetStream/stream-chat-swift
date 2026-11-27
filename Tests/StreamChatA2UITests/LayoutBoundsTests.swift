@@ -248,3 +248,15 @@ struct LayoutBoundsTests {
         #expect(size.width <= offeredWidth)
     }
 }
+
+@Suite("Button shape")
+struct ButtonShapeTests {
+    @Test("A button is a capsule once its radius reaches half its height")
+    func capsule() {
+        let rect = CGRect(x: 0, y: 0, width: 120, height: 40)
+
+        #expect(A2UIRoundedShape(cornerRadius: 9999).path(in: rect) == Capsule(style: .continuous).path(in: rect))
+        #expect(A2UIRoundedShape(cornerRadius: 20).path(in: rect) == Capsule(style: .continuous).path(in: rect))
+        #expect(A2UIRoundedShape(cornerRadius: 6).path(in: rect) == RoundedRectangle(cornerRadius: 6, style: .continuous).path(in: rect))
+    }
+}

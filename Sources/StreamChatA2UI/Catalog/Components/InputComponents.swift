@@ -356,15 +356,7 @@ private struct A2UIChoicePickerView: View {
                     .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
             }
             if usesChips {
-                LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: 110), spacing: theme.spacing.s)],
-                    alignment: .leading,
-                    spacing: theme.spacing.s
-                ) {
-                    ForEach(options) { option in
-                        chip(option, selection: selection, isMultiSelect: isMultiSelect)
-                    }
-                }
+                chips(options, selection: selection, isMultiSelect: isMultiSelect)
             } else {
                 VStack(alignment: .leading, spacing: theme.spacing.s) {
                     ForEach(options) { option in
@@ -424,7 +416,30 @@ private struct A2UIChoicePickerView: View {
         .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
     }
 
-    private func chip(_ option: Option, selection: Binding<[String]>, isMultiSelect: Bool) -> some View {
+    // Each chip is as wide as its label, wrapping to the next row, rather than a grid's column
+    // wide, which would break a long label. iOS 15 has no custom layouts, so it keeps the grid.
+    @ViewBuilder
+    private func chips(_ options: [Option], selection: Binding<[String]>, isMultiSelect: Bool) -> some View {
+        if #available(iOS 16.0, macOS 13.0, *) {
+            A2UIFlowLayout(spacing: theme.spacing.s) {
+                ForEach(options) { option in
+                    chip(option, selection: selection, isMultiSelect: isMultiSelect, fillsColumn: false)
+                }
+            }
+        } else {
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: 110), spacing: theme.spacing.s)],
+                alignment: .leading,
+                spacing: theme.spacing.s
+            ) {
+                ForEach(options) { option in
+                    chip(option, selection: selection, isMultiSelect: isMultiSelect, fillsColumn: true)
+                }
+            }
+        }
+    }
+
+    private func chip(_ option: Option, selection: Binding<[String]>, isMultiSelect: Bool, fillsColumn: Bool) -> some View {
         let selected = isSelected(option, selection)
         return Button {
             toggle(option, selection, isMultiSelect: isMultiSelect)
@@ -433,7 +448,7 @@ private struct A2UIChoicePickerView: View {
                 .font(theme.label)
                 .padding(.horizontal, theme.spacing.m)
                 .padding(.vertical, theme.spacing.s)
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: fillsColumn ? .infinity : nil)
                 .background(selected ? theme.accent.opacity(0.18) : theme.subtleSurface)
                 .foregroundColor(selected ? theme.accent : theme.text)
                 .clipShape(Capsule())

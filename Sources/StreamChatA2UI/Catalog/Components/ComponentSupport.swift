@@ -121,3 +121,71 @@ struct ValidationMessages: View {
         }
     }
 }
+
+// A rounded rectangle that is a capsule once its radius reaches half its height: a continuous
+// corner larger than that leaves points at the ends, and design systems give fully rounded
+// buttons a radius such as 9999.
+@available(iOS 15.0, macOS 12.0, *)
+struct A2UIRoundedShape: InsettableShape {
+    let cornerRadius: CGFloat
+    var inset: CGFloat = 0
+
+    func path(in rect: CGRect) -> Path {
+        let rect = rect.insetBy(dx: inset, dy: inset)
+        let radius = max(cornerRadius - inset, 0)
+        if radius * 2 >= min(rect.width, rect.height) {
+            return Capsule(style: .continuous).path(in: rect)
+        }
+        return RoundedRectangle(cornerRadius: radius, style: .continuous).path(in: rect)
+    }
+
+    func inset(by amount: CGFloat) -> A2UIRoundedShape {
+        var shape = self
+        shape.inset += amount
+        return shape
+    }
+}
+
+// Lays its children out in rows as wide as each wants, starting a new row when the next doesn't
+// fit, the way chips wrap. A child wider than a row is given the row's width.
+@available(iOS 16.0, macOS 13.0, *)
+struct A2UIFlowLayout: Layout {
+    let spacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        arrange(subviews, width: proposal.width).size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let frames = arrange(subviews, width: bounds.width).frames
+        for (subview, frame) in zip(subviews, frames) {
+            subview.place(
+                at: CGPoint(x: bounds.minX + frame.minX, y: bounds.minY + frame.minY),
+                proposal: ProposedViewSize(frame.size)
+            )
+        }
+    }
+
+    private func arrange(_ subviews: Subviews, width: CGFloat?) -> (frames: [CGRect], size: CGSize) {
+        let available = width.flatMap { $0.isFinite ? $0 : nil } ?? .greatestFiniteMagnitude
+        var frames: [CGRect] = []
+        var origin = CGPoint.zero
+        var rowHeight: CGFloat = 0
+        var widest: CGFloat = 0
+        for subview in subviews {
+            var size = subview.sizeThatFits(.unspecified)
+            if size.width > available {
+                size = subview.sizeThatFits(ProposedViewSize(width: available, height: nil))
+            }
+            if origin.x > 0, origin.x + size.width > available {
+                origin = CGPoint(x: 0, y: origin.y + rowHeight + spacing)
+                rowHeight = 0
+            }
+            frames.append(CGRect(origin: origin, size: size))
+            widest = max(widest, origin.x + size.width)
+            origin.x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+        }
+        return (frames, CGSize(width: widest, height: frames.isEmpty ? 0 : origin.y + rowHeight))
+    }
+}

@@ -36,14 +36,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix fields, chips and buttons blending into cards in dark mode [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
 ### 🔄 Changed
 - Take the components' spacing from the theme, and their controls' color from its accent [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+- Show buttons in the design system's style, and chips as wide as their labels [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
 
 ## StreamChatOpenUI
 ### ✅ Added
-- Add `OpenUITheme.Spacing.xxs` [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+- Add `OpenUITheme.Spacing.xxs`, `OpenUITheme.Radius.button` and `OpenUITheme.buttonHeights` [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
 ### 🐞 Fixed
 - Fix fields, chips and option cards blending into cards in dark mode, and tags in light mode [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
 ### 🔄 Changed
 - Take the components' spacing and fonts from the theme and design tokens, and their controls' color from its accent [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+- Show buttons in the design system's style instead of the system's [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
 
 # [5.18.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.18.0)
 _November 25, 2026_

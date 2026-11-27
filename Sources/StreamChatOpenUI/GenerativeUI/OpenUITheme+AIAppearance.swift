@@ -8,7 +8,8 @@ import SwiftUI
 @available(iOS 17.0, macOS 14.0, *)
 public extension OpenUITheme {
     /// The theme of StreamChatAI's `appearance`, so a reply's OpenUI looks like the rest of its
-    /// conversation: its accent, text, surface and status colors, its fonts, spacing and corners.
+    /// conversation: its accent, text, surface and status colors, its fonts, spacing, corners and
+    /// buttons.
     @MainActor
     init(appearance: AIAppearance) {
         self.init()
@@ -51,5 +52,10 @@ public extension OpenUITheme {
         radius.medium = layout.radiusLg
         radius.large = layout.radiusXl
         radius.pill = layout.radiusMax
+        radius.button = layout.buttonRadiusMd
+        buttonHeights.extraSmall = layout.buttonVisualHeightXs
+        buttonHeights.small = layout.buttonVisualHeightSm
+        buttonHeights.medium = layout.buttonVisualHeightMd
+        buttonHeights.large = layout.buttonVisualHeightLg
     }
 }
