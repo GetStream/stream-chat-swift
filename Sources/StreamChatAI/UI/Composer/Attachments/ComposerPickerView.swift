@@ -28,7 +28,7 @@ struct ComposerPickerView: View {
                         }
                     }
                 }
-                .padding()
+                .padding(layout.spacingMd)
             }
             RecentPhotosRow(viewModel: viewModel, photoLibrary: photoLibrary) {
                 cameraPresented = true

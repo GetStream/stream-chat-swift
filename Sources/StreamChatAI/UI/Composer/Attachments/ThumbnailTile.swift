@@ -13,6 +13,7 @@ struct ThumbnailTile: View {
     let didFail: Bool
 
     @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.images) private var images
     
     var body: some View {
@@ -26,7 +27,7 @@ struct ThumbnailTile: View {
                     .clipped()
             } else if didFail {
                 images.attachmentFailed
-                    .font(.title2.weight(.semibold))
+                    .font(fonts.attachmentPickerTileFailureIcon)
                     .foregroundStyle(Color(colors.attachmentPickerTileFailureIcon))
             } else {
                 ProgressView()

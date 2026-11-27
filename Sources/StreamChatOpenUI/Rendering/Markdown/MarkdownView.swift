@@ -123,7 +123,7 @@ struct MarkdownBlockView: View, Equatable {
             Text(InlineMarkdown.cached(text))
                 .font(headingFont(level))
                 .foregroundStyle(foreground ?? theme.colors.textPrimary)
-                .padding(.top, level <= 2 ? 4 : 2)
+                .padding(.top, level <= 2 ? theme.spacing.xs : theme.spacing.xxs)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
 
@@ -264,7 +264,7 @@ struct CodeBlockView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
+            HStack(spacing: theme.spacing.s) {
                 Text(language?.isEmpty == false ? language! : L10n.CodeBlock.languageFallback)
                     .font(theme.fonts.caption.weight(.medium))
                     .foregroundStyle(theme.colors.textSecondary)

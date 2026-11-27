@@ -2,11 +2,14 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamCore
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, *)
 public struct AITypingIndicatorView: View {
     @State private var animate = false
+
+    @Injected(\.aiAppearance.tokens.layout) private var layout
     
     var text: String
     
@@ -15,7 +18,7 @@ public struct AITypingIndicatorView: View {
     }
 
     public var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: layout.spacingXxs) {
             Text(text)
             ForEach(0..<3) { i in
                 Circle()

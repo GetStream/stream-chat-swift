@@ -77,12 +77,13 @@ private struct A2UIButtonView: View {
     let context: ComponentRenderContext
 
     @Environment(\.a2uiModalPresenter) private var modalPresenter
+    @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         let failures = context.failingChecks
         let isDisabled = failures.contains { $0.severity == .error }
 
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: theme.spacing.xs) {
             Button {
                 ButtonComponent.activate(context, in: modalPresenter)
             } label: {
@@ -108,19 +109,19 @@ private struct A2UIButtonLabelStyle: ViewModifier {
         switch variant {
         case "primary":
             content
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+                .padding(.horizontal, theme.buttonHorizontalPadding)
+                .padding(.vertical, theme.buttonVerticalPadding)
                 .foregroundColor(theme.onAccent)
                 .background(theme.accent)
                 .clipShape(RoundedRectangle(cornerRadius: theme.buttonCornerRadius, style: .continuous))
         case "borderless":
             content
                 .foregroundColor(theme.accent)
-                .padding(.vertical, 4)
+                .padding(.vertical, theme.spacing.xs)
         default:
             content
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+                .padding(.horizontal, theme.buttonHorizontalPadding)
+                .padding(.vertical, theme.buttonVerticalPadding)
                 .background(theme.subtleSurface)
                 .clipShape(RoundedRectangle(cornerRadius: theme.buttonCornerRadius, style: .continuous))
         }

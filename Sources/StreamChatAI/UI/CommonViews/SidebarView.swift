@@ -31,6 +31,7 @@ public struct SidebarView<Menu: View, Content: View>: View {
     @State private var isDragActive = false
 
     @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.tokens.layout) private var layout
     
     private let sidebarAnimation = Animation.spring(response: 0.28, dampingFraction: 0.85)
     
@@ -76,7 +77,7 @@ public struct SidebarView<Menu: View, Content: View>: View {
                     menu()
                         .frame(width: splitWidth, height: geometry.size.height)
                         .background(Color(colors.sidebarBackground))
-                        .shadow(color: .black.opacity(0.15), radius: 12, x: 4, y: 0)
+                        .elevation(light: layout.lightElevation3, dark: layout.darkElevation3, axis: .horizontal)
                         .simultaneousGesture(contentGesture, including: .gesture)
                         // VoiceOver reads only the side that shows.
                         .accessibilityHidden(!isOpen)

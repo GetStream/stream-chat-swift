@@ -36,7 +36,7 @@ struct FormControlView: View {
         let error = fieldName.flatMap { validation?.error(for: $0) }
 
         VStack(alignment: .leading, spacing: theme.spacing.s) {
-            HStack(spacing: 2) {
+            HStack(spacing: theme.spacing.xxs) {
                 Text(context.props.text("label") ?? "")
                     .font(theme.fonts.bodySmall.weight(.medium))
                     .foregroundStyle(theme.colors.textPrimary)
@@ -70,7 +70,7 @@ struct FieldChrome: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(.horizontal, theme.spacing.m)
-            .padding(.vertical, 10)
+            .padding(.vertical, theme.spacing.m)
             .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous)
@@ -192,7 +192,7 @@ struct SelectView: View {
                 }
             }
         } label: {
-            HStack {
+            HStack(spacing: theme.spacing.s) {
                 Text(selectedLabel ?? props.text("placeholder") ?? L10n.Select.placeholder)
                     .foregroundStyle(selectedLabel == nil ? theme.colors.textTertiary : theme.colors.textPrimary)
                     .lineLimit(1)
@@ -263,7 +263,7 @@ struct DatePickerView: View {
             }
         }
         .padding(.horizontal, theme.spacing.m)
-        .padding(.vertical, 6)
+        .padding(.vertical, theme.spacing.s)
         .background(theme.colors.sunkenSurface, in: RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous)
@@ -282,7 +282,7 @@ struct DatePickerView: View {
 
     @ViewBuilder
     private func dateRow(_ title: String, date: Date?, minimum: Date? = nil, onChange: @escaping @MainActor (Date) -> Void) -> some View {
-        HStack {
+        HStack(spacing: theme.spacing.s) {
             Text(title)
                 .font(theme.fonts.bodySmall)
                 .foregroundStyle(theme.colors.textSecondary)
@@ -328,7 +328,7 @@ struct SliderView: View {
         let label = props.text("label") ?? name
 
         VStack(alignment: .leading, spacing: theme.spacing.xs) {
-            HStack {
+            HStack(spacing: theme.spacing.s) {
                 Text(label)
                     .font(theme.fonts.bodySmall)
                     .foregroundStyle(theme.colors.textSecondary)
@@ -344,7 +344,7 @@ struct SliderView: View {
                     commit(next, field: field, name: name, rules: rules)
                 }
             }
-            HStack {
+            HStack(spacing: theme.spacing.s) {
                 Text(NumberFormatting.decimal(bounds.lowerBound))
                 Spacer()
                 Text(NumberFormatting.decimal(bounds.upperBound))
@@ -630,7 +630,7 @@ struct SelectionFieldView: View {
         let selected = selection.contains(value)
         let disabled = props.bool("disabled") ?? false
         return Button(action: action) {
-            HStack(spacing: 6) {
+            HStack(spacing: theme.spacing.s) {
                 if let icon = props.element("icon") {
                     OpenUIIconImage(element: icon)
                         .font(theme.fonts.bodySmall.weight(.semibold))
@@ -644,8 +644,8 @@ struct SelectionFieldView: View {
                         .accessibilityHidden(true)
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 7)
+            .padding(.horizontal, theme.spacing.m)
+            .padding(.vertical, theme.spacing.s)
             .foregroundStyle(selected ? theme.colors.accent : theme.colors.textPrimary)
             .background(selected ? theme.colors.accent.opacity(0.14) : theme.colors.sunkenSurface, in: Capsule())
             .overlay(Capsule().stroke(selected ? theme.colors.accent : .clear, lineWidth: 1))

@@ -8,7 +8,7 @@ import SwiftUI
 @available(iOS 15.0, macOS 12.0, *)
 public extension A2UITheme {
     /// The theme of StreamChatAI's `appearance`, so a reply's A2UI looks like the rest of its
-    /// conversation: its accent, text and surface colors, its fonts and its corners.
+    /// conversation: its accent, text and surface colors, its fonts, its spacing and its corners.
     @MainActor
     init(appearance: AIAppearance) {
         let colors = appearance.tokens.colors
@@ -20,7 +20,7 @@ public extension A2UITheme {
             text: Color(colors.textPrimary),
             secondaryText: Color(colors.textSecondary),
             surface: Color(colors.backgroundCoreSurfaceCard),
-            subtleSurface: Color(colors.backgroundCoreSurfaceDefault),
+            subtleSurface: Color(colors.backgroundCoreOnElevation),
             border: Color(colors.borderCoreDefault),
             error: Color(colors.accentError),
             warning: Color(colors.accentWarning),
@@ -39,5 +39,12 @@ public extension A2UITheme {
             buttonCornerRadius: layout.buttonRadiusMd,
             controlCornerRadius: layout.inputRadiusTextInput
         )
+        spacing.xxs = layout.spacingXxxs
+        spacing.xs = layout.spacingXxs
+        spacing.s = layout.spacingXs
+        spacing.m = layout.spacingSm
+        spacing.l = layout.spacingMd
+        buttonHorizontalPadding = layout.buttonPaddingXWithLabelMd
+        buttonVerticalPadding = layout.buttonPaddingYMd
     }
 }

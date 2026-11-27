@@ -212,7 +212,7 @@ struct FollowUpBlockView: View {
                             .multilineTextAlignment(.leading)
                         Spacer(minLength: 0)
                     }
-                    .padding(.vertical, theme.spacing.s + 2)
+                    .padding(.vertical, theme.spacing.m)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
@@ -247,17 +247,17 @@ struct ListBlockView: View {
                 let row = HStack(alignment: hasSubtitle ? .top : .center, spacing: theme.spacing.m) {
                     if variant == "image", let image = props.object("image") {
                         RemoteImage(url: image["src"]?.stringValue, alt: image["alt"]?.stringValue)
-                            .frame(width: (small ? 36 : 48) * scale, height: (small ? 36 : 48) * scale)
+                            .frame(width: imageSide(small: small), height: imageSide(small: small))
                             .clipShape(RoundedRectangle(cornerRadius: theme.radius.small, style: .continuous))
                     } else {
                         Text("\(index + 1)")
                             .font(theme.fonts.caption.weight(.semibold))
                             .monospacedDigit()
                             .foregroundStyle(theme.colors.accent)
-                            .frame(width: (small ? 20 : 24) * scale, height: (small ? 20 : 24) * scale)
+                            .frame(width: numberSide(small: small), height: numberSide(small: small))
                             .background(theme.colors.accent.opacity(0.12), in: Circle())
                     }
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: theme.spacing.xxs) {
                         Text(InlineMarkdown.cached(title))
                             .font(small ? theme.fonts.caption.weight(.medium) : theme.fonts.bodySmall.weight(.medium))
                             .foregroundStyle(theme.colors.textPrimary)
@@ -270,7 +270,7 @@ struct ListBlockView: View {
                     .multilineTextAlignment(.leading)
                     Spacer(minLength: 0)
                     if hasAction {
-                        HStack(spacing: 4) {
+                        HStack(spacing: theme.spacing.xs) {
                             if let actionLabel = props.text("actionLabel") {
                                 Text(actionLabel).font(theme.fonts.caption.weight(.medium))
                             }
@@ -281,7 +281,7 @@ struct ListBlockView: View {
                         .foregroundStyle(theme.colors.textSecondary)
                     }
                 }
-                .padding(.vertical, small ? theme.spacing.xs + 2 : theme.spacing.s + 2)
+                .padding(.vertical, small ? theme.spacing.s : theme.spacing.m)
                 .contentShape(Rectangle())
 
                 Group {
@@ -294,10 +294,18 @@ struct ListBlockView: View {
                     }
                 }
                 if index < items.count - 1 {
-                    Divider().padding(.leading, variant == "image" ? (small ? 48 : 60) : 36)
+                    Divider().padding(.leading, (variant == "image" ? imageSide(small: small) : numberSide(small: small)) + theme.spacing.m)
                 }
             }
         }
+    }
+
+    private func imageSide(small: Bool) -> CGFloat {
+        (small ? 36 : 48) * scale
+    }
+
+    private func numberSide(small: Bool) -> CGFloat {
+        (small ? 20 : 24) * scale
     }
 }
 
@@ -326,7 +334,7 @@ struct TagPill: View {
 
     var body: some View {
         let color = variant == nil || variant == "neutral" ? theme.colors.textSecondary : theme.colors.variant(variant)
-        HStack(spacing: 4) {
+        HStack(spacing: theme.spacing.xs) {
             if let icon {
                 OpenUIIconImage(element: icon)
                     .font(font.weight(.semibold))
@@ -337,8 +345,8 @@ struct TagPill: View {
                 .lineLimit(1)
         }
         .foregroundStyle(color)
-        .padding(.horizontal, size == "lg" ? 12 : size == "md" ? 10 : 8)
-        .padding(.vertical, size == "lg" ? 6 : size == "md" ? 4 : 3)
+        .padding(.horizontal, size == "lg" || size == "md" ? theme.spacing.m : theme.spacing.s)
+        .padding(.vertical, size == "lg" ? theme.spacing.s : theme.spacing.xs)
         .background(
             (variant == nil || variant == "neutral" ? theme.colors.subtleFill : color.opacity(0.14)),
             in: Capsule()
@@ -426,7 +434,7 @@ struct EntityListView: View {
                 .monospacedDigit(isNumber)
                 .multilineTextAlignment(.trailing)
         }
-        .padding(.vertical, small ? 5 : 8)
+        .padding(.vertical, small ? theme.spacing.xs : theme.spacing.s)
     }
 }
 

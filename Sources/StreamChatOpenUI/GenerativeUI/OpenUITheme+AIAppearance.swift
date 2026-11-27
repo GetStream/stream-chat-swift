@@ -19,8 +19,8 @@ public extension OpenUITheme {
         colors.textSecondary = Color(tokens.textSecondary)
         colors.textTertiary = Color(tokens.textTertiary)
         colors.surface = Color(tokens.backgroundCoreSurfaceCard)
-        colors.sunkenSurface = Color(tokens.backgroundCoreSurfaceDefault)
-        colors.subtleFill = Color(tokens.backgroundCoreSurfaceSubtle)
+        colors.sunkenSurface = Color(tokens.backgroundCoreOnElevation)
+        colors.subtleFill = Color(tokens.labelBackgroundNeutral)
         colors.border = Color(tokens.borderCoreDefault)
         colors.success = Color(tokens.accentSuccess)
         colors.warning = Color(tokens.accentWarning)
@@ -36,8 +36,11 @@ public extension OpenUITheme {
         fonts.bodyLarge = font.title3
         fonts.bodySmall = font.subheadline
         fonts.caption = font.caption1
+        fonts.code = font.footnote.monospaced()
+        fonts.metric = font.title2.weight(.semibold)
 
         let layout = appearance.tokens.layout
+        spacing.xxs = layout.spacingXxxs
         spacing.xs = layout.spacingXxs
         spacing.s = layout.spacingXs
         spacing.m = layout.spacingSm

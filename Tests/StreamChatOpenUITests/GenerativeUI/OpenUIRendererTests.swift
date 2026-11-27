@@ -115,8 +115,20 @@ struct OpenUIRendererTests {
 
         #expect(theme.colors.accent == Color(appearance.tokens.colors.accentPrimary))
         #expect(theme.colors.surface == Color(appearance.tokens.colors.backgroundCoreSurfaceCard))
+        #expect(theme.colors.sunkenSurface == Color(appearance.tokens.colors.backgroundCoreOnElevation))
+        #expect(theme.colors.subtleFill == Color(appearance.tokens.colors.labelBackgroundNeutral))
         #expect(theme.fonts.body == appearance.tokens.fonts.body)
         #expect(theme.radius.large == appearance.tokens.layout.radiusXl)
+        #expect(theme.fonts.code == appearance.tokens.fonts.footnote.monospaced())
+        #expect(theme.fonts.metric == appearance.tokens.fonts.title2.weight(.semibold))
+
+        let tokens = DesignSystemTokens()
+        tokens.layout.spacingXxxs = 3
+        tokens.layout.spacingXxs = 5
+        let spaced = OpenUITheme(appearance: AIAppearance(tokens: tokens))
+        #expect(spaced.spacing.xxs == 3)
+        #expect(spaced.spacing.xs == 5)
+        #expect(OpenUITheme().spacing.xxs == 2)
 
         var orange = OpenUITheme()
         orange.colors.accent = .orange

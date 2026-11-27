@@ -118,7 +118,7 @@ struct CatalogRenderingTests {
 
         let one = try #require(probes.sizes["one"]?.width)
         let three = try #require(probes.sizes["three"]?.width)
-        #expect(abs(one - (390 - A2UILayout.spacing) / 4) <= onePixelOfRounding)
+        #expect(abs(one - (390 - A2UITheme().spacing.s) / 4) <= onePixelOfRounding)
         #expect(abs(three - 3 * one) <= onePixelOfRounding * 3)
     }
 

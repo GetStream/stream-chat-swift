@@ -11,6 +11,7 @@ struct SelectionBadge: View {
 
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.images) private var images
+    @Injected(\.aiAppearance.tokens.layout) private var layout
     
     var body: some View {
         ZStack {
@@ -18,10 +19,10 @@ struct SelectionBadge: View {
                 TileBadge(image: images.attachmentSelected, fill: Color(colors.attachmentBadgeSelectedBackground))
             } else {
                 Circle()
-                    .stroke(Color(colors.attachmentBadgeForeground), lineWidth: 2)
-                    .frame(width: 16, height: 16)
+                    .stroke(Color(colors.attachmentBadgeForeground), lineWidth: layout.iconStrokeEmphasis)
+                    .frame(width: layout.iconSizeSm, height: layout.iconSizeSm)
             }
         }
-        .frame(width: 20, height: 20)
+        .frame(width: layout.iconSizeMd, height: layout.iconSizeMd)
     }
 }

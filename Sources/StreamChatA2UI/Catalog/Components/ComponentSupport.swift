@@ -7,9 +7,6 @@ import SwiftUI
 /// Shared layout and styling helpers for the basic catalog components.
 @available(iOS 15.0, macOS 12.0, *)
 enum A2UILayout {
-    /// The spacing used between children of layout containers.
-    static let spacing: CGFloat = 8
-
     /// Maps an A2UI cross-axis alignment onto a SwiftUI horizontal alignment.
     static func horizontalAlignment(_ align: String) -> HorizontalAlignment {
         switch align {
@@ -103,7 +100,7 @@ struct ValidationMessages: View {
         if results.isEmpty {
             EmptyView()
         } else {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: theme.spacing.xxs) {
                 ForEach(Array(results.enumerated()), id: \.offset) { _, result in
                     if let message = result.message ?? result.code {
                         Text(message)

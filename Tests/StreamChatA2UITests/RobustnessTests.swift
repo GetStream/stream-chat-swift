@@ -259,5 +259,8 @@ struct ThemeTests {
         #expect(theme.body == .body)
         #expect(theme.buttonCornerRadius == 10)
         #expect(theme.controlCornerRadius == 8)
+        #expect(theme.spacing.s == 8)
+        #expect(theme.buttonHorizontalPadding == 16)
+        #expect(theme.buttonVerticalPadding == 10)
     }
 }

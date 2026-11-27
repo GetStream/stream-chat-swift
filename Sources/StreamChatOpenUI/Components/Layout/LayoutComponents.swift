@@ -91,8 +91,8 @@ struct TabsView: View {
                             } label: {
                                 Text(item.trigger)
                                     .font(theme.fonts.bodySmall.weight(.semibold))
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 7)
+                                    .padding(.horizontal, theme.spacing.l)
+                                    .padding(.vertical, theme.spacing.s)
                                     .foregroundStyle(item.id == active ? theme.colors.textPrimary : theme.colors.textSecondary)
                                     .background {
                                         if item.id == active {
@@ -104,7 +104,7 @@ struct TabsView: View {
                             .accessibilityAddTraits(item.id == active ? [.isSelected] : [])
                         }
                     }
-                    .padding(3)
+                    .padding(theme.spacing.xs)
                     .background(theme.colors.sunkenSurface, in: Capsule())
                 }
                 if let current = items.first(where: { $0.id == active }) {
@@ -208,7 +208,7 @@ struct DisclosureRow<Content: View>: View {
             Button {
                 isExpanded.toggle()
             } label: {
-                HStack {
+                HStack(spacing: theme.spacing.s) {
                     Text(InlineMarkdown.cached(title))
                         .font(font ?? theme.fonts.bodySmall.weight(.semibold))
                         .foregroundStyle(theme.colors.textPrimary)
@@ -346,7 +346,7 @@ struct StepsView: View {
                                 .fill(theme.colors.border)
                                 .frame(width: 2)
                                 .frame(maxHeight: .infinity)
-                                .padding(.vertical, 4)
+                                .padding(.vertical, theme.spacing.xs)
                         }
                     }
                     VStack(alignment: .leading, spacing: theme.spacing.xs) {
@@ -410,7 +410,7 @@ struct CarouselView: View {
                         pagerButton("chevron.backward", label: L10n.Carousel.previous, disabled: current == 0) {
                             position = max(0, current - 1)
                         }
-                        HStack(spacing: 6) {
+                        HStack(spacing: theme.spacing.s) {
                             ForEach(0..<slides.count, id: \.self) { index in
                                 Circle()
                                     .fill(index == current ? theme.colors.accent : theme.colors.border)
@@ -475,7 +475,7 @@ struct ModalView: View {
                         VStack(alignment: .leading, spacing: theme.spacing.m) {
                             context.render(prop: "children")
                         }
-                        .padding()
+                        .padding(theme.spacing.l)
                     }
                     .navigationTitle(context.props.text("title") ?? "")
                     #if os(iOS)

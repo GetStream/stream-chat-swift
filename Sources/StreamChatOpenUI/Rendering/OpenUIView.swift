@@ -155,6 +155,7 @@ struct OpenUIRuntimeView: View {
         if let root = runtime.root {
             OpenUIElementView(element: root)
                 .environment(runtime)
+                .tint(theme.colors.accent)
                 .opacity(runtime.isQueryLoading ? 0.7 : 1)
                 .overlay(alignment: .topTrailing) {
                     if runtime.isQueryLoading {

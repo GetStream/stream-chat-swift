@@ -341,7 +341,7 @@ private struct A2UIMediaPlayerView: View {
             if let title, isAudioOnly {
                 Text(title)
                     .font(theme.caption)
-                    .padding(6)
+                    .padding(theme.spacing.s)
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))

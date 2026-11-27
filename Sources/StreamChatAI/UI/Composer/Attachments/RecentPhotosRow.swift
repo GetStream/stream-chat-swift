@@ -49,7 +49,7 @@ struct RecentPhotosRow: View {
                     }
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, layout.spacingMd)
         }
     }
 }

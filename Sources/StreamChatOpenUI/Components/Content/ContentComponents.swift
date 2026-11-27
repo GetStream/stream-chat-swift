@@ -163,13 +163,13 @@ struct SourcesStrip: View {
                             guard let url = source["url"]?.stringValue, !url.isEmpty else { return }
                             Task { await runtime.triggerAction(label: "", action: ["type": "open_url", "url": .string(url)]) }
                         } label: {
-                            HStack(alignment: .top, spacing: 6) {
+                            HStack(alignment: .top, spacing: theme.spacing.s) {
                                 Text("\(index + 1)")
                                     .font(theme.fonts.caption.weight(.bold))
                                     .foregroundStyle(theme.colors.onAccent)
                                     .frame(width: badgeSize, height: badgeSize)
                                     .background(theme.colors.accent, in: Circle())
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: theme.spacing.xxs) {
                                     Text(source["title"]?.stringValue ?? L10n.Sources.untitled)
                                         .font(theme.fonts.caption.weight(.medium))
                                         .foregroundStyle(theme.colors.textPrimary)
@@ -315,7 +315,7 @@ struct InlineHeaderView: View {
     @Environment(\.openUITheme) private var theme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: theme.spacing.xxs) {
             Text(InlineMarkdown.cached(context.props.text("heading") ?? ""))
                 .font(theme.fonts.heading)
                 .foregroundStyle(theme.colors.textPrimary)
@@ -515,7 +515,7 @@ struct GalleryPreview: View {
                             Text(details)
                                 .font(theme.fonts.bodySmall)
                                 .foregroundStyle(theme.colors.textSecondary)
-                                .padding(.horizontal)
+                                .padding(.horizontal, theme.spacing.l)
                         }
                     }
                     .tag(offset)

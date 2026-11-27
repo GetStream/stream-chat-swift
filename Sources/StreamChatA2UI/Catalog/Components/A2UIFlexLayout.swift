@@ -15,10 +15,12 @@ struct A2UIFlexStack: View {
     let children: [ResolvedChild]
     let context: ComponentRenderContext
 
+    @Environment(\.a2uiTheme) private var theme
+
     var body: some View {
         if sharesFreeSpace {
             if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-                A2UIFlexLayout(axis: axis, justify: justify, align: align, spacing: A2UILayout.spacing) {
+                A2UIFlexLayout(axis: axis, justify: justify, align: align, spacing: theme.spacing.s) {
                     ForEach(children) { child in
                         context.childView(child)
                             .layoutValue(key: A2UIFlexWeight.self, value: flexWeight(child))
@@ -58,7 +60,7 @@ struct A2UIFlexStack: View {
     // divider spans it; the row itself stays as tall as its tallest child.
     private var row: some View {
         let stretches = align == "stretch"
-        return HStack(alignment: A2UILayout.verticalAlignment(align), spacing: A2UILayout.spacing) {
+        return HStack(alignment: A2UILayout.verticalAlignment(align), spacing: theme.spacing.s) {
             A2UISpacers(count: spacers.leading)
             ForEach(Array(children.enumerated()), id: \.element.id) { offset, child in
                 WeightedChild(child: child, content: context.childView(child), axis: .horizontal)
@@ -72,7 +74,7 @@ struct A2UIFlexStack: View {
 
     private var column: some View {
         let stretches = align == "stretch"
-        return VStack(alignment: A2UILayout.horizontalAlignment(align), spacing: A2UILayout.spacing) {
+        return VStack(alignment: A2UILayout.horizontalAlignment(align), spacing: theme.spacing.s) {
             A2UISpacers(count: spacers.leading)
             ForEach(Array(children.enumerated()), id: \.element.id) { offset, child in
                 WeightedChild(child: child, content: context.childView(child), axis: .vertical)

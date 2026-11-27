@@ -23,7 +23,7 @@ struct ChatOptionRow: View {
             HStack(spacing: layout.spacingMd) {
                 Image(systemName: option.icon)
 
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: layout.spacingXxxs) {
                     Text(option.title)
                         .font(fonts.chatOptionTitle)
 

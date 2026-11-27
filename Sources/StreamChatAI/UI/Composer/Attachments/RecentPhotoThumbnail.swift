@@ -3,6 +3,7 @@
 //
 
 import Photos
+import StreamCore
 import SwiftUI
 import UIKit
 
@@ -22,6 +23,8 @@ struct RecentPhotoThumbnail: View {
     @State private var image: UIImage?
     @State private var didFail = false
     @State private var isFetchingAttachment = false
+
+    @Injected(\.aiAppearance.tokens.layout) private var layout
     
     var body: some View {
         Button {
@@ -56,7 +59,7 @@ struct RecentPhotoThumbnail: View {
             ThumbnailTile(image: image, didFail: didFail)
                 .overlay(alignment: .topTrailing) {
                     SelectionBadge(isSelected: isSelected)
-                        .padding(6)
+                        .padding(layout.spacingXs)
                 }
         }
         .disabled(isFetchingAttachment)

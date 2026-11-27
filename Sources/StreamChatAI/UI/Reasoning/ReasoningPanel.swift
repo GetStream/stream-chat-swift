@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamCore
 import SwiftUI
 
 /// The reasoning, one paragraph at a time. It grows with the text up to `maxHeight`, then
@@ -17,13 +18,14 @@ struct ReasoningPanel: View {
     @StateObject private var reveal = TextReveal()
     @State private var contentHeight: CGFloat = 0
     @State private var following = true
+    @Injected(\.aiAppearance.tokens.layout) private var layout
     private let bottom = "reasoning.bottom"
 
     var body: some View {
         let overflowing = contentHeight > maxHeight
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 10) {
+                LazyVStack(alignment: .leading, spacing: layout.spacingSm) {
                     ForEach(ReasoningParagraph.split(reveal.shown)) { paragraph in
                         ReasoningParagraphView(text: paragraph.text, color: color)
                             .equatable()

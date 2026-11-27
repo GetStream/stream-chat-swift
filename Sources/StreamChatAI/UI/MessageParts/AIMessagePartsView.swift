@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamCore
 import SwiftUI
 
 /// The steps an AI agent took while replying, in order. Show it before the reply's text.
@@ -33,13 +34,15 @@ public struct AIMessagePartsView<Content: View>: View {
     var parts: [AIMessagePart]
     var content: (AIMessagePart) -> Content
 
+    @Injected(\.aiAppearance.tokens.layout) private var layout
+
     public init(parts: [AIMessagePart], @ViewBuilder content: @escaping (AIMessagePart) -> Content) {
         self.parts = parts
         self.content = content
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: layout.spacingXs) {
             ForEach(parts) { part in
                 content(part)
             }

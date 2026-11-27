@@ -18,16 +18,17 @@ struct SelectedAttachmentThumbnail: View {
     @Environment(\.displayScale) private var displayScale
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.images) private var images
+    @Injected(\.aiAppearance.tokens.layout) private var layout
 
     var body: some View {
         ThumbnailTile(image: image, didFail: didFail)
             .overlay(alignment: .topTrailing) {
                 Button(action: onRemove) {
                     TileBadge(image: images.composerRemove, fill: Color(colors.attachmentBadgeBackground))
-                        .frame(width: 22, height: 22)
+                        .frame(width: layout.buttonVisualHeightXs, height: layout.buttonVisualHeightXs)
                 }
                 .buttonStyle(.plain)
-                .padding(6)
+                .padding(layout.spacingXs)
             }
             .task {
                 guard image == nil else { return }

@@ -82,6 +82,8 @@ public struct OpenUITheme: Sendable {
 
     /// OpenUI spacing scale (`none`, `xs`, `s`, `m`, `l`, `xl`, `2xl`).
     public struct Spacing: Sendable {
+        /// Between a title and its subtitle. The components use it; programs can't ask for it.
+        public var xxs: CGFloat = 2
         public var xs: CGFloat = 4
         public var s: CGFloat = 8
         public var m: CGFloat = 12

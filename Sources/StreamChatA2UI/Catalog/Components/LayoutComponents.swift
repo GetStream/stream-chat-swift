@@ -143,32 +143,13 @@ enum LayoutComponents {
             """
         ]
     ) { context in
-        let isHorizontal = context.option("direction", default: "vertical") == "horizontal"
-        let align = context.option("align", default: "stretch")
-        let children = context.resolvedChildren()
-
-        if isHorizontal {
-            return AnyView(
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(alignment: A2UILayout.verticalAlignment(align), spacing: A2UILayout.spacing) {
-                        ForEach(children) { child in
-                            context.childView(child)
-                                .modifier(A2UIHorizontalListItemWidth())
-                        }
-                    }
-                }
+        AnyView(
+            A2UIListView(
+                isHorizontal: context.option("direction", default: "vertical") == "horizontal",
+                align: context.option("align", default: "stretch"),
+                children: context.resolvedChildren(),
+                context: context
             )
-        }
-        return AnyView(
-            LazyVStack(alignment: A2UILayout.horizontalAlignment(align), spacing: A2UILayout.spacing) {
-                ForEach(children) { child in
-                    context.childView(child)
-                        .frame(
-                            maxWidth: align == "stretch" ? .infinity : nil,
-                            alignment: A2UILayout.frameAlignment(align, axis: .vertical)
-                        )
-                }
-            }
         )
     }
 
@@ -222,6 +203,39 @@ enum LayoutComponents {
 }
 
 @available(iOS 15.0, macOS 12.0, *)
+private struct A2UIListView: View {
+    let isHorizontal: Bool
+    let align: String
+    let children: [ResolvedChild]
+    let context: ComponentRenderContext
+
+    @Environment(\.a2uiTheme) private var theme
+
+    var body: some View {
+        if isHorizontal {
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(alignment: A2UILayout.verticalAlignment(align), spacing: theme.spacing.s) {
+                    ForEach(children) { child in
+                        context.childView(child)
+                            .modifier(A2UIHorizontalListItemWidth())
+                    }
+                }
+            }
+        } else {
+            LazyVStack(alignment: A2UILayout.horizontalAlignment(align), spacing: theme.spacing.s) {
+                ForEach(children) { child in
+                    context.childView(child)
+                        .frame(
+                            maxWidth: align == "stretch" ? .infinity : nil,
+                            alignment: A2UILayout.frameAlignment(align, axis: .vertical)
+                        )
+                }
+            }
+        }
+    }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UICardView: View {
     let context: ComponentRenderContext
 
@@ -229,7 +243,7 @@ private struct A2UICardView: View {
 
     var body: some View {
         context.childView(context.childId())
-            .padding(12)
+            .padding(theme.spacing.m)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(theme.surface)
             .clipShape(RoundedRectangle(cornerRadius: theme.cornerRadius, style: .continuous))

@@ -11,9 +11,10 @@ struct USpecChartView: View {
     init(spec: USpec) { self.spec = spec }
 
     @Injected(\.aiAppearance.fonts) private var fonts
+    @Injected(\.aiAppearance.tokens.layout) private var layout
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: layout.spacingXs) {
             if let title = spec.title { Text(title).font(fonts.chartTitle) }
             
             switch spec.kind {
@@ -33,6 +34,6 @@ struct USpecChartView: View {
                 CartesianChart(spec: spec).frame(height: 280)
             }
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, layout.spacingXs)
     }
 }

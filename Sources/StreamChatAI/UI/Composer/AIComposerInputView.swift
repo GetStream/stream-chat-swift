@@ -71,7 +71,7 @@ public struct AIComposerInputView<TrailingView: View>: View {
                 }
             }
             
-            HStack {
+            HStack(spacing: layout.spacingXs) {
                 textField
 
                 actions
@@ -129,7 +129,7 @@ public struct AIComposerInputView<TrailingView: View>: View {
                 images.composerSend
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 22)
+                    .frame(width: layout.buttonVisualHeightXs)
             }
             .opacity(viewModel.isGenerating ? 0 : (canSend ? 1 : 0))
             

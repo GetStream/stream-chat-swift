@@ -34,6 +34,19 @@ final class AIAppearance_Tests: XCTestCase {
         XCTAssertEqual(appearance.colors.attachmentPickerOptionDescription, .systemTeal)
     }
 
+    func test_replyColors_deriveFromTheSharedTokens() {
+        let tokens = DesignSystemTokens()
+        tokens.colors.textPrimary = .systemIndigo
+        tokens.colors.textLink = .systemPurple
+        tokens.colors.borderCoreDefault = .systemTeal
+
+        let colors = AIAppearance(tokens: tokens).colors
+
+        XCTAssertEqual(colors.assistantMessageText, .systemIndigo)
+        XCTAssertEqual(colors.assistantMessageLink, .systemPurple)
+        XCTAssertEqual(colors.assistantMessageTableBorder, .systemTeal)
+    }
+
     func test_colors_canBeOverriddenWithoutChangingTheTokens() {
         let appearance = AIAppearance()
 
@@ -80,6 +93,22 @@ final class AIAppearance_Tests: XCTestCase {
         XCTAssertEqual(appearance.fonts.messagePart, .title)
         XCTAssertEqual(appearance.fonts.suggestion, .title)
         XCTAssertEqual(appearance.fonts.chatOptionTitle, .largeTitle)
+    }
+
+    func test_smallFonts_deriveFromTheSharedTokens() {
+        let tokens = DesignSystemTokens()
+        tokens.fonts.caption1 = .footnote
+        tokens.fonts.title2 = .title
+        tokens.layout.iconSizeXs = 14
+
+        let fonts = AIAppearance(tokens: tokens).fonts
+
+        XCTAssertEqual(fonts.codeBlockLanguage, Font.footnote.monospaced())
+        XCTAssertEqual(fonts.chartAnnotation, .footnote)
+        XCTAssertEqual(fonts.reasoningFootnote, .footnote)
+        XCTAssertEqual(fonts.reasoningDisclosure, Font.footnote.weight(.semibold))
+        XCTAssertEqual(fonts.attachmentPickerTileFailureIcon, Font.title.weight(.semibold))
+        XCTAssertEqual(fonts.attachmentBadgeIcon, Font.system(size: 14, weight: .bold))
     }
 
     func test_codeColors_haveLightAndDarkVariants() {

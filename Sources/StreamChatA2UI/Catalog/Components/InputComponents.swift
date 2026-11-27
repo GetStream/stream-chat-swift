@@ -238,11 +238,11 @@ private struct A2UICheckBoxView: View {
         let binding = context.boolBinding()
         let failures = context.failingChecks
 
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: theme.spacing.xs) {
             Button {
                 binding.wrappedValue.toggle()
             } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                HStack(alignment: .firstTextBaseline, spacing: theme.spacing.s) {
                     Image(systemName: binding.wrappedValue ? "checkmark.square.fill" : "square")
                         .foregroundColor(binding.wrappedValue ? theme.accent : theme.secondaryText)
                     Text(context.string("label", default: ""))
@@ -271,7 +271,7 @@ private struct A2UITextFieldView: View {
         let failures = context.failingChecks
         let hasError = failures.contains { $0.severity == .error }
 
-        return VStack(alignment: .leading, spacing: 4) {
+        return VStack(alignment: .leading, spacing: theme.spacing.xs) {
             if !label.isEmpty {
                 Text(label)
                     .font(theme.label)
@@ -279,7 +279,7 @@ private struct A2UITextFieldView: View {
             }
             input(variant: variant, placeholder: placeholder.isEmpty ? label : placeholder, binding: binding)
                 .font(theme.body)
-                .padding(10)
+                .padding(theme.spacing.m)
                 .background(theme.subtleSurface)
                 .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
                 .overlay(
@@ -344,25 +344,29 @@ private struct A2UIChoicePickerView: View {
             filter.isEmpty || $0.label.localizedCaseInsensitiveContains(filter)
         }
 
-        return VStack(alignment: .leading, spacing: 6) {
+        return VStack(alignment: .leading, spacing: theme.spacing.s) {
             if !label.isEmpty {
                 Text(label).font(theme.label).foregroundColor(theme.secondaryText)
             }
             if isFilterable {
                 TextField("Search", text: $filter)
                     .font(theme.body)
-                    .padding(8)
+                    .padding(theme.spacing.m)
                     .background(theme.subtleSurface)
                     .clipShape(RoundedRectangle(cornerRadius: theme.controlCornerRadius, style: .continuous))
             }
             if usesChips {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 8)], alignment: .leading, spacing: 8) {
+                LazyVGrid(
+                    columns: [GridItem(.adaptive(minimum: 110), spacing: theme.spacing.s)],
+                    alignment: .leading,
+                    spacing: theme.spacing.s
+                ) {
                     ForEach(options) { option in
                         chip(option, selection: selection, isMultiSelect: isMultiSelect)
                     }
                 }
             } else {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: theme.spacing.s) {
                     ForEach(options) { option in
                         row(option, selection: selection, isMultiSelect: isMultiSelect)
                     }
@@ -409,7 +413,7 @@ private struct A2UIChoicePickerView: View {
         return Button {
             toggle(option, selection, isMultiSelect: isMultiSelect)
         } label: {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: theme.spacing.s) {
                 Image(systemName: symbol)
                     .foregroundColor(selected ? theme.accent : theme.secondaryText)
                 Text(option.label).font(theme.body)
@@ -427,8 +431,8 @@ private struct A2UIChoicePickerView: View {
         } label: {
             Text(option.label)
                 .font(theme.label)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, theme.spacing.m)
+                .padding(.vertical, theme.spacing.s)
                 .frame(maxWidth: .infinity)
                 .background(selected ? theme.accent.opacity(0.18) : theme.subtleSurface)
                 .foregroundColor(selected ? theme.accent : theme.text)
@@ -460,7 +464,7 @@ struct A2UISliderView: View {
         )
         let failures = context.failingChecks
 
-        return VStack(alignment: .leading, spacing: 4) {
+        return VStack(alignment: .leading, spacing: theme.spacing.xs) {
             HStack {
                 if !label.isEmpty {
                     Text(label).font(theme.label).foregroundColor(theme.secondaryText)
@@ -588,7 +592,7 @@ struct A2UIDateTimeInputView: View {
             }
         )
 
-        return VStack(alignment: .leading, spacing: 4) {
+        return VStack(alignment: .leading, spacing: theme.spacing.xs) {
             picker(label: label, selection: selection, components: components, range: range)
                 .environment(\.timeZone, timeZone)
                 .font(theme.body)
