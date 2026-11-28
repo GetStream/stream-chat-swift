@@ -104,7 +104,7 @@ private struct A2UIButtonView: View {
                     .modifier(
                         A2UIButtonLabelStyle(
                             variant: variant,
-                            fillsWidth: stretchedChildId == context.id && variant != "borderless"
+                            fillsWidth: stretchedChildId == context.id && variant != "borderless" && !isIconOnly
                         )
                     )
             }
@@ -113,6 +113,10 @@ private struct A2UIButtonView: View {
             .opacity(isDisabled ? 0.5 : 1)
             ValidationMessages(results: failures)
         }
+    }
+
+    private var isIconOnly: Bool {
+        context.childId().flatMap { context.renderer.component($0)?.type } == TextComponents.icon.name
     }
 
     // A button's text is in the font of labels, like the titles of the design system's buttons.

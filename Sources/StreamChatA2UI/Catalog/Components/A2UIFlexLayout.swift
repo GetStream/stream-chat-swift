@@ -63,8 +63,9 @@ struct A2UIFlexStack: View {
 
     // `align: stretch` gives every child the row's height, so a vertical
     // divider spans it; the row itself stays as tall as its tallest child.
-    // The stacks space only their children: stack spacing would also go next to the spacers that
-    // justify them, adding a gap after the last child of every container. A borderless button
+    // The stacks put a gap between their children themselves: stack spacing would also go next to
+    // the spacers that justify them, adding a gap after the last child of every container, and
+    // padding on a child would make it narrower than its siblings. A borderless button
     // the row stretches centers its title, as a stretched button does on the web, so it lines up
     // with the titles of the buttons beside it.
     private var row: some View {
@@ -72,13 +73,15 @@ struct A2UIFlexStack: View {
         return HStack(alignment: A2UILayout.verticalAlignment(align), spacing: 0) {
             A2UISpacers(count: spacers.leading)
             ForEach(Array(children.enumerated()), id: \.element.id) { offset, child in
-                if offset > 0 { A2UISpacers(count: spacers.between) }
+                if offset > 0 {
+                    A2UIGap(axis: .horizontal, length: theme.spacing.s)
+                    A2UISpacers(count: spacers.between)
+                }
                 WeightedChild(child: child, content: context.childView(child), axis: .horizontal)
                     .frame(
                         maxHeight: stretches ? .infinity : nil,
                         alignment: context.isBorderlessButton(child) ? .center : .top
                     )
-                    .padding(.leading, offset > 0 ? theme.spacing.s : 0)
             }
             A2UISpacers(count: spacers.trailing)
         }
@@ -90,17 +93,31 @@ struct A2UIFlexStack: View {
         return VStack(alignment: A2UILayout.horizontalAlignment(align), spacing: 0) {
             A2UISpacers(count: spacers.leading)
             ForEach(Array(children.enumerated()), id: \.element.id) { offset, child in
-                if offset > 0 { A2UISpacers(count: spacers.between) }
+                if offset > 0 {
+                    A2UIGap(axis: .vertical, length: theme.spacing.s)
+                    A2UISpacers(count: spacers.between)
+                }
                 WeightedChild(child: child, content: context.childView(child), axis: .vertical)
                     .frame(
                         maxWidth: stretches ? .infinity : nil,
                         alignment: A2UILayout.frameAlignment(align, axis: .vertical)
                     )
                     .environment(\.a2uiStretchedChildId, stretches ? child.componentId : nil)
-                    .padding(.top, offset > 0 ? theme.spacing.s : 0)
             }
             A2UISpacers(count: spacers.trailing)
         }
+    }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
+private struct A2UIGap: View {
+    let axis: Axis
+    let length: CGFloat
+
+    var body: some View {
+        Color.clear
+            .frame(width: axis == .horizontal ? length : 0, height: axis == .vertical ? length : 0)
+            .accessibilityHidden(true)
     }
 }
 

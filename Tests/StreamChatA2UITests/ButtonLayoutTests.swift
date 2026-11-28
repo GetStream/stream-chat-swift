@@ -42,7 +42,7 @@ struct ButtonLayoutTests {
         ]
 
         for (name, container) in [("start", start), ("row", row), ("card", card)] {
-            let measured = try #require(accentWidth(container + button(variant: "primary")))
+            let measured = try #require(accentWidth(container + button(variant: "primary")), "\(name)")
             #expect(measured < width / 2, "\(name)")
         }
     }
@@ -65,6 +65,41 @@ struct ButtonLayoutTests {
         let text = height([["id": "root", "component": "Text", "text": "Go"]], theme: theme)
 
         #expect(button < text)
+    }
+
+    @Test("An icon-only button keeps its width in a stretching column")
+    func iconButtonKeepsItsWidth() throws {
+        guard #available(iOS 16.0, macOS 13.0, *) else { return }
+        let measured = try #require(accentWidth([
+            ["id": "root", "component": "Column", "children": ["button"]],
+            ["id": "button", "component": "Button", "child": "icon", "variant": "primary", "action": ["event": ["name": "go"] as JsonMap] as JsonMap],
+            ["id": "icon", "component": "Icon", "name": "favorite"]
+        ]))
+
+        #expect(measured < width / 2)
+    }
+
+    @Test("Children that share a row's width get equal shares")
+    func rowChildrenShareItsWidthEqually() throws {
+        guard #available(iOS 16.0, macOS 13.0, *) else { return }
+        var theme = A2UITheme()
+        theme.surface = Color(red: 1, green: 0, blue: 0)
+        let mask = try #require(redMask([
+            ["id": "root", "component": "Row", "children": ["first", "second"]],
+            ["id": "first", "component": "Card", "child": "firstText"],
+            ["id": "firstText", "component": "Text", "text": "One"],
+            ["id": "second", "component": "Card", "child": "secondText"],
+            ["id": "secondText", "component": "Text", "text": "Two"]
+        ], theme: theme))
+        // A line through the cards' padding, above their text.
+        let row = mask[6]
+        var runs: [Int] = []
+        for (x, isRed) in row.enumerated() where isRed {
+            if x > 0, row[x - 1] { runs[runs.count - 1] += 1 } else { runs.append(1) }
+        }
+
+        #expect(runs.count == 2)
+        #expect(abs((runs.first ?? 0) - (runs.last ?? 0)) <= 1)
     }
 
     private func button(variant: String, isRoot: Bool = false) -> [JsonMap] {
@@ -101,6 +136,27 @@ struct ButtonLayoutTests {
     private func accentWidth(_ components: [JsonMap]) -> CGFloat? {
         var theme = A2UITheme()
         theme.accent = Color(red: 1, green: 0, blue: 0)
+        guard let mask = redMask(components, theme: theme) else { return nil }
+        let columns = mask.flatMap { row in row.indices.filter { row[$0] } }
+        guard let first = columns.min(), let last = columns.max() else { return nil }
+        return CGFloat(last - first + 1)
+    }
+
+    // Which pixels are red, row by row, at a scale of one point per pixel. Every case draws some
+    // red, and the first render of a test run now and then has none, so a render without any is
+    // drawn again.
+    @available(iOS 16.0, macOS 13.0, *)
+    private func redMask(_ components: [JsonMap], theme: A2UITheme) -> [[Bool]]? {
+        for _ in 0..<3 {
+            if let mask = renderRedMask(components, theme: theme), mask.contains(where: { $0.contains(true) }) {
+                return mask
+            }
+        }
+        return nil
+    }
+
+    @available(iOS 16.0, macOS 13.0, *)
+    private func renderRedMask(_ components: [JsonMap], theme: A2UITheme) -> [[Bool]]? {
         let renderer = ImageRenderer(content: surface(components, theme: theme).frame(width: width).background(Color.white))
         renderer.proposedSize = ProposedViewSize(width: width, height: nil)
         guard let image = renderer.cgImage else { return nil }
@@ -120,15 +176,11 @@ struct ButtonLayoutTests {
             return true
         }
         guard drawn else { return nil }
-        var columns: ClosedRange<Int>?
-        for y in 0..<image.height {
-            for x in 0..<image.width {
+        return (0..<image.height).map { y in
+            (0..<image.width).map { x in
                 let offset = y * bytesPerRow + x * 4
-                if pixels[offset] > 200, pixels[offset + 1] < 60, pixels[offset + 2] < 60 {
-                    columns = min(columns?.lowerBound ?? x, x)...max(columns?.upperBound ?? x, x)
-                }
+                return pixels[offset] > 200 && pixels[offset + 1] < 60 && pixels[offset + 2] < 60
             }
         }
-        return columns.map { CGFloat($0.count) }
     }
 }
