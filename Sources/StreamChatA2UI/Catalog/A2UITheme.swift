@@ -40,7 +40,7 @@ public struct A2UITheme: Sendable {
     public var body: Font
     /// The font of captions and validation messages.
     public var caption: Font
-    /// The font of fields' labels and of options.
+    /// The font of fields' labels, of options and of buttons' titles.
     public var label: Font
     /// The fonts of headings, from level 1 down. Deeper levels use the last.
     public var headings: [Font]

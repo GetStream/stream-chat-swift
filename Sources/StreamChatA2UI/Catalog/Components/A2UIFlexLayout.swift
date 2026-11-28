@@ -23,6 +23,7 @@ struct A2UIFlexStack: View {
                 A2UIFlexLayout(axis: axis, justify: justify, align: align, spacing: theme.spacing.s) {
                     ForEach(children) { child in
                         context.childView(child)
+                            .environment(\.a2uiStretchedChildId, stretchesWidth ? child.componentId : nil)
                             .layoutValue(key: A2UIFlexWeight.self, value: flexWeight(child))
                     }
                 }
@@ -43,6 +44,10 @@ struct A2UIFlexStack: View {
         }
     }
 
+    private var stretchesWidth: Bool {
+        axis == .vertical && align == "stretch"
+    }
+
     private var sharesFreeSpace: Bool {
         justify == "stretch" || children.contains { ($0.weight ?? 0) > 0 }
     }
@@ -58,14 +63,22 @@ struct A2UIFlexStack: View {
 
     // `align: stretch` gives every child the row's height, so a vertical
     // divider spans it; the row itself stays as tall as its tallest child.
+    // The stacks space only their children: stack spacing would also go next to the spacers that
+    // justify them, adding a gap after the last child of every container. A borderless button
+    // the row stretches centers its title, as a stretched button does on the web, so it lines up
+    // with the titles of the buttons beside it.
     private var row: some View {
         let stretches = align == "stretch"
-        return HStack(alignment: A2UILayout.verticalAlignment(align), spacing: theme.spacing.s) {
+        return HStack(alignment: A2UILayout.verticalAlignment(align), spacing: 0) {
             A2UISpacers(count: spacers.leading)
             ForEach(Array(children.enumerated()), id: \.element.id) { offset, child in
+                if offset > 0 { A2UISpacers(count: spacers.between) }
                 WeightedChild(child: child, content: context.childView(child), axis: .horizontal)
-                    .frame(maxHeight: stretches ? .infinity : nil, alignment: .top)
-                if offset < children.count - 1 { A2UISpacers(count: spacers.between) }
+                    .frame(
+                        maxHeight: stretches ? .infinity : nil,
+                        alignment: context.isBorderlessButton(child) ? .center : .top
+                    )
+                    .padding(.leading, offset > 0 ? theme.spacing.s : 0)
             }
             A2UISpacers(count: spacers.trailing)
         }
@@ -74,15 +87,17 @@ struct A2UIFlexStack: View {
 
     private var column: some View {
         let stretches = align == "stretch"
-        return VStack(alignment: A2UILayout.horizontalAlignment(align), spacing: theme.spacing.s) {
+        return VStack(alignment: A2UILayout.horizontalAlignment(align), spacing: 0) {
             A2UISpacers(count: spacers.leading)
             ForEach(Array(children.enumerated()), id: \.element.id) { offset, child in
+                if offset > 0 { A2UISpacers(count: spacers.between) }
                 WeightedChild(child: child, content: context.childView(child), axis: .vertical)
                     .frame(
                         maxWidth: stretches ? .infinity : nil,
                         alignment: A2UILayout.frameAlignment(align, axis: .vertical)
                     )
-                if offset < children.count - 1 { A2UISpacers(count: spacers.between) }
+                    .environment(\.a2uiStretchedChildId, stretches ? child.componentId : nil)
+                    .padding(.top, offset > 0 ? theme.spacing.s : 0)
             }
             A2UISpacers(count: spacers.trailing)
         }

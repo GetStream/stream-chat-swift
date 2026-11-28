@@ -229,6 +229,7 @@ private struct A2UIListView: View {
                             maxWidth: align == "stretch" ? .infinity : nil,
                             alignment: A2UILayout.frameAlignment(align, axis: .vertical)
                         )
+                        .environment(\.a2uiStretchedChildId, align == "stretch" ? child.componentId : nil)
                 }
             }
         }

@@ -189,3 +189,19 @@ struct A2UIFlowLayout: Layout {
         return (frames, CGSize(width: widest, height: frames.isEmpty ? 0 : origin.y + rowHeight))
     }
 }
+
+// The child that a Column or a vertical List stretches across its width, by id. A button there
+// is as wide as the container, as it is where a column stretches its children on the web; a
+// button nested deeper, such as in a Card or a Row, keeps the width of its title.
+@available(iOS 15.0, macOS 12.0, *)
+private struct A2UIStretchedChildIdKey: EnvironmentKey {
+    static var defaultValue: String? { nil }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
+extension EnvironmentValues {
+    var a2uiStretchedChildId: String? {
+        get { self[A2UIStretchedChildIdKey.self] }
+        set { self[A2UIStretchedChildIdKey.self] = newValue }
+    }
+}

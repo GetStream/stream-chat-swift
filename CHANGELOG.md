@@ -34,9 +34,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `spacing`, `buttonHorizontalPadding` and `buttonVerticalPadding` to `A2UITheme` [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
 ### 🐞 Fixed
 - Fix fields, chips and buttons blending into cards in dark mode [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+- Fix the extra space after the last child of a `Row` or `Column` [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
 ### 🔄 Changed
 - Take the components' spacing from the theme, and their controls' color from its accent [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
-- Show buttons in the design system's style, and chips as wide as their labels [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
+- Show buttons in the design system's style, as wide as a column that stretches them, and chips as wide as their labels [#4444](https://github.com/GetStream/stream-chat-swift/pull/4444)
 
 ## StreamChatOpenUI
 ### ✅ Added

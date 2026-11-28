@@ -291,7 +291,7 @@ struct FollowUpBlockView: View {
                             .multilineTextAlignment(.leading)
                         Spacer(minLength: 0)
                     }
-                    .padding(.vertical, theme.spacing.m)
+                    .padding(.vertical, theme.spacing.s)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
