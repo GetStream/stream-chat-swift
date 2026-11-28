@@ -103,6 +103,12 @@ extension AIAppearance {
         /// The bubble of a message the person sent.
         public lazy var userMessageBackground: UIColor = colors.backgroundCoreSurfaceDefault
         public lazy var userMessageText: UIColor = colors.textPrimary
+        /// The answer of a reply.
+        public lazy var assistantMessageText: UIColor = colors.textPrimary
+        /// The links in a reply.
+        public lazy var assistantMessageLink: UIColor = colors.textLink
+        /// The borders of the tables in a reply.
+        public lazy var assistantMessageTableBorder: UIColor = colors.borderCoreDefault
         /// The buttons under a reply, such as copy and regenerate.
         public lazy var messageAction: UIColor = colors.textSecondary
         /// The spinner at the start of the list while older messages load.

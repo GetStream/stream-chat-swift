@@ -21,7 +21,7 @@ struct A2UIMarkdownText: View {
         if blocks.count == 1, case let .paragraph(content) = blocks[0] {
             styled(Text(A2UIMarkdown.inline(content)))
         } else {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: theme.spacing.xs) {
                 ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in
                     block.view(isCaption: isCaption, theme: theme)
                 }
@@ -61,14 +61,14 @@ enum A2UIMarkdown {
                     .font(theme.heading(level))
                     .frame(maxWidth: .infinity, alignment: .leading)
             case let .bullet(text):
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                HStack(alignment: .firstTextBaseline, spacing: theme.spacing.xs) {
                     Text("•")
                     Text(A2UIMarkdown.inline(text))
                 }
                 .font(font)
                 .frame(maxWidth: .infinity, alignment: .leading)
             case let .ordered(number, text):
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                HStack(alignment: .firstTextBaseline, spacing: theme.spacing.xs) {
                     Text("\(number).")
                     Text(A2UIMarkdown.inline(text))
                 }
@@ -79,7 +79,7 @@ enum A2UIMarkdown {
                     .font(font)
                     .italic()
                     .foregroundColor(theme.secondaryText)
-                    .padding(.leading, 8)
+                    .padding(.leading, theme.spacing.s)
                     .overlay(alignment: .leading) {
                         Rectangle()
                             .frame(width: 2)

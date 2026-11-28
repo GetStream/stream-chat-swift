@@ -217,7 +217,7 @@ public struct StreamingReasoningView: View {
             choice = expands
             setOpen(expands)
         } label: {
-            HStack(spacing: 6) {
+            HStack(spacing: layout.spacingXs) {
                 ThinkingIcon(image: images.reasoning, isActive: isThinking)
                 Group {
                     if isThinking {
@@ -236,7 +236,7 @@ public struct StreamingReasoningView: View {
                         .truncationMode(.tail)
                 }
                 images.reasoningDisclosure
-                    .font(.caption2.weight(.semibold))
+                    .font(fonts.reasoningDisclosure)
                     .rotationEffect(.degrees(isExpanded ? 90 : 0))
             }
             .font(resolvedFont.weight(.medium))

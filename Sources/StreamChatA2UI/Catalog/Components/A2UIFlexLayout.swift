@@ -15,12 +15,15 @@ struct A2UIFlexStack: View {
     let children: [ResolvedChild]
     let context: ComponentRenderContext
 
+    @Environment(\.a2uiTheme) private var theme
+
     var body: some View {
         if sharesFreeSpace {
             if #available(iOS 16, macOS 13, tvOS 16, watchOS 9, *) {
-                A2UIFlexLayout(axis: axis, justify: justify, align: align, spacing: A2UILayout.spacing) {
+                A2UIFlexLayout(axis: axis, justify: justify, align: align, spacing: theme.spacing.s) {
                     ForEach(children) { child in
                         context.childView(child)
+                            .environment(\.a2uiStretchedChildId, stretchesWidth ? child.componentId : nil)
                             .layoutValue(key: A2UIFlexWeight.self, value: flexWeight(child))
                     }
                 }
@@ -41,6 +44,10 @@ struct A2UIFlexStack: View {
         }
     }
 
+    private var stretchesWidth: Bool {
+        axis == .vertical && align == "stretch"
+    }
+
     private var sharesFreeSpace: Bool {
         justify == "stretch" || children.contains { ($0.weight ?? 0) > 0 }
     }
@@ -56,14 +63,25 @@ struct A2UIFlexStack: View {
 
     // `align: stretch` gives every child the row's height, so a vertical
     // divider spans it; the row itself stays as tall as its tallest child.
+    // The stacks put a gap between their children themselves: stack spacing would also go next to
+    // the spacers that justify them, adding a gap after the last child of every container, and
+    // padding on a child would make it narrower than its siblings. A borderless button
+    // the row stretches centers its title, as a stretched button does on the web, so it lines up
+    // with the titles of the buttons beside it.
     private var row: some View {
         let stretches = align == "stretch"
-        return HStack(alignment: A2UILayout.verticalAlignment(align), spacing: A2UILayout.spacing) {
+        return HStack(alignment: A2UILayout.verticalAlignment(align), spacing: 0) {
             A2UISpacers(count: spacers.leading)
             ForEach(Array(children.enumerated()), id: \.element.id) { offset, child in
+                if offset > 0 {
+                    A2UIGap(axis: .horizontal, length: theme.spacing.s)
+                    A2UISpacers(count: spacers.between)
+                }
                 WeightedChild(child: child, content: context.childView(child), axis: .horizontal)
-                    .frame(maxHeight: stretches ? .infinity : nil, alignment: .top)
-                if offset < children.count - 1 { A2UISpacers(count: spacers.between) }
+                    .frame(
+                        maxHeight: stretches ? .infinity : nil,
+                        alignment: context.isBorderlessButton(child) ? .center : .top
+                    )
             }
             A2UISpacers(count: spacers.trailing)
         }
@@ -72,18 +90,34 @@ struct A2UIFlexStack: View {
 
     private var column: some View {
         let stretches = align == "stretch"
-        return VStack(alignment: A2UILayout.horizontalAlignment(align), spacing: A2UILayout.spacing) {
+        return VStack(alignment: A2UILayout.horizontalAlignment(align), spacing: 0) {
             A2UISpacers(count: spacers.leading)
             ForEach(Array(children.enumerated()), id: \.element.id) { offset, child in
+                if offset > 0 {
+                    A2UIGap(axis: .vertical, length: theme.spacing.s)
+                    A2UISpacers(count: spacers.between)
+                }
                 WeightedChild(child: child, content: context.childView(child), axis: .vertical)
                     .frame(
                         maxWidth: stretches ? .infinity : nil,
                         alignment: A2UILayout.frameAlignment(align, axis: .vertical)
                     )
-                if offset < children.count - 1 { A2UISpacers(count: spacers.between) }
+                    .environment(\.a2uiStretchedChildId, stretches ? child.componentId : nil)
             }
             A2UISpacers(count: spacers.trailing)
         }
+    }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
+private struct A2UIGap: View {
+    let axis: Axis
+    let length: CGFloat
+
+    var body: some View {
+        Color.clear
+            .frame(width: axis == .horizontal ? length : 0, height: axis == .vertical ? length : 0)
+            .accessibilityHidden(true)
     }
 }
 

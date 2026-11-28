@@ -12,16 +12,18 @@ struct TileBadge: View {
     let fill: Color
 
     @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.fonts) private var fonts
+    @Injected(\.aiAppearance.tokens.layout) private var layout
     
     var body: some View {
         ZStack {
             Circle()
                 .fill(Color(colors.attachmentBadgeForeground).opacity(0.9))
-                .shadow(radius: 1)
+                .elevation(light: layout.lightElevation1, dark: layout.darkElevation1)
             Circle()
                 .fill(fill)
             image
-                .font(.system(size: 12, weight: .bold))
+                .font(fonts.attachmentBadgeIcon)
                 .foregroundStyle(Color(colors.attachmentBadgeForeground))
         }
     }

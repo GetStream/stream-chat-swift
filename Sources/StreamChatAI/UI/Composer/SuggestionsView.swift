@@ -30,7 +30,7 @@ public struct SuggestionsView: View {
 
     public var body: some View {
         ScrollView(.horizontal) {
-            LazyHStack {
+            LazyHStack(spacing: layout.spacingXs) {
                 ForEach(suggestions, id: \.self) { option in
                     Button {
                         onMessageSend(.init(text: option))
@@ -42,13 +42,13 @@ public struct SuggestionsView: View {
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: itemMaxWidth)
-                            .padding()
+                            .padding(layout.spacingMd)
                             .background(Color(colors.suggestionBackground))
                             .cornerRadius(layout.radiusXl)
                     }
                 }
             }
-            .padding()
+            .padding(layout.spacingMd)
         }
         .frame(height: height)
     }

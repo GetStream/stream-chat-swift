@@ -17,7 +17,7 @@ struct EditingMessageChip: View {
 
     var body: some View {
         HStack {
-            HStack {
+            HStack(spacing: layout.spacingXs) {
                 images.messageEdit
                     .accessibilityHidden(true)
                 Text(L10n.Composer.editing)

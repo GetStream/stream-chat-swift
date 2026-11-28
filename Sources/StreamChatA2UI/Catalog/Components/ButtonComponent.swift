@@ -73,21 +73,40 @@ enum ButtonComponent {
 }
 
 @available(iOS 15.0, macOS 12.0, *)
+extension ComponentRenderContext {
+    func isBorderlessButton(_ child: ResolvedChild) -> Bool {
+        guard let component = renderer.component(child.componentId), component.type == ButtonComponent.button.name else {
+            return false
+        }
+        return component.property("variant") as? String == "borderless"
+    }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
 private struct A2UIButtonView: View {
     let context: ComponentRenderContext
 
     @Environment(\.a2uiModalPresenter) private var modalPresenter
+    @Environment(\.a2uiStretchedChildId) private var stretchedChildId
+    @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         let failures = context.failingChecks
         let isDisabled = failures.contains { $0.severity == .error }
+        let variant = context.option("variant", default: "default")
 
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: theme.spacing.xs) {
             Button {
                 ButtonComponent.activate(context, in: modalPresenter)
             } label: {
                 context.childView(context.childId())
-                    .modifier(A2UIButtonLabelStyle(variant: context.option("variant", default: "default")))
+                    .environment(\.a2uiTheme, titleTheme)
+                    .modifier(
+                        A2UIButtonLabelStyle(
+                            variant: variant,
+                            fillsWidth: stretchedChildId == context.id && variant != "borderless" && !isIconOnly
+                        )
+                    )
             }
             .buttonStyle(.plain)
             .disabled(isDisabled)
@@ -95,34 +114,72 @@ private struct A2UIButtonView: View {
             ValidationMessages(results: failures)
         }
     }
+
+    private var isIconOnly: Bool {
+        context.childId().flatMap { context.renderer.component($0)?.type } == TextComponents.icon.name
+    }
+
+    // A button's text is in the font of labels, like the titles of the design system's buttons.
+    private var titleTheme: A2UITheme {
+        var buttonTheme = theme
+        buttonTheme.body = theme.label
+        return buttonTheme
+    }
 }
 
 /// Applies the visual style of an A2UI button variant.
 @available(iOS 15.0, macOS 12.0, *)
 private struct A2UIButtonLabelStyle: ViewModifier {
     let variant: String
+    let fillsWidth: Bool
 
     @Environment(\.a2uiTheme) private var theme
 
+    // Borderless buttons sit at the edge of their container like a link, and a column of them
+    // as close as lines of text.
     func body(content: Content) -> some View {
+        let shape = A2UIRoundedShape(cornerRadius: theme.buttonCornerRadius)
+        let isBorderless = variant == "borderless"
+        content
+            .modifier(A2UIButtonTitleWeight())
+            .frame(maxWidth: fillsWidth ? .infinity : nil)
+            .padding(.horizontal, isBorderless ? 0 : theme.buttonHorizontalPadding)
+            .padding(.vertical, isBorderless ? theme.spacing.xs : theme.buttonVerticalPadding)
+            .foregroundColor(foreground)
+            .background(background, in: shape)
+            .overlay {
+                if variant != "primary" && variant != "borderless" {
+                    shape.strokeBorder(theme.border, lineWidth: 1)
+                }
+            }
+            .contentShape(shape)
+    }
+
+    private var foreground: Color {
         switch variant {
-        case "primary":
+        case "primary": return theme.onAccent
+        case "borderless": return theme.accent
+        default: return theme.text
+        }
+    }
+
+    private var background: Color {
+        switch variant {
+        case "primary": return theme.accent
+        case "borderless": return .clear
+        default: return theme.subtleSurface
+        }
+    }
+}
+
+// A button's title is semibold, whatever font its text has.
+@available(iOS 15.0, macOS 12.0, *)
+private struct A2UIButtonTitleWeight: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, macOS 13.0, *) {
+            content.fontWeight(.semibold)
+        } else {
             content
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .foregroundColor(theme.onAccent)
-                .background(theme.accent)
-                .clipShape(RoundedRectangle(cornerRadius: theme.buttonCornerRadius, style: .continuous))
-        case "borderless":
-            content
-                .foregroundColor(theme.accent)
-                .padding(.vertical, 4)
-        default:
-            content
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background(theme.subtleSurface)
-                .clipShape(RoundedRectangle(cornerRadius: theme.buttonCornerRadius, style: .continuous))
         }
     }
 }

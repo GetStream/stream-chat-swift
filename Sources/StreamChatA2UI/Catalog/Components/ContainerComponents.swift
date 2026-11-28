@@ -126,9 +126,9 @@ private struct A2UITabsView: View {
     var body: some View {
         let selected = selection ?? tabs.first?.id
 
-        return VStack(alignment: .leading, spacing: A2UILayout.spacing) {
+        return VStack(alignment: .leading, spacing: theme.spacing.s) {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 4) {
+                HStack(spacing: theme.spacing.xs) {
                     ForEach(tabs) { tab in
                         Button {
                             selection = tab.id
@@ -136,8 +136,8 @@ private struct A2UITabsView: View {
                             Text(tab.title)
                                 .font(theme.label)
                                 .foregroundColor(selected == tab.id ? theme.accent : theme.secondaryText)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
+                                .padding(.horizontal, theme.spacing.m)
+                                .padding(.vertical, theme.spacing.s)
                                 .background(
                                     selected == tab.id ? theme.accent.opacity(0.15) : Color.clear
                                 )
@@ -165,6 +165,7 @@ private struct A2UIModalView: View {
     let triggerIsButton: Bool
 
     @State private var isPresented = false
+    @Environment(\.a2uiTheme) private var theme
 
     var body: some View {
         interactiveTrigger
@@ -193,7 +194,7 @@ private struct A2UIModalView: View {
         #if os(iOS) || os(tvOS)
         NavigationView {
             ScrollView {
-                content.padding()
+                content.padding(theme.spacing.l)
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -206,7 +207,7 @@ private struct A2UIModalView: View {
             Button("Close") { isPresented = false }
             ScrollView { content }
         }
-        .padding()
+        .padding(theme.spacing.l)
         .frame(minWidth: 320, minHeight: 240)
         #endif
     }

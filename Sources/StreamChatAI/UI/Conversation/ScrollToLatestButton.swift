@@ -15,7 +15,6 @@ struct ScrollToLatestButton: View {
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     var body: some View {
-        let shadow = layout.lightElevation2
         Button(action: action) {
             images.conversationScrollToLatest
                 .font(fonts.conversationScrollButton)
@@ -23,7 +22,7 @@ struct ScrollToLatestButton: View {
                 .frame(width: layout.buttonVisualHeightMd, height: layout.buttonVisualHeightMd)
                 .background(Circle().fill(Color(colors.conversationScrollButtonBackground)))
                 .overlay(Circle().strokeBorder(Color(colors.conversationScrollButtonBorder)))
-                .shadow(color: Color(shadow.color), radius: shadow.blur / 2, x: shadow.x, y: shadow.y)
+                .elevation(light: layout.lightElevation2, dark: layout.darkElevation2)
                 .frame(minWidth: layout.buttonHitTargetMinWidth, minHeight: layout.buttonHitTargetMinHeight)
                 .contentShape(Rectangle())
         }

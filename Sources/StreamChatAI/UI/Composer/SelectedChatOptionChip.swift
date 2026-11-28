@@ -18,7 +18,7 @@ struct SelectedChatOptionChip: View {
 
     var body: some View {
         HStack {
-            HStack {
+            HStack(spacing: layout.spacingXs) {
                 Image(systemName: option.icon)
                 Text(option.shortTitle)
                     .font(fonts.composerChatOption)

@@ -63,7 +63,7 @@ struct TableView: View {
                             .disabled(current >= pages - 1)
                             .accessibilityLabel(Text(L10n.Pagination.nextPage))
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(OpenUIButtonStyle(variant: "secondary", isIconOnly: true, isCircle: true))
                     .controlSize(.small)
                 }
             }
@@ -91,7 +91,7 @@ struct TableView: View {
                         cell(row < column.data.count ? column.data[row] : nil, numeric: column.isNumeric)
                             .frame(maxWidth: .infinity, alignment: column.isNumeric ? .trailing : .leading)
                             .padding(.horizontal, theme.spacing.m)
-                            .padding(.vertical, theme.spacing.s + 2)
+                            .padding(.vertical, theme.spacing.m)
                     }
                 }
             }
@@ -213,15 +213,15 @@ struct EditableTableView: View {
                 .clipShape(RoundedRectangle(cornerRadius: theme.radius.small))
             }
             if changed > 0 {
-                HStack {
+                HStack(spacing: theme.spacing.s) {
                     Text(L10n.EditableTable.changes(changed))
                         .font(theme.fonts.caption)
                         .foregroundStyle(theme.colors.textSecondary)
                     Spacer()
                     Button(L10n.EditableTable.reset) { table.reset() }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(OpenUIButtonStyle(variant: "secondary"))
                     Button(L10n.EditableTable.save) { save(columns) }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(OpenUIButtonStyle(variant: "primary"))
                 }
                 .controlSize(.small)
                 .transition(.opacity)
@@ -273,7 +273,7 @@ struct EditableTableView: View {
                 .keyboardType(column.type == "number" ? .decimalPad : column.type == "url" ? .URL : .default)
                 .textInputAutocapitalization(column.type == "url" ? .never : .sentences)
             #endif
-                .padding(.vertical, 6)
+                .padding(.vertical, theme.spacing.s)
         }
     }
 

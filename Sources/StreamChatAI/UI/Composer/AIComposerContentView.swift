@@ -18,7 +18,7 @@ struct AIComposerContentView<ComposerFactory: AIComposerViewFactory>: View {
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     var body: some View {
-        HStack {
+        HStack(spacing: layout.spacingXs) {
             viewFactory.makeLeadingComposerView(
                 options: .init(onTap: {
                     viewModel.sheetShown = true

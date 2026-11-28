@@ -4,7 +4,8 @@
 
 import SwiftUI
 
-/// The look of a reply's A2UI: the colors, fonts and corners the basic catalog's components use.
+/// The look of a reply's A2UI: the colors, fonts, spacing and corners the basic catalog's
+/// components use.
 ///
 /// ``A2UIRenderer`` makes it from the app's `AIAppearance`, so A2UI looks like the rest of the
 /// conversation. Give the renderer a theme to change only A2UI, such as its buttons:
@@ -39,7 +40,7 @@ public struct A2UITheme: Sendable {
     public var body: Font
     /// The font of captions and validation messages.
     public var caption: Font
-    /// The font of fields' labels and of options.
+    /// The font of fields' labels, of options and of buttons' titles.
     public var label: Font
     /// The fonts of headings, from level 1 down. Deeper levels use the last.
     public var headings: [Font]
@@ -50,6 +51,13 @@ public struct A2UITheme: Sendable {
     public var buttonCornerRadius: CGFloat
     /// The corner radius of fields, images and players.
     public var controlCornerRadius: CGFloat
+
+    /// The spaces between and inside the components.
+    public var spacing = Spacing()
+    /// The space on each side of a button's title.
+    public var buttonHorizontalPadding: CGFloat = 16
+    /// The space above and below a button's title.
+    public var buttonVerticalPadding: CGFloat = 10
 
     /// A theme with the system's colors and fonts.
     public init(
@@ -93,6 +101,22 @@ public struct A2UITheme: Sendable {
         self.cornerRadius = cornerRadius
         self.buttonCornerRadius = buttonCornerRadius
         self.controlCornerRadius = controlCornerRadius
+    }
+
+    /// The spaces of a theme, from the smallest.
+    public struct Spacing: Sendable {
+        /// Between a field's validation messages.
+        public var xxs: CGFloat = 2
+        /// Between a control and its label or messages, and between tabs.
+        public var xs: CGFloat = 4
+        /// Between a layout's children, and between options.
+        public var s: CGFloat = 8
+        /// Inside cards, fields, chips and tabs.
+        public var m: CGFloat = 12
+        /// Around a modal's content.
+        public var l: CGFloat = 16
+
+        public init() { /* Public init. */ }
     }
 
     /// The font of a heading level, from 1.

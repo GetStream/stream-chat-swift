@@ -30,6 +30,7 @@ public struct AIAssistantMessageView<Factory: AIConversationViewFactory>: View {
     // while the answer is being written is typed, so it is written until the text reaches it.
     @State private var writing: Bool
 
+    @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     /// - Parameters:
@@ -73,6 +74,9 @@ public struct AIAssistantMessageView<Factory: AIConversationViewFactory>: View {
             }
             if !text.isEmpty {
                 StreamingMessageView(content: text, isGenerating: writing)
+                    .foregroundStyle(Color(colors.assistantMessageText))
+                    .tint(Color(colors.assistantMessageLink))
+                    .markdownTableBorderStyle(TableBorderStyle(color: Color(colors.assistantMessageTableBorder)))
             }
             ForEach(attachments.indices, id: \.self) { index in
                 viewFactory.makeAttachmentView(

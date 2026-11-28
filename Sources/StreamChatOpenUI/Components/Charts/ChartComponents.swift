@@ -287,7 +287,7 @@ struct LegendView: View {
 
     var body: some View {
         let total = entries.map(\.value).reduce(0, +)
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: theme.spacing.s) {
             ForEach(Array(entries.enumerated()), id: \.offset) { index, entry in
                 HStack(spacing: theme.spacing.s) {
                     RoundedRectangle(cornerRadius: 3)
@@ -456,7 +456,7 @@ struct SingleStackedBarView: View {
         if total > 0 {
             VStack(alignment: .leading, spacing: theme.spacing.m) {
                 GeometryReader { proxy in
-                    HStack(spacing: 2) {
+                    HStack(spacing: theme.spacing.xxs) {
                         ForEach(Array(slices.enumerated()), id: \.offset) { index, slice in
                             Rectangle()
                                 .fill(theme.colors.chartColor(index))
@@ -529,7 +529,7 @@ struct RadarChartView: View {
                 if seriesNames.count > 1 {
                     HStack(spacing: theme.spacing.m) {
                         ForEach(Array(seriesNames.enumerated()), id: \.offset) { index, name in
-                            HStack(spacing: 4) {
+                            HStack(spacing: theme.spacing.xs) {
                                 Circle().fill(theme.colors.chartColor(index)).frame(width: 8, height: 8)
                                 Text(name).font(theme.fonts.caption).foregroundStyle(theme.colors.textSecondary)
                             }

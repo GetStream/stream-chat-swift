@@ -17,7 +17,7 @@ struct TextBlockView: View {
         let props = context.props
         let size = props.string("size") ?? "md"
         let isNumber = props.string("variant") == "number"
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: theme.spacing.xxs) {
             Text(InlineMarkdown.cached(props.text("value") ?? ""))
                 .font(primaryFont(size).weight(bold ? .semibold : .regular))
                 .monospacedDigit(isNumber)
@@ -123,7 +123,7 @@ struct TitleSubtitle: View {
     @Environment(\.openUITheme) private var theme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: theme.spacing.xxs) {
             Text(InlineMarkdown.cached(title))
                 .font(theme.fonts.bodySmall.weight(bold ? .semibold : .medium))
                 .foregroundStyle(theme.colors.textPrimary)
@@ -187,7 +187,7 @@ struct TrendBadge: View {
             let up = direction == "up"
             let value = JS.toNumber(trend["value"])
             let color = up ? theme.colors.success : theme.colors.danger
-            HStack(spacing: 2) {
+            HStack(spacing: theme.spacing.xxs) {
                 Image(systemName: up ? "arrow.up.right" : "arrow.down.right")
                     .accessibilityHidden(true)
                 Text(NumberFormatting.percent(abs(value)))
@@ -195,8 +195,8 @@ struct TrendBadge: View {
             .font(theme.fonts.caption.weight(.semibold))
             .monospacedDigit()
             .foregroundStyle(color)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 2)
+            .padding(.horizontal, theme.spacing.s)
+            .padding(.vertical, theme.spacing.xxs)
             .background(color.opacity(0.12), in: Capsule())
             .accessibilityLabel(Text(up ? L10n.Trend.up(NumberFormatting.decimal(abs(value))) : L10n.Trend.down(NumberFormatting.decimal(abs(value)))))
         }
@@ -210,7 +210,7 @@ struct MetricInlineView: View {
     @Environment(\.openUITheme) private var theme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: theme.spacing.xxs) {
             HStack(alignment: .firstTextBaseline, spacing: theme.spacing.s) {
                 Text(props.text("value") ?? "")
                     .font(theme.fonts.metric)
@@ -235,7 +235,7 @@ struct MetricStrikethroughView: View {
     @Environment(\.openUITheme) private var theme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: theme.spacing.xxs) {
             HStack(alignment: .firstTextBaseline, spacing: theme.spacing.s) {
                 Text(props.text("value") ?? "")
                     .font(theme.fonts.metric)
@@ -714,7 +714,7 @@ private struct VisualCard: View {
             RemoteImage(url: props.string("bgImageSrc"), alt: props.text("bgImageAlt"))
                 .filling(height: 190, cornerRadius: 0)
             LinearGradient(colors: [.clear, .black.opacity(0.75)], startPoint: .center, endPoint: .bottom)
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: theme.spacing.xxs) {
                 Text(bodyProps?.text("value") ?? "")
                     .font(theme.fonts.bodySmall.weight(.semibold))
                     .foregroundStyle(.white)

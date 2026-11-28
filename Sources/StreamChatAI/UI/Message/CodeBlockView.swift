@@ -20,7 +20,7 @@ struct CodeBlockView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
+            HStack(spacing: layout.spacingXs) {
                 Text(configuration.language ?? L10n.StreamingMessage.codeBlockLanguageFallback)
                     .font(fonts.codeBlockLanguage)
                     .fontWeight(.semibold)
@@ -32,7 +32,7 @@ struct CodeBlockView: View {
                         UIPasteboard.general.string = configuration.content
                     }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, layout.spacingMd)
             .padding(.vertical, layout.spacingXs)
             .background {
                 Color(colors.codeBlockHeaderBackground)
@@ -49,7 +49,7 @@ struct CodeBlockView: View {
                         FontFamilyVariant(.monospaced)
                         FontSize(.em(0.85))
                     }
-                    .padding()
+                    .padding(layout.spacingMd)
             }
         }
         .background(Color(colors.codeBlockBackground))

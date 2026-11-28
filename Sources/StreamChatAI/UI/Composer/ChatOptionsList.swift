@@ -19,7 +19,7 @@ struct ChatOptionsList: View {
                     ChatOptionRow(option: option)
                 }
             }
-            .padding()
+            .padding(layout.spacingMd)
         }
     }
 }

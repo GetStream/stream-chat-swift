@@ -314,8 +314,25 @@ final class A2UIEngine_Tests: XCTestCase {
 
         XCTAssertEqual(theme.accent, Color(appearance.tokens.colors.accentPrimary))
         XCTAssertEqual(theme.surface, Color(appearance.tokens.colors.backgroundCoreSurfaceCard))
+        XCTAssertEqual(theme.subtleSurface, Color(appearance.tokens.colors.backgroundCoreOnElevation))
         XCTAssertEqual(theme.body, appearance.tokens.fonts.body)
         XCTAssertEqual(theme.buttonCornerRadius, appearance.tokens.layout.buttonRadiusMd)
+
+        let tokens = DesignSystemTokens()
+        tokens.layout.spacingXxxs = 3
+        tokens.layout.spacingXxs = 5
+        tokens.layout.spacingXs = 9
+        tokens.layout.spacingSm = 13
+        tokens.layout.spacingMd = 17
+        tokens.layout.buttonPaddingXWithLabelMd = 18
+        tokens.layout.buttonPaddingYMd = 11
+        let spaced = A2UITheme(appearance: AIAppearance(tokens: tokens))
+        XCTAssertEqual(
+            [spaced.spacing.xxs, spaced.spacing.xs, spaced.spacing.s, spaced.spacing.m, spaced.spacing.l],
+            [3, 5, 9, 13, 17]
+        )
+        XCTAssertEqual(spaced.buttonHorizontalPadding, 18)
+        XCTAssertEqual(spaced.buttonVerticalPadding, 11)
 
         let source = [createSurface, components].joined(separator: "\n")
         XCTAssertNil(try XCTUnwrap(engine.view(for: document(source), messageID: "m1")).theme)

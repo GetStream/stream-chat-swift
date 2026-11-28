@@ -8,7 +8,8 @@ import SwiftUI
 @available(iOS 17.0, macOS 14.0, *)
 public extension OpenUITheme {
     /// The theme of StreamChatAI's `appearance`, so a reply's OpenUI looks like the rest of its
-    /// conversation: its accent, text, surface and status colors, its fonts, spacing and corners.
+    /// conversation: its accent, text, surface and status colors, its fonts, spacing, corners and
+    /// buttons.
     @MainActor
     init(appearance: AIAppearance) {
         self.init()
@@ -19,8 +20,8 @@ public extension OpenUITheme {
         colors.textSecondary = Color(tokens.textSecondary)
         colors.textTertiary = Color(tokens.textTertiary)
         colors.surface = Color(tokens.backgroundCoreSurfaceCard)
-        colors.sunkenSurface = Color(tokens.backgroundCoreSurfaceDefault)
-        colors.subtleFill = Color(tokens.backgroundCoreSurfaceSubtle)
+        colors.sunkenSurface = Color(tokens.backgroundCoreOnElevation)
+        colors.subtleFill = Color(tokens.labelBackgroundNeutral)
         colors.border = Color(tokens.borderCoreDefault)
         colors.success = Color(tokens.accentSuccess)
         colors.warning = Color(tokens.accentWarning)
@@ -36,8 +37,11 @@ public extension OpenUITheme {
         fonts.bodyLarge = font.title3
         fonts.bodySmall = font.subheadline
         fonts.caption = font.caption1
+        fonts.code = font.footnote.monospaced()
+        fonts.metric = font.title2.weight(.semibold)
 
         let layout = appearance.tokens.layout
+        spacing.xxs = layout.spacingXxxs
         spacing.xs = layout.spacingXxs
         spacing.s = layout.spacingXs
         spacing.m = layout.spacingSm
@@ -48,5 +52,10 @@ public extension OpenUITheme {
         radius.medium = layout.radiusLg
         radius.large = layout.radiusXl
         radius.pill = layout.radiusMax
+        radius.button = layout.buttonRadiusMd
+        buttonHeights.extraSmall = layout.buttonVisualHeightXs
+        buttonHeights.small = layout.buttonVisualHeightSm
+        buttonHeights.medium = layout.buttonVisualHeightMd
+        buttonHeights.large = layout.buttonVisualHeightLg
     }
 }

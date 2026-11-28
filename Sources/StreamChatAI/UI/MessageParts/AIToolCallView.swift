@@ -25,7 +25,7 @@ public struct AIToolCallView: View {
     public var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: layout.spacingXs) {
             icon
-                .frame(width: 16)
+                .frame(width: layout.iconSizeSm)
             VStack(alignment: .leading, spacing: layout.spacingXxxs) {
                 Text(title)
                     .foregroundStyle(Color(colors.toolCallTitle))

@@ -75,7 +75,7 @@ struct RemoteImage: View {
         ZStack {
             theme.colors.sunkenSurface
             if let systemImage {
-                VStack(spacing: 4) {
+                VStack(spacing: theme.spacing.xs) {
                     Image(systemName: systemImage)
                         .font(theme.fonts.bodyLarge)
                     if let alt, !alt.isEmpty {
@@ -86,7 +86,7 @@ struct RemoteImage: View {
                     }
                 }
                 .foregroundStyle(theme.colors.textTertiary)
-                .padding(8)
+                .padding(theme.spacing.s)
             } else {
                 ProgressView()
             }

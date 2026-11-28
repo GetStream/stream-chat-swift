@@ -41,6 +41,7 @@ struct A2UISurface<Placeholder: View>: View {
         // calls whenever the surface's data model changes.
         content(revision: viewModel.revision)
             .foregroundColor(theme.text)
+            .tint(theme.accent)
     }
 
     @ViewBuilder

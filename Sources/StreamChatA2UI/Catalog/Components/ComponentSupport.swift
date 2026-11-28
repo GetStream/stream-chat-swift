@@ -7,9 +7,6 @@ import SwiftUI
 /// Shared layout and styling helpers for the basic catalog components.
 @available(iOS 15.0, macOS 12.0, *)
 enum A2UILayout {
-    /// The spacing used between children of layout containers.
-    static let spacing: CGFloat = 8
-
     /// Maps an A2UI cross-axis alignment onto a SwiftUI horizontal alignment.
     static func horizontalAlignment(_ align: String) -> HorizontalAlignment {
         switch align {
@@ -103,7 +100,7 @@ struct ValidationMessages: View {
         if results.isEmpty {
             EmptyView()
         } else {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: theme.spacing.xxs) {
                 ForEach(Array(results.enumerated()), id: \.offset) { _, result in
                     if let message = result.message ?? result.code {
                         Text(message)
@@ -122,5 +119,89 @@ struct ValidationMessages: View {
         case .warning: return theme.warning
         case .info: return theme.secondaryText
         }
+    }
+}
+
+// A rounded rectangle that is a capsule once its radius reaches half its height: a continuous
+// corner larger than that leaves points at the ends, and design systems give fully rounded
+// buttons a radius such as 9999.
+@available(iOS 15.0, macOS 12.0, *)
+struct A2UIRoundedShape: InsettableShape {
+    let cornerRadius: CGFloat
+    var inset: CGFloat = 0
+
+    func path(in rect: CGRect) -> Path {
+        let rect = rect.insetBy(dx: inset, dy: inset)
+        let radius = max(cornerRadius - inset, 0)
+        if radius * 2 >= min(rect.width, rect.height) {
+            return Capsule(style: .continuous).path(in: rect)
+        }
+        return RoundedRectangle(cornerRadius: radius, style: .continuous).path(in: rect)
+    }
+
+    func inset(by amount: CGFloat) -> A2UIRoundedShape {
+        var shape = self
+        shape.inset += amount
+        return shape
+    }
+}
+
+// Lays its children out in rows as wide as each wants, starting a new row when the next doesn't
+// fit, the way chips wrap. A child wider than a row is given the row's width.
+@available(iOS 16.0, macOS 13.0, *)
+struct A2UIFlowLayout: Layout {
+    let spacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        arrange(subviews, width: proposal.width).size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let frames = arrange(subviews, width: bounds.width).frames
+        for (subview, frame) in zip(subviews, frames) {
+            subview.place(
+                at: CGPoint(x: bounds.minX + frame.minX, y: bounds.minY + frame.minY),
+                proposal: ProposedViewSize(frame.size)
+            )
+        }
+    }
+
+    private func arrange(_ subviews: Subviews, width: CGFloat?) -> (frames: [CGRect], size: CGSize) {
+        let available = width.flatMap { $0.isFinite ? $0 : nil } ?? .greatestFiniteMagnitude
+        var frames: [CGRect] = []
+        var origin = CGPoint.zero
+        var rowHeight: CGFloat = 0
+        var widest: CGFloat = 0
+        for subview in subviews {
+            var size = subview.sizeThatFits(.unspecified)
+            if size.width > available {
+                size = subview.sizeThatFits(ProposedViewSize(width: available, height: nil))
+            }
+            if origin.x > 0, origin.x + size.width > available {
+                origin = CGPoint(x: 0, y: origin.y + rowHeight + spacing)
+                rowHeight = 0
+            }
+            frames.append(CGRect(origin: origin, size: size))
+            widest = max(widest, origin.x + size.width)
+            origin.x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+        }
+        return (frames, CGSize(width: widest, height: frames.isEmpty ? 0 : origin.y + rowHeight))
+    }
+}
+
+// The child that a Column or a vertical List stretches across its width, by id. A button there
+// is as wide as the container, as it is where a column stretches its children on the web; a
+// button nested deeper, such as in a Card or a Row, keeps the width of its title.
+@available(iOS 15.0, macOS 12.0, *)
+private struct A2UIStretchedChildIdKey: EnvironmentKey {
+    static var defaultValue: String? { nil }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
+extension EnvironmentValues {
+    var a2uiStretchedChildId: String? {
+        get { self[A2UIStretchedChildIdKey.self] }
+        set { self[A2UIStretchedChildIdKey.self] = newValue }
     }
 }

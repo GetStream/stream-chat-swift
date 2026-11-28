@@ -13,6 +13,7 @@ extension AIAppearance {
     @MainActor
     public final class Fonts {
         private let fonts: DesignSystemTokens.Fonts
+        private let layout: DesignSystemTokens.Layout
 
         // MARK: - Composer
 
@@ -22,19 +23,28 @@ extension AIAppearance {
         public lazy var chatOptionDescription: Font = fonts.subheadline
         public lazy var suggestion: Font = fonts.subheadline
 
+        // MARK: - Attachment Picker
+
+        /// The icon of a photo's tile that couldn't load.
+        public lazy var attachmentPickerTileFailureIcon: Font = fonts.title2.weight(.semibold)
+        /// The icon of a tile's badge, such as its check mark or its remove button.
+        public lazy var attachmentBadgeIcon: Font = .system(size: layout.iconSizeXs, weight: .bold)
+
         // MARK: - Message
 
-        public lazy var codeBlockLanguage: Font = .system(.caption, design: .monospaced)
+        public lazy var codeBlockLanguage: Font = fonts.caption1.monospaced()
         public lazy var chartTitle: Font = fonts.headline
         /// The shares written on a pie chart.
-        public lazy var chartAnnotation: Font = .caption2
+        public lazy var chartAnnotation: Font = fonts.caption1
 
         // MARK: - Message Parts
 
         /// Reasoning, tool calls and tool approvals, unless a view is given its own font.
         public lazy var messagePart: Font = fonts.subheadline
         /// The note under the open reasoning.
-        public lazy var reasoningFootnote: Font = .caption2
+        public lazy var reasoningFootnote: Font = fonts.caption1
+        /// The chevron that opens and closes the reasoning.
+        public lazy var reasoningDisclosure: Font = fonts.caption1.weight(.semibold)
         /// A tool call's outcome and duration.
         public lazy var toolCallDetail: Font = fonts.caption1
         /// The agent's reason and what allowing a tool call shares.
@@ -61,6 +71,7 @@ extension AIAppearance {
 
         public nonisolated init(tokens: DesignSystemTokens = DesignSystemTokens()) {
             fonts = tokens.fonts
+            layout = tokens.layout
         }
     }
 }
